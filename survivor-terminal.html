@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survivor Terminal | BBN | FNTD User Guide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}:root{--ug-accent:#ffa45b;--ug-purple:#681f62}html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html{font-size:10px}body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}#ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/952b91dc-d51b-434a-bee1-591d5d60126a-standard.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}#ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}#ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}.ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}.ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}.ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}#ug-topnav{position:sticky;top:0;z-index:1000}.ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}.ug-tn-inner::-webkit-scrollbar{display:none}.ug-tn-link{display:flex;align-items:center;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-link.active{color:var(--ug-accent)}.ug-tn-item{position:relative;display:flex;align-items:stretch}.ug-tn-btn{display:flex;align-items:center;gap:5px;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}.ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}.ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}.ug-tn-drop a{display:block;padding:9px 14px;color:rgba(255,255,255,.6);font-size:10px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}.ug-tn-drop a:last-child{border-bottom:none}.ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}.ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}#ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}#ug-hamburger .hmb-icon{font-size:16px;line-height:1}#ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}#ug-overlay.open{display:block}#ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}#ug-mobile-nav::-webkit-scrollbar{width:3px}#ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}#ug-mobile-nav.open{transform:translateX(0)}.ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}.ug-mn-brand{display:flex;align-items:center;gap:10px}.ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}.ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}.ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}.ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}.ug-mn-body{flex:1;padding:6px 0 12px}.ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}.ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}.ug-mn-link.active{color:var(--ug-accent)}.ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}.ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}.ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}.ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}.ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}.ug-mn-section.open .ug-mn-section-items{max-height:600px}.ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}.ug-mn-child:last-child{border-bottom:none}.ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}.ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}.ug-mn-discord-wrap{padding:14px 14px 4px}.ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}.ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}#ug-hero{position:relative;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/starry1-standard-ymjg51.webp');background-size:cover;background-attachment:fixed;background-position:center top}#ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}#ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}#ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}.ug-page-title-area{text-align:center;margin-bottom:18px}.ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}.ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(20,50,120,.85);border:1px solid rgba(80,140,255,.45);color:#86b8ff;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}.ug-page-desc{font-size:17px;color:#fff;line-height:1.75;margin-bottom:6px;text-align:center}.ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}#ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}.clean-pill{display:inline-block;padding:14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}.clean-pill.on{border-color:#4dff88;color:#8cffb0}.clean-pill:hover{transform:translateY(2px)}.clean-pill::after{content:'';position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}.clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#fff;text-align:center;line-height:1.6;opacity:0.85}@keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}.ad-slot{text-align:center}#ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}#ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}#ug-footer p{position:relative;z-index:1}#ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1}#ug-footer a:hover{text-decoration:underline}@media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}@media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}.metaRoot{zoom:0.87}.meta-card-img{height:100%!important;width:100%!important;object-fit:cover!important;object-position:center top!important;display:block!important;margin:0!important}</style>
+</head>
+<body>
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header"><div class="ug-mn-brand"><img class="ug-mn-brand-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD"><span class="ug-mn-brand-name">FNTD User Guide</span></div><button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button></div>
+    <div class="ug-mn-body"><a href="/" class="ug-mn-link">Home</a><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child">PvP/Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div><div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a><a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a><a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a><a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a><a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a><a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="ug-mn-child">Killer Terminal</a><a href="/bbn/survivor-terminal" class="ug-mn-child active">Survivor Terminal</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FAQ <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/faq-fntd1" class="ug-mn-child">FAQ FNTD1</a><a href="/faq-fntd2" class="ug-mn-child">FAQ FNTD2</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a><a href="/patch-notes" class="ug-mn-child">FNTD2</a><a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a></div></div><div class="ug-mn-discord-wrap"><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a></div></div>
+  </div>
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner"><img class="ug-header-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD Userguide"><div class="ug-header-title">FNTD User Guide</div></div>
+      <nav id="ug-topnav"><div class="ug-tn-inner"><a href="/" class="ug-tn-link">Home</a><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd1/meta-teams">Meta Teams</a><a href="/fntd1/charts-tierlists">Charts</a><a href="/fntd1/tierlists">TierLists</a><a href="/fntd1/other-charts">Other Charts</a><a href="/fntd1/pvp-ranked">PvP/Ranked</a><a href="/fntd1/endless">Endless</a><a href="/fntd1/event-endless">Event Endless</a><a href="/fntd1/night-shift">Night Shift</a><a href="/fntd1/boss-raids">Boss Raids</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd2/meta-teams-1">Meta Teams</a><a href="/fntd2/unit-engine">Unit Engine</a><a href="/fntd2/tierlists-1">TierLists</a><a href="/fntd2/story-index">Story &amp; Index</a><a href="/fntd2/endless-index">Endless &amp; Index</a><a href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless">Event Story &amp; Endless</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a><a href="/bbn/killer-terminal">Killer Terminal</a><a href="/bbn/survivor-terminal" class="active">Survivor Terminal</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FAQ <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/faq-fntd1">FAQ FNTD1</a><a href="/faq-fntd2">FAQ FNTD2</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">Patch Notes <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/patch-notes/fntd1-1">FNTD1</a><a href="/patch-notes">FNTD2</a><a href="/patch-notes/bbn-patch-notes">BBN</a></div></div><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a></div></nav>
+    </header>
+    <div id="ug-hero"><div id="ug-hero-inner">
+                  <div class="ug-page-title-area">
+        <div class="ug-page-title">Survivor Terminal</div>
+        <p class="ug-page-desc" style="margin-top:8px">An effective, super stylized wiki for BBN, with much info for both Killers and Survivors.</p>
+      </div>
+    </div></div>
+    <div id="ug-content">
+<style>
+  #camera-buttons,
+  #data-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  #camera-buttons::-webkit-scrollbar,
+  #data-bar::-webkit-scrollbar { display: none; }
+
+  #camera-panel {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #camera-panel {
+    aspect-ratio: 750 / 750;
+  }
+
+  #camera-panel,
+  #data-panel,
+  #noSignal {
+    text-shadow: 1px 2px 5px rgba(0,0,0,0.85);
+  }
+
+  @media (max-width: 600px) {
+    #camera-panel {
+      aspect-ratio: 9 / 11;
+      overflow: visible;
+    }
+
+    #camera-buttons button {
+      width: 52px !important;
+      min-width: 52px !important;
+      height: 52px !important;
+    }
+
+    #data-panel {
+      flex-shrink: 0 !important;
+      max-height: 380px !important;
+    }
+  }
+
+  #video-container {
+  background: #000;
+  border: 4px solid #000;
+  margin: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+#camVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: none;
+  background: #000;
+}
+</style>
+
+<div id="camera-panel" style="
+  width:100%;
+  max-width:750px;
+  margin:20px auto;
+  border:3px solid #000;
+  background:#c0c0c0;
+  box-shadow:3px 3px 0 #000 inset;
+  display:flex;
+  position: relative;
+  flex-direction:column;
+  font-family:'Courier New', monospace;
+  color:#f0d402;
+">
+
+  <div style="background:#000080; color:#fff; padding:6px 10px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; box-shadow: inset 0 -2px 0 #fff; font-size:16px;">
+    <span>Terminal.S</span><span>v1.6 (Updated 5/15/26)</span>
+  </div>
+
+<div id="camera-buttons" style="
+display:flex; 
+overflow-x: auto;
+white-space: nowrap;
+flex-wrap: nowrap; 
+padding:6px; 
+background:#c0c0c0; 
+border-bottom:
+2px solid #808080; 
+gap:6px;">
+</div>
+
+  <div id="video-container" style="
+  background:#000;
+  border:4px solid #000;
+  margin:8px;
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+">
+    
+  <video
+  id="camVideo"
+  autoplay
+  muted
+  playsinline
+  webkit-playsinline
+  preload="auto"
+  style="
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:none;
+    background:#000;
+  ">
+</video>
+  
+  <div id="noSignal" style="
+    position:absolute;
+    inset:0;
+    background:#000080;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:18px;
+    text-align:center;
+    font-family:'Courier New', monospace;
+    z-index:2;
+  ">
+    txt.file Null - Error 2015294522
+  </div>
+
+</div>
+
+<div id="data-bar" style="
+  display:flex;
+  background:#c0c0c0;
+  border-top:2px solid #808080;
+  padding:6px;
+  gap:6px;
+">
+  <button id="tab-mode" onclick="window.location.href='https://www.fntduserguide.com/terminal-killer'">Mode</button>
+  <button id="tab-files">File</button>
+  <button id="tab-voice">Training</button>
+  <button id="tab-skin">Skins</button>
+  <button id="tab-copy">Copy</button>
+</div>
+
+<div id="data-panel" style="
+  background: #000;
+  color: #f0d402;
+  max-height: 250px; 
+  margin: 8px;
+  border: 2px inset #808080;
+  box-shadow: inset 2px 2px 0 #000;
+  padding: 10px;
+  overflow-y: auto;
+  display: none;
+"></div>
+
+</div>
+
+<script>
+function captureFrame(video) {
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
+
+  return canvas.toDataURL("image/png");
+}
+  
+const copyBtn = document.getElementById('tab-copy');
+styleButton(copyBtn);
+
+copyBtn.onclick = async () => {
+  if (currentIndex === -1) return;
+
+  const video = document.getElementById("camVideo");
+  video.crossOrigin = "anonymous";
+  if (!video) return;
+
+  if (video.readyState < 2) {
+    await new Promise(resolve => {
+      video.onloadeddata = resolve;
+    });
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
+
+  try {
+    canvas.toBlob(async (blob) => {
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
+      showCopyText();
+    });
+  } catch (err) {
+    console.error("Copy failed", err);
+  }
+};
+
+function showCopyText(msg = "content copied!") {
+  const panel = document.getElementById('camera-panel');
+
+  const text = document.createElement('div');
+  text.textContent = msg;
+
+  text.style.position = 'absolute';
+  text.style.bottom = '20px';
+  text.style.left = '50%';
+  text.style.transform = 'translateX(-50%)';
+  text.style.color = '#f0d402';
+  text.style.fontFamily = 'Courier New, monospace';
+  text.style.fontSize = '16px';
+  text.style.padding = '4px 10px';
+  text.style.background = 'rgba(0,0,0,0.7)';
+  text.style.border = '1px solid #f0d402';
+  text.style.opacity = '1';
+  text.style.pointerEvents = 'none';
+  text.style.zIndex = '99999';
+
+  panel.appendChild(text);
+
+  setTimeout(() => {
+    text.style.transition = 'opacity 0.8s';
+    text.style.opacity = '0';
+  }, 100);
+
+  setTimeout(() => {
+    text.remove();
+  }, 1000);
+}
+  
+let currentTab = null;
+  
+function styleButton(btn){
+  btn.style.border = '2px outset #fff';
+  btn.style.background = '#c0c0c0';
+  btn.style.padding = '6px 12px';
+  btn.style.cursor = 'pointer';
+  btn.style.fontFamily = 'Courier New, monospace';
+
+  btn.onmouseover = () => {
+    if(btn.style.border !== '2px inset #fff'){
+      btn.style.background = '#d0d0d0';
+    }
+  };
+
+  btn.onmouseout = () => {
+    if(btn.style.border !== '2px inset #fff'){
+      btn.style.background = '#c0c0c0';
+    }
+  };
+}
+  
+const cameras = [
+  {
+    image: 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/bbn_-_10_-_edited-removebg-preview-high-27gltd.png?enable-io=true&crop=1.2835%3A1&width=532',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/customer1.mp4'
+  },
+  {
+    image: 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/bbn_-_12_-_edited-removebg-preview-high-2seg9n.png?enable-io=true&crop=1.2835%3A1&width=532',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/figther.mp4'
+  },
+  {
+    image: 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/bbn_-_13_-_edited-removebg-preview-high-ijtayj.png?enable-io=true&crop=1.2835%3A1&width=532',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/medic.mp4'
+  },
+  {
+    image: 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/bbn_-_11_-_edited-removebg-preview-high-31nnv1.png?enable-io=true&crop=1.2835%3A1&width=532',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/securityguard.mp4'
+  },
+  {
+    image: 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/bbn_-_9_-_edited-removebg-preview-high-jwoz6u.png?enable-io=true&width=532',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/technician.mp4'
+  }
+];
+
+const videoCache = {};
+
+function getVideo(src){
+  if(!videoCache[src]){
+    const v = document.createElement('video');
+    v.crossOrigin = "anonymous";
+    v.src = src;
+    v.preload = 'auto';
+    v.muted = true;
+    v.playsInline = true;
+    videoCache[src] = v;
+  }
+  return videoCache[src];
+}
+
+function preloadVideos(){
+  cameras.forEach(cam => {
+    getVideo(cam.video);
+  });
+}
+
+preloadVideos();
+  
+const camData = {
+  0: {
+    files: [
+      {
+        title: "General Note",
+        expanded: true,
+        content: [
+          { type: "text", value: "Barricading and releasing a door with a Killer in range of the door will Stun the Killer for 0.2s. You cannot barricade any doors 8s after barricading a door. Killers can attack barricaded doors up to 3 times, with the door permanently breaking after the 3rd hit. Doors can be broken faster if you don't keep your cursor within the mini-game circle that spawns on your screen while barricading doors. If a door you're barricading is broken down, you will be stunned for 0.75s if your cursor is within aforementioned circle, but only for 1.5s if your cursor is outside of the circle." }
+        ]
+      },
+      {
+        title: "File",
+        expanded: true,
+        content: [
+          { type: "text", value: "Price - Free\nIdentity - Unknown\nWIP." }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Training",
+        expanded: true,
+        content: [
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/customerinfo.m4a" },
+          { type: "text", value: "Welcome new user. You have signed in under 'Customer'.\n● Your Stats are, 100 Health, 12 Walkspeed, 24 Runspeed, and 100 Stamina.\n● Your First Ability is, Drink. Take a drink from your soda can, after a 3 second animation while being 50% slower, gain 30 stamina and 3 buffs: Speed for 5s, Energetic for 15s decreasing your stamina drain by 50%, and Rest for 20s decreasing your stamina grain by 50%. After which, gain 50% Slowness for 3s (65s CD).\n● Your second ability, Pizza. Take a bite of a pizza slice, while being 50% slower for 3s, restoring 20% of your current missing HP (30s CD)." }
+        ]
+      }
+    ],
+  },
+//fighter
+  1: {
+    files: [
+      {
+        title: "General Note",
+        expanded: true,
+        content: [
+          { type: "text", value: "Barricading and releasing a door with a Killer in range of the door will Stun the Killer for 0.2s. You cannot barricade any doors 8s after barricading a door. Killers can attack barricaded doors up to 3 times, with the door permanently breaking after the 3rd hit. Doors can be broken faster if you don't keep your cursor within the mini-game circle that spawns on your screen while barricading doors. If a door you're barricading is broken down, you will be stunned for 0.75s if your cursor is within aforementioned circle, but only for 1.5s if your cursor is outside of the circle." }
+        ]
+      },
+      {
+        title: "File",
+        expanded: true,
+        content: [
+          { type: "text", value: "Price - 1350\nIdentity - Unknown\nWIP." }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Training",
+        expanded: true,
+        content: [
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/fighterinfo.m4a" },
+          { type: "text", value: "Welcome Employee. You are a Fighter.\n● Your Stats are, 110 Health, 12 Walkspeed, 24 Runspeed, and 100 Stamina.\n● Your First Ability is, Parry. Block any close range attack from the Killer, adding 1 Charge for Swing. Parrying only works with close range attacks or abilities. Range attacks will still cause you to take damage, apart of Springtraps Axe, if you Parry it from close range. Missing a Parry will result in you getting weakness for 2 seconds, 30 second cooldown. You will still get weakness if you land the parry, keep this in mind.\n● Ability, Swing. Lunge forward and slash at the killer, if landed the killer will be stunned for 3 seconds gaining debuffs based on the number Parry Charges.\n● 1 Charge: 3 second stun.\n● 2 Charges: 3 second stun, inflicts blindness, and deafness on the killer.\n● 3 Charges: 3 second stun, inflicts blindness, confusion, and deafness.\nOnly able to be used if you have a charge. You start with 1 charge. Lose all charges opon use regardless if the hit is landed or not, 30 second cooldown." }
+        ]
+      }
+    ],
+    skin: [
+      {
+        title: "Crowbar",
+        content: [
+          { type: "text", value: "Price - 800" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-tue-may-05-2026-18-09-59-gmt-0500-central-daylight-time-high.png?enable-io=true&width=532", size: "200x200"},
+        ]
+      },
+      {
+        title: "Medal",
+        content: [
+          { type: "text", value: "Obtainment - Must've completed the Bite By Night X Medal Event" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-tue-may-05-2026-18-22-38-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=532", size: "200x200"},
+        ]
+      },
+      {
+        title: "American",
+        content: [
+          { type: "text", value: "Obtainment - Dev Exclusive" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/img_7045-high.png?enable-io=true&width=226", size: "200x100"},
+        ]
+      }
+    ],
+  },
+  //medic
+  2: {
+    files: [
+      {
+        title: "General Note",
+        expanded: true,
+        content: [
+          { type: "text", value: "Barricading and releasing a door with a Killer in range of the door will Stun the Killer for 0.2s. You cannot barricade any doors 8s after barricading a door. Killers can attack barricaded doors up to 3 times, with the door permanently breaking after the 3rd hit. Doors can be broken faster if you don't keep your cursor within the mini-game circle that spawns on your screen while barricading doors. If a door you're barricading is broken down, you will be stunned for 0.75s if your cursor is within aforementioned circle, but only for 1.5s if your cursor is outside of the circle." }
+        ]
+      },
+      {
+        title: "File",
+        expanded: true,
+        content: [
+          { type: "text", value: "Price - 800\nIdentity - Unknown\nWIP." }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Training",
+        expanded: true,
+        content: [
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/medicinfo.m4a" },
+          { type: "text", value: "Welcome Employee. You are, Medic.\n● Your Stats consist of, 90 Health, 12 Walkspeed, 24 Runspeed, 100 Stamina.\n● Your First Ability is, Self Heal. You will equip your medkit, becoming immobile, and playing an animation. Healing 5 HP per second up to a maximum of 3 HP, this can not overheal. Self Heal can not be manually canceled, and will only end when taking damage or the animation itself ending. Even if you have reached maximum HP, you will be stuck in the animation until it ends. This has a 60 second cooldown.\n● Your second ability, Self. Become immobile, glow in green, and giving a prompt to heal. If a player interacts with you, you will be put into a healing animation, healing a player by 5 HP every 2 seconds, only able to heal 40 HP per use. If the player healed is already full HP they can be overhealed up to 15 extra HP. 40 second cooldown." }
+        ]
+      }
+    ],
+  },
+  //Technician
+  4: {
+    files: [
+      {
+        title: "General Note",
+        expanded: true,
+        content: [
+          { type: "text", value: "Barricading and releasing a door with a Killer in range of the door will Stun the Killer for 0.2s. You cannot barricade any doors 8s after barricading a door. Killers can attack barricaded doors up to 3 times, with the door permanently breaking after the 3rd hit. Doors can be broken faster if you don't keep your cursor within the mini-game circle that spawns on your screen while barricading doors. If a door you're barricading is broken down, you will be stunned for 0.75s if your cursor is within aforementioned circle, but only for 1.5s if your cursor is outside of the circle." }
+        ]
+      },
+      {
+        title: "File",
+        expanded: true,
+        content: [
+          { type: "text", value: "Price - 1600\nIdentity - Unknown\nWIP." }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Training",
+        expanded: true,
+        content: [
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/techinfo.m4a" },
+          { type: "text", value: "Welcome Employee. You are a Technician.\n● Your stats are, 100 Health, 12 Walkspeed, 24 Runspeed, and 100 Stamina.\n● Your First Ability, Vanni Mask. Equip the Vanni mask, forcing the player into a first person point of view, locking Static Mirage, and unlocking Phase. This lasts 15 seconds, But a 30 second cooldown.\n● Ability, Static Mirage. Place a Static Mirage applying 50% slowness, 0.1 second stun, and dazed to the killer if within range. These can be destroyed by any M1 or ability. 20 second lifetime, 20 second cooldown.\n● Ability, Phase. Phase through certain objects around the map, costing 45% of the Mask's meter, and 20% slowness. The slowness length is dependent on the size of the object that is Phased. If used twice in a row, slowness will be ignored. Each Phase is a 1 second cooldown between them." }
+        ]
+      }
+    ],
+  },
+  3: {
+    files: [
+      {
+        title: "General Note",
+        expanded: true,
+        content: [
+          { type: "text", value: "Barricading and releasing a door with a Killer in range of the door will Stun the Killer for 0.2s. You cannot barricade any doors 8s after barricading a door. Killers can attack barricaded doors up to 3 times, with the door permanently breaking after the 3rd hit. Doors can be broken faster if you don't keep your cursor within the mini-game circle that spawns on your screen while barricading doors. If a door you're barricading is broken down, you will be stunned for 0.75s if your cursor is within aforementioned circle, but only for 1.5s if your cursor is outside of the circle." }
+        ]
+      },
+      {
+        title: "File",
+        expanded: true,
+        content: [
+          { type: "text", value: "Price - 1100\nIdentity - Unknown\nWIP." }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Training",
+        expanded: true,
+        content: [
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/sginfo.m4a" },
+          { type: "text", value: "Welcome Employee. You are a Security Guard.\n● Your stats are, 100 Health withn 25 overheal, 12 Walkspeed, and 24 Runspeed, your is 100 Stamina.\n● Your First Ability is, Cameras. Access cameras around the map with your tablet. You will see Killers in red (except for disguised Ennard), fellow Survivors in green, and objects of interest will be blue and named. Click on any of these to reveal them to all players. Opening cameras will automatically make you see through the camera which is closest to the Killer. Killers are revealed in red for 5 seconds when clicked. Objectives, objects, and Survivors are revealed in white for 5 seconds when clicked. Room names turn red when the Killer is in that room. Survivors can see all highlights you make. Your tablet has 4 bars and consumes 1/4th of a bar when marking anything. Power is passively regained when not in use.\n● Ability, Taser. Charge your Taser, disabling your run and interactions. You're able to fire or holster your Taser at any time, which has a range of ~12 studs. Inflicts the Killer with slow and other debuffs depending on your charge time. Charging ends if you're attacked while charging.\n● Charged for 6.5 seconds: Speed is increased, roughly faster than walking during charge. Applies 50% Slow to the Killer for 3s.\n● Charged for 12 seconds: Normal walking speed while charging. Applies 50% Slow and Dazed for 5s.\n● Charged for 17.5 seconds: Decreases Speed while charging. Applies Slowness and Confusion for 7s.\n● Charged for 20 seconds: Greatly reduces Speed while charging. Applies 50% Slow and Silence for 9s, and Stun for 0.1 second. Automatically fires when it reaches full charge (30s CD if hit, 20s CD if missed." }
+        ]
+      }
+    ],
+  },
+};
+
+const loadedAudioCams = {};
+
+function preloadCameraAudio(index){
+  if(loadedAudioCams[index]) return;
+  loadedAudioCams[index] = true;
+
+  const cam = camData[index];
+  if(!cam) return;
+
+  Object.values(cam).forEach(section => {
+    section.forEach(entry => {
+      (entry.content || []).forEach(item => {
+        if(item.type === 'audio'){
+          const a = new Audio();
+          a.src = item.value;
+        }
+      });
+    });
+  });
+}
+  
+const cameraButtonsContainer = document.getElementById('camera-buttons');
+const videoEl = document.getElementById('camVideo');
+const noSignal = document.getElementById('noSignal');
+
+let currentIndex = -1;
+let isSwitching = false;
+let switchCooldown = 800;
+
+videoEl.style.display = 'none';
+noSignal.style.display = 'flex';
+
+cameras.forEach(function(cam, index) {
+  const btn = document.createElement('button');
+  btn.style.border = '2px outset #fff';
+  btn.style.background = '#c0c0c0';
+  btn.style.padding = '4px';
+  btn.style.cursor = 'pointer';
+  btn.style.flexShrink = '0';
+  btn.style.width = '70px';
+  btn.style.minWidth = '70px';
+  btn.style.height = '70px';
+  btn.style.aspectRatio = '1 / 1';
+
+  btn.style.display = 'flex';
+  btn.style.alignItems = 'center';
+  btn.style.justifyContent = 'center';
+  btn.style.overflow = 'hidden';
+
+  const img = document.createElement('img');
+  img.src = cam.image;
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.objectFit = 'contain';
+  
+  img.style.display = 'block';
+  img.draggable = false;
+
+  btn.appendChild(img);
+
+  btn.onclick = function() {
+    loadCamera(index);
+    videoEl.play().catch(() => {});
+  };
+  
+  cameraButtonsContainer.appendChild(btn);
+});
+
+var tabs = ['files','skin','voice'];
+
+tabs.forEach(function(type){
+  var btn = document.getElementById('tab-' + type);
+  styleButton(btn);
+  btn.onclick = function() {
+    openTab(type);
+  };
+});
+  
+function loadCamera(index) {
+  if (index === currentIndex || isSwitching) return;
+
+  isSwitching = true;
+  currentIndex = index;
+
+  currentTab = null;
+  highlightTab(null);
+  document.getElementById('data-panel').style.display = 'none';
+
+  videoEl.style.display = 'block';
+  videoEl.style.objectFit = 'fill';
+  noSignal.style.display = 'none';
+
+  document.querySelectorAll('#camera-buttons button').forEach(function(b, i){
+    b.style.border = (i === index) ? '2px inset #fff' : '2px outset #fff';
+  });
+
+  const cam = cameras[index];
+
+videoEl.pause();
+videoEl.removeAttribute('src');
+videoEl.crossOrigin = "anonymous";
+videoEl.src = cam.video;
+videoEl.loop = false;
+
+videoEl.load();
+
+const introEnd = 3.2;
+let introPlayed = false;
+
+videoEl.onloadedmetadata = () => {
+  videoEl.currentTime = 0;
+
+  videoEl.play().catch(() => {});
+
+  videoEl.ontimeupdate = () => {
+    if (!introPlayed && videoEl.currentTime >= introEnd) {
+      introPlayed = true;
+    }
+
+    if (introPlayed && videoEl.currentTime >= videoEl.duration - 0.05) {
+      videoEl.currentTime = introEnd;
+      videoEl.play();
+    }
+  };
+
+  setTimeout(() => {
+    isSwitching = false;
+  }, switchCooldown);
+};
+}
+
+const modeBtn = document.getElementById('tab-mode');
+styleButton(modeBtn);
+  
+function openTab(type){
+
+  function preloadTabAudio(index, type){
+    const cam = camData[index];
+    if(!cam || !cam[type]) return;
+
+    cam[type].forEach(entry => {
+      (entry.content || []).forEach(item => {
+        if(item.type === 'audio'){
+          const a = new Audio();
+          a.src = item.value;
+          a.preload = "metadata";
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll('#data-panel audio').forEach(a => {
+    a.pause();
+    a.currentTime = 0;
+  });
+
+  if(currentIndex === -1) return;
+
+  var panel = document.getElementById('data-panel');
+  var video = document.getElementById('camVideo');
+
+  if(currentTab === type && panel.style.display === 'block'){
+    panel.style.display = 'none';
+    currentTab = null;
+    highlightTab(null);
+    video.style.objectFit = 'fill';
+    return;
+  }
+
+  panel.style.display = 'block';
+  panel.innerHTML = '';
+  video.style.objectFit = 'contain';
+
+  currentTab = type;
+  highlightTab(type);
+  
+  preloadTabAudio(currentIndex, type);
+
+  var data = (camData[currentIndex] && camData[currentIndex][type]) || [];
+
+  for(let i = 0; i < data.length; i++){
+    let entry = data[i];
+
+    let wrapper = document.createElement('div');
+    wrapper.style.background = '#909090';
+    wrapper.style.border = '2px inset #a0a0a0';
+    wrapper.style.marginBottom = '10px';
+
+    let contentBox = document.createElement('div');
+    contentBox.style.padding = '10px';
+
+    const title = entry.title || ("Entry " + (i + 1));
+    const isExpanded = entry.expanded === true;
+
+    contentBox.style.display = isExpanded ? 'block' : 'none';
+
+    let header = document.createElement('div');
+    header.style.cursor = 'pointer';
+    header.style.padding = '6px';
+    header.style.background = '#707070';
+    header.style.borderBottom = '2px solid #505050';
+
+    header.textContent = title + (isExpanded ? " [-]" : " [+]");
+
+    header.onclick = () => {
+
+      if(entry.expanded === true) return;
+
+      const isOpen = contentBox.style.display === 'block';
+      contentBox.style.display = isOpen ? 'none' : 'block';
+      header.textContent = title + (isOpen ? " [+]" : " [-]");
+    };
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(contentBox);
+
+    let contentList = entry.content || [];
+
+    for(let j = 0; j < contentList.length; j++){
+      let item = contentList[j];
+
+      if(item.type === 'text'){
+        let p = document.createElement('div');
+        p.innerHTML = item.value.replace(/\n/g, "<br>");
+        p.style.marginBottom = '6px';
+        contentBox.appendChild(p);
+      }
+
+      if(item.type === 'image'){
+        let imgBox = document.createElement('div');
+        imgBox.style.background = '#505050';
+        imgBox.style.padding = '6px';
+        imgBox.style.display = 'inline-block';
+        imgBox.style.marginBottom = '6px';
+
+        let img = document.createElement('img');
+        img.src = item.value;
+        img.style.display = 'block';
+        img.style.maxWidth = '100%';
+
+        if(item.size){
+          let parts = item.size.toLowerCase().split('x');
+          if(parts.length === 2){
+            let w = parseInt(parts[0]);
+            let h = parseInt(parts[1]);
+            if(!isNaN(w)) img.style.width = w + 'px';
+            if(!isNaN(h)) img.style.height = h + 'px';
+          }
+        }
+
+        imgBox.appendChild(img);
+        contentBox.appendChild(imgBox);
+      }
+
+      if(item.type === 'audio'){
+        let audio = document.createElement('audio');
+        audio.controls = true;
+        audio.style.width = '100%';
+        audio.preload = 'metadata';
+        audio.src = item.value;
+
+        audio.setAttribute("playsinline", "");
+        audio.setAttribute("webkit-playsinline", "");
+
+        contentBox.appendChild(audio);
+      }
+    }
+
+    panel.appendChild(wrapper);
+  }
+}
+
+let open = false;
+  
+function preloadAllAudio() {
+  Object.values(camData).forEach(cam => {
+    Object.values(cam).forEach(section => {
+      section.forEach(entry => {
+        (entry.content || []).forEach(item => {
+          if(item.type === 'audio'){
+            const a = new Audio();
+            a.src = item.value;
+          }
+        });
+      });
+    });
+  });
+}
+  
+function highlightTab(activeType){
+  var tabs = ['files','skin','voice'];
+
+  tabs.forEach(function(type){
+    var btn = document.getElementById('tab-' + type);
+
+    if(type === activeType){
+      btn.style.border = '2px inset #fff';
+      btn.style.background = '#b0b0b0';
+    } else {
+      btn.style.border = '2px outset #fff';
+      btn.style.background = '#c0c0c0';
+    }
+  });
+}
+
+videoEl.style.display = "none";
+  
+function playLoader(callback){
+  const el = document.getElementById("loaderText");
+  let i = 0;
+
+  el.innerHTML = "";
+
+  const interval = setInterval(() => {
+    if(i < loaderLines.length){
+      el.innerHTML += loaderLines[i] + "<br>";
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(callback, 300);
+    }
+  }, 120);
+}
+
+function fixButtonRowWidths() {
+  const panel = document.getElementById('camera-panel');
+  const w = panel.getBoundingClientRect().width;
+  document.getElementById('camera-buttons').style.maxWidth = w + 'px';
+  document.getElementById('data-bar').style.maxWidth = w + 'px';
+}
+  
+['camera-buttons', 'data-bar'].forEach(function(id) {
+  var el = document.getElementById(id);
+  el.addEventListener('wheel', function(e) {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+});
+  
+fixButtonRowWidths();
+window.addEventListener('resize', fixButtonRowWidths);
+</script>
+
+    </div>
+    <footer id="ug-footer">
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>
+    </footer>
+  </div>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"></script>
+  <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
+</body>
+</html>

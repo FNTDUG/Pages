@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Killer Terminal | BBN | FNTD User Guide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}:root{--ug-accent:#ffa45b;--ug-purple:#681f62}html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html{font-size:10px}body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}#ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/952b91dc-d51b-434a-bee1-591d5d60126a-standard.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}#ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}#ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}.ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}.ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}.ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}#ug-topnav{position:sticky;top:0;z-index:1000}.ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}.ug-tn-inner::-webkit-scrollbar{display:none}.ug-tn-link{display:flex;align-items:center;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-link.active{color:var(--ug-accent)}.ug-tn-item{position:relative;display:flex;align-items:stretch}.ug-tn-btn{display:flex;align-items:center;gap:5px;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}.ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}.ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}.ug-tn-drop a{display:block;padding:9px 14px;color:rgba(255,255,255,.6);font-size:10px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}.ug-tn-drop a:last-child{border-bottom:none}.ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}.ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}#ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}#ug-hamburger .hmb-icon{font-size:16px;line-height:1}#ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}#ug-overlay.open{display:block}#ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}#ug-mobile-nav::-webkit-scrollbar{width:3px}#ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}#ug-mobile-nav.open{transform:translateX(0)}.ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}.ug-mn-brand{display:flex;align-items:center;gap:10px}.ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}.ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}.ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}.ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}.ug-mn-body{flex:1;padding:6px 0 12px}.ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}.ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}.ug-mn-link.active{color:var(--ug-accent)}.ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}.ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}.ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}.ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}.ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}.ug-mn-section.open .ug-mn-section-items{max-height:600px}.ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}.ug-mn-child:last-child{border-bottom:none}.ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}.ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}.ug-mn-discord-wrap{padding:14px 14px 4px}.ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}.ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}#ug-hero{position:relative;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/starry1-standard-ymjg51.webp');background-size:cover;background-attachment:fixed;background-position:center top}#ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}#ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}#ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}.ug-page-title-area{text-align:center;margin-bottom:18px}.ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}.ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(20,50,120,.85);border:1px solid rgba(80,140,255,.45);color:#86b8ff;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}.ug-page-desc{font-size:17px;color:#fff;line-height:1.75;margin-bottom:6px;text-align:center}.ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}#ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}.clean-pill{display:inline-block;padding:14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}.clean-pill.on{border-color:#4dff88;color:#8cffb0}.clean-pill:hover{transform:translateY(2px)}.clean-pill::after{content:'';position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}.clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#fff;text-align:center;line-height:1.6;opacity:0.85}@keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}.ad-slot{text-align:center}#ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}#ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}#ug-footer p{position:relative;z-index:1}#ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1}#ug-footer a:hover{text-decoration:underline}@media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}@media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}.metaRoot{zoom:0.87}.meta-card-img{height:100%!important;width:100%!important;object-fit:cover!important;object-position:center top!important;display:block!important;margin:0!important}</style>
+</head>
+<body>
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header"><div class="ug-mn-brand"><img class="ug-mn-brand-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD"><span class="ug-mn-brand-name">FNTD User Guide</span></div><button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button></div>
+    <div class="ug-mn-body"><a href="/" class="ug-mn-link">Home</a><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child">PvP/Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div><div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a><a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a><a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a><a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a><a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a><a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="ug-mn-child active">Killer Terminal</a><a href="/bbn/survivor-terminal" class="ug-mn-child">Survivor Terminal</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FAQ <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/faq-fntd1" class="ug-mn-child">FAQ FNTD1</a><a href="/faq-fntd2" class="ug-mn-child">FAQ FNTD2</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a><a href="/patch-notes" class="ug-mn-child">FNTD2</a><a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a></div></div><div class="ug-mn-discord-wrap"><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a></div></div>
+  </div>
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner"><img class="ug-header-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD Userguide"><div class="ug-header-title">FNTD User Guide</div></div>
+      <nav id="ug-topnav"><div class="ug-tn-inner"><a href="/" class="ug-tn-link">Home</a><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd1/meta-teams">Meta Teams</a><a href="/fntd1/charts-tierlists">Charts</a><a href="/fntd1/tierlists">TierLists</a><a href="/fntd1/other-charts">Other Charts</a><a href="/fntd1/pvp-ranked">PvP/Ranked</a><a href="/fntd1/endless">Endless</a><a href="/fntd1/event-endless">Event Endless</a><a href="/fntd1/night-shift">Night Shift</a><a href="/fntd1/boss-raids">Boss Raids</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd2/meta-teams-1">Meta Teams</a><a href="/fntd2/unit-engine">Unit Engine</a><a href="/fntd2/tierlists-1">TierLists</a><a href="/fntd2/story-index">Story &amp; Index</a><a href="/fntd2/endless-index">Endless &amp; Index</a><a href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless">Event Story &amp; Endless</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="active">Killer Terminal</a><a href="/bbn/survivor-terminal">Survivor Terminal</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FAQ <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/faq-fntd1">FAQ FNTD1</a><a href="/faq-fntd2">FAQ FNTD2</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">Patch Notes <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/patch-notes/fntd1-1">FNTD1</a><a href="/patch-notes">FNTD2</a><a href="/patch-notes/bbn-patch-notes">BBN</a></div></div><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a></div></nav>
+    </header>
+    <div id="ug-hero"><div id="ug-hero-inner">
+                  <div class="ug-page-title-area">
+        <div class="ug-page-title">Killer Terminal</div>
+        <p class="ug-page-desc" style="margin-top:8px">An effective, super stylized wiki for BBN, with much info for both Killers and Survivors.</p>
+      </div>
+    </div></div>
+    <div id="ug-content">
+<style>
+  #camera-buttons,
+  #data-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  #camera-buttons::-webkit-scrollbar,
+  #data-bar::-webkit-scrollbar { display: none; }
+
+  #camera-panel {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #camera-panel {
+    aspect-ratio: 752 / 850;
+  }
+
+  #camera-panel,
+  #data-panel,
+  #noSignal {
+    text-shadow: 1px 2px 5px rgba(0,0,0,0.85);
+  }
+
+  @media (max-width: 600px) {
+    #camera-panel {
+      aspect-ratio: 9 / 11;
+      overflow: visible;
+    }
+
+    #data-panel {
+      flex: none !important;
+      max-height: 380px !important;
+    }
+  }
+
+  #video-container {
+  background: #000;
+  border: 4px solid #000;
+  margin: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+#camVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: none;
+  background: #000;
+}
+</style>
+
+<div id="camera-panel" style="
+  width:100%;
+  max-width:752px;
+  margin:20px auto;
+  border:3px solid #000;
+  background:#c0c0c0;
+  box-shadow:3px 3px 0 #000 inset;
+  display:flex;
+  position: relative;
+  flex-direction:column;
+  font-family:'Courier New', monospace;
+">
+
+  <div style="background:#000080; color:#fff; padding:6px 10px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; box-shadow: inset 0 -2px 0 #fff; font-size:16px;">
+    <span>Terminal.K</span><span>v1.6 (Updated 5/15/26)</span>
+  </div>
+
+<div id="camera-buttons" style="
+display:flex; 
+overflow-x: auto;
+white-space: nowrap;
+flex-wrap: nowrap; 
+padding:6px; 
+background:#c0c0c0; 
+border-bottom:
+2px solid #808080; 
+gap:6px;">
+</div>
+
+  <div id="video-container" style="
+  background:#000;
+  border:4px solid #000;
+  margin:8px;
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+">
+    
+  <video
+  id="camVideo"
+  autoplay
+  muted
+  playsinline
+  webkit-playsinline
+  preload="auto"
+  style="
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:none;
+    background:#000;
+  ">
+</video>
+  
+  <div id="noSignal" style="
+    position:absolute;
+    inset:0;
+    background:#000080;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:18px;
+    text-align:center;
+    font-family:'Courier New', monospace;
+    z-index:2;
+  ">
+    No Signal - Error 801
+  </div>
+
+</div>
+
+<div id="data-bar" style="
+  display:flex;
+  background:#c0c0c0;
+  border-top:2px solid #808080;
+  padding:6px;
+  gap:6px;
+">
+  <button id="tab-mode" onclick="window.location.href='https://www.fntduserguide.com/bbn/terminal-survivor'">Mode</button>
+  <button id="tab-files">File</button>
+  <button id="tab-voice">Audios</button>
+  <button id="tab-skin">Skins</button>
+  <button id="tab-copy">Copy</button>
+</div>
+
+<div id="data-panel" style="
+  background:#000;
+  color:#f0d402;
+  font-size:17.5px;
+  flex:1;
+  margin:8px;
+  border:2px inset #808080;
+  box-shadow: inset 2px 2px 0 #000;
+  padding:10px;
+  overflow-y:auto;
+  display:none;
+"></div>
+  
+</div>
+
+<script>
+function captureFrame(video) {
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
+
+  return canvas.toDataURL("image/png");
+}
+  
+const copyBtn = document.getElementById('tab-copy');
+styleButton(copyBtn);
+
+copyBtn.onclick = async () => {
+  if (currentIndex === -1) return;
+
+  const video = document.getElementById("camVideo");
+  video.crossOrigin = "anonymous";
+  if (!video) return;
+
+  if (video.readyState < 2) {
+    await new Promise(resolve => {
+      video.onloadeddata = resolve;
+    });
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
+
+  try {
+    canvas.toBlob(async (blob) => {
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
+      showCopyText();
+    });
+  } catch (err) {
+    console.error("Copy failed", err);
+  }
+};
+
+function showCopyText(msg = "content copied!") {
+  const panel = document.getElementById('camera-panel');
+
+  const text = document.createElement('div');
+  text.textContent = msg;
+
+  text.style.position = 'absolute';
+  text.style.bottom = '20px';
+  text.style.left = '50%';
+  text.style.transform = 'translateX(-50%)';
+  text.style.color = '#f0d402';
+  text.style.fontFamily = 'Courier New, monospace';
+  text.style.fontSize = '16px';
+  text.style.padding = '4px 10px';
+  text.style.background = 'rgba(0,0,0,0.7)';
+  text.style.border = '1px solid #f0d402';
+  text.style.opacity = '1';
+  text.style.pointerEvents = 'none';
+  text.style.zIndex = '99999';
+
+  panel.appendChild(text);
+
+  setTimeout(() => {
+    text.style.transition = 'opacity 0.8s';
+    text.style.opacity = '0';
+  }, 100);
+
+  setTimeout(() => {
+    text.remove();
+  }, 1000);
+}
+  
+let currentTab = null;
+  
+function styleButton(btn){
+  btn.style.border = '2px outset #fff';
+  btn.style.background = '#c0c0c0';
+  btn.style.padding = '6px 12px';
+  btn.style.cursor = 'pointer';
+  btn.style.fontFamily = 'Courier New, monospace';
+  btn.style.flexShrink = '0';
+  btn.onmouseover = () => {
+    if(btn.style.border !== '2px inset #fff'){
+      btn.style.background = '#d0d0d0';
+    }
+  };
+
+  btn.onmouseout = () => {
+    if(btn.style.border !== '2px inset #fff'){
+      btn.style.background = '#c0c0c0';
+    }
+  };
+}
+  
+const cameras = [
+  {
+    label: 'Mimic',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/mimic1.mp4'
+  },
+  {
+    label: 'Springtrap',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/springtrap.mp4'
+  },
+  {
+    label: 'Ennard',
+    video: 'https://pub-7fc811cfbf09473bb8453d8fc35bae34.r2.dev/ennard1.mp4'
+  }
+];
+
+const videoCache = {};
+
+function getVideo(src){
+  if(!videoCache[src]){
+    const v = document.createElement('video');
+    v.crossOrigin = "anonymous";
+    v.src = src;
+    v.preload = 'auto';
+    v.muted = true;
+    v.playsInline = true;
+    videoCache[src] = v;
+  }
+  return videoCache[src];
+}
+
+function preloadVideos(){
+  cameras.forEach(cam => {
+    getVideo(cam.video);
+  });
+}
+
+preloadVideos();
+  
+const camData = {
+  0: {
+    files: [
+      {
+        title: "General Note",
+        content: [
+          { type: "text", value: "Killer's have DSD outside of chases and use 80% less stamina while it's in effect. If in a chase but outside of M1 range, Killers use 10% less stamina than Survivors. Killers gain Bloodlust on successful M1s, giving the Killer Energetic (-50% stamina usage from all sources) for 5s, and Rest (+50% stamina regen) for 10s.\nTerms: DSD = Decreased Stamina Drain, M1 = Basic Attack.\n\nEach kill takes 25 in-game minutes off the clock." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/killer%20gen%20note%20new.m4a" },
+        ]
+      },
+      {
+        title: "Hardware",
+        content: [
+          { type: "text", value: "Ability: Mode Switch - Become all forming. Switch between 3 different modes to adapt to any situation. These modes can affect stats, or give you abilities. 5 second CD after switching." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Mode%20Switch.m4a" },
+          { type: "text", value: "Mode: Strength - The default mode, gaining no extra abilities. Your m1 damage is 40, your m1 cooldown is 3 seconds. You have 110 Stamina, walk at 12 speed, and run at 22 speed." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Strength%20Mode%20New.m4a" },
+          { type: "text", value: "Mode: Stealth - While in this mode, become undetectable, gain increased speed by 10%, and 3 abilities, Grab, Drill, and Drill Stab, but at the cost of damage, your basic attack will now deal 25 damage, you will walk at 13.2 studs per second, and your runspeed will be increased to 24.2 studs per second." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Stealth%20Mode.m4a" },
+          { type: "text", value: "Stealth, Ability: Grab - Swing your arm forward, grabbing and holding a player. A bar will appear showing how long is left. After the bar is full deal 25 damage and toss the player, this can damage and rogdall others near by 15s CD, you can hit the attack keybind to throw early." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Grab%20Ability.m4a" },
+          { type: "text", value: "Stealth, Ability: Drill - Pause for 5 seconds. After which you’ll in travel in tunnels. Gaining speed and Invisibility until you resurface, which takes 2 seconds, dealing 32 damage in an 13 stud AOE and ragdolling any anyonce hit, at the cost of 30 stamina. Followup damage is reduced by 87%. this has a 45 second cooldown." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Drill%20New.m4a" },
+          { type: "text", value: "Mode: Speed - When in Speed Mode, at the cost of Damage, Stamina, Stamina regen, and no bloodlust, gain increased speed, and the Leap ability. Your m1 damage is 6, your Stamina is 55, your speed is 15, and your runspeed is 27.5. Note, the Stamina will not decrease viusally, however due to the increased Stamina drain it is 55." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Speed%20Mode%20New.m4a" },
+           { type: "text", value: "Speed, Ability: Leap - After a 1 second windup, jump forward slamming the ground dealing 25 damage in an AOE, ragdolling anyone inside, and the ability to go over obstacles. Follow up damage is reduced by 87%. This has a 25 second cooldown." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic%20Leap%20New.m4a" },
+        ]
+      },
+      {
+        title: "File",
+        content: [
+          { type: "text", value: "Price - 4500\nSubject - The Project\nAlso known as 'The Mimic', it is the greatest and most vile creation of Edwin Murray.\n \n The Mimic is a rush down killer with Its abilities focused on finding Survivors and dealing with them quickly. Strength mode hits hard with no other features to boast about, a good choice for when your victim is backed into a corner. Speed mode hurts your damage output and stamina, but allows you to Leap over obstacles and stun Survivors to finish off a chase. Stealth mode makes you harder to detect but your hits also weaken, your newfound Drill great for finding survivors and keeping them right where you want them." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/0426.m4a" }
+        ]
+      }
+    ],
+    voice: [
+      {
+        title: "Voicelines",
+        content: [
+          { type: "text", value: "Mimic - THIS BEHAVIOR WILL BE NOTED IN YOUR PERFORMANCE REVIEW." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/THISBEHAVIORWILLBENOTED.m4a" },
+          { type: "text", value: "Mimic - REMAIN WHERE YOU ARE." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/REMAINWHEREYOUARE.m4a" },
+          { type: "text", value: "Mimic - THIS LOCATION IS UNAUTHORIZED." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/THISLOCATIONISUNAUTHORIZED.m4a" },
+          { type: "text", value: "Mimic - CONTINUED RESISTANCE WILL RESULT IN DISCIPLINARY ACTION." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WILLRESULTINDISCIPLINARYACTIO.m4a" },
+          { type: "text", value: "Mimic - CONTINUED NON-COMPLIANCE MAY LEAD TO FUTURE WAGE DEDUCTIONS." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/CONTINUEDNONCOMPLIANCEMAYLEADTO.m4a" },
+          { type: "text", value: "Mimic - PLEASE BE ADVISED THAT THIS IS YOUR FINAL NOTICE." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PLEASEBEADVISEDTHATTHISISYOURFINALWARNING.m4a" },
+          { type: "text", value: "??? - COME HERE. LEMME MAKE SURE YOU'RE OKAY." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/COMEHERELEMMEMAKESUREYOUROKAY.m4a" },
+          { type: "text", value: "??? - I DON'T LIKE IT WHEN YOU WANDER OFF." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/IDONTLIKEITWHENYOUWANDEROFF.m4a" },
+          { type: "text", value: "??? - YOU'LL HURT YOURSELF THERE." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YOULLHURTYOURSELFTHERE.m4a" },
+          { type: "text", value: "??? - SWEETHEART. YOU'RE GOING TO CATCH A COLD HIDING LIKE THAT." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YOURGONNACATCHACOLDHIDINGLIKETHAT.m4a" },
+          { type: "text", value: "??? - THIS PLACE ISN'T SAFE FOR YOU. YOU KNOW THAT." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/THISPLACEISNTSAFEFORYOU.m4a" }
+        ]
+      },
+      {
+        title: "Chase",
+        content: [
+          { type: "text", value: "Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic_L1.m4a" },
+          { type: "text", value: "Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic_L2.m4a" },
+          { type: "text", value: "Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic_L3.m4a" },
+          { type: "text", value: "Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mimic_L4.m4a" },
+          { type: "text", value: "LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MimicLMS.m4a" }
+        ]
+      }
+    ],
+    skin: [
+      {
+        title: "Ruined",
+        content: [
+          { type: "text", value: "Price - 3500\nSubject - Ruined\nAlso known as 'The Mimic'\nOrigin - FNaF Security Breach: Ruin DLC" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-apr-03-2026-22-25-40-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200"},
+          { type: "text", value: "Ruined Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MimicL1Ruined_1.m4a" },
+          { type: "text", value: "Ruined Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MimicL2Ruined_1.m4a" },
+          { type: "text", value: "Ruined Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MimicL3Ruined_1.m4a" },
+          { type: "text", value: "Ruined Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MimicL4Ruined_1.m4a" }
+        ]
+      },
+      {
+        title: "Aftermath",
+        content: [
+          { type: "text", value: "Price - 2500\nSubject - Aftermath\nAlso known as 'The Mimic'\nOrigin - SotM True Ending" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-apr-03-2026-22-25-36-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200"},
+          { type: "text", value: "Aftermath Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/AftermathLayer1.mp3.mpeg" },
+          { type: "text", value: "Aftermath Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/AftermathLayer2.mp3.mpeg" },
+          { type: "text", value: "Aftermath Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/AftermathLayer3.mp3.mpeg" },
+          { type: "text", value: "Aftermath Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/AftermathLayer4.mp3.mpeg" }
+        ]
+      }
+    ]
+  },
+//Springtrap
+  1: {
+    files: [
+      {
+        title: "General Note",
+        content: [
+          { type: "text", value: "Killer's have DSD outside of chases and use 80% less stamina while it's in effect. If in a chase but outside of M1 range, Killers use 10% less stamina than Survivors. Killers gain Bloodlust on successful M1s, giving the Killer Energetic (-50% stamina usage from all sources) for 5s, and Rest (+50% stamina regen) for 10s.\nTerms: DSD = Decreased Stamina Drain, M1 = Basic Attack.\n\nEach kill takes 25 in-game minutes off the clock." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/killer%20gen%20note%20new.m4a" },
+        ]
+      },
+      {
+        title: "Hardware",
+        content: [
+          { type: "text", value: "Stats - Springtrap has 70 stamina, he has 14 studs per second speed while walking, and 22 while running, 24.2 without his axe equip." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ST%20Stats.m4a" },
+          { type: "text", value: "Basic Attack - You have 2 basic attacks, but the cooldown between both of them is 2.4 seconds. If your is equipped, you'll deal 34 damage per swing, without your you will punch and deal 28 damage per swing." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ST%20Basic%20Attacks.m4a" },
+          { type: "text", value: "Ability: Beartrap - Place on your position over a 1.5 second animation. If stepped on, a survivor will be stunned for 8s, and take 15 damage, other players can free them. These can also be disarmed. You can pick these up as well, over a 3.5 second animation. You have a max of 3 beartraps at any moment. 2.5 second CD is applied after placing 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ST%20Beartrap.m4a" },
+          { type: "text", value: "Ability: Remnant Cleaver -  Press the Axe to charge a throw, after a 1 second windup, it will flash white, aimable via cursor. If it hits a survivor, deal a total of 35 damage. While Axe is on the ground, gain Scream and 10% Speed 8 second cooldown after being returned. The axe will be automatically returned after 30 seconds have passed." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ST%20Remnant%20Cleaver.m4a" },
+          { type: "text", value: "Ability: Scream - Release a shockwave that  highlights, blinds, and deafness all players for 5 seconds. The affect depends on studs from you. Also restores 25 Stamina 4 second CD. After use changed to Charge." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ST%20Scream.m4a" },
+          { type: "text", value: "Ability: Charge - Gain a burst of speed, reaching out to grab a player draining stamina quickly. If a player is grabbed, they're ragdoll for 2 seconds and you deal 40% damage of their current HP.  Any followup damage is reduced by 87%." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Springtrap%20Charge%20New.m4a" }
+        ]
+      },
+      {
+        title: "File",
+        content: [
+          { type: "text", value: "Price - Free\nSubject - Rotten\nAlso known as 'Springtrap', he is a beast both man and machine. It's futile to try and stop his efforts, for he always comes back.\n\nSpringtrap is a map control killer with his abilities focused on preventing Survivors from accessing parts of the map and finding them no matter where they are. With your axe in hand, you hit hard, have a single use ranged attack, and can set traps to hinder Survivors from reaching their goals or from escaping you. Without your axe, you gain Scream to blind and mark all Survivors for you to see while also restoring some stamina. Scream becomes Charge after use, consuming high stamina to run fast and ragdoll Survivors while also doing a % of their health in damage." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Springtrap%20extra%20info.m4a" }
+       ]
+      }
+    ],
+    voice: [
+      {
+        title: "Voicelines",
+        content: [
+          { type: "text", value: "Springtrap - You are getting tired." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YOURGETTINGTIRED.mp3.mpeg" },
+          { type: "text", value: "Springtrap - And now, you are mine." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ANDNOWYOUAREMINE.mp3.mpeg" },
+          { type: "text", value: "Springtrap - I always come back." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/IALWAYSCOMEBACK.mp3.mpeg" },
+          { type: "text", value: "Springtrap - I smell fear" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ISMELLFEAR.mp3.mpeg" },
+          { type: "text", value: "Springtrap - Soft... breakable..." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SOFTBREAKABLE.mp3.mpeg" },
+          { type: "text", value: "Springtrap - So predictable." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SOPREDICTABLE.mp3.mpeg" },
+          { type: "text", value: "Springtrap - You can run, but you cannot hide." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YOUCANRUNBUTYOUCANNOTHIDE.mp3.mpeg" },
+          { type: "text", value: "Springtrap - There's nowhere left to hide." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/THERESNOWHERELEFTTOHIDE.mp3.mpeg" },
+          { type: "text", value: "Springtrap - laugh 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SPRINGTRAPLAUGH1.mp3.mpeg" },
+          { type: "text", value: "Springtrap - laugh 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SPRINGTRAPLAUGH2.mp3.mpeg" },
+          { type: "text", value: "Springtrap - laugh 3." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SPRINGTRAPLAUGH3.mp3.mpeg" },
+          { type: "text", value: "Springtrap - laugh 4." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SPRINGTRAPLAUGH4.mp3.mpeg" },
+          { type: "text", value: "Springtrap - Grunt 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SpringInGame_Grunt_1.mp3.mpeg" },
+          { type: "text", value: "Springtrap - Grunt 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SpringInGameGrunt2.mp3.mpeg" }
+        ]
+      },
+      {
+        title: "Chase",
+        content: [
+          { type: "text", value: "Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Craving_Slaughter_Layer_1.mp3.mpeg" },
+          { type: "text", value: "Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Craving_Slaughter_Layer_2.mp3.mpeg" },
+          { type: "text", value: "Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Craving_Slaughter_Layer_3.mp3.mpeg" },
+          { type: "text", value: "Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Craving_Slaughter_Chase.mp3.mpeg" },
+          { type: "text", value: "LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SpringtrapLMS.mp3.mpeg" }
+        ]
+      }
+    ],
+    skin: [
+       {
+        title: "Toon",
+        content: [
+          { type: "text", value: "Price - 3500\nSubject - Toon\nAlso known as 'Springtrap'\nOrigin - 5AM at Freddy's: The Sequel" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-apr-03-2026-22-29-11-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200"},
+          { type: "text", value: "Toon Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PIE1.mp3.mpeg" },
+          { type: "text", value: "Toon Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PIE2.mp3.mpeg" },
+          { type: "text", value: "Toon Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PIE3.mp3.mpeg" },
+          { type: "text", value: "Toon Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PIECHASE.mp3.mpeg" },
+          { type: "text", value: "Toon LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/PIEMASH_LMS.mp3.mpeg" },
+          { type: "text", value: "Toon - I'm RIGHT behind you!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Imrightbehindyou.mp3.mpeg" },
+          { type: "text", value: "Toon - Hey, get back here!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Heygetbackhere.mp3.mpeg" },
+          { type: "text", value: "Toon - Run faster~! Pretend your paycheck depends on it!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Runfasterpretendyourpaycheckdependsonit.mp3.mpeg" },
+          { type: "text", value: "Toon - Laughs" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonLaugh.mp3.mpeg" },
+          { type: "text", value: "Toon - This ends.. TONIGHT!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Thisendstonight.mp3.mpeg" },
+          { type: "text", value: "Toon - I've waited YEARS for this." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ivewaitedyearsforthis.mp3.mpeg" },
+          { type: "text", value: "Toon - Mmmm, smells like panic." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Mmmsmellslikepanic.mp3.mpeg" },
+          { type: "text", value: "Toon - When I'm done with you... Your face will look like mashed potatoes." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Whenimdonewithyouyourfacewilllooklikemashedpotatoes.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My knees! 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MyKnees1.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My knees! 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MyKnees2.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My freaking knees! 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/FreakingKnees1.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My freaking knees! 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/FreakingKnees2.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My freaking knees! 3." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/FreakingKnees3.mp3.mpeg" },
+          { type: "text", value: "Toon - Ah! My freaking knees! 4." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/FreakingKnees4.mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(1).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(2).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 3." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(3).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 4." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(4).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 5." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(5).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 6." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(6).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 7." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(7).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 8." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(8).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 9." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(9).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 10." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(10).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 11." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(11).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 12." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(12).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 13.." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(13).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 14.." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(14).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 15." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(15).mp3.mpeg" },
+          { type: "text", value: "Toon - Grunt 16." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ToonGrunt_(16).mp3.mpeg" },
+        ]
+      },
+      {
+        title: "Spartan",
+        content: [
+          { type: "text", value: "Price - 3500\nSubject - Spartan\nAlso known as 'Springtrap'\nOrigin - Kratos from God of War" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-apr-03-2026-22-29-13-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200"},
+          { type: "text", value: "Spartan Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/KratosSpringtrapLayer1.mp3.mpeg" },
+          { type: "text", value: "Spartan Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/KratosSpringtrapLayer2.mp3.mpeg" },
+          { type: "text", value: "Spartan Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/KratosSpringtrapLayer3.mp3.mpeg" },
+          { type: "text", value: "Spartan Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/KratosSpringtrapChase.mp3.mpeg" },
+          { type: "text", value: "Spartan LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Spartan_Last_Man_Standing.mp3.m4a" }
+        ]
+      },
+      {
+        title: "Hoax",
+        content: [
+          { type: "text", value: "Price - 5500\nSubject - Hoax\nAlso known as 'Springtrap'\nOrigin - FNaF2 backroom Purple Guy" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-apr-03-2026-22-29-16-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200"},
+          { type: "text", value: "Hoax Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HOAXLayer1INGAME.mp3.mpeg" },
+          { type: "text", value: "Hoax Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HOAXLayer2INGAME.mp3.mpeg" },
+          { type: "text", value: "Hoax Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HOAXLayer3INGAME.mp3.mpeg" },
+          { type: "text", value: "Hoax Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HOAXLayer4INGAME.mp3.mpeg" },
+          { type: "text", value: "Final Slaughter/LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/FinalSlaughterINGAME.mp3.mpeg" },
+          { type: "text", value: "Hoax - You always come back... Screaming!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/You_always_come_back_screaming_.mp3.mpeg" },
+          { type: "text", value: "Hoax - I've done this before MANY times." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ive_done_this_before_many_times_.mp3.mpeg" },
+          { type: "text", value: "Hoax - Don't worry, this isn't the end." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Dont_worry_this_isnt_the_end_.mp3.mpeg" },
+          { type: "text", value: "Hoax - So much effort... For nothing!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SoMuchEffortForNothing.mp3.mpeg" },
+          { type: "text", value: "Hoax - I'll see YOU again Laughs." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ill_see_you_again_.mp3.mpeg" },
+          { type: "text", value: "Hoax - Your breathing gives you away..!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Your_breathing_gives_you_away_.mp3.mpeg" },
+          { type: "text", value: "Hoax - Run faster! I want to see you try." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Run_faster_i_want_to_see_you_try_fixed_.mp3.mpeg" },
+          { type: "text", value: "Hoax - I don't need to rush. You'll come to me." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/I_dont_need_to_rush_youll_come_to_me_.mp3.mpeg" },
+          { type: "text", value: "Hoax - I assure you I'm REAL this time." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/I_assure_you_im_real_this_time_.mp3.mpeg" },
+          { type: "text", value: "Hoax - Laugh 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laugh1.mp3.mpeg" },
+          { type: "text", value: "Hoax - Laugh 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laugh2.mp3.mpeg" },
+          { type: "text", value: "Hoax - grunt 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HoaxStun1.mp3.mpeg" },
+          { type: "text", value: "Hoax - grunt 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HoaxStun2.mp3.mpeg" }
+        ]
+      },
+      {
+        title: "Pit Rabbit",
+        content: [
+          { type: "text", value: "Price - 4000\nSubject - Pit Rabbit\nAlso known as 'Agony'\nOrigin - Five Nights at Freddy's: Into the Pit" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-tue-apr-21-2026-11-21-19-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=347", size: "200x200"},
+          { type: "text", value: "Pit Rabbit Layer 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/pitchase.mp3" },
+          { type: "text", value: "Pit Rabbit Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/pitlayer1.mp3" },
+          { type: "text", value: "Pit Rabbit Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/pitlayer2.mp3" },
+          { type: "text", value: "Pit Rabbit Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/pitlayer3.mp3" },
+          { type: "text", value: "Pit Rabbit - Struggle all you want, it only makes the hunt sweeter." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/makesthehuntsweeter.mp3" },
+          { type: "text", value: "Pit Rabbit - I always come back!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ialwayscomeback(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - I smell fear!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ismellfear(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - And now you are MINE!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/andnowyouaremine(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Soft... Breakable." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/softbreakable(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - So predictable." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/sopredictable(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - There is nowhere left to hide!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/thereisnowherelefttohide(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - You are getting tired!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/youaregettingtired(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - You can run, but you cannot hide!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/youcanrunbutyoucannothide(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - You'll fit right in with the others." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/youllfitrightinwiththeothers.mp3" },
+          { type: "text", value: "Pit Rabbit - Scream" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/scream(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Laugh 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/laugh1(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Laugh 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/laugh2(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Laugh 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/laugh3(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Laugh 4" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/laugh4(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Grunt 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/grunt1(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Grunt 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/grunt2(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Grunt 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/grunt3(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Grunt 4" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/grunt4(pit).mp3" },
+          { type: "text", value: "Pit Rabbit - Jumpscare 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/jumpscare1.mp3" },
+          { type: "text", value: "Pit Rabbit - Jumpscare 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/jumpscare2.mp3" }
+        ]
+      }
+    ],
+  },
+  //ennard
+  2: {
+    files: [
+   {
+    title: "General Note",
+    content: [
+      { type: "text", value: "Killer's have DSD outside of chases and use 80% less stamina while it's in effect. If in a chase but outside of M1 range, Killers use 10% less stamina than Survivors. Killers gain Bloodlust on successful M1s, giving the Killer Energetic (-50% stamina usage from all sources) for 5s, and Rest (+50% stamina regen) for 10s.\nTerms: DSD = Decreased Stamina Drain, M1 = Basic Attack.\n\nEach kill takes 25 in-game minutes off the clock." },
+      { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/killer%20gen%20note%20new.m4a" },
+    ]
+  },
+   {
+        title: "Hardware",
+        content: [
+          { type: "text", value: "Stats - Ennard has a unique speed stat, he has 70 stamina, walks at 12 speed, and runs at 23 speed. Unlike Springtrap, and the Mimic, he can not change his speed, making him the 'slower' killer in the game." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ennardstatsfixed.m4a" },
+          { type: "text", value: "Basic Attack - Your swing is your basic attack. You deal 32 damage and have a cooldown of 2.5 seconds between each swing." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20Basic%20Attack.m4a" },
+          { type: "text", value: "Passive: Trust No One - Survivors cannot know wether others are dead, or alive." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20passive%202.m4a" },
+          { type: "text", value: "Ability: Grab - After a 1 second windup, send a wire in a line, if it hits Ennard drags the player within m1 range, at which they will be released. This has a 12 second cooldown." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20Grab%20New.m4a" },
+          { type: "text", value: "Ability: Wired Eyes - Place 2 at a time (up to a maximum of 6) Wired Eyes on your current location, these will chase players, if close enough they will latch to them dealing 20 damage, Revealing, Slowing, Blindinhg and dealing an additional 6 damage over time until they're shaken off 40 second lifetime, 15 second CD." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20Wired%20Eyes.m4a" },
+          { type: "text", value: "Ability: Skin Stealer - Disguise as any player killed during the match, you can disguise as yourself as well. This also sets Stamina to 100." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ennardSSfixed.m4a" },
+          { type: "text", value: "Ability: SS, Throw - Throw a Minion, if it hits a player deal 20 damage in an AOE, Swpans a Minion if missed 15 second CD. This also takes 20% of your Skin Stealer bar." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20SS%20Yeet%20that%20little%20shit.m4a" },
+          { type: "text", value: "Ability: SS, Stab - If disguised gain the ability to lunge towards players, dealing 45 damage. 24 second cooldown if you land it, 5 second cooldown if you miss." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ennardssstab.m4a" },
+          { type: "text", value: "Ability: SS, Explode - While disguised, gain the ability to burst, dealing 25 damage in an AOE, and ragdoll those hit 3 second CD." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20SS%20Explode.m4a" },
+        ]
+      },
+  {
+    title: "File",
+    content: [
+      { type: "text", value: "Price - 6000\nSubject - The Doppelganger\nAlso known as 'Ennard', he is an amalgamation of animatronics once rented out for a fun time. Keep your friends close when facing him.\n\nEnnard is a stealth Killer, with his abilities focused on disguising as Survivors and dealing with them one by one. No one knows who's dead or who's alive when you're around. You have access to a long range Grab, allowing no Survivor to escape the end you bring. You can also deploy your Wire Eyes around the map to find, chase, and damage Survivors while you're away facing another Survivor. Wire Eyes are also good finding stragglers, as they mark and slow Survivors as well. While disguised, you have increased stamina and have access to both an AOE attack and a lunge, great for knocking down a victim and finishing them off." },
+      { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard%20extra%20info.m4a" }
+   ]
+      }
+    ],
+    voice: [
+      {
+        title: "Voicelines",
+        content: [
+          { type: "text", value: "Ennard - I've got you." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/IveGotYou.mp3.mpeg" },
+          { type: "text", value: "Ennard - I've\nFuntime Freddy - GOTCHA!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard3.mp3.mpeg" },
+          { type: "text", value: "Funtime Freddy - GOTCHAAA!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ennard2.mp3.mpeg" },
+          { type: "text", value: "Ennard - The spotlight is on you." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/TheSpotLightIsOnYou1.mp3.mpeg" },
+          { type: "text", value: "Funtime Foxy - The spotlight\nBaby - is on you." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/TheSpotlightIsOnYou2.mp3.mpeg" },
+          { type: "text", value: "Funtime Foxy - The spotlight\nEnnard - is on you." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/TheSpotlightIsOnYou3.mp3.mpeg" },
+          { type: "text", value: "Ennard - Where are you going?" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WhereAreYouGoing3.mp3.mpeg" },
+          { type: "text", value: "Funtime Freddy - Where are YOU going?" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WhereAreYouGoing2.mp3.mpeg" },
+          { type: "text", value: "Ennard - Where are\nFuntime Freddy - YOU going?" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WhereAreYouGoing.mp3.mpeg" },
+          { type: "text", value: "Funtime Foxy - It's time to take your final bow!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ItsTimeToTakeYourFinalBow.mp3.mpeg" },
+          { type: "text", value: "Ennard - It's time to fall." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ItsTimeToFall.mp3.mpeg" },
+          { type: "text", value: "Funtime Foxy - It's time\nEnnard - to fall" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ItsTimeToFall2.mp3.mpeg" },
+          { type: "text", value: "Ennard - Such a shame, but we can fix that!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SuchAShameButWeCanFixThat1.mp3.mpeg" },
+          { type: "text", value: "Baby - Such a shame...\nFuntime Foxy - that you're no longer part of the show!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SuchAShameThatYourNoLongerApartOfTheShow1.mp3.mpeg" },
+          { type: "text", value: "Ennard - Such a shame...\nFuntime Foxy - that you're no longer part of the show!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SuchAShameThatYourNoLongerApartOfTheShow2.mp3.mpeg" },
+          { type: "text", value: "Ennard - New costume... I love it!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/NewCostumeILoveIt3.mp3.mpeg" },
+          { type: "text", value: "Funtime Freddy - New costume...\nEnnard - I love it!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/NewCostumeIloveIt2.mp3.mpeg" },
+          { type: "text", value: "Funtime Freddy - New costume...\nFuntime Foxy - I love it!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/NewCostumeIloveIt1.mp3.mpeg" },
+          { type: "text", value: "Ennard - Hold still... This won't hurt." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HoldStillThisWontHurt2.mp3.mpeg" },
+          { type: "text", value: "Ballora - Hold still...\nBaby - This won't hurt." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HoldStillThisWontHurt1.mp3.mpeg" },
+          { type: "text", value: "Ennard - Hold still...\nBaby - This won't hurt." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HoldStillThisWontHurt3.mp3.mpeg" },
+          { type: "text", value: "Ennard - There's nothing to be afraid of..." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/TheresNothingToBeAfraidOf.mp3.mpeg" },
+          { type: "text", value: "Baby - You need to understand\nBallora - there's nothing to be afraid of." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YouNeedToUnderstandThereIsNothingToBeAfraidOf2.mp3.mpeg" },
+          { type: "text", value: "Baby - You need to understand\nEnnard - there's nothing to\nBallora - be afraid of." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YouNeedToUnderstandThereIsNothingToBeAfraidOf1.mp3.mpeg" },
+          { type: "text", value: "Ennard - So lifeless... but not for long." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SoLifelessButNotForLong.mp3.mpeg" },
+          { type: "text", value: "Ennard - So lifeless...\nFuntime Freddy - HAHAHA! Not for long!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SoLifelessHahahaNotForLong1.mp3.mpeg" },
+          { type: "text", value: "Baby - So lifeless...\nFuntime Freddy - HAHAHA! Not for long!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SoLifelessHahahaNotForLong2.mp3.mpeg" },
+          { type: "text", value: "Ennard - You've interrupted the show." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YouveInterruptedTheShow3.ogg" },
+          { type: "text", value: "Baby - You've interrupted the show." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YouveInterruptedTheShow1.ogg" },
+          { type: "text", value: "Ennard - You've interrupted\nBaby - the show." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/YouveInterruptedTheShow2.ogg" },
+          { type: "text", value: "Ennard - How rude." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HowRude.ogg" },
+          { type: "text", value: "Ballora - How improper." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HowImproper1.ogg" },
+          { type: "text", value: "Ennard - How\nBallora - improper" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/HowImproper2.ogg" },
+          { type: "text", value: "Ennard - Such a bold move." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SuchABoldMove.ogg" },
+          { type: "text", value: "Funtime Freddy - That wasn't in the script!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ThatWasntInTheScript.mp3.mpeg" },
+          { type: "text", value: "Funtime Foxy - So dramatic..." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SoDramatic.ogg" }
+        ]
+      },
+      {
+        title: "Chase",
+        content: [
+          { type: "text", value: "Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/LAYER_1_ENNARD.mp3.mpeg" },
+          { type: "text", value: "Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/LAYER_2_ENNARD.mp3.mpeg" },
+          { type: "text", value: "Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/LAYER_3_ENNARD.mp3.mpeg" },
+          { type: "text", value: "Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/LAYER_4_ENNARD.mp3.mpeg" },
+          { type: "text", value: "LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/THELASTDANCE.mp3.mpeg" }
+        ]
+      }
+    ],
+    skin: [
+      {
+        title: "Mime",
+        content: [
+          { type: "text", value: "Price - 2000\nSubject - Mime\nAlso known as 'Ennard'\nOrigin - Original" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-mon-apr-06-2026-23-54-07-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=347", size: "200x200" },
+        ]
+      },
+      {
+        title: "Spaghetti",
+        content: [
+          { type: "text", value: "Price - 4000\nSubject - Spaghetti\nAlso known as 'Ennard'\nOrigin - Original" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-mon-apr-06-2026-23-54-59-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=347", size: "200x200" },
+        ]
+      },
+      {
+        title: "Anomaly",
+        content: [
+          { type: "text", value: "Price - 4500\nSubject - Anomaly\nAlso known as 'Ennard'\nOrigin - ReachAnimations: Anomaly Report [FNAF/VHS]" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-mon-apr-06-2026-23-55-22-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200" },
+          { type: "text", value: "Anomaly Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Anomaly1.mp3.mpeg" },
+          { type: "text", value: "Anomaly Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Anomaly2.mp3.mpeg" },
+          { type: "text", value: "Anomaly Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Anomaly3.mp3.mpeg" },
+          { type: "text", value: "Anomaly Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Anomalychase.mp3.mpeg" },
+          { type: "text", value: "Anomaly - You never saw it coming." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/EXPLODE_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - I cannot be CONTAINED!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/EXPLODE_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - You can't run." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/GRAB_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - You're not him." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/GRAB_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - SUBMIT!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/GRAB_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Your flesh will do nicely." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ON_KILL_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - YES!! YESS! YESSSS!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ON_KILL_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Please... Forgive me." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ON_KILL_-_VARIANT_4.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Time for a new perspective." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SKIN_STEAL_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - I'm.. Sorry." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SKIN_STEAL_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - WHERE IS HEEE!!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STAB_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - COME BACCCK!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STUN_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - STOP, STOP, STOPPPPP!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STUN_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Find them." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WIRE_EYES_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Go." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WIRE_EYES_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Scream 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/EXPLODE_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Scream 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STUN_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Noise 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/SKIN_STEAL_-_VARIANT_3.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Noise 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STAB_-_VARIANT_1.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Laugh 1." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/ON_KILL_-_VARIANT_2.mp3.mpeg" },
+          { type: "text", value: "Anomaly - Laugh 2." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/STAB_-_VARIANT_2.mp3.mpeg" },
+        ]
+      },
+      {
+        title: "Molten",
+        content: [
+          { type: "text", value: "Price - 4250\nSubject - Molten\nAlso known as 'Ennard'\nOrigin - FNaF Pizzeria Simulator" },
+          { type: "image", value: "https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-mon-apr-06-2026-23-55-07-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=1252", size: "200x200" },
+          { type: "text", value: "Molten Freddy Layer 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenLayer1.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy Layer 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenLayer2.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy Layer 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenLayer3.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy Chase" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenLayer4.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy LMS" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/moltenLMS2.m4a" },
+          { type: "text", value: "Molten Freddy - Knock Knock!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/KnockKnock.m4a" },
+          { type: "text", value: "Molten Freddy - Get ready for a Supriiiiise!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenSkinsuit2.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy - I'll try not to disappoint." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Illtrynottodisappoint.m4a" },
+          { type: "text", value: "Molten Freddy - Let's throw them a BIIIG party!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Letsthrowthemabigparty.m4a" },
+          { type: "text", value: "Molten Freddy - Now we can be a BIIG happy family." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Nowwecanbeabighappyfamily.m4a" },
+          { type: "text", value: "Molten Freddy - Oh! I've missed you!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ohivemissedyou.m4a" },
+          { type: "text", value: "Molten Freddy - Oh, what a pleasent Suprise." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/OhWhatAPleasentSurprise.m4a" },
+          { type: "text", value: "Molten Freddy - OH, what fun!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Ohwhatfun.m4a" },
+          { type: "text", value: "Molten Freddy - Ready or not! Here I come!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Readyornothereicome.m4a" },
+          { type: "text", value: "Molten Freddy - That's No-Not fair!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Thatsnotfair.m4a" },
+          { type: "text", value: "Molten Freddy - Way to crash the party." },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/MoltenStun2.mp3.mpeg" },
+          { type: "text", value: "Molten Freddy - We'll be target, forEVER!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/wellbetogetherforever.m4a" },
+          { type: "text", value: "Molten Freddy - HAHAHA! WELL, HELLO AGAIN!" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/WellHelloAgain.m4a" },
+          { type: "text", value: "Molten Freddy - Laugh 1" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laughter.m4a" },
+          { type: "text", value: "Molten Freddy - Laugh 2" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laughter%202.m4a" },
+          { type: "text", value: "Molten Freddy - Laugh 3" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laughter%203.m4a" },
+          { type: "text", value: "Molten Freddy - Laugh 4" },
+          { type: "audio", value: "https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/Laughter%204.m4a" }
+        ]
+      }
+    ],
+  }
+};
+
+const loadedAudioCams = {};
+
+function preloadCameraAudio(index){
+  if(loadedAudioCams[index]) return;
+  loadedAudioCams[index] = true;
+
+  const cam = camData[index];
+  if(!cam) return;
+
+  Object.values(cam).forEach(section => {
+    section.forEach(entry => {
+      (entry.content || []).forEach(item => {
+        if(item.type === 'audio'){
+          const a = new Audio();
+          a.src = item.value;
+        }
+      });
+    });
+  });
+}
+  
+const cameraButtonsContainer = document.getElementById('camera-buttons');
+const videoEl = document.getElementById('camVideo');
+const noSignal = document.getElementById('noSignal');
+
+let currentIndex = -1;
+let isSwitching = false;
+let switchCooldown = 800;
+
+videoEl.style.display = 'none';
+noSignal.style.display = 'flex';
+
+cameras.forEach(function(cam, index) {
+  const btn = document.createElement('button');
+  btn.textContent = cam.label;
+  btn.style.border = '2px outset #fff';
+  btn.style.background = '#c0c0c0';
+  btn.style.padding = '8px 14px';
+  btn.style.cursor = 'pointer';
+  btn.style.fontFamily = 'Courier New, monospace';
+  btn.style.fontSize = '14px';
+  btn.style.flexShrink = '0';
+  btn.onclick = function() {
+    loadCamera(index);
+    videoEl.play().catch(() => {});
+  };
+  
+  cameraButtonsContainer.appendChild(btn);
+});
+
+var tabs = ['files','voice','skin'];
+
+tabs.forEach(function(type){
+  var btn = document.getElementById('tab-' + type);
+  styleButton(btn);
+  btn.onclick = function() {
+    openTab(type);
+  };
+});
+  
+function loadCamera(index) {
+  if (index === currentIndex || isSwitching) return;
+
+  isSwitching = true;
+  currentIndex = index;
+
+  camSwitchAudio.currentTime = 0;
+  camSwitchAudio.play().catch(() => {});
+
+  currentTab = null;
+  highlightTab(null);
+  document.getElementById('data-panel').style.display = 'none';
+
+  videoEl.style.display = 'block';
+  videoEl.style.objectFit = 'fill';
+  noSignal.style.display = 'none';
+
+  document.querySelectorAll('#camera-buttons button').forEach(function(b, i){
+    b.style.border = (i === index) ? '2px inset #fff' : '2px outset #fff';
+  });
+
+  const cam = cameras[index];
+
+videoEl.pause();
+videoEl.removeAttribute('src');
+videoEl.crossOrigin = "anonymous";
+videoEl.src = cam.video;
+videoEl.loop = false;
+
+videoEl.load();
+
+const introEnd = 1.1;
+let introPlayed = false;
+
+videoEl.onloadedmetadata = () => {
+  videoEl.currentTime = 0;
+
+  videoEl.play().catch(() => {});
+
+  videoEl.ontimeupdate = () => {
+    if (!introPlayed && videoEl.currentTime >= introEnd) {
+      introPlayed = true;
+    }
+
+    if (introPlayed && videoEl.currentTime >= videoEl.duration - 0.05) {
+      videoEl.currentTime = introEnd;
+      videoEl.play();
+    }
+  };
+
+  setTimeout(() => {
+    isSwitching = false;
+  }, switchCooldown);
+};
+}
+
+const modeBtn = document.getElementById('tab-mode');
+styleButton(modeBtn);
+  
+function openTab(type){
+
+  function preloadTabAudio(index, type){
+    const cam = camData[index];
+    if(!cam || !cam[type]) return;
+
+    cam[type].forEach(entry => {
+      (entry.content || []).forEach(item => {
+        if(item.type === 'audio'){
+          const a = new Audio();
+          a.src = item.value;
+          a.preload = "metadata";
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll('#data-panel audio').forEach(a => {
+    a.pause();
+    a.currentTime = 0;
+  });
+
+  if(currentIndex === -1) return;
+
+  var panel = document.getElementById('data-panel');
+  var video = document.getElementById('camVideo');
+
+  if(currentTab === type && panel.style.display === 'block'){
+    panel.style.display = 'none';
+    currentTab = null;
+    highlightTab(null);
+    video.style.objectFit = 'fill';
+    return;
+  }
+
+  panel.style.display = 'block';
+  panel.innerHTML = '';
+  video.style.objectFit = 'contain';
+
+  currentTab = type;
+  highlightTab(type);
+  
+  preloadTabAudio(currentIndex, type);
+
+  var data = (camData[currentIndex] && camData[currentIndex][type]) || [];
+
+  for(let i = 0; i < data.length; i++){
+    let entry = data[i];
+
+    let wrapper = document.createElement('div');
+    wrapper.style.background = '#909090';
+    wrapper.style.border = '2px inset #a0a0a0';
+    wrapper.style.marginBottom = '10px';
+
+    let contentBox = document.createElement('div');
+    contentBox.style.padding = '10px';
+
+    const title = entry.title || ("Entry " + (i + 1));
+    const isExpanded = entry.expanded === true;
+
+    contentBox.style.display = isExpanded ? 'block' : 'none';
+
+    let header = document.createElement('div');
+    header.style.cursor = 'pointer';
+    header.style.padding = '6px';
+    header.style.background = '#707070';
+    header.style.borderBottom = '2px solid #505050';
+
+    header.textContent = title + (isExpanded ? " [-]" : " [+]");
+
+    header.onclick = () => {
+
+      if(entry.expanded === true) return;
+
+      const isOpen = contentBox.style.display === 'block';
+      contentBox.style.display = isOpen ? 'none' : 'block';
+      header.textContent = title + (isOpen ? " [+]" : " [-]");
+    };
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(contentBox);
+
+    let contentList = entry.content || [];
+
+    for(let j = 0; j < contentList.length; j++){
+      let item = contentList[j];
+
+      if(item.type === 'text'){
+        let p = document.createElement('div');
+        p.innerHTML = item.value.replace(/\n/g, "<br>");
+        p.style.marginBottom = '6px';
+        contentBox.appendChild(p);
+      }
+
+      if(item.type === 'image'){
+        let imgBox = document.createElement('div');
+        imgBox.style.background = '#505050';
+        imgBox.style.padding = '6px';
+        imgBox.style.display = 'inline-block';
+        imgBox.style.marginBottom = '6px';
+
+        let img = document.createElement('img');
+        img.src = item.value;
+        img.style.display = 'block';
+        img.style.maxWidth = '100%';
+
+        if(item.size){
+          let parts = item.size.toLowerCase().split('x');
+          if(parts.length === 2){
+            let w = parseInt(parts[0]);
+            let h = parseInt(parts[1]);
+            if(!isNaN(w)) img.style.width = w + 'px';
+            if(!isNaN(h)) img.style.height = h + 'px';
+          }
+        }
+
+        imgBox.appendChild(img);
+        contentBox.appendChild(imgBox);
+      }
+
+      if(item.type === 'audio'){
+        let audio = document.createElement('audio');
+        audio.controls = true;
+        audio.style.width = '100%';
+        audio.preload = 'metadata';
+        audio.src = item.value;
+
+        audio.setAttribute("playsinline", "");
+        audio.setAttribute("webkit-playsinline", "");
+
+        contentBox.appendChild(audio);
+      }
+    }
+
+    panel.appendChild(wrapper);
+  }
+}
+
+let open = false;
+  
+function preloadAllAudio() {
+  Object.values(camData).forEach(cam => {
+    Object.values(cam).forEach(section => {
+      section.forEach(entry => {
+        (entry.content || []).forEach(item => {
+          if(item.type === 'audio'){
+            const a = new Audio();
+            a.src = item.value;
+          }
+        });
+      });
+    });
+  });
+}
+  
+function highlightTab(activeType){
+  var tabs = ['files','voice','skin'];
+
+  tabs.forEach(function(type){
+    var btn = document.getElementById('tab-' + type);
+
+    if(type === activeType){
+      btn.style.border = '2px inset #fff';
+      btn.style.background = '#b0b0b0';
+    } else {
+      btn.style.border = '2px outset #fff';
+      btn.style.background = '#c0c0c0';
+    }
+  });
+}
+
+videoEl.style.display = "none";
+  
+function playLoader(callback){
+  const el = document.getElementById("loaderText");
+  let i = 0;
+
+  el.innerHTML = "";
+
+  const interval = setInterval(() => {
+    if(i < loaderLines.length){
+      el.innerHTML += loaderLines[i] + "<br>";
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(callback, 300);
+    }
+  }, 120);
+}
+
+function fixButtonRowWidths() {
+  const panel = document.getElementById('camera-panel');
+  const w = panel.getBoundingClientRect().width;
+  document.getElementById('camera-buttons').style.maxWidth = w + 'px';
+  document.getElementById('data-bar').style.maxWidth = w + 'px';
+}
+  
+['camera-buttons', 'data-bar'].forEach(function(id) {
+  var el = document.getElementById(id);
+  el.addEventListener('wheel', function(e) {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+});
+  
+fixButtonRowWidths();
+window.addEventListener('resize', fixButtonRowWidths);
+
+const camSwitchAudio = new Audio('https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/vhs-startup-glitch.m4a');
+
+let _startupDone = false;
+function _playStartup() {
+  if (_startupDone) return;
+  _startupDone = true;
+  const beep = new Audio('https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/processingbeeping.m4a');
+  const mac = new Audio('https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/macosstartup.m4a');
+  beep.onended = () => mac.play().catch(() => {});
+  beep.play().catch(() => {});
+}
+
+window.addEventListener('load', function() {
+  const beep = new Audio('https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/processingbeeping.m4a');
+  const mac = new Audio('https://pub-5d85ca9eab544b38a6e2254019a57f9e.r2.dev/macosstartup.m4a');
+  beep.onended = () => mac.play().catch(() => {});
+  beep.play().then(() => {
+    _startupDone = true;
+  }).catch(() => {
+    ['click', 'touchstart', 'keydown'].forEach(function(ev) {
+      document.addEventListener(ev, function _first() {
+        document.removeEventListener(ev, _first, true);
+        _playStartup();
+      }, { once: true, capture: true });
+    });
+  });
+});
+</script>
+
+    </div>
+    <footer id="ug-footer">
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>
+    </footer>
+  </div>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"></script>
+  <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
+</body>
+</html>
