@@ -382,6 +382,7 @@
   </style>
 
   <style>
+
 .updated-panel,
 .updated-panel * {
   font-family: 'Press Start 2P', cursive !important;
@@ -392,6 +393,14 @@
   font-family: 'Audiowide', sans-serif !important;
 }
 
+@keyframes updatedShiny {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ------------------------------------------------
+   MAIN CONTAINER
+------------------------------------------------ */
 .updated-panel {
   max-width: 650px;
   width: 95%;
@@ -419,6 +428,7 @@
   position: relative;
 }
 
+/* scanline overlay */
 .updated-panel::before {
   content: '';
   position: absolute;
@@ -435,6 +445,9 @@
   border-radius: inherit;
 }
 
+/* ------------------------------------------------
+   HEADER
+------------------------------------------------ */
 .updated-header {
   background: linear-gradient(180deg,
     #120326 0%,
@@ -451,6 +464,7 @@
   border-radius: 16px 16px 0 0;
 }
 
+/* corner diamonds */
 .updated-header::before,
 .updated-header::after {
   content: '◆';
@@ -477,6 +491,9 @@
     0 0 36px rgba(255, 164, 91, 0.18);
 }
 
+/* ------------------------------------------------
+   BODY
+------------------------------------------------ */
 .updated-body {
   padding: 16px 14px;
   position: relative;
@@ -500,6 +517,9 @@
   max-width: calc(84px * 7 + 6px * 6);
 }
 
+/* ------------------------------------------------
+   UNIT CARDS
+------------------------------------------------ */
 .updated-card {
   width: 84px;
   height: 84px;
@@ -533,6 +553,7 @@
   box-shadow: 0 0 14px rgba(255, 164, 91, 0.55);
 }
 
+/* gradient border via ::before mask trick */
 .updated-card::before {
   content: "";
   position: absolute;
@@ -547,23 +568,50 @@
   pointer-events: none;
 }
 
-.rarity-uncommon { background: linear-gradient(135deg, rgb(29,107,19), rgb(32,219,144)); }
-.rarity-uncommon::before { background: linear-gradient(135deg, rgb(92,255,77), rgb(63,255,143)); }
+/* ------------------------------------------------
+   RARITY BACKGROUNDS + BORDERS
+------------------------------------------------ */
+.rarity-uncommon {
+  background: linear-gradient(135deg, rgb(29,107,19), rgb(32,219,144));
+}
+.rarity-uncommon::before {
+  background: linear-gradient(135deg, rgb(92,255,77), rgb(63,255,143));
+}
 
-.rarity-rare { background: linear-gradient(135deg, rgb(26,55,98), rgb(57,160,197)); }
-.rarity-rare::before { background: linear-gradient(135deg, rgb(88,166,255), rgb(28,58,160)); }
+.rarity-rare {
+  background: linear-gradient(135deg, rgb(26,55,98), rgb(57,160,197));
+}
+.rarity-rare::before {
+  background: linear-gradient(135deg, rgb(88,166,255), rgb(28,58,160));
+}
 
-.rarity-epic { background: linear-gradient(135deg, rgb(26,59,108), rgb(130,29,197)); }
-.rarity-epic::before { background: linear-gradient(135deg, rgb(255,53,255), rgb(135,0,159)); }
+.rarity-epic {
+  background: linear-gradient(135deg, rgb(26,59,108), rgb(130,29,197));
+}
+.rarity-epic::before {
+  background: linear-gradient(135deg, rgb(255,53,255), rgb(135,0,159));
+}
 
-.rarity-mythic { background: linear-gradient(135deg, rgb(26,59,108), rgb(130,29,197)); }
-.rarity-mythic::before { background: linear-gradient(135deg, rgb(255,184,31), rgb(255,255,0)); }
+.rarity-mythic {
+  background: linear-gradient(135deg, rgb(26,59,108), rgb(130,29,197));
+}
+.rarity-mythic::before {
+  background: linear-gradient(135deg, rgb(255,184,31), rgb(255,255,0));
+}
 
-.rarity-secret { background: linear-gradient(135deg, rgb(107,75,44), rgb(208,84,84)); }
-.rarity-secret::before { background: linear-gradient(135deg, rgb(255,136,0), rgb(255,12,12)); }
+.rarity-secret {
+  background: linear-gradient(135deg, rgb(107,75,44), rgb(208,84,84));
+}
+.rarity-secret::before {
+  background: linear-gradient(135deg, rgb(255,136,0), rgb(255,12,12));
+}
 
-.rarity-nightmare { background: linear-gradient(135deg, rgb(63,52,85), rgb(58,27,100)); }
-.rarity-nightmare::before { background: linear-gradient(135deg, rgb(73,37,144), rgb(42,30,66)); }
+.rarity-nightmare {
+  background: linear-gradient(135deg, rgb(63,52,85), rgb(58,27,100));
+}
+.rarity-nightmare::before {
+  background: linear-gradient(135deg, rgb(73,37,144), rgb(42,30,66));
+}
 
 .rarity-exclusive {
   background: linear-gradient(135deg,
@@ -575,14 +623,45 @@
     rgb(79,164,255) 100%
   );
 }
-.rarity-exclusive::before { background: linear-gradient(135deg, rgb(140,255,203), rgb(51,231,255), rgb(79,164,255)); }
+.rarity-exclusive::before {
+  background: linear-gradient(135deg, rgb(140,255,203), rgb(51,231,255), rgb(79,164,255));
+}
 
-.rarity-apex { background: linear-gradient(135deg, rgb(109,47,138), rgb(156,20,27)); }
-.rarity-apex::before { background: linear-gradient(135deg, rgb(157,0,120), rgb(0,99,248)); }
+.rarity-apex {
+  background: linear-gradient(135deg, rgb(109,47,138), rgb(156,20,27));
+}
+.rarity-apex::before {
+  background: linear-gradient(135deg, rgb(157,0,120), rgb(0,99,248));
+}
 
-.rarity-hero { background: linear-gradient(135deg, rgb(126,138,86), rgb(156,130,35)); }
-.rarity-hero::before { background: linear-gradient(90deg, rgb(255,205,25), rgb(53,56,21), rgb(255,251,133)); }
+.rarity-hero {
+  background: linear-gradient(135deg, rgb(126,138,86), rgb(156,130,35));
+}
+.rarity-hero::before {
+  background: linear-gradient(90deg, rgb(255,205,25), rgb(53,56,21), rgb(255,251,133));
+}
 
+.rarity-shiny {
+  background: linear-gradient(135deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  background-size: 300% 300%;
+  animation: updatedShiny 6s linear infinite;
+}
+.rarity-shiny::before {
+  background: linear-gradient(90deg, red, orange, yellow, lime, cyan, blue, magenta, red);
+  background-size: 200% 200%;
+  animation: updatedShiny 6s linear infinite;
+}
+
+.rarity-radiant {
+  background: linear-gradient(135deg, rgb(120,70,20), rgb(180,120,30));
+}
+.rarity-radiant::before {
+  background: linear-gradient(90deg, #FF6600, #FFCC33);
+}
+
+/* ------------------------------------------------
+   MOBILE
+------------------------------------------------ */
 @media (max-width: 600px) {
   .updated-grid {
     width: 100% !important;
@@ -887,23 +966,131 @@
           <span style="color:#d061c7">Overpaid For</span>.
         </p>
 
-        <div class="updated-panel">
-          <div class="updated-header">
-            <h3>Last Added/Updated</h3>
-          </div>
+<div class="updated-panel">
+  <div class="updated-header">
+    <h3>Last Added/Updated</h3>
+  </div>
 
-          <div class="updated-body">
-            <div class="updated-grid-wrapper">
-              <div class="updated-grid">
+  <div class="updated-body">
+    <div class="updated-grid-wrapper">
+      <div class="updated-grid" id="updatedGrid"></div>
+    </div>
+  </div>
+</div>
 
-                <div class="updated-card rarity-secret" data-unit="Lore Keeper Shadow Bonnie">
-                  <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/wefgiwefigyweiygwefiygwefiygwef-high.png">
-                </div>
+<script>
+/* ── EDIT THIS LIST ── */
+var UPDATED_UNITS = [
+  "Starfarer Princess",
+  "Cthulhu Nightmare Foxy",
+  "Gravelord Foxy",
+  "Mothman Lefty",
+  "Unicorn Toy Foxy",
+  "Grand Strategist Chica",
+  "Chipper",
+  "Old Man Consequences"
+];
+/* ────────────────── */
 
-              </div>
-            </div>
-          </div>
-        </div>
+var UNITS_JSON_URL = 'https://raw.githubusercontent.com/FNTDUG/characters.json/refs/heads/main/json';
+
+(function () {
+  var grid = document.getElementById('updatedGrid');
+  if (!grid) return;
+
+  fetch(UNITS_JSON_URL)
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var map = {};
+      data.forEach(function (u) { if (u.name) map[u.name] = u; });
+
+      var RARITY_ORDER = ["hero","shiny","apex","exclusive","nightmare","secret","mythic","epic","rare","uncommon"];
+      function rarityRank(name) {
+        var u = map[name];
+        var r = u ? (u.rarity || '').toLowerCase() : '';
+        var idx = RARITY_ORDER.indexOf(r);
+        return idx === -1 ? 999 : idx;
+      }
+
+      var sorted = UPDATED_UNITS.slice().sort(function (a, b) {
+        return rarityRank(a) - rarityRank(b);
+      });
+
+      sorted.forEach(function (name) {
+        var u = map[name];
+        var card = document.createElement('div');
+        card.className = 'updated-card rarity-' + ((u && u.rarity) ? u.rarity.toLowerCase() : 'rare');
+        card.setAttribute('data-unit', name);
+
+        var img = document.createElement('img');
+        img.src = (u && (u.imgNormal || u.img)) || '';
+        img.alt = name;
+        img.loading = 'lazy';
+
+        card.appendChild(img);
+        grid.appendChild(card);
+      });
+    })
+    .catch(function () {
+      UPDATED_UNITS.forEach(function (name) {
+        var card = document.createElement('div');
+        card.className = 'updated-card rarity-rare';
+        card.setAttribute('data-unit', name);
+        grid.appendChild(card);
+      });
+    });
+}());
+
+function smoothScrollToY(targetY, duration) {
+  duration = duration || 700;
+  var startY = window.scrollY;
+  var delta  = targetY - startY;
+  var start  = performance.now();
+
+  function easeInOut(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function frame(now) {
+    var p = Math.min((now - start) / duration, 1);
+    window.scrollTo(0, startY + delta * easeInOut(p));
+    if (p < 1) requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+document.addEventListener('click', function (e) {
+  var card = e.target.closest('.updated-card');
+  if (!card) return;
+
+  var unitName = card.getAttribute('data-unit');
+  if (!unitName) return;
+
+  var engine = document.getElementById('unitEngine');
+  var input  = document.getElementById('unitSearch');
+  if (!engine || !input) return;
+
+  input.value = unitName;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      var engineTop = engine.getBoundingClientRect().top + window.pageYOffset;
+      smoothScrollToY(engineTop + 160, 750);
+    });
+  });
+
+  setTimeout(function () {
+    input.focus();
+    input.value = unitName;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
+    }));
+  }, 750);
+});
+</script>
 
         <div style="text-align:center;">
           <div id="cleanModeToggle" class="clean-pill">
@@ -2275,50 +2462,6 @@
   })();
   </script>
 
-  <script>
-  /* --- Updated-panel card click → unit search --- */
-  function smoothScrollToY(targetY, duration) {
-    duration = duration || 700;
-    var startY = window.scrollY;
-    var delta = targetY - startY;
-    var start = performance.now();
-    function easeInOut(t) {
-      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
-    }
-    function frame(now) {
-      var p = Math.min((now - start) / duration, 1);
-      window.scrollTo(0, startY + delta * easeInOut(p));
-      if (p < 1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  }
-
-  document.addEventListener('click', function(e) {
-    var card = e.target.closest('.updated-card');
-    if (!card) return;
-    var unitName = card.getAttribute('data-unit');
-    if (!unitName) return;
-    var engine = document.getElementById('unitEngine');
-    var input  = document.getElementById('unitSearch');
-    if (!engine || !input) return;
-    input.value = unitName;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        var engineTop = engine.getBoundingClientRect().top + window.pageYOffset;
-        smoothScrollToY(engineTop + 160, 750);
-      });
-    });
-    setTimeout(function() {
-      input.focus();
-      input.value = unitName;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new KeyboardEvent('keydown', {
-        key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
-      }));
-    }, 750);
-  });
-  </script>
 
 </body>
 </html>
