@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charts / FNTD1 | FNTD Userguide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>
+  /* global rule — webkit/moz font-smoothing applied site-wide; keep on all pages */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  :root{--ug-accent:#ffa45b;--ug-purple:#681f62}
+  html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  html{font-size:10px}
+  body::-webkit-scrollbar{width:6px}
+  body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}
+  #ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/952b91dc-d51b-434a-bee1-591d5d60126a-standard.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}
+  #ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}
+  #ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+  .ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}
+  .ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}
+  .ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}
+  #ug-topnav{position:sticky;top:0;z-index:1000}
+  .ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}
+  .ug-tn-inner::-webkit-scrollbar{display:none}
+  .ug-tn-link{display:flex;align-items:center;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}
+  .ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}
+  .ug-tn-link.active{color:var(--ug-accent)}
+  .ug-tn-item{position:relative;display:flex;align-items:stretch}
+  .ug-tn-btn{display:flex;align-items:center;gap:5px;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+  .ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}
+  .ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}
+  .ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}
+  .ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}
+  .ug-tn-drop a{display:block;padding:9px 14px;color:rgba(255,255,255,.6);font-size:10px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}
+  .ug-tn-drop a:last-child{border-bottom:none}
+  .ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}
+  #ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #ug-hamburger .hmb-icon{font-size:16px;line-height:1}
+  #ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  #ug-overlay.open{display:block}
+  #ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
+  #ug-mobile-nav::-webkit-scrollbar{width:3px}
+  #ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
+  #ug-mobile-nav.open{transform:translateX(0)}
+  .ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}
+  .ug-mn-brand{display:flex;align-items:center;gap:10px}
+  .ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}
+  .ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}
+  .ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}
+  .ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}
+  .ug-mn-body{flex:1;padding:6px 0 12px}
+  .ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}
+  .ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}
+  .ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}
+  .ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}
+  .ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}
+  .ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}
+  .ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}
+  .ug-mn-section.open .ug-mn-section-items{max-height:500px}
+  .ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}
+  .ug-mn-child:last-child{border-bottom:none}
+  .ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}
+  .ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}
+  .ug-mn-discord-wrap{padding:14px 14px 4px}
+  .ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}
+  .ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}
+  #ug-hero{position:relative;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/starry1-standard-9bn846.webp');background-size:cover;background-attachment:fixed;background-position:center top}
+  #ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}
+  #ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}
+  #ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}
+  .ug-page-title-area{text-align:center;margin-bottom:18px}
+  .ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}
+  .ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(35,105,35,.85);border:1px solid rgba(80,190,80,.45);color:#86f786;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}
+  .ug-page-desc{font-size:17px;color:#fff;line-height:1.75;margin-bottom:6px;text-align:center}
+  .ug-section-title{font-family:'Audiowide',sans-serif;font-size:20px;color:var(--ug-accent);text-align:center;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid rgba(255,164,91,.22);letter-spacing:.5px}
+  #ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}
+  #ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+  #ug-footer p{position:relative;z-index:1}
+  #ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1}
+  #ug-footer a:hover{text-decoration:underline}
+  #ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}
+  .ug-divider-img{width:100%;height:auto;display:block;margin:20px auto}
+  .ug-section{margin-bottom:28px}
+  .ug-chart-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;align-items:start}
+  .ug-chart-col{display:flex;flex-direction:column}
+  .ug-chart-col .ug-section-title,
+  .ug-wither-wrap .ug-section-title{
+    color:#fff;
+    font-size:30px;
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:10px;
+  }
+  .ug-chart-col img{width:100%;height:auto;max-width:100%;display:block;margin:0 0 8px}
+  .ug-wither-wrap{max-width:420px;margin:0 auto 28px}
+  .chart-dropdown{margin-top:0;border-radius:8px;overflow:hidden;border:1px solid rgba(255,164,91,.3)}
+  .chart-drop-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);border:none;color:#fff;font-family:'Audiowide',sans-serif;font-size:13px;cursor:pointer;letter-spacing:.5px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  .chart-drop-arrow{display:inline-block;transition:transform .22s;font-size:12px}
+  .chart-drop-btn.open .chart-drop-arrow{transform:rotate(180deg)}
+  .chart-drop-body{max-height:0;overflow:hidden;padding:0 18px;background:rgba(7,4,18,.97);color:#fff;font-size:13px;line-height:1.8;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .35s cubic-bezier(.4,0,.2,1)}
+  .chart-drop-body::-webkit-scrollbar{width:4px}
+  .chart-drop-body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.35);border-radius:2px}
+  .chart-drop-body.open{max-height:600px;padding:16px 18px 28px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.3) transparent}
+  .chart-drop-body ul{list-style:disc;padding-left:20px}
+  .chart-drop-body li{margin-bottom:12px}
+  .chart-drop-note{padding:10px 12px;background:rgba(255,164,91,.08);border-left:2px solid rgba(255,164,91,.5);font-size:12px;color:rgba(255,164,91,.9);border-radius:0 4px 4px 0}
+  @media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}
+  @media(max-width:580px){.ug-chart-pair{grid-template-columns:1fr}.ug-chart-col .ug-section-title,.ug-wither-wrap .ug-section-title{font-size:22px}}
+  @media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}
+  </style>
+  <style>
+  .clean-pill{display:inline-block;padding:14px 14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}
+  .clean-pill.on{border-color:#4dff88;color:#8cffb0;text-shadow:0 0 8px rgba(140,255,176,0.8)}
+  .clean-pill:hover{transform:translateY(2px)}
+  .clean-pill::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}
+  .clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#FFFFFF;text-align:center;line-height:1.6;opacity:0.85}
+  @keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}
+  .ad-slot{text-align:center}
+  </style>
+</head>
+<body>
+
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header">
+      <div class="ug-mn-brand">
+        <img class="ug-mn-brand-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD">
+        <span class="ug-mn-brand-name">FNTD User Guide</span>
+      </div>
+      <button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button>
+    </div>
+    <div class="ug-mn-body">
+      <a href="/" class="ug-mn-link">Home</a>
+      <div class="ug-mn-section open">
+        <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button>
+        <div class="ug-mn-section-items">
+          <a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a>
+          <a href="/fntd1/charts-tierlists" class="ug-mn-child active">Charts</a>
+          <a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a>
+          <a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a>
+          <a href="/fntd1/pvp-ranked" class="ug-mn-child">PVP / Ranked</a>
+          <a href="/fntd1/endless" class="ug-mn-child">Endless</a>
+          <a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a>
+          <a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a>
+          <a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a>
+        </div>
+      </div>
+      <div class="ug-mn-section">
+        <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button>
+        <div class="ug-mn-section-items">
+          <a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a>
+          <a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a>
+          <a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a>
+          <a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a>
+          <a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a>
+          <a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a>
+          <a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a>
+        </div>
+      </div>
+      <div class="ug-mn-section">
+        <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button>
+        <div class="ug-mn-section-items">
+          <a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a>
+          <a href="/bbn/killer-terminal" class="ug-mn-child">Killer Terminal</a>
+          <a href="/bbn/survivor-terminal" class="ug-mn-child">Survivor Terminal</a>
+        </div>
+      </div>
+      <div class="ug-mn-section">
+        <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FAQ <span class="ug-mn-section-arrow">/</span></button>
+        <div class="ug-mn-section-items">
+          <a href="/faq-fntd1" class="ug-mn-child">FAQ FNTD1</a>
+          <a href="/faq-fntd2" class="ug-mn-child">FAQ FNTD2</a>
+        </div>
+      </div>
+      <div class="ug-mn-section">
+        <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button>
+        <div class="ug-mn-section-items">
+          <a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a>
+          <a href="/patch-notes" class="ug-mn-child">FNTD2</a>
+          <a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a>
+        </div>
+      </div>
+      <div class="ug-mn-discord-wrap">
+        <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner">
+        <img class="ug-header-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD Userguide">
+        <div class="ug-header-title">FNTD User Guide</div>
+      </div>
+      <nav id="ug-topnav" role="navigation" aria-label="Site navigation">
+        <div class="ug-tn-inner">
+          <a href="/" class="ug-tn-link">Home</a>
+          <div class="ug-tn-item">
+            <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button>
+            <div class="ug-tn-drop">
+              <a href="/fntd1/meta-teams">Meta Teams</a>
+              <a href="/fntd1/charts-tierlists" class="active">Charts</a>
+              <a href="/fntd1/tierlists">TierLists</a>
+              <a href="/fntd1/other-charts">Other Charts</a>
+              <a href="/fntd1/pvp-ranked">PVP / Ranked</a>
+              <a href="/fntd1/endless">Endless</a>
+              <a href="/fntd1/event-endless">Event Endless</a>
+              <a href="/fntd1/night-shift">Night Shift</a>
+              <a href="/fntd1/boss-raids">Boss Raids</a>
+            </div>
+          </div>
+          <div class="ug-tn-item">
+            <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button>
+            <div class="ug-tn-drop">
+              <a href="/fntd2/meta-teams-1">Meta Teams</a>
+              <a href="/fntd2/unit-engine">Unit Engine</a>
+              <a href="/fntd2/tierlists-1">TierLists</a>
+              <a href="/fntd2/story-index">Story &amp; Index</a>
+              <a href="/fntd2/endless-index">Endless &amp; Index</a>
+              <a href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a>
+              <a href="/fntd2/event-story-endless">Event Story &amp; Endless</a>
+            </div>
+          </div>
+          <div class="ug-tn-item">
+            <button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button>
+            <div class="ug-tn-drop">
+              <a href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a>
+              <a href="/bbn/killer-terminal">Killer Terminal</a>
+              <a href="/bbn/survivor-terminal">Survivor Terminal</a>
+            </div>
+          </div>
+          <div class="ug-tn-item">
+            <button class="ug-tn-btn" onclick="ugTnToggle(this)">FAQ <span class="ug-tn-arrow">/</span></button>
+            <div class="ug-tn-drop">
+              <a href="/faq-fntd1">FAQ FNTD1</a>
+              <a href="/faq-fntd2">FAQ FNTD2</a>
+            </div>
+          </div>
+          <div class="ug-tn-item">
+            <button class="ug-tn-btn" onclick="ugTnToggle(this)">Patch Notes <span class="ug-tn-arrow">/</span></button>
+            <div class="ug-tn-drop">
+              <a href="/patch-notes/fntd1-1">FNTD1</a>
+              <a href="/patch-notes">FNTD2</a>
+              <a href="/patch-notes/bbn-patch-notes">BBN</a>
+            </div>
+          </div>
+          <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a>
+        </div>
+      </nav>
+    </header>
+
+    <div id="ug-hero">
+      <div id="ug-hero-inner">
+        <div class="ug-page-title-area">
+          <div class="ug-page-title">Charts</div>
+          <div class="ug-status-badge">Last updated 9/26/25 (Up-To-Date!)</div>
+          <p class="ug-page-desc">Every chart, with an exception to the Endgame charts, have their rankings based on the units' overall use in that category.</p>
+        </div>
+        <div style="text-align:center;margin-bottom:18px">
+          <div id="cleanModeToggle" class="clean-pill">Clean-Mode: Off</div>
+        </div>
+        <div class="clean-text">Ads help keep this site running.<br>Turn on Clean-Mode for an Ad-free experience.</div>
+        <div class="ad-slot" style="margin-top:14px">
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"></script>
+          <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+      </div>
+    </div>
+
+    <div id="ug-content">
+
+      <div class="ug-chart-pair">
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Midgame Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-x7ygzw.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Midgame Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Midgame <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <ul>
+                <li><strong>1. Jackie:</strong> While mediocre at both, Jackie can apply Slow and Stun. With her type being Cone AOE, if you have good placements she can hit almost everything on the map. 60% Slow that lasts 5.5s and a 0.4s Stun.</li>
+                <li><strong>2. Vanny:</strong> The highest DPS Midgame as well as being the best Slower out of the Midgame units. Being Pierce Spread, she can hit all the enemies on the map with good placements. 65% Slow that lasts 2s.</li>
+                <li><strong>3. Dread Pirate Foxy:</strong> Like a worse Jackie. Dread Pirate may have a longer Stun and more DPS than Jackie, but he can't hit nearly as many enemies placing him at 3rd. 60% Slow that lasts 3s and a Stun that lasts 0.5s.</li>
+                <li><strong>4. Overseer Foxy:</strong> Like a worse Vanny. Overseer Foxy does 65% Splash Slow and a 50% AOE Slow that each activate when he attacks. Since he has 3 placements, set each one to different targets to help maximize Slow coverage.</li>
+                <li><strong>5. Bouncer:</strong> Like a worse Vanny. Bouncer attacks very fast and is Cone AOE for type. With that in mind, good placements can get you almost global, and near instant, 60% Slow. Placed lower due to less Slowing and DPS than other Midgames. Slow lasts 1.5s.</li>
+                <li><strong>6. Dee Dee:</strong> The best Stunner out of the Midgame units. Her 1s Nuke Stun is great for maps that have the enemies cluster up, but she might not be used in all situations that need a Midgame stunner because global Stunners, like Lolbit, can be better at times.</li>
+                <li><strong>7. Lolbit:</strong> Great at Stunning considering her Pierce Spread type and sometimes performs better than Dee Dee, but not always. She has a unique 0.6s Stun and can hit every enemy on the map with good placements.</li>
+                <li><strong>8. Sentinel Bonnie:</strong> While he is Single target and has much worse DPS than other Midgames, Sentinel Bonnie makes it into Top 8 since he can fully halt Regen. You may find that spamming his targeting option can be effective at halting Regen on multiple enemies in certain situations.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Starter Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-vvoxqn.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Starter Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Starter <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <ul>
+                <li><strong>1. Dark Frostbear:</strong> Applies the highest Slow out of all the Starters, has high DPS, cheap costs, and 55% AOE Slowing which place him on top. May not appear in teams often as Slow is not often needed in a Starter. Slow lasts 1s.</li>
+                <li><strong>2. Fetch:</strong> Applies the highest Anti-Regen out of all Starters (50%), has high DPS, and is Splash type. Setting each placement to different targets will often come with the best result in terms of Anti-Regen coverage. Anti-Regen lasts 1s.</li>
+                <li><strong>3. Tarnished Fredbear:</strong> Good DPS and being Cone AOE allows him to apply a near global 30% Anti-Regen if you have good placements. Anti-Regen lasts 2s.</li>
+                <li><strong>4. Tarnished Spring Bonnie:</strong> High DPS and 10% Cone AOE Wither. Good placements can result in almost every enemy being hit by his attacks. Wither lasts 2s.</li>
+                <li><strong>5. Fortified Endo 02:</strong> Is the only Starter that can apply both Wither and Anti-Regen. Has good DPS but isn't used often due to his full DPS being split across 4 placements and his Wither and Anti being lower than other Starters. Good placements can result in nearly all enemies being hit with his attacks. 7.5% Wither and 15% Anti-Regen which both last 1s.</li>
+                <li><strong>6. Alien Helpy:</strong> Good DPS and is the only Starter that can apply a range boost. Gives other units in range a +15% range boost (+43.75% if Shiny).</li>
+                <li><strong>7. Pirate Withered Foxy:</strong> Highest DPS Starter and applies the highest Wither out of all the Starters. He's held back greatly by being Single target but setting the placements to First, Strongest, and Last can prove very effective. 25% Wither that lasts 1s.</li>
+                <li><strong>8. Drained Coffee:</strong> Quite expensive in use compared to other Starters, but has good DPS and is the only Starter that can apply a damage boost. Gives other units in range a +15% damage boost (+43.75% if Shiny).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ug-chart-pair">
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Endgame Chart 1</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-rer7bn.png?enable-io=true&enable=upscale&crop=0.7759%3A1&width=800" alt="Endgame Chart 1">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Endgame 1 <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <div class="chart-drop-note" style="margin-bottom:10px"><strong>SubCore</strong> &#8212; When a unit relies on a certain unit to be good.</div>
+              <ul>
+                <li><strong>1. The Glitched:</strong> High DPS, the best True Stunning, and very powerful execution. His base attack insta-kills enemies below 20% of their max health, and every attack applies a unique 'Marked' debuff. If an enemy is marked by The Glitched, the next time The Glitched attacks that enemy it will be afflicted with True Stun for 2.8s and will be insta-killed if below 45% of its max health (below 15% for Bosses/Imps).</li>
+                <li><strong>2. Queen of Hearts Ballora:</strong> She isn't great on her own, but can be VERY powerful when boosting strong 1 placement units. She still does good DPS on her own though.</li>
+                <li><strong>3. Toxic Springtrap:</strong> Good DPS and great Withering. His Pierce Spread type allows him to hit every enemy on the map if you have good placements. His passive is very strong, taking away 1% of enemies' current health every 5th attack (0.25% for Bosses/Imps). 25% Wither that lasts 2.5s.</li>
+                <li><strong>4. Mr Hippo:</strong> Great total DPS, good Withering, and Traps that apply 2.5s True Stun. Being Cone AOE, he can apply Wither to most things on the map with good placements. Moving him across the track via deleting and replacing is great for maximizing his True Stun. 20% Wither that lasts 5s.</li>
+                <li><strong>5. Gaia Chica:</strong> Great total DPS and can make very powerful Trap stacks. With that in mind, she can occasionally outperform Mr Hippo in terms of damage. Each placement can place up to 200 Traps leading to 400 Traps total if you have enough time, each trap is placed every 6s. Trap stacks are most effective when paired with Withering units.</li>
+                <li><strong>6. Sparky:</strong> Has the highest DPS in the game but is held back greatly by his type and how his passive works. He can only damage up to 3 enemies at once and to get to full power he must first kill 83 enemies and you must drop down to 1 HP which isn't possible in most maps. Has no utility other than DPS.</li>
+                <li><strong>7. Oceanic Ballora:</strong> High DPS and is the best Slowing unit in the game, she also applies good Wither too. Her Slowing and Wither work on a scaling factor based on the amount of enemies in her range. If there's 4 or less enemies she applies 60% Slow and 10% Wither, if there's 5&#8211;9 enemies it goes up to 65% Slow and 15% Wither, then maxes out if there's 10 or more enemies at 70% Slow and 20% Wither. Her scaling is instantly maxed if there's a Boss in her range.</li>
+                <li><strong>8. Astral Bonnie:</strong> Has good DPS and is the best Anti-Regen unit, halting the Regen of a good amount of enemies. He's held back by his type being Splash but you can partially counteract that by setting each of his placements to different targets for maximum Anti-Regen coverage.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Endgame Chart 2</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-10h44b.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Endgame Chart 2">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Endgame 2 <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <div class="chart-drop-note" style="margin-bottom:10px"><strong>SubCore</strong> &#8212; When a unit relies on a certain unit to be good.</div>
+              <ul>
+                <li><strong>9. Fossilized Puppet:</strong> High total DPS that is split into 3 different types (Chain Splash, Single, AOE), which can turn out to be inconsistent at times. Is great if used with Coffee due to her range boost, which is +50% range to any units in range (+87.5% if Shiny).</li>
+                <li><strong>10. Jester Puppet:</strong> High total DPS and great Wither that is held back by being Splash type. This can be partially counteracted by desyncing each placement's AOE attack. Can be replaced by Gilded Jester Puppet, who does the same stuff but is cheaper in use and also generates extra cash. Wither is 30% and lasts 1.5s.</li>
+                <li><strong>11. Apollo's Moon:</strong> High total DPS and great Wither. Is pretty much a slightly worse Jester Puppet, but still great if it's all you have. 25% Wither that lasts 3s.</li>
+                <li><strong>12. Titan Crusher Freddy:</strong> His normal DPS is mediocre but he does good scaling DPS to Bosses/Imps based on the amount of Bosses/Imps in range. For every Imp in range, he does +23.3% damage to Bosses/Imps (capped at 3 stacks, aka +70% damage to Bosses/Imps). The same scaling and cap applies to his True Stun, being +0.5s per Imp in range up to 1.5s True Stun. His scaling is instantly maxed if there's a Boss in his range. Can be replaced by Neo Titan Freddy who does the same stuff but instead does +25% damage to Bosses/Imps per stack capped at a +75% Boss/Imp damage boost.</li>
+                <li><strong>13. Old Man Consequences:</strong> Has poor DPS compared to other Endgame units but makes up for it with his passive. Every 5.05s, he will either insta-kill an enemy or True Stun a Boss/Imp for 1.65s (Depends on what he's targeting).</li>
+                <li><strong>14. Chicazilla:</strong> Very high total DPS. Her Cone AOE is unique, working like a wall of damage since it's 180&#176;. Her Beam attack is fixed at 0.25s CD and is the bulk of her DPS, making her inconsistent at times. Has no utility other than DPS.</li>
+                <li><strong>15. Dark Knight Puppet:</strong> Great DPS that gets higher the more enemies in range, being +1% damage per enemy in range. Every 3rd attack she applies 60% Anti-Regen so it's best to desync her placements for the faster Anti-Regen coverage. Can be replaced by Gilded Knight who does the same stuff but is cheaper in use and also generates extra cash. Anti-Regen lasts 3s.</li>
+                <li><strong>16. Gravelord Foxy:</strong> High total DPS and decent Wither. Is one of the best summoners in the game and performs best when boosted by The Blob. 10% Wither that lasts 1s.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ug-chart-pair">
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Slow Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-xeerku.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Slow Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Slow <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <ul>
+                <li><strong>1. Oceanic Ballora:</strong> 60&#8211;70% AOE Slow, works on a scaling system based on the amount of enemies in her range. Applies 60% Slow if there's 4 or less enemies, 65% Slow if there's 5&#8211;9 enemies, and 70% Slow if there's 10+ enemies or a boss.</li>
+                <li><strong>2. Frostbite Freddy:</strong> 65% AOE Slow. Very good but not quite the best. Slow lasts 4s.</li>
+                <li><strong>3. MXES:</strong> 65% AOE Slow. Is placed lower than Frostbite since he attacks slower. Slow lasts 3s.</li>
+                <li><strong>4. Paperpals:</strong> 65% Cone AOE Slow. While much faster than other Slowing units, they're placed lower due to their type. Can be partially counteracted with good placements and a range booster. Slow lasts 3s.</li>
+                <li><strong>5. Vanny:</strong> 65% Pierce Spread Slow. Can slow every enemy on the map with good placements. Slow lasts 2s.</li>
+                <li><strong>6. Tropic Terror Duo:</strong> 60% Cone AOE Slow and occasional 70% XL Splash Slow. With their Waterfall being the source of their 70%, it's tricky to setup properly hence the lower ranking. 60% Slow lasts 2s and the 70% Slow lasts 3s.</li>
+                <li><strong>7. Diver Endo:</strong> 65% Slash Slow. Is faster than Vanny but is placed lower due to having a worse type and being harder to fit into teams. Slow lasts 1s.</li>
+                <li><strong>8. Icetrap:</strong> 65% Pierce Spread Slow. Is faster than Vanny but is placed lower due to being harder to fit into teams. Slow lasts 1.5s.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Stun Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-z3nlb5.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Stun Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Stun <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <div class="chart-drop-note" style="margin-bottom:10px"><strong>General Note &#8212;</strong> True Stun has a Stun immunity of 5 seconds. Stun (0.4s&#8211;1s) has a Stun immunity of 0.8 seconds.</div>
+              <ul>
+                <li><strong>1. The Glitched:</strong> 2.8s Nuke True Stun. The best True Stunner in the game.</li>
+                <li><strong>2. Titan Crusher Freddy:</strong> Has scaling AOE True Stun. Applies 0.5s True Stun per Imp in range (capped at 1.5s). The scaling is instantly maxed if there's a Boss in range. Does not apply any True Stun if there's no Imp or Boss in his range.</li>
+                <li><strong>3. Kronos Endo Freddy:</strong> 0.75s Nuke Stun and 2.5s global True Stun that activates every 20s. Is the only unit that can apply both types of Stun, which is fantastic.</li>
+                <li><strong>4. Michael's Demise:</strong> 1.2s Cone AOE True Stun. Can hit most enemies on the map with a good placement.</li>
+                <li><strong>5. Planet Buster Scott:</strong> 0.75s Nuke Stun. Does the same normal Stun as Kronos but is lower since he lacks True Stun.</li>
+                <li><strong>6. Lolbit:</strong> 0.6s Pierce Spread Stun. Can hit every enemy on the map with good placements which can make her better than PBS but only in some situations.</li>
+                <li><strong>7. Endo 05:</strong> 1s Nuke Stun. Is the best 1s Stunner but doesn't fit into teams as well as other Stunners due to overall performance.</li>
+                <li><strong>8. Moondrop:</strong> 0.5s AOE Stun. Can Stun every enemy on the map with pretty much any placement.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ug-chart-pair">
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Booster Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-59f2t1.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Booster Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Booster <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <ul>
+                <li><strong>1. El Chip:</strong> The best Triple Booster in the game. His boosts are +25% damage, +25% range and &#8209;25% CD (+56% damage, +56% range and &#8209;43.7% CD if Shiny).</li>
+                <li><strong>2. Coffee:</strong> The best booster in terms of pure DPS boost but is lower than El Chip since he doesn't do any range boosting. His boosts are +32% damage and &#8209;30% CD (+65% damage and &#8209;47.5% CD if Shiny).</li>
+                <li><strong>3. Overseer Lolbit:</strong> Technically the mascot of our guide and the 2nd best booster in terms of pure DPS boosting. Her boosts are +32% damage and &#8209;25% CD (+65% damage and &#8209;43.7% CD if Shiny).</li>
+                <li><strong>4. Eclipse Ballora:</strong> Can sometimes perform better than Overseer Lolbit due to having a better CD boost. Her boosts are +27% damage and &#8209;27% CD (+58% damage and &#8209;44.2% CD if Shiny).</li>
+                <li><strong>5. Paleontologist Springbonnie:</strong> The best CD booster in the game. His boost is &#8209;33% CD (&#8209;49.8% CD if Shiny). He also gives Springtrap and Prehistoric units +30% damage (+62.5% damage if Shiny) and can do damage himself.</li>
+                <li><strong>6. Handunit:</strong> Like a worse El Chip. Its boosts are +20% damage, +20% range and &#8209;20% CD (+50% damage, +50% range and &#8209;40% CD if Shiny).</li>
+                <li><strong>7. Frost Queen Ballora:</strong> Is unique in that she's the only dual booster that also applies a debuff to enemies. Her boosts are +20% damage and &#8209;20% CD (+50% damage and &#8209;40% CD if Shiny). Her slowing is 60% AOE Slow and is locked to 1.25s CD.</li>
+                <li><strong>8. Funtime Chica:</strong> The third best range booster. Her boost is +55% range (+94% range if Shiny). She also gives Chica and Sister Location units +30% damage (+62.5% damage if Shiny) and can do damage herself.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="ug-chart-col">
+          <div class="ug-section-title">Anti-Regen Chart</div>
+          <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-b8e8c8.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Anti-Regen Chart">
+          <div class="chart-dropdown">
+            <button class="chart-drop-btn" onclick="toggleDrop(this)">Anti-Regen <span class="chart-drop-arrow">&#9660;</span></button>
+            <div class="chart-drop-body">
+              <ul>
+                <li><strong>1. Astral Bonnie:</strong> 100% Splash Anti-Regen that is applied almost instantly. Set each placement to different targets for best Anti-Regen coverage. Anti-Regen lasts for 10s.</li>
+                <li><strong>2. Burntrap:</strong> 100% Large Splash Anti-Regen. Is placed lower than Astral due to attacking slower but he can hit more enemies at once. Anti-Regen lasts 1.8s.</li>
+                <li><strong>3. Steve Raglan:</strong> 90% Cone AOE Anti-Regen. Can hit most enemies on the map with good placements. Is 3rd because he doesn't fully halt Regen like Astral and Burntrap do. Anti-Regen lasts 10s.</li>
+                <li><strong>4. Tiger Rock:</strong> 80% Slash Anti-Regen. Can hit every enemy on the map with good placements. Is lower than Steve since he applies less Anti-Regen. Anti-Regen lasts 1.5s.</li>
+                <li><strong>5. Molten Serpent:</strong> 100% Chain 5 Anti-Regen. While fully halting regen is great, he can only apply the effect to a max of 10 enemies. Anti-Regen lasts 1s.</li>
+                <li><strong>6. Spring Trooper:</strong> 75% Cone AOE Anti-Regen. Can hit every enemy on the map with good placements. Anti-Regen lasts 2s.</li>
+                <li><strong>7. Dark Knight Puppet:</strong> 60% AOE Anti-Regen that is applied every 3rd attack. Desync both placements for faster Anti-Regen. Anti-Regen lasts 3s.</li>
+                <li><strong>8. Sentinel Bonnie:</strong> 100% Single Anti-Regen that is applied almost instantly. Fully halting Regen is great but Sentinel only hits one enemy at a time. Rapidly changing his targeting can prove effective at times as it applies Regen halt to multiple enemies. Anti-Regen lasts 1s.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ug-wither-wrap">
+        <div class="ug-section-title">Wither Chart</div>
+        <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-war2d9.png?enable-io=true&enable=upscale&crop=0.7776%3A1&width=800" alt="Wither Chart" style="width:100%;display:block;margin-bottom:16px">
+        <div class="chart-dropdown">
+          <button class="chart-drop-btn" onclick="toggleDrop(this)">Wither <span class="chart-drop-arrow">&#9660;</span></button>
+          <div class="chart-drop-body">
+            <ul>
+              <li><strong>1. Blighted Foxy:</strong> 25% Slash Wither (35% Wither if Shiny). One of few units that still apply more Wither when Shiny. He can hit most enemies on the map with good placements. Wither lasts 5s.</li>
+              <li><strong>2. Toxic Springtrap:</strong> 25% Pierce Spread Wither. Can hit all enemies on the map with good placements. Wither lasts 2.5s.</li>
+              <li><strong>3. Blighted Endo Freddy:</strong> 20% AOE Wither that is applied almost instantly. Not used nearly as often as other Withering units as he's pretty lackluster overall. Wither lasts 1s.</li>
+              <li><strong>4. Oceanic Ballora:</strong> 10&#8211;20% AOE Wither, works on a scaling system based on the amount of enemies in her range. Applies 10% Wither if there's 4 or less enemies, 15% Wither if there's 5&#8211;9 enemies, and 20% Wither if there's 10+ enemies or a boss.</li>
+              <li><strong>5. Phantom Mangle:</strong> 50% Single Wither that is applied almost instantly. Applies the highest amount of Wither in the game but is held back greatly by being Single target. Set each placement to different targets for more coverage. Wither lasts 1s.</li>
+              <li><strong>6. Jester Puppet:</strong> 30% Splash Wither and occasional 30% AOE Wither. Desync the AOE attack of each placement for the best Wither coverage. Wither lasts 1.5s.</li>
+              <li><strong>7. Apollo's Moon:</strong> 25% Nuke Wither and occasional 25% AOE Wither. Is a slightly worse Jester Puppet overall but can hit more enemies at once. Wither lasts 3s.</li>
+              <li><strong>8. Old Man Krampus:</strong> 16.5% AOE Wither that is applied almost instantly. Wither lasts 2s.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+
+    <footer id="ug-footer">
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>
+    </footer>
+  </div>
+
+  <script>
+  function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}
+  function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}
+  function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}
+  var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();
+  function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}
+  function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}
+  function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}
+  var _spinTimers=new Map();
+  function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}
+  function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}
+  var _ugLeaveTimer=null;
+  function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}
+  function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}
+  function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}
+  function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}
+  function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}
+  document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});
+  document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});
+  window.addEventListener('resize',ugCloseAll,{passive:true});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
+  function toggleDrop(btn){var body=btn.nextElementSibling;btn.classList.toggle('open');body.classList.toggle('open');}
+  (function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();
+  </script>
+</body>
+</html>

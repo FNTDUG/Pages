@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patch Notes / FNTD2 | FNTD User Guide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}:root{--ug-accent:#ffa45b;--ug-purple:#681f62}html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html{font-size:10px}body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}#ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/952b91dc-d51b-434a-bee1-591d5d60126a-standard.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}#ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}#ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}.ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}.ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}.ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}#ug-topnav{position:sticky;top:0;z-index:1000}.ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}.ug-tn-inner::-webkit-scrollbar{display:none}.ug-tn-link{display:flex;align-items:center;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-link.active{color:var(--ug-accent)}.ug-tn-item{position:relative;display:flex;align-items:stretch}.ug-tn-btn{display:flex;align-items:center;gap:5px;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}.ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}.ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}.ug-tn-drop a{display:block;padding:9px 14px;color:rgba(255,255,255,.6);font-size:10px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}.ug-tn-drop a:last-child{border-bottom:none}.ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}.ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}#ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}#ug-hamburger .hmb-icon{font-size:16px;line-height:1}#ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}#ug-overlay.open{display:block}#ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}#ug-mobile-nav::-webkit-scrollbar{width:3px}#ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}#ug-mobile-nav.open{transform:translateX(0)}.ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}.ug-mn-brand{display:flex;align-items:center;gap:10px}.ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}.ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}.ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}.ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}.ug-mn-body{flex:1;padding:6px 0 12px}.ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}.ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}.ug-mn-link.active{color:var(--ug-accent)}.ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}.ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}.ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}.ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}.ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}.ug-mn-section.open .ug-mn-section-items{max-height:600px}.ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}.ug-mn-child:last-child{border-bottom:none}.ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}.ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}.ug-mn-discord-wrap{padding:14px 14px 4px}.ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}.ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}#ug-hero{position:relative;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/starry1-standard-ymjg51.webp');background-size:cover;background-attachment:fixed;background-position:center top}#ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}#ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}#ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}.ug-page-title-area{text-align:center;margin-bottom:18px}.ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}.ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(35,105,35,.85);border:1px solid rgba(80,190,80,.45);color:#86f786;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}.ug-page-desc{font-size:17px;color:#fff;line-height:1.75;margin-bottom:6px;text-align:center}.ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}#ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}.clean-pill{display:inline-block;padding:14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}.clean-pill.on{border-color:#4dff88;color:#8cffb0}.clean-pill:hover{transform:translateY(2px)}.clean-pill::after{content:'';position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}.clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#fff;text-align:center;line-height:1.6;opacity:0.85}@keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}.ad-slot{text-align:center}#ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}#ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}#ug-footer p{position:relative;z-index:1}#ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1}#ug-footer a:hover{text-decoration:underline}@media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}@media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}</style>
+</head>
+<body>
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header"><div class="ug-mn-brand"><img class="ug-mn-brand-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD"><span class="ug-mn-brand-name">FNTD User Guide</span></div><button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button></div>
+    <div class="ug-mn-body"><a href="/" class="ug-mn-link">Home</a><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child">PvP/Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div><div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a><a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a><a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a><a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a><a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a><a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="ug-mn-child">Killer Terminal</a><a href="/bbn/survivor-terminal" class="ug-mn-child">Survivor Terminal</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FAQ <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/faq-fntd1" class="ug-mn-child">FAQ FNTD1</a><a href="/faq-fntd2" class="ug-mn-child">FAQ FNTD2</a></div></div><div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a><a href="/patch-notes" class="ug-mn-child">FNTD2</a><a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a></div></div><div class="ug-mn-discord-wrap"><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a></div></div>
+  </div>
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner"><img class="ug-header-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD Userguide"><div class="ug-header-title">FNTD User Guide</div></div>
+      <nav id="ug-topnav"><div class="ug-tn-inner"><a href="/" class="ug-tn-link">Home</a><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd1/meta-teams">Meta Teams</a><a href="/fntd1/charts-tierlists">Charts</a><a href="/fntd1/tierlists">TierLists</a><a href="/fntd1/other-charts">Other Charts</a><a href="/fntd1/pvp-ranked">PvP/Ranked</a><a href="/fntd1/endless">Endless</a><a href="/fntd1/event-endless">Event Endless</a><a href="/fntd1/night-shift">Night Shift</a><a href="/fntd1/boss-raids">Boss Raids</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd2/meta-teams-1">Meta Teams</a><a href="/fntd2/unit-engine">Unit Engine</a><a href="/fntd2/tierlists-1">TierLists</a><a href="/fntd2/story-index">Story &amp; Index</a><a href="/fntd2/endless-index">Endless &amp; Index</a><a href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless">Event Story &amp; Endless</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a><a href="/bbn/killer-terminal">Killer Terminal</a><a href="/bbn/survivor-terminal">Survivor Terminal</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FAQ <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/faq-fntd1">FAQ FNTD1</a><a href="/faq-fntd2">FAQ FNTD2</a></div></div><div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">Patch Notes <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/patch-notes/fntd1-1">FNTD1</a><a href="/patch-notes">FNTD2</a><a href="/patch-notes/bbn-patch-notes">BBN</a></div></div><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a></div></nav>
+    </header>
+    <div id="ug-hero"><div id="ug-hero-inner">
+      <div class="ug-page-title-area"><div class="ug-page-title">Patch Notes</div><div class="ug-status-badge">Up-To-Date!</div><p class="ug-page-desc">FNTD2 update history and patch notes.</p></div>
+      
+    </div></div>
+    <div id="ug-content">
+      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+
+<style>
+.update-log-wrapper {
+  background: linear-gradient(145deg, #0a0a0a 0%, #121212 100%);
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #1a1a1a;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  margin: 40px auto;
+  max-width: 900px;
+}
+
+.update-date {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14.5px;
+  color: #ffffff;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.update-entry {
+  background: rgba(20,20,20,0.9);
+  border: 2px solid #401253;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(64,18,83,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.update-entry:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(64,18,83,0.8);
+}
+
+.update-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-right: 10px;
+  font-family: 'Audiowide', sans-serif;
+  letter-spacing: 1px;
+}
+
+.badge-new {
+  background: #ef4444;
+  color: #fff;
+}
+
+.badge-feature {
+  background: #401253;
+  color: #f69b55;
+}
+
+.badge-balance {
+  background: #f69b55;
+  color: #000;
+}
+
+.update-title {
+  display: inline-block;
+  font-family: 'Audiowide', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.update-description {
+  margin-top: 6px;
+  font-size: 15px;
+  color: #b3b3b3;
+  line-height: 1.6;
+}
+
+.update-description br {
+  display: block;
+  margin-top: 4px;
+  content: "";
+}
+
+.update-description a {
+  color: #f69b55;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.update-description a:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+</style>
+<div class="update-log-wrapper">
+<div class="update-date">5/17/26 Version 9.4</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Updated Unit Engine<br>
+   ● Updated Every Unit TierList.<br>
+   ● Updated Booster TierList<br>
+   ● Updated Farthest Metas<br>
+   ● Updated Grind Metas<br>
+   </div>
+  </div>
+ </div>
+
+<div class="update-log-wrapper">
+<div class="update-date">5/17/26 Version 9.3</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Updated Unit Engine<br>
+   ● Updated Every Unit TierList.<br>
+   ● Updated Booster TierList<br>
+   ● Updated Farthest Metas<br>
+   ● Added Stun Tierlist<br>
+   ● Added Multiplayer Metas<br>
+   </div>
+  </div>
+ </div>
+
+
+<div class="update-log-wrapper">
+<div class="update-date">4/21/26 Version 9.2</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Updated Unit Engine<br>
+   ● Updated Every Unit TierList.<br>
+   ● Updated Booster TierList<br>
+   ● Updated Farthest Metas<br>
+   ● Updated Grind Metas<br>
+   ● Added Nightmare Metas for Story Modes<br>
+   </div>
+  </div>
+ </div>
+
+<div class="update-log-wrapper">
+<div class="update-date">4/13/26 Version 9.1</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Updated Unit Engine<br>
+   ● Updated Every Unit TierList.<br>
+   </div>
+  </div>
+ </div>
+<div class="update-log-wrapper">
+  
+  <div class="update-date">4/7/26 Version 9.0</div>
+
+   <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+   ● Added Astral Bonnie.<br>
+   ● Added Purple Guy skin<br>
+  These changes can be found on the <a href="/fntd2/unit-engine" >Unit Engine</a> page.<br>
+   </div>
+  </div>
+  
+   <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Booster TierList.<br>
+   ● Every Unit TierList.<br>
+  These changes can be found on the <a href="/fntd2/unit-engine" >Unit Engine</a> page.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Meta</span>
+   <div class="update-description">
+   ● Updated all Farthest Metas.<br>
+     These changes can be found on the <a href="/fntd2/meta-teams-1" >Meta Teams</a> page.<br>
+   </div>
+  </div>
+
+</div>
+  
+    
+  <div class="update-date">4/2/26 Version 8.9</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Booster TierList.<br>
+   ● Starter TierList.<br>
+   ● Every Unit TierList.<br>
+  These changes can be found on the <a href="/fntd2/unit-engine" >TierLists</a> page.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Meta</span>
+   <div class="update-description">
+   ● Updated all Farthest Metas.<br>
+     These changes can be found on the <a href="/fntd2/unit-engine" >Meta Teams</a> page.<br>
+   </div>
+  </div>
+
+  
+<div class="update-log-wrapper">
+    
+  <div class="update-date">Small Patch</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● Booster TierList.<br>
+   ● Every Unit TierList.<br>
+  These changes can be found on the <a href="/fntd2/unit-engine" >TierLists</a> page.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Meta Teams</span>
+   <div class="update-description">
+   ● All Metas changed in some way. Find these changes on the <a href="/fntd2/unit-engine" >Meta Teams</a> page.
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/29/26 Version 8.8</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+   ● Added Thanatos.<br>
+   ● Added 2 new skins (for OMC and Springtrap).<br>
+   ● Updated Puppets stats.<br>
+   ● Updated Golden Freddys stats.<br>
+   ● Updated Nightmare Mangles stats.<br>
+  These changes can be found on the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">Small Patch</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Event Story</span>
+   <div class="update-description">
+   ● Rewards Index for <a href="/fntd2/event-story-endless" >Event Story</a>.
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+   ● Placements Meta for <a href="/fntd2/endless-index" >Endless</a>.
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/24/26 Version 8.7</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Metas</span>
+   <div class="update-description">
+   ● <a href="/fntd2/unit-engine" >Story</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Event Story</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Endless (Farthest)</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Endless (Grind)</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Event Endless (Farthest)</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Event Endless (Grind</a> Meta.<br>
+   ● <a href="/fntd2/unit-engine" >Element/Mono Type</a> Meta.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+   ● All <a href="/fntd2/unit-engine" >TierLists</a>.
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">Small Patch</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+   ● All units from the new event to the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">Small Patch</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+   ● Now actually have all of Nightmare Fredbears Voicelines. Thanks again to Matic for sending these.<br>
+     These can be found on the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+   </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/18/26 Version 8.6</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Boss Raids page</span>
+   <div class="update-description">
+   ● Farthest Boss Raids Meta.<br>
+   ● Placements Fixed/Updated.<br>
+   These changes can be found on the <a href="/fntd2/endless-index" >Boss Raids</a> page.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+   ● Farthest Endless Meta.<br>
+   ● Placements Updated.<br>
+   These changes can be found on the <a href="/fntd2/endless-index" >Endless</a> page.<br>
+   </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/15/26 Version 8.5</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Endless page</span>
+   <div class="update-description">
+   ● Placements for both Farthest and Grind Metas (Endless 4).<br>
+     Find these under the <a href="/fntd2/endless-index" >Endless</a> page.<br>
+   </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Clans Wars</span>
+   <div class="update-description">
+    ● Metas for all Quests, Collective Quests, and Sprints.<br>
+     Find these on the <a href="#" >Clan Wars</a> page.<br>
+   </div>
+  </div>
+  
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+    ● Starter TierList.<br>
+    ● Mid-Endgame TierList.<br>
+    ● Every Unit TierList.<br>
+     All can be found under the <a href="/fntd2/tierlists-1" >TierLists</a> page.<br>
+   </div>
+  </div>
+  
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+    ● <a href="/fntd2/endless-index" >Endless</a> Meta.
+    </div>
+  </div>
+  
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Event Endless</span>
+   <div class="update-description">
+    ● <a href="/fntd2/event-story-endless" >Event Endless</a> Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Boss Raids Page</span>
+   <div class="update-description">
+    ● Boss Raids Meta.<br>
+    ● Placements for both Grind and Farthest.<br>
+     These changes can be found under <a href="/fntd2/boss-raids-index" >Boss Raids</a> page.<br>
+   </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/14/26 Version 8.4</div>
+
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● New Element Passives and Exclusive Rarity for the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+    ● <a href="/fntd2/endless-index" >Endless</a> Rewards Index.
+    </div>
+  </div>
+  
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Story</span>
+   <div class="update-description">
+    ● <a href="/fntd2/story-index" >Story</a> Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● For all the balance changes/new unit <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/12/26 Version 8.3</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Story</span>
+   <div class="update-description">
+    ● Game 4 to <a href="/fntd2/story-index" >Story</a> Index.
+    </div>
+  </div>
+  
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+    ● <a href="/fntd2/tierlists-1" >TierLists</a> updated with some small ranking changes.
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+    ● Meta changed for <a href="/fntd2/endless-index" >Endless</a>.
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Boss Raids</span>
+   <div class="update-description">
+    ● Meta changed for <a href="/fntd2/boss-raids-index" >Boss Raids</a>.
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● Some minor bugs for the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">Small Patch</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Clan Wars</span>
+   <div class="update-description">
+    ● changed Sprint1 Info and Sprint2 Info for <a href="#" >Clan Wars</a> page.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/9/26 Version 8.2</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+   <div class="update-description">
+    ● All <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Endless</span>
+   <div class="update-description">
+    ● <a href="/fntd2/endless-index" >Endless</a> 1-4 Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Event Endless</span>
+   <div class="update-description">
+    ● <a href="/fntd2/event-story-endless" >Event Endless</a> 1-4 Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Boss Raids</span>
+   <div class="update-description">
+    ● <a href="/fntd2/boss-raids-index" >Boss Raids</a> Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Meta Teams</span>
+   <div class="update-description">
+    ● Elements Metas.<br>
+    ● Farthest Metas.<br>
+    ● Grind Metas.<br>
+     All Updated, this can be found under <a href="/fntd2/meta-teams-1" >Meta Teams</a> page.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Clan Wars</span>
+   <div class="update-description">
+     ● A bunch of <a href="#" >Clan Wars</a> stuff I'm not going to list.
+    </div>
+  </div>
+
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/8/26 Version 8.1</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-new">Add</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● All new units for the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/7/26 Version 8.0</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-new">Add</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● Proper passive colors for actives/not actives, and active icons for the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/6/26 Version 7.9</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● Changed unit rarity colors for the <a href="/fntd2/unit-engine" >Unit Engine</a> to match 1-1 with the game.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/4/26 Version 7.8</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Clan Wars</span>
+   <div class="update-description">
+    ● Added Collective Quest tab and the Quests Meta to <a href="#" >Clan Wars</a> page. (More to come).
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Boss Raids</span>
+    <div class="update-description">
+    ● <a href="/fntd2/boss-raids-index" >Boss Raids</a> page to be more user friendly.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+    
+  <div class="update-date">3/3/26 Version 7.7</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● Hacker King RWQFSFASXC special Shiny border now displays properly for the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Site</span>
+    <div class="update-description">
+    ● <a href="/" >Home</a> page button Players/Visits not displaying 100% of the time.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Clan Wars</span>
+    <div class="update-description">
+    ● Sprints Schedule was not showing the proper times or dates, this issue was fixed and now shows what days it resets for you.
+    </div>
+  </div>
+  
+</div>
+
+ <div class="update-log-wrapper">
+
+  <div class="update-date">3/1/26 Version 7.6</div>
+  <!-- NEWEST UPDATE -->
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+   <div class="update-description">
+    ● Hacker King RWQFSFASXC to <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Meta</span>
+    <div class="update-description">
+    ● Mono Type/Element Teams Meta to <a href="#" >Clans Wars</a> and <a href="/fntd2/meta-teams-1" >Meta Teams</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+    ● Every Unit, Mid-Endgame, and Booster <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+
+</div>
+   
+<div class="update-log-wrapper">
+
+  <div class="update-date">2/27/26 Version 7.5</div>
+
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Clan Wars</span>
+    <div class="update-description">
+    ● New <a href="/fntd2" >Clan Wars</a> page.
+    </div>
+  </div>
+
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">UI</span>
+    <div class="update-description">
+    ● Buttons on <a href="/fntd2" >Modes</a> page improved.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+
+  <div class="update-date">2/24/26 Version 7.4</div>
+
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Popcorn Bots boost to <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+    ● Dead Soul Freddy.<br>
+    ● Soul Prisoner Foxy.<br>
+    ● Cerberus Freddy.<br>
+    ● Hades Bonnie to <a href="/fntd2/tierlists-1" >TierLists</a>.<br>
+    </div>
+  </div>
+  
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+      ● Mid-Endgame and Every Unit <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+      ● Hybrid units (deals DMG + boosts) now actually display DPS properly on <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+
+  <div class="update-date">2/23/26 Version 7.3</div>
+
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● "Underpaid For” Status.<br>
+     ● Dead Soul Freddy.<br>
+     ● Soul Prisoner Foxy.<br>
+     ● Cerberus Freddy.<br>
+     ● Hades Bonnie.<br>
+      All additions are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+      ● Sweetheart Toy Foxy can no longer average the CD from Boosters.<br>
+      ● “Select Cooldown…” option now displays properly on the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+
+  <div class="update-date">2/17/26 Version 7.2</div>
+
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Sweetheart Toy Foxy Boost under the Boosts option on the <a href="/fntd2/unit-engine" >Unit Engine</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+      ● <a href="/fntd2/tierlists-1" >TierLists</a>. (Follow Me finally got that nerf but is still Meta).<br>
+      ● Notes for Tierlists.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Overall Site</span>
+    <div class="update-description">
+    ● Changed outlines for images from White to Orange.
+    </div>
+  </div>
+  
+</div>
+
+<div class="update-log-wrapper">
+
+  <div class="update-date">2/16/26 Version 7.1</div>
+
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Sweetheart Toy Foxy.<br>
+     ● Plus Sign for newly added units.<br>
+     ● Notes for 5 Star units.<br>
+      All additions are for the <a href="/fntd2/tierlists-1" >TierLists</a> page.<br>
+    </div>
+  </div>
+
+</div>
+
+ <div class="update-log-wrapper">
+
+  <div class="update-date">2/15/26 Version 7.0</div>
+  <!-- NEWEST UPDATE -->
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Meta</span>
+    <div class="update-description">
+     ● Grind Metas for <a href="/fntd2/endless-index" >Endless</a> (1-3).<br>
+     ● Grind Metas for <a href="/fntd2/boss-raids-index" >Event Endless</a> (1-4).<br>
+     ● Grind Metas for <a href="/fntd2/boss-raids-index" >Boss Raids</a>.<br>
+    </div>
+  </div>
+
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Placements</span>
+    <div class="update-description">
+     ● Placement Charts for both <a href="/fntd2/boss-raids-index" >Boss Raids</a> Farthest and Grind Metas.
+    </div>
+  </div>
+  
+     <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+    ● <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+  
+ </div>
+
+ <div class="update-log-wrapper">
+ <div class="update-date">2/11/26 Version 6.9</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Knockback Type to categories.<br>
+     ● "Last Updated" UI. (Click to search the unit instantly!)<br>
+     ● "Rockin Vibes" passive to Rockin Bonnie.<br>
+     ● “Manipulated” status.<br>
+     ● the ability to have multiple Permanent/Temporary boosts.<br>
+     ● Skins Button to units with skins (Springtrap, Puppet, Golden Freddy).<br>
+      All additions are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Boss Raids</span>
+    <div class="update-description">
+     ● Boss Raids Modifiers TierList to the <a href="/fntd2/boss-raids-index" >Boss Raids</a> page.
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Arrow description to <a href="/fntd2/tierlists-1" >TierList</a> page.
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+    ● <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Metas</span>
+    <div class="update-description">
+     ● <a href="/fntd2/endless-index" >Endless</a> Meta.<br>
+     ● <a href="/fntd2/event-story-endless" >Event Endless</a> Meta.<br>
+     ● <a href="/fntd2/boss-raids-index" >Boss Raids</a> Meta(1).<br>
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● HHM’s temporary boost being 70%, not 85%.<br>
+     ● Search bar no longer cuts taller letters.<br>
+     ● Search bar no longer expands page (less jumpy, super noticeable).<br>
+     ● Mobile UX significantly improved.<br>
+     ● Rockin Bonnies CD boost (12.5% > 8%).<br>
+     ● Improved boost descriptions for Boost UI.<br>
+     ● Improved Skin UI/UX.<br>
+     ● Grinch Foxy having 4 placements instead of 3.<br>
+     ● Turkey Chica having passive DPS accounted into base DPS.<br>
+     ● Slasher Bonnie having passive DPS accounted into base DPS.<br>
+     ● Undead Chica having passive DPS accounted into base DPS.<br>
+     ● 1pixel cutting on Boosts UI.<br>
+     ● “New Search” animation playing when first selecting a Permanent boost.<br>
+     ● click SFX when selecting a Permanent boost.<br>
+    All fixes for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+    
+  </div>
+
+  <div class="update-log-wrapper">
+ <div class="update-date">2/8/26 Version 6.8</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Arrow to show when a unit dropped or rose on <a href="/fntd2/tierlists-1" >TierLists</a> page.
+    </div>
+  </div>
+
+ <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Boss Raids</span>
+    <div class="update-description">
+     ● <a href="/fntd2/boss-raids-index" >Boss Raids</a> 2 team.
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Metas</span>
+    <div class="update-description">
+     ● <a href="/fntd2/event-story-endless" >Event Endless</a> Meta.<br>
+     ● <a href="/fntd2/boss-raids-index" >Boss Raids</a> Meta.<br>
+     ● <a href="/fntd2/endless-index" >Endless</a> Meta.<br>
+     ● <a href="/fntd2/meta-teams-1" >Meta Teams</a> page.<br>
+    </div>
+  </div>
+
+<div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● <a href="/fntd2/tierlists-1" >TierLists</a>.
+    </div>
+  </div>
+    
+  </div>
+
+  <div class="update-log-wrapper">
+ <div class="update-date">2/3/26 Version 6.7</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Exists count!<br>
+     ● Rockin Bonnies Cooldown boost.<br>
+     ● Leviathan Mangle.<br>
+     ● Deadeye Freddy.<br>
+     ● Valkyrie Chica.<br>
+     ● Gravelord Foxy.<br>
+     ● Blighted Endo Freddy.<br>
+     ● War Machine Foxy.<br>
+     ● Tarnished Spring Bonnie.<br>
+     ● Rockin Bonnie.<br>
+     ● Mecha Cupcake.<br>
+     ● Freddy With A Glock.<br>
+    All additions are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Booster TierList.<br>
+     ● Starter TierList (750$ and under).<br>
+      Both additions are for the <a href="/fntd2/tierlists-1" >TierLists</a> page.<br>
+    </div>
+  </div>
+    
+ <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Dreadbears TierList ranking (4 star > 3 star).<br>
+     ● Overgrown Foxy’s ranking (below Golden Cupcake > Above).<br>
+     Both changes are for the <a href="/fntd2/tierlists-1" >TierLists</a> page.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Metas</span>
+    <div class="update-description">
+     ● <a href="/fntd2/event-story-endless" >Event Endless</a> Meta.<br>
+     ● <a href="/fntd2/story-index" >Story</a> Meta.<br>
+     ● <a href="/fntd2/meta-teams-1" >Meta Teams</a> page.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Golden Freddy having passive DPS accounted into normal DPS.<br>
+     ● Dreadbear having passive DPS accounted into normal DPS.<br>
+     ● Yeti Oni Bonnie's degrees not displaying.<br>
+     All fixes are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+    
+  </div>
+
+    <div class="update-log-wrapper">
+ <div class="update-date">1/30/26 Version 6.6</div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● An issue with stats table not displaying boosts properly.<br>
+     ● Toy Maker Mangle name.<br>
+     ● Conductor Toy Freddy name.<br>
+     ● Time Lord Withered Freddy name.<br>
+    All fixes are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="update-log-wrapper">
+ <div class="update-date">1/27/26 Version 6.5</div>
+
+    <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Fisher man Toy Bonnie.<br>
+     ● Shark Withered Foxy.<br>
+     ● Serpent Endo.<br>
+     ● TierList badge to Unit Engine (if clicked hyperlinks to TierList page).<br>
+     ● "All Tiers" Category.<br>
+      All additions are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+    
+    <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Boss Raids</span>
+    <div class="update-description">
+     ● Boss Raids Index, displays rewards up to wave 146. (this can be found under the <a href="/fntd2/boss-raids-index" >Boss Raids</a> page.)
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">TierLists</span>
+    <div class="update-description">
+     ● Updated <a href="/fntd2/unit-engine" >TierLists</a>.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Meta</span>
+    <div class="update-description">
+     ● Updated <a href="/fntd2/story-index" >Story</a> Meta.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Frozen King Foxy last upgrade Attack Type changed from Circle > 90° Cone. Seems like a mistake on the balancing teams end but it is what’s correct to the game.<br>
+     ● Blossom Chica and Overgrown Foxy being the wrong Element.<br>
+      Both fixes are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+    
+  </div>
+
+  <div class="update-log-wrapper">
+ <div class="update-date">1/24/26 Version 6.4</div>
+
+    <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● OMC Guiding Whistle boost to permanent boosts [Water units only].<br>
+     ● Overgrown Foxys boost (averaged).<br>
+      Both additions are for the  <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+   <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Story Page</span>
+    <div class="update-description">
+     ● Story Index. This shows the rewards for each night as well as the odds/chance of these rewards. This can be found on the <a href="/fntd2/story-index" >Story</a> Page.
+    </div>
+  </div>
+    
+    <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Slight misalignment between tables.<br>
+     ● Search bar cutting taller letters off.<br>
+     ● Arrow animation not displaying when Passive table Opened/Closed.<br>
+      All fixes are for the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+    
+  </div>
+
+  <div class="update-log-wrapper">
+ <div class="update-date">1/21/26 Version 6.3</div>
+
+    <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Site</span>
+    <div class="update-description">
+     ● Added <a href="/fntd2/boss-raids-index" >Boss Raids</a> page.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-new">Added</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Overgrown Foxy.<br>
+     ● Time Lord Withered Freddy.<br>
+     ● Clockwork Cupcake.<br>
+     ● Popeyes Toy Freddy.<br>
+     ● Old Man Consequences.<br>
+     ● Blossom Chica.<br>
+      All units listed were added to the <a href="/fntd2/unit-engine" >Unit Engine</a>.<br>
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Metas</span>
+    <div class="update-description">
+     ● All <a href="/fntd2/meta-teams-1" >Metas</a> changed.
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-feature">Updated</span>
+    <span class="update-title">Tierlists</span>
+    <div class="update-description">
+     ● All <a href="/fntd2/tierlists-1" >TierLists</a> changed.
+    </div>
+  </div>
+
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Unit Engine</span>
+    <div class="update-description">
+     ● Phantom Foxy wasn't displaying Attack Type changes.<br>
+     ● Element render spacing.<br>
+    </div>
+  </div>
+    
+  <div class="update-entry">
+    <span class="update-badge badge-balance">Fixed</span>
+    <span class="update-title">Info Charts</span>
+    <div class="update-description">
+     ● Small typo corrected on Enchant Chart, under <a href="/fntd1/other-charts" >Info Charts</a>.
+    </div>
+  </div>
+    
+  </div>
+
+      <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+    </div>
+    <footer id="ug-footer">
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>
+    </footer>
+  </div>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"></script>
+  <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
+</body>
+</html>

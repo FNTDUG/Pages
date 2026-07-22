@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PVP / Ranked / FNTD1 | FNTD Userguide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>
+  /* global rule — webkit/moz font-smoothing applied site-wide; keep on all pages */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  :root{--ug-accent:#ffa45b;--ug-purple:#681f62}
+  html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  html{font-size:10px}
+  body::-webkit-scrollbar{width:6px}
+  body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}
+  #ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/952b91dc-d51b-434a-bee1-591d5d60126a-standard.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}
+  #ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}
+  #ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+  .ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}
+  .ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}
+  .ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}
+  #ug-topnav{position:sticky;top:0;z-index:1000}
+  .ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}
+  .ug-tn-inner::-webkit-scrollbar{display:none}
+  .ug-tn-link{display:flex;align-items:center;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}
+  .ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}
+  .ug-tn-item{position:relative;display:flex;align-items:stretch}
+  .ug-tn-btn{display:flex;align-items:center;gap:5px;padding:11px 13px;color:rgba(255,255,255,.65);font-size:11px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+  .ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}
+  .ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}
+  .ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}
+  .ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}
+  .ug-tn-drop a{display:block;padding:9px 14px;color:rgba(255,255,255,.6);font-size:10px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}
+  .ug-tn-drop a:last-child{border-bottom:none}
+  .ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}
+  #ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #ug-hamburger .hmb-icon{font-size:16px;line-height:1}
+  #ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  #ug-overlay.open{display:block}
+  #ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
+  #ug-mobile-nav::-webkit-scrollbar{width:3px}
+  #ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
+  #ug-mobile-nav.open{transform:translateX(0)}
+  .ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}
+  .ug-mn-brand{display:flex;align-items:center;gap:10px}
+  .ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}
+  .ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}
+  .ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}
+  .ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}
+  .ug-mn-body{flex:1;padding:6px 0 12px}
+  .ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}
+  .ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}
+  .ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}
+  .ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}
+  .ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}
+  .ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}
+  .ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}
+  .ug-mn-section.open .ug-mn-section-items{max-height:500px}
+  .ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}
+  .ug-mn-child:last-child{border-bottom:none}
+  .ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}
+  .ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}
+  .ug-mn-discord-wrap{padding:14px 14px 4px}
+  .ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}
+  .ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}
+  #ug-hero{position:relative;background-image:url('https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/starry1-standard-n5yi5z.webp');background-size:cover;background-attachment:fixed;background-position:center top}
+  #ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}
+  #ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}
+  #ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}
+  .ug-page-title-area{text-align:center;margin-bottom:18px}
+  .ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}
+  .ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(35,105,35,.85);border:1px solid rgba(80,190,80,.45);color:#86f786;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}
+  .ug-section-title{font-family:'Audiowide',sans-serif;font-size:22px;color:#fff;text-align:center;margin-bottom:12px;padding-bottom:0;border-bottom:none;letter-spacing:.5px}
+  .ug-img-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;align-items:start}
+  #ug-content .ug-img-pair img{max-width:100%;height:auto;display:block;margin:0 0 8px}
+  @media(max-width:600px){.ug-img-pair{grid-template-columns:1fr}}
+  #ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}
+  #ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+  #ug-footer p{position:relative;z-index:1}
+  #ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1}
+  #ug-footer a:hover{text-decoration:underline}
+  #ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}
+  .ug-divider-img{width:100%;height:auto;display:block;margin:20px auto}
+  .ug-section{margin-bottom:28px}
+  .ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}
+  .ug-discontinued{background:rgba(10,7,22,.88);border:1px solid rgba(150,50,50,.5);border-radius:10px;padding:12px 16px;font-size:13px;color:rgba(255,150,150,.85);line-height:1.75;margin-bottom:16px;text-align:center}
+  @media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}
+  @media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}
+  </style>
+  <style>
+  .clean-pill{display:inline-block;padding:14px 14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}
+  .clean-pill.on{border-color:#4dff88;color:#8cffb0}
+  .clean-pill:hover{transform:translateY(2px)}
+  .clean-pill::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}
+  .clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#FFFFFF;text-align:center;line-height:1.6;opacity:0.85}
+  @keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}
+  .ad-slot{text-align:center}
+  </style>
+</head>
+<body>
+
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header">
+      <div class="ug-mn-brand">
+        <img class="ug-mn-brand-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD">
+        <span class="ug-mn-brand-name">FNTD User Guide</span>
+      </div>
+      <button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button>
+    </div>
+    <div class="ug-mn-body">
+      <a href="/" class="ug-mn-link">Home</a>
+      <div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child active">PVP / Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div>
+      <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a><a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a><a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a><a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a><a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a><a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a></div></div>
+      <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="ug-mn-child">Killer Terminal</a><a href="/bbn/survivor-terminal" class="ug-mn-child">Survivor Terminal</a></div></div>
+      <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FAQ <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/faq-fntd1" class="ug-mn-child">FAQ FNTD1</a><a href="/faq-fntd2" class="ug-mn-child">FAQ FNTD2</a></div></div>
+      <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a><a href="/patch-notes" class="ug-mn-child">FNTD2</a><a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a></div></div>
+      <div class="ug-mn-discord-wrap"><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a></div>
+    </div>
+  </div>
+
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner">
+        <img class="ug-header-logo" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70" alt="FNTD Userguide">
+        <div class="ug-header-title">FNTD User Guide</div>
+      </div>
+      <nav id="ug-topnav" role="navigation" aria-label="Site navigation">
+        <div class="ug-tn-inner">
+          <a href="/" class="ug-tn-link">Home</a>
+          <div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd1/meta-teams">Meta Teams</a><a href="/fntd1/charts-tierlists">Charts</a><a href="/fntd1/tierlists">TierLists</a><a href="/fntd1/other-charts">Other Charts</a><a href="/fntd1/pvp-ranked" class="active">PVP/Ranked</a><a href="/fntd1/endless">Endless</a><a href="/fntd1/event-endless">Event Endless</a><a href="/fntd1/night-shift">Night Shift</a><a href="/fntd1/boss-raids">Boss Raids</a></div></div>
+          <div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/fntd2/meta-teams-1">Meta Teams</a><a href="/fntd2/unit-engine">Unit Engine</a><a href="/fntd2/tierlists-1">TierLists</a><a href="/fntd2/story-index">Story &amp; Index</a><a href="/fntd2/endless-index">Endless &amp; Index</a><a href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless">Event Story &amp; Endless</a></div></div>
+          <div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a><a href="/bbn/killer-terminal">Killer Terminal</a><a href="/bbn/survivor-terminal">Survivor Terminal</a></div></div>
+          <div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">FAQ <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/faq-fntd1">FAQ FNTD1</a><a href="/faq-fntd2">FAQ FNTD2</a></div></div>
+          <div class="ug-tn-item"><button class="ug-tn-btn" onclick="ugTnToggle(this)">Patch Notes <span class="ug-tn-arrow">/</span></button><div class="ug-tn-drop"><a href="/patch-notes/fntd1-1">FNTD1</a><a href="/patch-notes">FNTD2</a><a href="/patch-notes/bbn-patch-notes">BBN</a></div></div>
+          <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a>
+        </div>
+      </nav>
+    </header>
+
+    <div id="ug-hero">
+      <div id="ug-hero-inner">
+        <div class="ug-page-title-area">
+          <div class="ug-page-title">PVP/Ranked</div>
+          <p style="font-family:'Audiowide',sans-serif;font-size:15px;color:#fff;text-align:center;margin-top:6px">Must have Shiny Boosters, shiny apexes are not necessary to get Top 250.</p>
+          <div class="ug-status-badge">Last updated 9/26/25 (Final)</div>
+        </div>
+        <div style="text-align:center;margin-bottom:18px"><div id="cleanModeToggle" class="clean-pill">Clean-Mode: Off</div></div>
+        <div class="clean-text">Ads help keep this site running.<br>Turn on Clean-Mode for an Ad-free experience.</div>
+        <div class="ad-slot" style="margin-top:14px"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+      </div>
+    </div>
+
+    <div id="ug-content">
+
+
+      <div class="ug-section">
+        <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-qqx68d.png?enable-io=true&enable=upscale&crop=2.1771%3A1&width=800" alt="PVP Ranked">
+      </div>
+
+
+      <div class="ug-section">
+        <div class="ug-section-title">Placements</div>
+        <div class="ug-discontinued">Discontinued</div>
+      </div>
+
+      <div class="ug-section">
+        <div class="ug-section-title">TierList (Final)</div>
+        <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-uszc8c.png?enable-io=true&enable=upscale&crop=4.7742%3A1&width=800" alt="PVP TierList" style="max-width:80%;margin:0 auto 16px">
+        <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-fa5edx.png?enable-io=true&enable=upscale&crop=2.1771%3A1&width=800" alt="PVP TierList 2" style="max-width:100%;margin:0 auto 16px">
+      </div>
+
+      <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+    </div>
+
+    <footer id="ug-footer">
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>
+    </footer>
+  </div>
+
+  <script>
+  function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}
+  function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}
+  function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}
+  var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();
+  function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}
+  function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}
+  function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}
+  var _spinTimers=new Map();
+  function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}
+  function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}
+  var _ugLeaveTimer=null;
+  function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}
+  function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}
+  function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}
+  function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}
+  function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}
+  document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});
+  document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});
+  window.addEventListener('resize',ugCloseAll,{passive:true});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
+  (function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();
+  </script>
+</body>
+</html>
