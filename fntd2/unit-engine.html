@@ -113,7 +113,7 @@
     transition:color .15s,background .15s;
   }
   .ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}
-  .ug-tn-link.active{color:var(--ug-accent)}@keyframes ug-blink{0%,100%{opacity:1}50%{opacity:0}}.ug-tn-drop a.active::after,.ug-tn-link.active::after,.ug-mn-child.active::after,.ug-mn-link.active::after{content:"|";margin-left:4px;color:var(--ug-accent);animation:ug-blink 1s step-end infinite;font-weight:400}
+  .ug-tn-link.active{color:var(--ug-accent)}.ug-tn-drop a.active::after,.ug-tn-link.active::after,.ug-mn-child.active::after,.ug-mn-link.active::after{content:"|";margin-left:4px;color:var(--ug-accent);font-weight:400}body.ug-cursor-off .ug-tn-drop a.active::after,body.ug-cursor-off .ug-tn-link.active::after,body.ug-cursor-off .ug-mn-child.active::after,body.ug-cursor-off .ug-mn-link.active::after{opacity:0}
 
   .ug-tn-item{position:relative;display:flex;align-items:stretch}
   .ug-tn-item.open .ug-tn-drop{display:block}
@@ -2433,5 +2433,5 @@ document.addEventListener('click', function (e) {
   </script>
 
 
-<script>/*ug-vis-fix*/document.addEventListener("visibilitychange",function(){if(document.hidden)return;document.querySelectorAll(".ug-tn-drop a.active,.ug-tn-link.active,.ug-mn-child.active,.ug-mn-link.active").forEach(function(el){el.classList.remove("active");void el.offsetWidth;el.classList.add("active")});document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})});</script></body>
+<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>
