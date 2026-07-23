@@ -2150,6 +2150,14 @@ document.addEventListener('click', function (e) {
         margin-bottom: 4px;
       }
 
+      /* The passive panel sets max-height via JS before applying top+bottom padding.
+         With border-box, max-height clips the total box (including padding), hiding the
+         bottom padding entirely. Switching to content-box makes max-height limit only
+         the content area, so the 10px top and 12px bottom padding render correctly. */
+      .passive-container > div > div > div:last-child {
+        box-sizing: content-box !important;
+      }
+
       #unitEngine .ue-csel-wrap {
         position: relative;
         width: 100%;
