@@ -102,6 +102,13 @@
   .clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#FFFFFF;text-align:center;line-height:1.6;opacity:0.85}
   @keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}
   .ad-slot{text-align:center}
+  .info-card{max-width:700px;margin:0 auto 16px;display:flex;flex-direction:column;gap:10px}
+  .info-card-section{background:#1a1b1e;border-radius:8px;padding:14px 18px;position:relative}
+  .info-card-section::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25),-2px 0 10px rgba(255,164,91,.15)}
+  .info-card-section h4{font-family:'Audiowide',sans-serif;font-size:16px;color:var(--ug-accent);margin:0 0 6px;letter-spacing:.5px;text-align:center}
+  .info-card-section p{font-size:16px;color:#fff;line-height:1.8;margin:0;text-align:center}
+  .info-card-section a{color:var(--ug-accent);text-decoration:none}
+  .info-card-section a:hover{text-decoration:underline}
   </style>
 </head>
 <body>
@@ -174,8 +181,12 @@
           </div>
         </div>
 
-        <div class="ug-subsection-title" style="text-align:center;font-size:18px;font-weight:bold">Map Select Tech</div>
-        <div class="ug-note" style="text-align:center;font-size:15px;font-weight:bold">Find your desired map, beat the boss, select your modifier and click <strong>save quick</strong>.</div>
+        <div class="info-card">
+          <div class="info-card-section">
+            <h4>Map Select Tech</h4>
+            <p>Find your desired map, beat the boss, select your modifier and click <strong>save quick</strong>.</p>
+          </div>
+        </div>
         <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-kz9jwl.png" alt="Map Select Tech" style="max-width:55%;margin:0 auto 16px">
       </div>
 
@@ -196,9 +207,11 @@
         <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-ll2w62.png" alt="Boss Raids TierList 2">
         <div style="height:3px;background:var(--ug-accent);margin:16px 0;border-radius:2px;box-shadow:0 0 8px rgba(255,164,91,.5)"></div>
         <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-9qdbun.png" alt="Boss Raids TierList 3">
-        <div class="ug-section-title" style="margin-top:8px">Multiplayer Boss Raid</div>
-        <div class="ug-note" style="text-align:center;font-size:16px;font-weight:bold">
-          For team composition and co-op coordination, join our <a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer" style="color:var(--ug-accent)">Discord</a>.
+        <div class="info-card" style="margin-top:8px">
+          <div class="info-card-section">
+            <h4>Multiplayer Boss Raid</h4>
+            <p>For team composition and co-op coordination, join our <a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a>.</p>
+          </div>
         </div>
         <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/image-high-kd99p5.png" alt="Boss Raids TierList 4">
       </div>
