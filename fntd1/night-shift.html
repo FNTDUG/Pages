@@ -96,6 +96,11 @@
   .clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#FFFFFF;text-align:center;line-height:1.6;opacity:0.85}
   @keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}
   .ad-slot{text-align:center}
+  .info-card{max-width:700px;margin:0 auto 16px;display:flex;flex-direction:column;gap:10px}
+  .info-card-section{background:#1a1b1e;border-radius:8px;padding:14px 18px;position:relative}
+  .info-card-section::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25),-2px 0 10px rgba(255,164,91,.15)}
+  .info-card-section h4{font-family:'Audiowide',sans-serif;font-size:16px;color:var(--ug-accent);margin:0 0 6px;letter-spacing:.5px;text-align:center}
+  .info-card-section p{font-size:16px;color:#fff;line-height:1.8;margin:0;text-align:center}
   </style>
 </head>
 <body>
@@ -160,10 +165,12 @@
       </div>
 
       <div class="ug-section">
-        <div style="font-family:'Audiowide',sans-serif;font-size:26px;color:#fff;margin-bottom:8px;text-align:center">Notes:</div>
-        <div class="ug-note" style="font-size:16px;text-align:center">
-          The higher your power is, the greater the rewards.<br>
-          <strong>JJ</strong> is also a good option with a full team of Balloon Boys.
+        <div class="info-card">
+          <div class="info-card-section">
+            <h4>Notes:</h4>
+            <p>The higher your power is, the greater the rewards.<br>
+            <strong>JJ</strong> is also a good option with a full team of Balloon Boys.</p>
+          </div>
         </div>
         <div class="ug-section-title">Map Layout &amp; Placements</div>
       </div>
