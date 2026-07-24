@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PVP / Ranked / FNTD1 | FNTD Userguide</title>
+  <title>PvP/Ranked / FNTD1 | FNTD Userguide</title>
   <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
   <style>
@@ -88,7 +88,7 @@
   .ug-discontinued{background:rgba(10,7,22,.88);border:1px solid rgba(150,50,50,.5);border-radius:10px;padding:12px 16px;font-size:13px;color:rgba(255,150,150,.85);line-height:1.75;margin-bottom:16px;text-align:center}
   @media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}
   @media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}
-  </style>
+  .ug-tn-drop a.active::after,.ug-tn-link.active::after,.ug-mn-child.active::after,.ug-mn-link.active::after{content:"|";margin-left:4px;color:var(--ug-accent);font-weight:400}body.ug-cursor-off .ug-tn-drop a.active::after,body.ug-cursor-off .ug-tn-link.active::after,body.ug-cursor-off .ug-mn-child.active::after,body.ug-cursor-off .ug-mn-link.active::after{opacity:0}</style>
   <style>
   .clean-pill{display:inline-block;padding:14px 14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}
   .clean-pill.on{border-color:#4dff88;color:#8cffb0}
@@ -114,7 +114,7 @@
     </div>
     <div class="ug-mn-body">
       <a href="/" class="ug-mn-link">Home</a>
-      <div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child active">PVP / Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div>
+      <div class="ug-mn-section open"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd1/meta-teams" class="ug-mn-child">Meta Teams</a><a href="/fntd1/charts-tierlists" class="ug-mn-child">Charts</a><a href="/fntd1/tierlists" class="ug-mn-child">TierLists</a><a href="/fntd1/other-charts" class="ug-mn-child">Other Charts</a><a href="/fntd1/pvp-ranked" class="ug-mn-child active">PvP/Ranked</a><a href="/fntd1/endless" class="ug-mn-child">Endless</a><a href="/fntd1/event-endless" class="ug-mn-child">Event Endless</a><a href="/fntd1/night-shift" class="ug-mn-child">Night Shift</a><a href="/fntd1/boss-raids" class="ug-mn-child">Boss Raids</a></div></div>
       <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/fntd2/meta-teams-1" class="ug-mn-child">Meta Teams</a><a href="/fntd2/unit-engine" class="ug-mn-child">Unit Engine</a><a href="/fntd2/trade-calculator" class="ug-mn-child">Trade Calculator</a><a href="/fntd2/tierlists-1" class="ug-mn-child">TierLists</a><a href="/fntd2/story-index" class="ug-mn-child">Story &amp; Index</a><a href="/fntd2/endless-index" class="ug-mn-child">Endless &amp; Index</a><a href="/fntd2/boss-raids-index" class="ug-mn-child">Boss Raids &amp; Index</a><a href="/fntd2/event-story-endless" class="ug-mn-child">Event Story &amp; Endless</a></div></div>
       <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/bbn/bite-by-night-tierlists" class="ug-mn-child">TierLists &amp; Maps</a><a href="/bbn/killer-terminal" class="ug-mn-child">Killer Terminal</a><a href="/bbn/survivor-terminal" class="ug-mn-child">Survivor Terminal</a></div></div>
       <div class="ug-mn-section"><button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button><div class="ug-mn-section-items"><a href="/patch-notes/fntd1-1" class="ug-mn-child">FNTD1</a><a href="/patch-notes" class="ug-mn-child">FNTD2</a><a href="/patch-notes/bbn-patch-notes" class="ug-mn-child">BBN</a></div></div>
