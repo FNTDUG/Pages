@@ -96,6 +96,9 @@
   .ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}
   .ug-note a{color:var(--ug-accent);text-decoration:none}
   .ug-note a:hover{text-decoration:underline}
+  .ug-info-box{background:#1a1b1e;border-radius:8px;padding:14px 18px;position:relative;margin-bottom:16px}
+  .ug-info-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25),-2px 0 10px rgba(255,164,91,.15)}
+  .ug-info-box .ug-note{margin-bottom:0}
   @media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}
   @media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}
   </style>
@@ -234,7 +237,7 @@
         </div>
       </div>
 
-      <div class="ug-section">
+      <div class="ug-info-box">
         <div class="ug-note" style="font-size:16px;text-align:center">
           <strong>Boosters should <u>ALWAYS</u> be shiny.</strong><br>
           For <strong>Boss Raids</strong> — see the <a href="/fntd1/boss-raids">Boss Raids</a> page for the reset strategy.<br><br>
