@@ -902,7 +902,8 @@
 
         <div class="ug-page-title-area">
           <div class="ug-page-title">Unit Engine</div>
-          <div class="ug-status-badge">Last updated 6/27/26 (Up-To-Date!)</div>
+          <div class="ug-status-badge" id="ue-last-updated">Loading...</div>
+          <script>(function(){fetch("https://raw.githubusercontent.com/FNTDUG/characters.json/refs/heads/main/last-updated").then(function(r){return r.text();}).then(function(t){var el=document.getElementById("ue-last-updated");if(el)el.textContent=t.trim();}).catch(function(){var el=document.getElementById("ue-last-updated");if(el)el.textContent="Last Updated";});})();</script>
           <p class="ug-page-desc">The site&#39;s very own search Engine. You can use it to find units, learn unit stats, calculate DPS, see live Exists counts, and learn Values!</p>
         </div>
 
