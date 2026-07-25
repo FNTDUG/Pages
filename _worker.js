@@ -101,17 +101,23 @@ const DESKTOP_NAV_INNER = `
 
 const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
-#ug-hamburger{display:flex!important}
-/* Replace fixed attachment (forces full repaint on scroll) with scroll */
+#ug-hamburger{display:flex!important;text-transform:uppercase}
 #ug-main,#ug-hero{background-attachment:scroll!important}
-/* GPU-accelerate the drawer slide */
 #ug-mobile-nav{will-change:transform}
-/* Simplify overlay — backdrop blur forces a compositor layer on every frame */
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+#ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
+#ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);will-change:transform;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
+#ug-info-panel::-webkit-scrollbar{width:3px}
+#ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
+#ug-info-panel.open{transform:translateX(0)}
+#ug-info-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1098}
+#ug-info-overlay.open{display:block}
 @media(min-width:769px){
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
-  #ug-mobile-nav{width:420px}
+  #ug-info-btn{top:63px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
   .ug-mn-brand-name{font-size:16px}
   .ug-mn-close{width:40px;height:40px;font-size:20px}
@@ -121,6 +127,25 @@ const NAV_CSS = `<style>
   .ug-mn-discord{font-size:14px}
 }
 </style>`;
+
+const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
+<div id="ug-info-overlay" onclick="ugInfoClose()"></div>
+<div id="ug-info-panel" role="dialog" aria-label="Info">
+  <div class="ug-mn-header">
+    <div class="ug-mn-brand">
+      <img class="ug-mn-brand-logo" src="https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glowy.webp" alt="FNTD">
+      <span class="ug-mn-brand-name" style="letter-spacing:2px">INFO</span>
+    </div>
+    <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
+  </div>
+  <div id="ug-info-body" style="flex:1;padding:16px"></div>
+</div>
+<script>
+function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('open');document.getElementById('ug-info-overlay').classList.add('open');document.body.style.overflow='hidden'}
+function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
+function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
+<\/script>`;
 
 const ACTIVE_SCRIPT = `<script>
 (function(){
@@ -159,7 +184,10 @@ export default {
         element(el) { el.setInnerContent(DESKTOP_NAV_INNER, { html: true }); }
       })
       .on('body', {
-        element(el) { el.append(ACTIVE_SCRIPT, { html: true }); }
+        element(el) {
+          el.append(INFO_HTML, { html: true });
+          el.append(ACTIVE_SCRIPT, { html: true });
+        }
       })
       .transform(response);
   }
