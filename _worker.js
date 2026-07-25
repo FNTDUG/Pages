@@ -170,19 +170,19 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
   <div id="ug-info-body" style="flex:1">
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Bytes <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-bytes-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Chips <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-chips-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
   </div>
 </div>
@@ -195,6 +195,31 @@ function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn)
 function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
+(function(){
+  fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/metas.json')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var sh=(d&&d.shared)||{};
+      function card(name,imgUrl,rarCls,borderBg){
+        var c=document.createElement('div');c.className='inf-card';
+        var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+        var badge=document.createElement('span');badge.className='inf-img'+(rarCls?' inf-rarity-'+rarCls:'');
+        if(borderBg)badge.style.background=borderBg;
+        var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
+        var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
+        row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
+        c.appendChild(document.createElement('p'));
+        return c;
+      }
+      var bEl=document.getElementById('inf-bytes-inner');
+      if(bEl&&sh.bytes)Object.keys(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null));});
+      var cEl=document.getElementById('inf-chips-inner');
+      if(cEl&&sh.chips)Object.keys(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null));});
+      var eEl=document.getElementById('inf-enchants-inner');
+      if(eEl&&sh.enchants)Object.keys(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color));});
+    })
+    .catch(function(){});
+})();
 <\/script>`;
 
 const ACTIVE_SCRIPT = `<script>
