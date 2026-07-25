@@ -102,6 +102,7 @@ const DESKTOP_NAV_INNER = `
 const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important;text-transform:uppercase}
+.ug-header-inner{padding-right:110px!important}
 #ug-main,#ug-hero{background-attachment:scroll!important}
 #ug-mobile-nav{will-change:transform}
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
@@ -116,6 +117,7 @@ const NAV_CSS = `<style>
 @media(min-width:769px){
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
+  .ug-header-inner{padding-right:130px!important}
   #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
