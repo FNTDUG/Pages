@@ -147,14 +147,14 @@ const NAV_CSS = `<style>
 .inf-card h4{font-family:'Audiowide',sans-serif;font-size:12px;color:#ffa45b;margin:0 0 6px;letter-spacing:.5px}
 .inf-card p{font-size:13px;color:#ccc;line-height:1.75;margin:0}
 .inf-card p+p{margin-top:6px}
-.inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:7px;padding:2px;margin:0 3px;flex-shrink:0}
-.inf-img img{width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:5px;display:block}
+.inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:10px;padding:2px;margin:0 3px;flex-shrink:0;overflow:hidden}
+.inf-img img{width:100%;height:100%;object-fit:contain;border-radius:8px;display:block;background:rgba(10,8,22,.9)}
 .inf-rarity-nightmare{background:linear-gradient(135deg,#492590,#2A1E42)}
-.inf-rarity-secret{background:linear-gradient(90deg,#FF8800,#FF0C0C)}
-.inf-rarity-mythic{background:linear-gradient(90deg,#FFB81F,#FFFF00)}
-.inf-rarity-exclusive{background:linear-gradient(180deg,rgb(140,255,203) 0%,rgb(20,115,91) 25%,rgb(51,231,255) 50%,rgb(20,68,112) 68%,rgb(79,164,255) 100%)}
+.inf-rarity-secret{background:linear-gradient(135deg,#FF8800,#FF0C0C)}
+.inf-rarity-mythic{background:linear-gradient(135deg,#FFB81F,#FFFF00)}
+.inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
 .inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
-.inf-rarity-rare{background:linear-gradient(90deg,#58A6FF,#1C3AA0)}
+.inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
