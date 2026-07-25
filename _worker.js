@@ -101,7 +101,7 @@ const DESKTOP_NAV_INNER = `
 
 const ACTIVE_SCRIPT = `<script>
 (function(){
-  var p = window.location.pathname.replace(/\/+$/, '') || '/';
+  var p = window.location.pathname.replace(/[/]+$/, '') || '/';
   document.querySelectorAll('#ug-topnav [data-nav-href]').forEach(function(el){
     if(el.getAttribute('data-nav-href') === p) el.classList.add('active');
   });
