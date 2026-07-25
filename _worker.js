@@ -132,10 +132,13 @@ const NAV_CSS = `<style>
   .ug-mn-discord{font-size:14px}
 }
 .inf-drop{border-bottom:1px solid rgba(255,164,91,0.1)}
-.inf-drop-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s}
+.inf-drop-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 18px;background:none;border:none;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}
 .inf-drop-btn:hover{background:rgba(255,164,91,.05)}
-.inf-drop-arrow{font-size:13px;opacity:.55;font-family:monospace,Arial;transition:transform .25s,opacity .12s,color .12s;min-width:.8em;text-align:center}
-.inf-drop.open .inf-drop-arrow{transform:rotate(90deg);opacity:1;color:#ffa45b}
+.inf-drop.open>.inf-drop-btn{color:#ffa45b}
+.inf-drop-arrow{font-size:13px;opacity:.55;font-family:monospace,Arial;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}
+.inf-drop.open .inf-drop-arrow{opacity:1;color:#ffa45b}
+.ug-mn-section-btn{color:rgba(255,255,255,.7)!important}
+.ug-mn-section.open>.ug-mn-section-btn{color:#ffa45b!important}
 .inf-drop-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
 .inf-drop.open .inf-drop-body{max-height:4000px}
 .inf-drop-inner{padding:10px 14px 16px;display:flex;flex-direction:column;gap:8px}
@@ -186,7 +189,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
 <script>
 function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('open');document.getElementById('ug-info-overlay').classList.add('open');document.body.style.overflow='hidden'}
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
-function infToggle(btn){var s=btn.closest('.inf-drop');s.classList.toggle('open')}
+var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
+function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
+function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn));_infTimers.delete(btn);}var a=btn.querySelector('.inf-drop-arrow');if(a)a.textContent='/';}
+function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 <\/script>`;
