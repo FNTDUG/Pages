@@ -102,8 +102,14 @@ const DESKTOP_NAV_INNER = `
 const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important}
+/* Replace fixed attachment (forces full repaint on scroll) with scroll */
+#ug-main,#ug-hero{background-attachment:scroll!important}
+/* GPU-accelerate the drawer slide */
+#ug-mobile-nav{will-change:transform}
+/* Simplify overlay — backdrop blur forces a compositor layer on every frame */
+#ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 @media(min-width:769px){
-  #ug-hamburger{top:14px;right:18px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
   #ug-mobile-nav{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
