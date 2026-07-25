@@ -102,7 +102,7 @@ const DESKTOP_NAV_INNER = `
 const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important;text-transform:uppercase}
-.ug-mn-header{justify-content:center}
+.ug-mn-close{display:none!important}
 #ug-main,#ug-hero{background-attachment:scroll!important}
 #ug-mobile-nav{will-change:transform;width:min(360px,94vw)!important}
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
