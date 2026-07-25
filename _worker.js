@@ -103,8 +103,8 @@ const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important}
 @media(min-width:769px){
-  #ug-hamburger{top:14px;right:18px;padding:9px 16px 9px 13px;font-size:12px;border-radius:24px;gap:7px}
-  #ug-hamburger .hmb-icon{font-size:18px}
+  #ug-hamburger{top:14px;right:18px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-hamburger .hmb-icon{font-size:21px}
   #ug-mobile-nav{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
   .ug-mn-brand-name{font-size:16px}
