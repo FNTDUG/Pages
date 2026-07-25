@@ -145,6 +145,7 @@ function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('op
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
+(function(){var nav=document.getElementById('ug-mobile-nav');var btn=document.getElementById('ug-info-btn');if(!nav||!btn)return;new MutationObserver(function(){btn.style.display=nav.classList.contains('open')?'none':'';}).observe(nav,{attributes:true,attributeFilter:['class']});})();
 <\/script>`;
 
 const ACTIVE_SCRIPT = `<script>
