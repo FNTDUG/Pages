@@ -103,7 +103,6 @@ const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important;text-transform:uppercase}
 .ug-mn-close{display:none!important}
-#ug-main,#ug-hero{background-attachment:scroll!important}
 #ug-mobile-nav{will-change:transform;width:min(360px,94vw)!important}
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 #ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
