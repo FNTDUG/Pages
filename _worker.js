@@ -105,7 +105,7 @@ const NAV_CSS = `<style>
 #ug-main,#ug-hero{background-attachment:scroll!important}
 #ug-mobile-nav{will-change:transform}
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+#ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);will-change:transform;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
@@ -116,7 +116,7 @@ const NAV_CSS = `<style>
 @media(min-width:769px){
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
-  #ug-info-btn{top:63px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
   .ug-mn-brand-name{font-size:16px}
@@ -176,6 +176,12 @@ export default {
     return new HTMLRewriter()
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); }
+      })
+      .on('img.ug-header-logo', {
+        element(el) { el.setAttribute('src', 'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/circle_done.png'); }
+      })
+      .on('img.ug-mn-brand-logo', {
+        element(el) { el.setAttribute('src', 'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glowy.webp'); }
       })
       .on('.ug-mn-body', {
         element(el) { el.setInnerContent(MOBILE_NAV_BODY, { html: true }); }
