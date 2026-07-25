@@ -131,6 +131,27 @@ const NAV_CSS = `<style>
   .ug-mn-child{font-size:14px;padding:13px 24px 13px 36px}
   .ug-mn-discord{font-size:14px}
 }
+.inf-drop{border-bottom:1px solid rgba(255,164,91,0.1)}
+.inf-drop-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s}
+.inf-drop-btn:hover{background:rgba(255,164,91,.05)}
+.inf-drop-arrow{font-size:13px;opacity:.55;font-family:monospace,Arial;transition:transform .25s,opacity .12s,color .12s;min-width:.8em;text-align:center}
+.inf-drop.open .inf-drop-arrow{transform:rotate(90deg);opacity:1;color:#ffa45b}
+.inf-drop-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.inf-drop.open .inf-drop-body{max-height:4000px}
+.inf-drop-inner{padding:10px 14px 16px;display:flex;flex-direction:column;gap:8px}
+.inf-card{background:#1a1b1e;border-radius:8px;padding:12px 14px;position:relative;line-height:1.75}
+.inf-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25)}
+.inf-card h4{font-family:'Audiowide',sans-serif;font-size:12px;color:#ffa45b;margin:0 0 6px;letter-spacing:.5px}
+.inf-card p{font-size:13px;color:#ccc;line-height:1.75;margin:0}
+.inf-card p+p{margin-top:6px}
+.inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:7px;padding:2px;margin:0 3px;flex-shrink:0}
+.inf-img img{width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:5px;display:block}
+.inf-rarity-nightmare{background:linear-gradient(135deg,#492590,#2A1E42)}
+.inf-rarity-secret{background:linear-gradient(90deg,#FF8800,#FF0C0C)}
+.inf-rarity-mythic{background:linear-gradient(90deg,#FFB81F,#FFFF00)}
+.inf-rarity-exclusive{background:linear-gradient(180deg,rgb(140,255,203) 0%,rgb(20,115,91) 25%,rgb(51,231,255) 50%,rgb(20,68,112) 68%,rgb(79,164,255) 100%)}
+.inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
+.inf-rarity-rare{background:linear-gradient(90deg,#58A6FF,#1C3AA0)}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -143,11 +164,29 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     </div>
     <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
   </div>
-  <div id="ug-info-body" style="flex:1;padding:16px"></div>
+  <div id="ug-info-body" style="flex:1">
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Bytes <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Chips <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner"></div></div>
+    </div>
+  </div>
 </div>
 <script>
 function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('open');document.getElementById('ug-info-overlay').classList.add('open');document.body.style.overflow='hidden'}
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
+function infToggle(btn){var s=btn.closest('.inf-drop');s.classList.toggle('open')}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 <\/script>`;
