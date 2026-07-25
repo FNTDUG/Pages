@@ -121,7 +121,7 @@ const NAV_CSS = `<style>
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
   #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-mobile-nav{width:400px!important}
+  #ug-mobile-nav{width:350px!important}
   #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
   .ug-mn-brand-name{font-size:16px}
