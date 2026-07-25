@@ -99,19 +99,6 @@ const DESKTOP_NAV_INNER = `
 </div>
 <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a>`;
 
-const NAV_CSS = `<style>
-#ug-topnav{display:none!important}
-#ug-hamburger{display:flex!important}
-@media(min-width:769px){
-  #ug-hamburger{top:14px;right:18px;padding:10px 20px 10px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-hamburger .hmb-icon{font-size:22px}
-  #ug-mobile-nav{width:340px}
-  .ug-mn-link{font-size:12.5px}
-  .ug-mn-section-btn{font-size:11px}
-  .ug-mn-child{font-size:11.5px}
-}
-</style>`;
-
 const ACTIVE_SCRIPT = `<script>
 (function(){
   var p = window.location.pathname.replace(/[/]+$/, '') || '/';
@@ -139,9 +126,6 @@ export default {
     if (!ct.includes('text/html')) return response;
 
     return new HTMLRewriter()
-      .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); }
-      })
       .on('.ug-mn-body', {
         element(el) { el.setInnerContent(MOBILE_NAV_BODY, { html: true }); }
       })
