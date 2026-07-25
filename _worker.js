@@ -145,7 +145,7 @@ function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('op
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
-(function(){var nav=document.getElementById('ug-mobile-nav');var btn=document.getElementById('ug-info-btn');if(!nav||!btn)return;var t=null;new MutationObserver(function(){clearTimeout(t);if(nav.classList.contains('open')){btn.style.zIndex='1050';btn.style.opacity='0';}else{btn.style.opacity='1';t=setTimeout(function(){btn.style.zIndex='';},300);}}).observe(nav,{attributes:true,attributeFilter:['class']});})();
+(function(){var nav=document.getElementById('ug-mobile-nav');var btn=document.getElementById('ug-info-btn');if(!nav||!btn)return;new MutationObserver(function(){if(nav.classList.contains('open')){btn.style.zIndex='1049';btn.style.opacity='0';}else{btn.style.zIndex='';btn.style.opacity='1';}}).observe(nav,{attributes:true,attributeFilter:['class']});})();
 <\/script>`;
 
 const ACTIVE_SCRIPT = `<script>
