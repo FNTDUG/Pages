@@ -103,12 +103,16 @@ const NAV_CSS = `<style>
 #ug-topnav{display:none!important}
 #ug-hamburger{display:flex!important}
 @media(min-width:769px){
-  #ug-hamburger{top:14px;right:18px;padding:10px 20px 10px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-hamburger .hmb-icon{font-size:22px}
-  #ug-mobile-nav{width:340px}
-  .ug-mn-link{font-size:12.5px}
-  .ug-mn-section-btn{font-size:11px}
-  .ug-mn-child{font-size:11.5px}
+  #ug-hamburger{top:20px;right:26px;padding:16px 32px 16px 24px;font-size:17px;border-radius:40px;gap:12px}
+  #ug-hamburger .hmb-icon{font-size:30px}
+  #ug-mobile-nav{width:420px}
+  .ug-mn-brand-logo{width:44px;height:44px}
+  .ug-mn-brand-name{font-size:16px}
+  .ug-mn-close{width:40px;height:40px;font-size:20px}
+  .ug-mn-link{font-size:15px;padding:16px 24px}
+  .ug-mn-section-btn{font-size:13px;padding:15px 24px}
+  .ug-mn-child{font-size:14px;padding:13px 24px 13px 36px}
+  .ug-mn-discord{font-size:14px}
 }
 </style>`;
 
