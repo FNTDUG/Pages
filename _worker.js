@@ -155,6 +155,7 @@ const NAV_CSS = `<style>
 .inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
 .inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
 .inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
+.ug-status-badge{white-space:nowrap}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -288,6 +289,28 @@ const ACTIVE_SCRIPT = `<script>
         if(btn && typeof ugMnSpinStart === 'function') ugMnSpinStart(btn);
       }
     }
+  });
+})();
+(function(){
+  var bs=document.querySelectorAll('.ug-status-badge[data-gh-file]');
+  if(!bs.length)return;
+  bs.forEach(function(b){
+    var file=b.getAttribute('data-gh-file');
+    var repo=b.getAttribute('data-gh-repo')||'FNTDUG/Pages';
+    var suffix=b.textContent.trim();
+    var key='ugh:'+repo+':'+file;
+    var hit=sessionStorage.getItem(key);
+    if(hit){b.textContent='Last updated - '+hit+(suffix?' '+suffix:'');return;}
+    fetch('https://api.github.com/repos/'+repo+'/commits?path='+encodeURIComponent(file)+'&per_page=1')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(!d||!d[0])return;
+        var dt=new Date(d[0].commit.committer.date);
+        var s=(dt.getMonth()+1)+'/'+dt.getDate()+'/'+String(dt.getFullYear()).slice(2);
+        sessionStorage.setItem(key,s);
+        b.textContent='Last updated - '+s+(suffix?' '+suffix:'');
+      })
+      .catch(function(){});
   });
 })();
 <\/script>`;
