@@ -202,7 +202,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var sh=(d&&d.shared)||{};
       var DESCS={
         bytes:{
-          // 'The Box': '[Obtainability]<br>XYZ<br>[Stats]<br>XYZ'
+         'The Box': '[Obtainability]<br>XYZ<br>[Stats]<br>XYZ'
         },
         chips:{
           // 'Chip Name': 'Description here.'
