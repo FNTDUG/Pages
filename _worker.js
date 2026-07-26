@@ -230,7 +230,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
-        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong>$1</strong>');}
+        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>');}
         var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
