@@ -219,7 +219,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
-        function hl(t){return t.replace(/\[([^\]]*)\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.1em">$1</span>');}
+        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.1em">$1</span>');}
         if(desc){desc.split('\n').forEach(function(line){var p=document.createElement('p');p.innerHTML=hl(line);c.appendChild(p);});}else{c.appendChild(document.createElement('p'));}
         return c;
       }
