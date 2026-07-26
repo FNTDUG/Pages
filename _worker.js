@@ -211,7 +211,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STATS]<br>● INCOME: -50% ~ +50%'
         },
         chips:{
-          // 'Chip Name': 'Description here.'
+         'Overwhelming Power': 'Description here.',
+         'Rapid Strikes': 'Description here.',
+         'Crowd Culler': 'Description here.',
+         'Weak Point': 'Description here.',
+         'Eye Augmentation': 'Description here.',
+         'Blazing Fire': 'Description here.'
         },
         enchants:{
           // 'Enchant Name': 'Description here.'
@@ -225,16 +230,17 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
-        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>');}
+        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong>$1</strong>');}
         var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
+      function sorted(obj){return Object.keys(obj).sort(function(a,b){return a.localeCompare(b);});}
       var bEl=document.getElementById('inf-bytes-inner');
-      if(bEl&&sh.bytes)Object.keys(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
+      if(bEl&&sh.bytes)sorted(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl&&sh.chips)Object.keys(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
+      if(cEl&&sh.chips)sorted(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
       var eEl=document.getElementById('inf-enchants-inner');
-      if(eEl&&sh.enchants)Object.keys(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
+      if(eEl&&sh.enchants)sorted(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
     })
     .catch(function(){});
 })();
