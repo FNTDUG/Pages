@@ -200,7 +200,18 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
     .then(function(r){return r.json();})
     .then(function(d){
       var sh=(d&&d.shared)||{};
-      function card(name,imgUrl,rarCls,borderBg){
+      var DESCS={
+        bytes:{
+          // 'Byte Name': 'Description here.'
+        },
+        chips:{
+          // 'Chip Name': 'Description here.'
+        },
+        enchants:{
+          // 'Enchant Name': 'Description here.'
+        }
+      };
+      function card(name,imgUrl,rarCls,borderBg,desc){
         var c=document.createElement('div');c.className='inf-card';
         var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
         var badge=document.createElement('span');badge.className='inf-img'+(rarCls?' inf-rarity-'+rarCls:'');
@@ -208,15 +219,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
-        c.appendChild(document.createElement('p'));
+        if(desc){desc.split('\n').forEach(function(line){var p=document.createElement('p');p.textContent=line;c.appendChild(p);});}else{c.appendChild(document.createElement('p'));}
         return c;
       }
       var bEl=document.getElementById('inf-bytes-inner');
-      if(bEl&&sh.bytes)Object.keys(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null));});
+      if(bEl&&sh.bytes)Object.keys(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl&&sh.chips)Object.keys(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null));});
+      if(cEl&&sh.chips)Object.keys(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
       var eEl=document.getElementById('inf-enchants-inner');
-      if(eEl&&sh.enchants)Object.keys(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color));});
+      if(eEl&&sh.enchants)Object.keys(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
     })
     .catch(function(){});
 })();
