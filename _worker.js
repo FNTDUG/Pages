@@ -206,7 +206,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Boss Drain': '[OBTAINMENT]<br>● Purchasable in Boss Raids Shop<br>[STATS]<br>● DAMAGE: 0% ~ +10%<br>● BOSS DAMAGE: -20% ~ +25%',
          'Reaper': '[OBTAINMENT]<br>● Chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE 0% ~ +40%',
          'KABOOM!': '[OBTAINMENT]<br>● Chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: 0% ~ +25%',
-         'The Fan': '[OBTAINMENT]<br>● Chance when leveling up in Boss Raids<br>[PASSIVE] Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: 30s ~ 25s<br>● SLOW%: -5% ~ -20%<br>● SLOW DURATION: 2s ~ 5s<br>● APPLY DURATION: 2s ~ 5s',
+         'The Fan': '[OBTAINMENT]<br>● Chance when leveling up in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: 30s ~ 25s<br>● SLOW%: -5% ~ -20%<br>● SLOW DURATION: 2s ~ 5s<br>● APPLY DURATION: 2s ~ 5s',
          'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVE]<br>● Able to give any single Element Boost<br>[STATS]<br>● ELEMENT DAMAGE: +2% ~ +10%<br>● ACTIVE DAMAGE: +10% ~ +35%',
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STATS]<br>● INCOME: -50% ~ +50%'
         },
