@@ -213,8 +213,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         chips:{
          _top: [
            '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
-           '[STATS]<br>● {All base Stats for Chips}<br>● Buff Potency: +6% ~ +30%<br>● Follow Up Damage: +6% ~ +30%<br>● Damage: +5% ~ +25%<br>● Cooldown: -2.5% ~ -12.5%<br>● DoT Damage: +6% ~ +30%<br>● Crit Chance: +5% ~ +25%<br>● Range: +5% ~ +25%<br>● Crit Damage: +8% ~ +40%',
-           '[STAT BONUSES]<br>● {All Possible Bonuses to Chips}
+           '[STATS]<br> {All base Stats for Chips}<br>● Buff Potency: +6% ~ +30%<br>● Follow Up Damage: +6% ~ +30%<br>● Damage: +5% ~ +25%<br>● Cooldown: -2.5% ~ -12.5%<br>● DoT Damage: +6% ~ +30%<br>● Crit Chance: +5% ~ +25%<br>● Range: +5% ~ +25%<br>● Crit Damage: +8% ~ +40%',
+           '[STAT BONUSES]<br> {All Possible Bonuses to Chips}
          ],
          'Overwhelming Power': 'Description here.',
          'Rapid Strikes': 'Description here.',
