@@ -234,13 +234,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
-      function sorted(obj){return Object.keys(obj).sort(function(a,b){return a.localeCompare(b);});}
+      var RAR_ORDER=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+      function rarRank(r){var i=RAR_ORDER.indexOf((r||'').toLowerCase());return i===-1?RAR_ORDER.length:i;}
+      function sorted(obj,getRar){return Object.keys(obj).sort(function(a,b){var rd=rarRank(getRar(obj[a]))-rarRank(getRar(obj[b]));return rd!==0?rd:a.localeCompare(b);});}
       var bEl=document.getElementById('inf-bytes-inner');
-      if(bEl&&sh.bytes)sorted(sh.bytes).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
+      if(bEl&&sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl&&sh.chips)sorted(sh.chips).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
+      if(cEl&&sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
       var eEl=document.getElementById('inf-enchants-inner');
-      if(eEl&&sh.enchants)sorted(sh.enchants).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
+      if(eEl&&sh.enchants)sorted(sh.enchants,function(v){return '';}).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
     })
     .catch(function(){});
 })();
