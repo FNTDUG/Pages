@@ -202,7 +202,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var sh=(d&&d.shared)||{};
       var DESCS={
         bytes:{
-          // 'The Box': '[Obtainability]\\nXYZ\\n[Stats]\\nXYZ'
+          // 'The Box': '[Obtainability]<br>XYZ<br>[Stats]<br>XYZ'
         },
         chips:{
           // 'Chip Name': 'Description here.'
@@ -220,7 +220,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
         function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.1em">$1</span>');}
-        if(desc){desc.split('\\n').forEach(function(line){var p=document.createElement('p');p.innerHTML=hl(line);c.appendChild(p);});}else{c.appendChild(document.createElement('p'));}
+        var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
       var bEl=document.getElementById('inf-bytes-inner');
