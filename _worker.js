@@ -212,9 +212,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         },
         chips:{
          _top: [
-           '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
+           '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively. Whether or not it is Part A or Part B is random',
            '[BASE STATS]<br>● Buff Potency: {+6% ~ +30%}<br>● Follow Up Damage: {+6% ~ +30%}<br>● Damage: {+5% ~ +25%}<br>● Cooldown: {-2.5% ~ -12.5%}<br>● DoT Damage: {+6% ~ +30%}<br>● Crit Chance: {+5% ~ +25%}<br>● Range: {+5% ~ +25%}<br>● Crit Damage: {+8% ~ +40%}',
-           '[STAT BONUSES]<br>{Rarities}<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>{Sub-Chips}<br>'
+           '[STAT BONUSES]<br>{Chip Rarity}<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>{Sub-Stats}<br>● Buff Potency: {+2% → +10%}<br>● Follow Up Damage: {+2.5% → +12.5%}<br>● Damage: {+2% → +10%}<br>● Cooldown: {-1% → -5%}<br>● DoT Damage: {+2% → +10%}<br>● Crit Chance: {+1.5% → +7.5%}<br>● Range: {+2% → +10%}<br>● Crit Damage: {+3% → +15%}'
          ],
          'Overwhelming Power': '[OBTAINMENT]<br>● Game 1<br>[SYNERGY BOOST]<br>● {+15%} Damage<br>[SYNERGY PASSIVE]<br>● Buff Damage by {+0.5%} per enemy in Range ({+5%} cap)',
          'Rapid Strikes': '[OBTAINMENT]<br>● Game 3<br>[SYNERGY BOOSTS]<br>● {-5%} Cooldown<br>● {+25%} Follow Up Damage<br>[SYNERGY PASSIVE]<br>● Enemies hit by Follow Ups take {+15%} Damage from this Unit for 3s',
@@ -224,7 +224,23 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Blazing Fire': '[OBTAINMENT]<br>● Game 6<br>[SYNERGY BOOST]<br>● {+20%} DoT Damage<br>[SYNERGY PASSIVE]<br>● When applying Burn to an enemy for the first time, Buff this Units Damage by {20%} for 10s (does not stack)'
         },
         enchants:{
-          // 'Enchant Name': 'Description here.'
+         'Damage 1-3': 'Description here.',
+         'Range 1-3': 'Description here.',
+         'Speed 1-3': 'Description here.',
+         'Puppets Nightmare': 'Description here.',
+         'Engineer': 'Description here.',
+         'Investor': 'Description here.',
+         'Haywire': 'Description here.',
+         'Phantom': 'Description here.',
+         'Blighted': 'Description here.',
+         'Shadow': 'Description here.',
+         'Scooped': 'Description here.',
+         'Springlocked': 'Description here.',
+         'Vengeance': 'Description here.',
+         'Hijacked': 'Description here.',
+         'Champion': 'Description here.',
+         'Prototype': 'Description here.',
+         'Thespian': 'Description here.'
         }
       };
       var RAR_GRAD={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
