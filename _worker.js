@@ -222,6 +222,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
           // 'Enchant Name': 'Description here.'
         }
       };
+      function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>');}
+      function textCard(desc){var c=document.createElement('div');c.className='inf-card';var p=document.createElement('p');p.innerHTML=hl(desc);c.appendChild(p);return c;}
       function card(name,imgUrl,rarCls,borderBg,desc){
         var c=document.createElement('div');c.className='inf-card';
         var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
@@ -230,7 +232,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
         row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
-        function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>');}
         var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
@@ -238,11 +239,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       function rarRank(r){var i=RAR_ORDER.indexOf((r||'').toLowerCase());return i===-1?RAR_ORDER.length:i;}
       function sorted(obj,getRar){return Object.keys(obj).sort(function(a,b){var rd=rarRank(getRar(obj[a]))-rarRank(getRar(obj[b]));return rd!==0?rd:a.localeCompare(b);});}
       var bEl=document.getElementById('inf-bytes-inner');
-      if(bEl&&sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});
+      if(bEl){if(DESCS.bytes._top)bEl.appendChild(textCard(DESCS.bytes._top));if(sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});}
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl&&sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});
+      if(cEl){if(DESCS.chips._top)cEl.appendChild(textCard(DESCS.chips._top));if(sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});}
       var eEl=document.getElementById('inf-enchants-inner');
-      if(eEl&&sh.enchants)sorted(sh.enchants,function(v){return '';}).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});
+      if(eEl){if(DESCS.enchants._top)eEl.appendChild(textCard(DESCS.enchants._top));if(sh.enchants)sorted(sh.enchants,function(v){return '';}).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});}
     })
     .catch(function(){});
 })();
