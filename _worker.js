@@ -211,8 +211,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}'
         },
         chips:{
-         _top: '[STATS]<br>● {All Possible Stat Bonus on Chips}<br>● ~nightmare:Buff Potency<br>● Follow Up Damage<br>● Damage<br>● Cooldown<br>● DoT Damage<br>● Crit Chance<br>● Range<br>● Crit Damage~', 
-         _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
+         _top: [
+           '[STATS]<br>● {All Possible Stat Bonus on Chips}<br>● ~nightmare:Buff Potency<br>● Follow Up Damage<br>● Damage<br>● Cooldown<br>● DoT Damage<br>● Crit Chance<br>● Range<br>● Crit Damage~',
+           '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively'
+         ],
          'Overwhelming Power': 'Description here.',
          'Rapid Strikes': 'Description here.',
          'Crowd Culler': 'Description here.',
@@ -241,12 +243,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var RAR_ORDER=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
       function rarRank(r){var i=RAR_ORDER.indexOf((r||'').toLowerCase());return i===-1?RAR_ORDER.length:i;}
       function sorted(obj,getRar){return Object.keys(obj).sort(function(a,b){var rd=rarRank(getRar(obj[a]))-rarRank(getRar(obj[b]));return rd!==0?rd:a.localeCompare(b);});}
+      function addTops(el,tops){if(!tops)return;(Array.isArray(tops)?tops:[tops]).forEach(function(t){el.appendChild(textCard(t));});}
       var bEl=document.getElementById('inf-bytes-inner');
-      if(bEl){if(DESCS.bytes._top)bEl.appendChild(textCard(DESCS.bytes._top));if(sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});}
+      if(bEl){addTops(bEl,DESCS.bytes._top);if(sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});}
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl){if(DESCS.chips._top)cEl.appendChild(textCard(DESCS.chips._top));if(sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});}
+      if(cEl){addTops(cEl,DESCS.chips._top);if(sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});}
       var eEl=document.getElementById('inf-enchants-inner');
-      if(eEl){if(DESCS.enchants._top)eEl.appendChild(textCard(DESCS.enchants._top));if(sh.enchants)sorted(sh.enchants,function(v){return '';}).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});}
+      if(eEl){addTops(eEl,DESCS.enchants._top);if(sh.enchants)sorted(sh.enchants,function(v){return '';}).forEach(function(n){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));});}
     })
     .catch(function(){});
 })();
