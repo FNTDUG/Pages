@@ -211,7 +211,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STATS]<br>● INCOME: {-50% ~ +50%}'
         },
         chips:{
-         _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a 30%, 20%, 20%, 15%, and 15% drop chance respectively',
+         _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, and ~nightmare:15%~ drop chance respectively',
          'Overwhelming Power': 'Description here.',
          'Rapid Strikes': 'Description here.',
          'Crowd Culler': 'Description here.',
