@@ -213,15 +213,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         chips:{
          _top: [
            '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
-           '[STATS]<br>{All base Stats for Chips}<br>● Buff Potency: {+6% ~ +30%}<br>● Follow Up Damage: {+6% ~ +30%}<br>● Damage: {+5% ~ +25%}<br>● Cooldown: {-2.5% ~ -12.5%}<br>● DoT Damage: {+6% ~ +30%}<br>● Crit Chance: {+5% ~ +25%}<br>● Range: {+5% ~ +25%}<br>● Crit Damage: {+8% ~ +40%}',
-           '[STAT BONUSES]<br>{All possible Bonuses to Chips}<br>{Rarities}<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>●{Sub-Chips}'
+           '[BASE STATS]<br>● Buff Potency: {+6% ~ +30%}<br>● Follow Up Damage: {+6% ~ +30%}<br>● Damage: {+5% ~ +25%}<br>● Cooldown: {-2.5% ~ -12.5%}<br>● DoT Damage: {+6% ~ +30%}<br>● Crit Chance: {+5% ~ +25%}<br>● Range: {+5% ~ +25%}<br>● Crit Damage: {+8% ~ +40%}',
+           '[STAT BONUSES]<br>{Rarities}<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>{Sub-Chips}<br>'
          ],
-         'Overwhelming Power': 'Description here.',
-         'Rapid Strikes': 'Description here.',
-         'Crowd Culler': 'Description here.',
-         'Weak Point': 'Description here.',
-         'Eye Augmentation': 'Description here.',
-         'Blazing Fire': 'Description here.'
+         'Overwhelming Power': '[OBTAINMENT]<br>● Game 1<br>[SYNERGY BOOST]<br>● +15% Damage<br>[SYNERGY PASSIVE]<br>● Buff Damage by +0.5% per enemy in Range (+5% cap)',
+         'Rapid Strikes': '[OBTAINMENT]<br>● Game 3<br>[SYNERGY BOOSTS]<br>● -5% Cooldown<br>● +25% Follow Up Damage<br>[SYNERGY PASSIVE]<br>● Enemies hit by Follow Ups take +15% Damage from this Unit for 3s',
+         'Crowd Culler': '[OBTAINMENT]<br>● Game 5<br>[SYNERGY PASSIVE]<br>● Buff Damage by +5% for each enemy in Range (cap of +25%)',
+         'Weak Point': '[OBTAINMENT]<br>● Game 2<br>[SYNERGY BOOST]<br>● +15% Crit Rate<br>● +30% Crit Damage',
+         'Eye Augmentation': '[OBTAINMENT]<br>● Game 4<br>[SYNERGY BOOST]<br>● +15% Range<br>● +10% Damage',
+         'Blazing Fire': '[OBTAINMENT]<br>● Game 6<br>[SYNERGY BOOST]<br>● + 20% DoT Damage<br>[SYNERGY PASSIVE]<br>● When applying Burn to an enemy for the first time, Buff this Units Damage by 20% for 10s (does not stack)'
         },
         enchants:{
           // 'Enchant Name': 'Description here.'
