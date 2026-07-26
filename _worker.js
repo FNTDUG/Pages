@@ -211,7 +211,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}'
         },
         chips:{
-         _top: '[STATS]<br>● {All Possible Stat Bonus on Chips}<br>● ~nightmare:Buff Potency<br>● Follow Up Damage<br>● Damage<br>● Cooldown<br>● DoT Damage<br>● Crit Chance<br>● Range<br>● Crit Damage~' 
+         _top: '[STATS]<br>● {All Possible Stat Bonus on Chips}<br>● ~nightmare:Buff Potency<br>● Follow Up Damage<br>● Damage<br>● Cooldown<br>● DoT Damage<br>● Crit Chance<br>● Range<br>● Crit Damage~', 
          _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
          'Overwhelming Power': 'Description here.',
          'Rapid Strikes': 'Description here.',
