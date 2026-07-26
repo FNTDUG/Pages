@@ -208,10 +208,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'KABOOM!': '[OBTAINMENT]<br>● Chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
          'The Fan': '[OBTAINMENT]<br>● Chance when leveling up in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
          'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVE]<br>● Able to give any single Element Boost<br>[STATS]<br>● ELEMENT DAMAGE: {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
-         'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STATS]<br>● INCOME: {-50% ~ +50%}'
+         'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}'
         },
         chips:{
-         _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, and ~nightmare:15%~ drop chance respectively',
+         _top: '[STATS]<br>● {All Possible Stat Bonus on Chips}<br>● ~nightmare:Buff Potency<br>● Follow Up Damage<br>● Damage<br>● Cooldown<br>● DoT Damage<br>● Crit Chance<br>● Range<br>● Crit Damage~' 
+         _top: '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively',
          'Overwhelming Power': 'Description here.',
          'Rapid Strikes': 'Description here.',
          'Crowd Culler': 'Description here.',
