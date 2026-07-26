@@ -144,7 +144,7 @@ const NAV_CSS = `<style>
 .inf-drop-inner{padding:10px 14px 16px;display:flex;flex-direction:column;gap:8px}
 .inf-card{background:#1a1b1e;border-radius:8px;padding:12px 14px;position:relative;line-height:1.75}
 .inf-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25)}
-.inf-card h4{font-family:'Audiowide',sans-serif;font-size:12px;color:#ffa45b;margin:0 0 6px;letter-spacing:.5px}
+.inf-card h4{font-family:'Audiowide',sans-serif;font-size:15px;color:#ffa45b;margin:0 0 6px;letter-spacing:.5px}
 .inf-card p{font-size:13px;color:#ccc;line-height:1.75;margin:0}
 .inf-card p+p{margin-top:6px}
 .inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:10px;padding:2px;margin:0 3px;flex-shrink:0;overflow:hidden}
