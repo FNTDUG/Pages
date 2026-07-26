@@ -202,7 +202,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var sh=(d&&d.shared)||{};
       var DESCS={
         bytes:{
-         'The Box': '[OBTAINMENT]<br>● Chance when opening any present<br>[STATS]<br>● COOLDOWN: +10% ~ -10%<br>● RANGE: -20% ~ +20%<br>● DAMAGE: -20% ~ +20%',
+         'The Box': '[OBTAINMENT]<br>● Chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
          'Boss Drain': '[OBTAINMENT]<br>● Purchasable in Boss Raids Shop<br>[STATS]<br>● DAMAGE: 0% ~ +10%<br>● BOSS DAMAGE: -20% ~ +25%',
          'Reaper': '[OBTAINMENT]<br>● Chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE 0% ~ +40%',
          'KABOOM!': '[OBTAINMENT]<br>● Chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: 0% ~ +25%',
