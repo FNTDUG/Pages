@@ -565,7 +565,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var DESCS={
         bytes:{
         _top: [
-           '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>● [1] No Change<br>● [2] Reroll Stats within the Bytes Stat Range<br>● [3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>● [3] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passive&#39;s Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
+           '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>● [1] No Change<br>● [2] Reroll Stats within the Bytes Stat Range<br>● [3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>● [3] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passives Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
          ],
          'The Box': '[OBTAINMENT]<br>● Chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
          'Boss Drain': '[OBTAINMENT]<br>● Purchasable in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
