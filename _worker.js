@@ -250,8 +250,9 @@ function infToggle(btn){
   if(lazy){var loaded=(lazy==='presents')?_presentsLoaded:_catLoaded[lazy];infLoad(lazy);if(!loaded){if(body){body.style.transition='none';body.style.maxHeight='0';}return;}}
   infOpen(body);
 }
-function infOpen(body){if(!body)return;body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';body.removeEventListener('transitionend',f);};body.addEventListener('transitionend',f);}
-function infClose(body){if(!body)return;body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
+function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
+function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
+function infClose(body){if(!body)return;_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
 function infLoad(lazy){if(lazy==='presents')return infLoadPresents();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
@@ -362,7 +363,7 @@ function buildPresents(pEl,data,imgMap){
       var ri=document.createElement('img');ri.src=imgMap[(r.name||'').toLowerCase()]||'';ri.alt=r.name||'';rb.appendChild(ri);
       var rname=document.createElement('div');rname.className='inf-reward-name';
       var _rg=_RG[(r.rarity||'').toLowerCase()];
-      if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:11px;word-break:break-word';}
+      if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
       rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
       var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!=null?r.chance+'%':'';
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rchance);inner.appendChild(rrow);
