@@ -226,6 +226,11 @@ var PRESENTS_CFG={
   'SlasherBonniePresent':{name:'Slasher Bonnie Present'},
   'Sweetheart Present':{name:'Sweetheart Toy Foxy Present'},
   'DreadbearPresent':{name:'Dreadbear Present'},
+  'Endo02Present':{name:'Endo 02 Present'},
+  'HalloweenPresent':{name:'Halloween Present'},
+  'JackOBonniePresent':{name:"Jack'O Bonnie"},
+  'Season1Present':{name:'Season 1 Present'},
+  'ShadowBonniePresent':{name:'Shadow Bonnie Present'},
     // Any field is optional — only define what you want to change:
     // 'Present Name':{name:'Display Name'}          ← just rename
     // 'Present Name':{rarity:'epic'}                ← just change rarity
@@ -330,7 +335,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Reaper': '[OBTAINMENT]<br>● Chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE {0% ~ +40%}',
          'KABOOM!': '[OBTAINMENT]<br>● Chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
          'The Fan': '[OBTAINMENT]<br>● Chance when leveling up in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
-         'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVE]<br>● Able to give any single Element Boost<br>● If the Unit and UFO share the same Element, gain a Damage Boost<br>[STATS]<br>● DAMAGE (Same Element): {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
+         'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVES]<br>● Able to give any single Element Boost<br>● If the Unit and UFO share the same Element, gain a Damage Boost<br>[STATS]<br>● DAMAGE (Same Element): {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}'
         },
         chips:{
