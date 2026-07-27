@@ -155,7 +155,7 @@ const NAV_CSS = `<style>
 .inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
 .inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
 .inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
-.ug-status-badge{white-space:nowrap}
+.ug-status-badge{white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
