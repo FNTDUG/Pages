@@ -516,7 +516,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   var displayImg=ov.image||base.image||'';
   var displayRar=(ov.rarity||base.rarity||'').toLowerCase();
   var card=document.createElement('div');card.className='inf-card';
-  var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px';
+  var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;font-size:13px;line-height:1.75';
   (src.fields||[]).forEach(function(f){
     var v=ov[f.key]!==undefined?ov[f.key]:base[f.key];
     if(v===undefined||v===null||v==='')return;
