@@ -214,6 +214,16 @@ function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentEle
 var _presentsLoaded=false;
 var PRESENTS_CFG={
   overrides:{
+  'Hero Present 1':{name:'Golden Freddy Present'},
+  'Hero Present 2':{name:'Puppet Present'},
+  'Hero Present 3':{name:'Springtrap Present'},
+  'ManglePresent':{name:'Mangle Present'},
+  'PartyGlockPresent':{name:'Party Glock Present'},
+  'PPCPresent':{name:'Party Packer Cupcake Present'},
+  'PuppetsAlliancePresent':{name:'Puppet's Alliance Present'},
+  'ScarecrowPresent':{name:'Scarecrow Freddy Present'},
+  'SlasherBonniePresent':{name:'Slasher Bonnie Present'},
+  'Sweetheart Present':{name:'Sweetheart Toy Foxy Present'},
     // Any field is optional — only define what you want to change:
     // 'Present Name':{name:'Display Name'}          ← just rename
     // 'Present Name':{rarity:'epic'}                ← just change rarity
