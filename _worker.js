@@ -223,7 +223,7 @@ var PRESENTS_CFG={
   'PuppetsAlliancePresent':{name:'Puppet's Alliance Present'},
   'ScarecrowPresent':{name:'Scarecrow Freddy Present'},
   'SlasherBonniePresent':{name:'Slasher Bonnie Present'},
-  'Sweetheart Present':{name:'Sweetheart Toy Foxy Present'},
+  'Sweetheart Present':{name:'Sweetheart Toy Foxy Present'}
     // Any field is optional — only define what you want to change:
     // 'Present Name':{name:'Display Name'}          ← just rename
     // 'Present Name':{rarity:'epic'}                ← just change rarity
