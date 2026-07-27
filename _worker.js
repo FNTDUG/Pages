@@ -234,6 +234,7 @@ function buildPresents(pEl,data,imgMap){
   if(!pEl||!data)return;
   var _RO=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
+  var _RG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   Object.keys(data).sort(function(a,b){var rd=_rr(data[a].rarity)-_rr(data[b].rarity);return rd!==0?rd:a.localeCompare(b);}).forEach(function(name){
     var p=data[name];
     var card=document.createElement('div');card.className='inf-card';
@@ -250,7 +251,7 @@ function buildPresents(pEl,data,imgMap){
       var rb=document.createElement('span');rb.className='inf-img'+(r.rarity?' inf-rarity-'+r.rarity:'');
       if(!r.rarity)rb.style.background='rgba(25,24,40,.9)';
       var ri=document.createElement('img');ri.src=imgMap[(r.name||'').toLowerCase()]||'';ri.alt=r.name||'';rb.appendChild(ri);
-      var rname=document.createElement('div');rname.className='inf-reward-name';rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
+      var rname=document.createElement('div');rname.className='inf-reward-name';var _rg=_RG[(r.rarity||'').toLowerCase()];if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px';}rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
       var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!==null&&r.chance!==undefined?r.chance+'%':'';
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rchance);inner.appendChild(rrow);
     });
