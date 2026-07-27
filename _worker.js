@@ -157,6 +157,16 @@ const NAV_CSS = `<style>
 .inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
 .ug-status-badge{white-space:nowrap}
 @media(max-width:768px){.ug-status-badge{font-size:8px;padding:4px 10px}#ug-info-panel{height:-webkit-fill-available;height:100dvh}}
+.inf-subdrop{border-bottom:1px solid rgba(255,164,91,.06)}
+.inf-subdrop-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:none;border:none;cursor:pointer;text-align:left;transition:background .12s}
+.inf-subdrop-btn:hover{background:rgba(255,164,91,.04)}
+.inf-subdrop.open>.inf-subdrop-btn{background:rgba(255,164,91,.05)}
+.inf-subdrop-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.inf-subdrop.open .inf-subdrop-body{max-height:1200px}
+.inf-subdrop-inner{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
+.inf-reward-row{display:flex;align-items:center;gap:8px}
+.inf-reward-name{font-size:11px;color:#ccc;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inf-reward-chance{font-size:10px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -183,18 +193,61 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
-      <button class="inf-drop-btn" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
+      <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
   </div>
 </div>
 <script>
 function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('open');document.getElementById('ug-info-overlay').classList.add('open');document.body.style.overflow='hidden'}
-function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow='';document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);});}
+function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow='';document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});}
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
 function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn));_infTimers.delete(btn);}var a=btn.querySelector('.inf-drop-arrow');if(a)a.textContent='/';}
-function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);}
+function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);if(!wasOpen&&btn.getAttribute('data-lazy')==='presents')infLoadPresents();}
+function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
+var _presentsLoaded=false;
+function infLoadPresents(){
+  if(_presentsLoaded)return;_presentsLoaded=true;
+  var pEl=document.getElementById('inf-presents-inner');
+  if(pEl){var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);}
+  Promise.all([
+    fetch('https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json').then(function(r){return r.json();}),
+    fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/json').then(function(r){return r.json();})
+  ]).then(function(res){
+    var presentsData=res[0];var unitsArr=res[1];
+    var imgMap={};
+    (Array.isArray(unitsArr)?unitsArr:[]).forEach(function(u){if(u.name&&u.imgNormal)imgMap[u.name.toLowerCase()]=u.imgNormal;});
+    if(pEl)pEl.innerHTML='';
+    buildPresents(pEl,presentsData,imgMap);
+  }).catch(function(){if(pEl){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load presents.';pEl.appendChild(e);}});
+}
+function buildPresents(pEl,data,imgMap){
+  if(!pEl||!data)return;
+  Object.keys(data).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){
+    var p=data[name];
+    var sd=document.createElement('div');sd.className='inf-subdrop';
+    var btn=document.createElement('button');btn.className='inf-subdrop-btn';
+    btn.addEventListener('click',function(){infSubToggle(btn);});
+    var badge=document.createElement('span');badge.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');
+    var img=document.createElement('img');img.src=p.image||'';img.alt=name;badge.appendChild(img);
+    var nameEl=document.createElement('span');nameEl.style.cssText='color:#fff;font-family:Audiowide,sans-serif;font-size:10px;flex:1;text-align:left;line-height:1.3';nameEl.textContent=name;
+    btn.appendChild(badge);btn.appendChild(nameEl);sd.appendChild(btn);
+    var body=document.createElement('div');body.className='inf-subdrop-body';
+    var inner=document.createElement('div');inner.className='inf-subdrop-inner';
+    (p.rewards||[]).forEach(function(r){
+      var row=document.createElement('div');row.className='inf-reward-row';
+      var rb=document.createElement('span');rb.className='inf-img'+(r.rarity?' inf-rarity-'+r.rarity:'');
+      if(!r.rarity)rb.style.background='rgba(25,24,40,.9)';
+      var ri=document.createElement('img');ri.src=imgMap[(r.name||'').toLowerCase()]||'';ri.alt=r.name||'';rb.appendChild(ri);
+      var rname=document.createElement('div');rname.className='inf-reward-name';rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
+      var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!==null&&r.chance!==undefined?r.chance+'%':'';
+      row.appendChild(rb);row.appendChild(rname);row.appendChild(rchance);
+      inner.appendChild(row);
+    });
+    body.appendChild(inner);sd.appendChild(body);pEl.appendChild(sd);
+  });
+}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 (function(){
