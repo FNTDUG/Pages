@@ -107,6 +107,7 @@ const NAV_CSS = `<style>
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:1040!important}
 #ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
+#ug-info-panel{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);will-change:transform;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
 #ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
@@ -169,7 +170,7 @@ const NAV_CSS = `<style>
 .inf-subdrop.open .inf-subdrop-body{max-height:1200px}
 .inf-subdrop-inner{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
 .inf-reward-row{display:flex;align-items:center;gap:8px}
-.inf-reward-name{font-size:11px;color:#ccc;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inf-reward-name{font-size:11px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:10px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
 </style>`;
 
@@ -211,6 +212,24 @@ function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn)
 function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);if(!wasOpen&&btn.getAttribute('data-lazy')==='presents')infLoadPresents();}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 var _presentsLoaded=false;
+var PRESENTS_CFG={
+  overrides:{
+    // Override name/image/rarity for an existing present:
+    // 'Present Name':{name:'Display Name',image:'https://...',rarity:'epic'}
+  },
+  add:{
+    // Add a brand new present:
+    // 'New Present':{rarity:'rare',image:'https://...',rewards:[{name:'X',type:'Unit',rarity:'epic',chance:100}]}
+  },
+  rewardOverrides:{
+    // Override a reward inside a specific present:
+    // 'Present Name':{'Reward Name':{name:'Override Name',rarity:'epic'}}
+  },
+  addRewards:{
+    // Add extra rewards to an existing present:
+    // 'Present Name':[{name:'Extra Reward',type:'Unit',rarity:'epic',chance:10}]
+  }
+};
 function infLoadPresents(){
   if(_presentsLoaded)return;_presentsLoaded=true;
   var pEl=document.getElementById('inf-presents-inner');
@@ -235,31 +254,46 @@ function buildPresents(pEl,data,imgMap){
   var _RO=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
   var _RG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
-  Object.keys(data).sort(function(a,b){var rd=_rr(data[a].rarity)-_rr(data[b].rarity);return rd!==0?rd:a.localeCompare(b);}).forEach(function(name){
-    var p=data[name];
+  var allData={};
+  Object.keys(data).forEach(function(k){allData[k]=data[k];});
+  Object.keys(PRESENTS_CFG.add||{}).forEach(function(k){allData[k]=PRESENTS_CFG.add[k];});
+  Object.keys(allData).sort(function(a,b){var rd=_rr(allData[a].rarity)-_rr(allData[b].rarity);return rd!==0?rd:a.localeCompare(b);}).forEach(function(name){
+    var p=allData[name];
+    var ov=PRESENTS_CFG.overrides[name]||{};
+    var displayName=ov.name||name;
+    var displayImg=ov.image||p.image||'';
+    var displayRar=(ov.rarity||p.rarity||'').toLowerCase();
+    var rewards=(p.rewards||[]).slice();
+    var rovs=PRESENTS_CFG.rewardOverrides[name]||{};
+    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};return {type:ro.type||r.type,name:ro.name||r.name,amount:r.amount,chance:r.chance,rarity:(ro.rarity||r.rarity||'').toLowerCase()};});
+    (PRESENTS_CFG.addRewards[name]||[]).forEach(function(r){rewards.push(r);});
+    rewards.sort(function(a,b){var rd=_rr(a.rarity)-_rr(b.rarity);return rd!==0?rd:(a.name||'').localeCompare(b.name||'');});
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
-    var badge=document.createElement('span');badge.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');
-    var img=document.createElement('img');img.src=p.image||'';img.alt=name;badge.appendChild(img);
-    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=name;
+    var badge=document.createElement('span');badge.className='inf-img'+(displayRar?' inf-rarity-'+displayRar:'');
+    var img=document.createElement('img');img.src=displayImg;img.alt=displayName;badge.appendChild(img);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName;
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
     var body=document.createElement('div');body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
-    (p.rewards||[]).forEach(function(r){
+    rewards.forEach(function(r){
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
       var rb=document.createElement('span');rb.className='inf-img'+(r.rarity?' inf-rarity-'+r.rarity:'');
       if(!r.rarity)rb.style.background='rgba(25,24,40,.9)';
       var ri=document.createElement('img');ri.src=imgMap[(r.name||'').toLowerCase()]||'';ri.alt=r.name||'';rb.appendChild(ri);
-      var rname=document.createElement('div');rname.className='inf-reward-name';var _rg=_RG[(r.rarity||'').toLowerCase()];if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px';}rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
-      var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!==null&&r.chance!==undefined?r.chance+'%':'';
+      var rname=document.createElement('div');rname.className='inf-reward-name';
+      var _rg=_RG[(r.rarity||'').toLowerCase()];
+      if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:11px;word-break:break-word';}
+      rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
+      var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!=null?r.chance+'%':'';
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rchance);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
     var open=false;
     row.addEventListener('click',function(){
       open=!open;
-      body.style.maxHeight=open?'1200px':'0';
+      body.style.maxHeight=open?'2000px':'0';
       row.style.marginBottom=open?'8px':'0';
       arr.textContent=open?'-':'/';
     });
