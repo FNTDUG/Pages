@@ -488,13 +488,10 @@ function buildCategory(pEl,catKey,data,unitRar){
     var shiny=shinyMap[name];
     var extraRow=null;
     if(shiny){
-      extraRow=document.createElement('div');extraRow.className='inf-reward-row';
+      extraRow=document.createElement('div');extraRow.style.cssText='display:flex;align-items:center;gap:10px;margin-top:8px';
       var _sb=document.createElement('span');_sb.className='inf-img inf-rarity-shiny';
       var _si=document.createElement('img');_si.src=shiny.image||'';_si.alt='Shiny '+displayName;_sb.appendChild(_si);
-      var _sn=document.createElement('div');
-      if(src.shinyName==='plain'){_sn.className='inf-reward-name';_sn.style.cssText='flex:1;min-width:0;word-break:break-word;font-family:Audiowide,sans-serif;color:#fff;font-weight:600';}
-      else{_sn.className='inf-reward-name inf-shiny-text';}
-      _sn.textContent='Shiny '+displayName;
+      var _sn=document.createElement('h4');_sn.style.cssText='margin:0;flex:1';_sn.textContent='Shiny '+displayName;
       extraRow.appendChild(_sb);extraRow.appendChild(_sn);
     }
     pEl.appendChild(buildOneSub(catKey,name,base,ov,unitRar,extraRow));
@@ -519,7 +516,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
       var rn=document.createElement('div');rn.className='inf-reward-name';rn.innerHTML=infHl(u.rarity?('~'+u.rarity+':'+v+'~'):v);
       rr.appendChild(rb);rr.appendChild(rn);inner.appendChild(rr);
     } else {
-      var ln=document.createElement('div');ln.style.cssText='font-size:11px;color:#ccc;line-height:1.6;margin-top:4px';
+      var ln=document.createElement('div');ln.style.cssText='font-size:13px;color:#ccc;line-height:1.75;margin-top:4px';
       ln.innerHTML=infHl('● '+(f.bold?('{'+v+'}'):v));
       inner.appendChild(ln);
     }
@@ -536,8 +533,8 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   card.appendChild(row);
   if(hasBody){
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
+    if(extraRow)body.appendChild(extraRow);
     if(hasInner)body.appendChild(inner);
-    if(extraRow){extraRow.style.marginTop=hasInner?'8px':'0';body.appendChild(extraRow);}
     card.appendChild(body);
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
   }
