@@ -314,15 +314,15 @@ function infLoadPresents(){
   if(pEl){var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);}
   function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
   Promise.all([
-    J('https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json',null),
-    J('https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',[]),
-    J(COS_BASE+'/skins.json',{}),
-    J(COS_BASE+'/pets.json',{}),
-    J(COS_BASE+'/banners.json',{}),
-    J(COS_BASE+'/loading-screens.json',{}),
-    J(ITM_BASE+'/materials.json',{}),
-    J(ITM_BASE+'/foods.json',{}),
-    J(ITM_BASE+'/potions.json',{})
+    J('/inf-data/presents',null),
+    J('/inf-data/units',[]),
+    J('/inf-data/skins',{}),
+    J('/inf-data/pets',{}),
+    J('/inf-data/banners',{}),
+    J('/inf-data/loading-screens',{}),
+    J('/inf-data/materials',{}),
+    J('/inf-data/foods',{}),
+    J('/inf-data/potions',{})
   ]).then(function(res){
     var presentsData=res[0];
     if(!presentsData){throw new Error('no presents');}
@@ -394,13 +394,13 @@ var INF_RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-
 function infHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=INF_RG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
 function infDur(s){s=Number(s);if(!isFinite(s))return String(s);if(s>=60){var m=Math.round(s/60*10)/10;return s+'s ('+m+'m)';}return s+'s';}
 var INFO_SOURCES={
-  banners:          {url:COS_BASE+'/banners.json',          mode:'lightbox'},
-  pets:             {url:COS_BASE+'/pets.json',             mode:'sub', shiny:true, shinyName:'gradient', fields:[{key:'speed',label:'Speed',bold:true}]},
-  skins:            {url:COS_BASE+'/skins.json',            mode:'sub', shiny:true, shinyName:'plain', unitLookup:true, fields:[{key:'unit',label:'Unit',unitRow:true}]},
-  'loading-screens':{url:COS_BASE+'/loading-screens.json',  mode:'lightbox'},
-  materials:        {url:ITM_BASE+'/materials.json',        mode:'sub', fields:[{key:'description',label:'Description'},{key:'obtainment',label:'Obtainment'}]},
-  potions:          {url:ITM_BASE+'/potions.json',          mode:'card', render:function(it){var L=[];if(it.description)L.push('[DESCRIPTION]<br>● '+it.description);if(it.type!=null&&it.type!=='')L.push('[TYPE]<br>● {'+it.type+'}');return L.join('<br>');}},
-  foods:            {url:ITM_BASE+'/foods.json',            mode:'card', render:function(it){return it.exp!=null?'[EXP]<br>● {'+it.exp+'}':'';}}
+  banners:          {url:'/inf-data/banners',         mode:'lightbox'},
+  pets:             {url:'/inf-data/pets',            mode:'sub', shiny:true, shinyName:'gradient', fields:[{key:'speed',label:'Speed',bold:true}]},
+  skins:            {url:'/inf-data/skins',           mode:'sub', shiny:true, shinyName:'plain', unitLookup:true, fields:[{key:'unit',label:'Unit',unitRow:true}]},
+  'loading-screens':{url:'/inf-data/loading-screens', mode:'lightbox'},
+  materials:        {url:'/inf-data/materials',       mode:'sub', fields:[{key:'description',label:'Description'},{key:'obtainment',label:'Obtainment'}]},
+  potions:          {url:'/inf-data/potions',         mode:'card', render:function(it){var L=[];if(it.description)L.push('[DESCRIPTION]<br>● '+it.description);if(it.type!=null&&it.type!=='')L.push('[TYPE]<br>● {'+it.type+'}');return L.join('<br>');}},
+  foods:            {url:'/inf-data/foods',           mode:'card', render:function(it){return it.exp!=null?'[EXP]<br>● {'+it.exp+'}':'';}}
 };
 // Same override/add logic as PRESENTS_CFG — any field optional. Keyed by category.
 //   overrides: { 'Item Name':{name:'New Name'} / {rarity:'epic'} / {image:'https://...'} / any field }
@@ -426,7 +426,7 @@ function infLoadCategory(catKey){
     .then(function(r){return r.json();})
     .then(function(data){
       if(src.unitLookup){
-        fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/json')
+        fetch('/inf-data/units')
           .then(function(r){return r.json();}).catch(function(){return [];})
           .then(function(arr){
             var um={};(Array.isArray(arr)?arr:[]).forEach(function(u){if(u.name)um[u.name.toLowerCase()]={rarity:(u.rarity||'').toLowerCase(),img:u.imgNormal||''};});
@@ -677,8 +677,36 @@ const ACTIVE_SCRIPT = `<script>
 })();
 <\/script>`;
 
+const INF_PROXY = {
+  'presents':        'https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json',
+  'units':           'https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',
+  'skins':           'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/skins.json',
+  'pets':            'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/pets.json',
+  'banners':         'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/banners.json',
+  'loading-screens': 'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/loading-screens.json',
+  'materials':       'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/materials.json',
+  'foods':           'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/foods.json',
+  'potions':         'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/potions.json'
+};
+
 export default {
   async fetch(request, env) {
+    // Same-origin JSON proxy so the browser never needs CORS on the r2.dev buckets
+    const url = new URL(request.url);
+    if (url.pathname.startsWith('/inf-data/')) {
+      const target = INF_PROXY[url.pathname.slice('/inf-data/'.length)];
+      if (!target) return new Response('Not found', { status: 404 });
+      const up = await fetch(target, { cf: { cacheTtl: 300, cacheEverything: true } });
+      return new Response(up.body, {
+        status: up.status,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'access-control-allow-origin': '*',
+          'cache-control': 'public, max-age=300'
+        }
+      });
+    }
+
     const response = await env.ASSETS.fetch(request);
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
