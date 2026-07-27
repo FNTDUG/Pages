@@ -155,7 +155,8 @@ const NAV_CSS = `<style>
 .inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
 .inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
 .inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
-.ug-status-badge{white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+.ug-status-badge{white-space:nowrap}
+@media(max-width:768px){.ug-status-badge{font-size:8px;padding:4px 10px}#ug-info-panel{height:-webkit-fill-available;height:100dvh}}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -189,11 +190,11 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
 </div>
 <script>
 function ugInfoOpen(){document.getElementById('ug-info-panel').classList.add('open');document.getElementById('ug-info-overlay').classList.add('open');document.body.style.overflow='hidden'}
-function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow=''}
+function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.overflow='';document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);});}
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
 function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn));_infTimers.delete(btn);}var a=btn.querySelector('.inf-drop-arrow');if(a)a.textContent='/';}
-function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);}
+function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 (function(){
