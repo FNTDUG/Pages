@@ -444,14 +444,15 @@ function buildCategory(pEl,catKey,data,unitRar){
   Object.keys(data).forEach(function(k){allData[k]=data[k];});
   Object.keys(cfg.add||{}).forEach(function(k){allData[k]=cfg.add[k];});
 
-  // Fold "Shiny X" variants into their base item
-  var shinyMap={};
+  // Fold "Shiny X" (and "Shiny Signed X") variants into their base item
+  var shinyMap={}; // baseKey -> [ {name, data} ]
   if(src.shiny){
-    Object.keys(allData).forEach(function(k){
+    var _keys=Object.keys(allData);
+    _keys.forEach(function(k){
       if(/^shiny /i.test(k)){
-        var baseName=k.replace(/^shiny /i,'');
-        var baseKey=Object.keys(allData).filter(function(x){return !/^shiny /i.test(x)&&x.toLowerCase()===baseName.toLowerCase();})[0];
-        if(baseKey){shinyMap[baseKey]=allData[k];delete allData[k];}
+        var baseName=k.replace(/^shiny\s+/i,'').replace(/^signed\s+/i,'');
+        var baseKey=_keys.filter(function(x){return !/^shiny /i.test(x)&&x.toLowerCase()===baseName.toLowerCase();})[0];
+        if(baseKey){(shinyMap[baseKey]=shinyMap[baseKey]||[]).push({name:k,data:allData[k]});delete allData[k];}
       }
     });
   }
@@ -498,20 +499,19 @@ function buildCategory(pEl,catKey,data,unitRar){
     }
 
     // ── Sub-dropdown style (pets / skins / materials): bytes/chips-style sections ──
-    var shiny=shinyMap[name];
-    var extraRow=null;
-    if(shiny){
-      extraRow=document.createElement('div');extraRow.style.cssText='display:flex;align-items:center;gap:10px;margin-top:8px';
+    var extraRows=(shinyMap[name]||[]).map(function(v){
+      var er=document.createElement('div');er.style.cssText='display:flex;align-items:center;gap:10px;margin-top:8px';
       var _sb=document.createElement('span');_sb.className='inf-img inf-rarity-shiny';
-      var _si=document.createElement('img');_si.src=shiny.image||'';_si.alt='Shiny '+displayName;_sb.appendChild(_si);
-      var _sn=document.createElement('h4');_sn.style.cssText='margin:0;flex:1';_sn.textContent='Shiny '+displayName;
-      extraRow.appendChild(_sb);extraRow.appendChild(_sn);
-    }
-    pEl.appendChild(buildOneSub(catKey,name,base,ov,unitRar,extraRow));
+      var _si=document.createElement('img');_si.src=(v.data&&v.data.image)||'';_si.alt=v.name;_sb.appendChild(_si);
+      var _sn=document.createElement('h4');_sn.style.cssText='margin:0;flex:1';_sn.textContent=v.name;
+      er.appendChild(_sb);er.appendChild(_sn);
+      return er;
+    });
+    pEl.appendChild(buildOneSub(catKey,name,base,ov,unitRar,extraRows));
   });
 }
-function buildOneSub(catKey,name,base,ov,unitData,extraRow){
-  var src=INFO_SOURCES[catKey];ov=ov||{};base=base||{};
+function buildOneSub(catKey,name,base,ov,unitData,extraRows){
+  var src=INFO_SOURCES[catKey];ov=ov||{};base=base||{};extraRows=extraRows||[];
   var displayName=ov.name||name;
   var displayImg=ov.image||base.image||'';
   var displayRar=(ov.rarity||base.rarity||'').toLowerCase();
@@ -535,7 +535,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
     }
   });
   var hasInner=inner.children.length>0;
-  var hasBody=hasInner||extraRow;
+  var hasBody=hasInner||extraRows.length;
   var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px'+(hasBody?';cursor:pointer':'');
   var badge=document.createElement('span');badge.className='inf-img'+(displayRar?' inf-rarity-'+displayRar:'');if(!displayRar)badge.style.background='rgba(25,24,40,.9)';
   var img=document.createElement('img');img.src=displayImg;img.alt=displayName;badge.appendChild(img);
@@ -546,7 +546,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   card.appendChild(row);
   if(hasBody){
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
-    if(extraRow)body.appendChild(extraRow);
+    extraRows.forEach(function(er){body.appendChild(er);});
     if(hasInner)body.appendChild(inner);
     card.appendChild(body);
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
