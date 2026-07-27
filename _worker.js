@@ -353,7 +353,7 @@ function buildPresents(pEl,data,rewMap){
     var displayRar=(ov.rarity||p.rarity||'').toLowerCase();
     var rewards=(p.rewards||[]).slice();
     var rovs=PRESENTS_CFG.rewardOverrides[name]||{};
-    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};return {type:ro.type||r.type,name:ro.name||r.name,amount:r.amount,chance:r.chance,rarity:(ro.rarity||r.rarity||'').toLowerCase()};});
+    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var look=rewMap[((ty||'Unit').toLowerCase())+'|'+((nm||'').toLowerCase())]||{};return {type:ty,name:nm,amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
     (PRESENTS_CFG.addRewards[name]||[]).forEach(function(r){rewards.push(r);});
     rewards.sort(function(a,b){var rd=_rr(a.rarity)-_rr(b.rarity);return rd!==0?rd:(a.name||'').localeCompare(b.name||'');});
     var card=document.createElement('div');card.className='inf-card';
@@ -366,9 +366,8 @@ function buildPresents(pEl,data,rewMap){
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     rewards.forEach(function(r){
-      var look=rewMap[((r.type||'Unit').toLowerCase())+'|'+(r.name||'').toLowerCase()]||{};
-      var rar=(look.rarity||r.rarity||'').toLowerCase();
-      var imgU=look.img||'';
+      var rar=(r.rarity||'').toLowerCase();
+      var imgU=r.img||'';
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
       var rb=document.createElement('span');rb.className='inf-img'+(rar?' inf-rarity-'+rar:'');
       if(!rar)rb.style.background='rgba(25,24,40,.9)';
@@ -566,7 +565,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var DESCS={
         bytes:{
         _top: [
-           '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>● [1] No Change<br>● [2] Reroll Stats within the Bytes Stat Range<br>● [3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>● [3] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passive's Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
+           '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>● [1] No Change<br>● [2] Reroll Stats within the Bytes Stat Range<br>● [3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>● [3] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passive&#39;s Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
          ],
          'The Box': '[OBTAINMENT]<br>● Chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
          'Boss Drain': '[OBTAINMENT]<br>● Purchasable in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
