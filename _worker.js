@@ -155,6 +155,10 @@ const NAV_CSS = `<style>
 .inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
 .inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
 .inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
+.inf-rarity-uncommon{background:linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))}
+.inf-rarity-apex{background:linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))}
+.inf-rarity-hero{background:linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))}
+.inf-rarity-shiny{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)}
 .ug-status-badge{white-space:nowrap}
 @media(max-width:768px){.ug-status-badge{font-size:8px;padding:4px 10px}#ug-info-panel{height:-webkit-fill-available;height:100dvh}}
 .inf-subdrop{border-bottom:1px solid rgba(255,164,91,.06)}
@@ -228,7 +232,9 @@ function infLoadPresents(){
 }
 function buildPresents(pEl,data,imgMap){
   if(!pEl||!data)return;
-  Object.keys(data).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){
+  var _RO=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+  function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
+  Object.keys(data).sort(function(a,b){var rd=_rr(data[a].rarity)-_rr(data[b].rarity);return rd!==0?rd:a.localeCompare(b);}).forEach(function(name){
     var p=data[name];
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
@@ -238,7 +244,7 @@ function buildPresents(pEl,data,imgMap){
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
     var body=document.createElement('div');body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
-    var inner=document.createElement('div');inner.style.cssText='padding-top:10px;display:flex;flex-direction:column;gap:6px';
+    var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     (p.rewards||[]).forEach(function(r){
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
       var rb=document.createElement('span');rb.className='inf-img'+(r.rarity?' inf-rarity-'+r.rarity:'');
