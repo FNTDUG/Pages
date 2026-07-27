@@ -312,21 +312,30 @@ function infLoadPresents(){
   if(_presentsLoaded)return;_presentsLoaded=true;
   var pEl=document.getElementById('inf-presents-inner');
   if(pEl){var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);}
-  fetch('https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json')
-    .then(function(r){return r.json();})
-    .then(function(presentsData){
-      if(pEl)pEl.innerHTML='';
-      fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/json')
-        .then(function(r){return r.json();})
-        .catch(function(){return [];})
-        .then(function(unitsArr){
-          var imgMap={};
-          (Array.isArray(unitsArr)?unitsArr:[]).forEach(function(u){if(u.name&&u.imgNormal)imgMap[u.name.toLowerCase()]=u.imgNormal;});
-          buildPresents(pEl,presentsData,imgMap);
-          var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
-        });
-    })
-    .catch(function(){if(pEl){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load presents.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);}});
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  Promise.all([
+    J('https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json',null),
+    J('https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',[]),
+    J(COS_BASE+'/skins.json',{}),
+    J(COS_BASE+'/pets.json',{}),
+    J(COS_BASE+'/banners.json',{}),
+    J(COS_BASE+'/loading-screens.json',{}),
+    J(ITM_BASE+'/materials.json',{}),
+    J(ITM_BASE+'/foods.json',{}),
+    J(ITM_BASE+'/potions.json',{})
+  ]).then(function(res){
+    var presentsData=res[0];
+    if(!presentsData){throw new Error('no presents');}
+    // Combined reward lookup keyed "type|name" → {img,rarity}
+    var rewMap={};
+    function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+    function addArr(type,arr){(Array.isArray(arr)?arr:[]).forEach(function(u){if(u.name)rewMap[type+'|'+u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});}
+    function addObj(type,obj){Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};rewMap[type+'|'+n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});}
+    addArr('unit',res[1]);addObj('skin',res[2]);addObj('pet',res[3]);addObj('banner',res[4]);addObj('loading screen',res[5]);addObj('material',res[6]);addObj('food',res[7]);addObj('potion',res[8]);
+    if(pEl)pEl.innerHTML='';
+    buildPresents(pEl,presentsData,rewMap);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){if(pEl){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load presents.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);}});
 }
 function buildPresents(pEl,data,imgMap){
   if(!pEl||!data)return;
@@ -357,12 +366,15 @@ function buildPresents(pEl,data,imgMap){
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     rewards.forEach(function(r){
+      var look=rewMap[((r.type||'Unit').toLowerCase())+'|'+(r.name||'').toLowerCase()]||{};
+      var rar=(look.rarity||r.rarity||'').toLowerCase();
+      var imgU=look.img||'';
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
-      var rb=document.createElement('span');rb.className='inf-img'+(r.rarity?' inf-rarity-'+r.rarity:'');
-      if(!r.rarity)rb.style.background='rgba(25,24,40,.9)';
-      var ri=document.createElement('img');ri.src=imgMap[(r.name||'').toLowerCase()]||'';ri.alt=r.name||'';rb.appendChild(ri);
+      var rb=document.createElement('span');rb.className='inf-img'+(rar?' inf-rarity-'+rar:'');
+      if(!rar)rb.style.background='rgba(25,24,40,.9)';
+      var ri=document.createElement('img');ri.src=imgU;ri.alt=r.name||'';rb.appendChild(ri);
       var rname=document.createElement('div');rname.className='inf-reward-name';
-      var _rg=_RG[(r.rarity||'').toLowerCase()];
+      var _rg=_RG[rar];
       if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
       rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
       var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!=null?r.chance+'%':'';
