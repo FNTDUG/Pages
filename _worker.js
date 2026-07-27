@@ -377,6 +377,7 @@ function buildPresents(pEl,data,rewMap){
       if(_rg){rname.style.cssText='background:'+_rg+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
       rname.textContent=(r.name||'')+(r.type?' ('+r.type+')':'');
       var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!=null?r.chance+'%':'';
+      if((r.type||'').toLowerCase()==='unit'&&r.name){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(r.name);}
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rchance);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
@@ -521,14 +522,15 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   (src.fields||[]).forEach(function(f){
     var v=ov[f.key]!==undefined?ov[f.key]:base[f.key];
     if(v===undefined||v===null||v==='')return;
-    var hd=document.createElement('div');hd.style.cssText=inner.children.length?'margin-top:8px':'';hd.innerHTML=infHl('['+String(f.label).toUpperCase()+']');inner.appendChild(hd);
+    if(!f.unitRow){var hd=document.createElement('div');hd.style.cssText=inner.children.length?'margin-top:8px':'';hd.innerHTML=infHl('['+String(f.label).toUpperCase()+']');inner.appendChild(hd);}
     if(f.unitRow&&unitData){
       var u=unitData[String(v).toLowerCase()]||{};
-      var rr=document.createElement('div');rr.className='inf-reward-row';rr.style.marginTop='4px';
+      var rr=document.createElement('div');rr.className='inf-reward-row';rr.style.marginTop='4px';rr.style.cursor='pointer';
       var rb=document.createElement('span');rb.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');if(!u.rarity)rb.style.background='rgba(25,24,40,.9)';
       var ri=document.createElement('img');ri.src=u.img||'';ri.alt=v;rb.appendChild(ri);
       var rn=document.createElement('div');rn.className='inf-reward-name';rn.innerHTML=infHl(u.rarity?('~'+u.rarity+':'+v+'~'):v);
       rr.appendChild(rb);rr.appendChild(rn);inner.appendChild(rr);
+      (function(un){rr.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(v);
     } else {
       var ln=document.createElement('div');ln.style.cssText='font-size:13px;color:#ccc;line-height:1.75;margin-top:4px';
       ln.innerHTML=infHl('● '+(f.bold?('{'+v+'}'):v));
@@ -709,7 +711,14 @@ export default {
       });
     }
 
-    const response = await env.ASSETS.fetch(request);
+    // Deep links like /fntd2/unit-engine/<UnitName> serve the unit-engine page;
+    // the page's JS reads the unit name from the path and opens it.
+    let assetReq = request;
+    if (/^\/fntd2\/unit-engine\/.+/.test(url.pathname)) {
+      assetReq = new Request(new URL('/fntd2/unit-engine', url).toString(), request);
+    }
+
+    const response = await env.ASSETS.fetch(assetReq);
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
