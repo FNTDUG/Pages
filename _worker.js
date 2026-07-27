@@ -201,6 +201,34 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="pets" onclick="infToggle(this)">Pets <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-pets-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="skins" onclick="infToggle(this)">Unit Skins <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-skins-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="loading-screens" onclick="infToggle(this)">Loading Screens <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-loading-screens-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="materials" onclick="infToggle(this)">Materials <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-materials-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="potions" onclick="infToggle(this)">Potions <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-potions-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="foods" onclick="infToggle(this)">Food <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-foods-inner"></div></div>
+    </div>
   </div>
 </div>
 <script>
@@ -210,7 +238,8 @@ function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
 function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn));_infTimers.delete(btn);}var a=btn.querySelector('.inf-drop-arrow');if(a)a.textContent='/';}
-function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');var isP=btn.getAttribute('data-lazy')==='presents';document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);if(!wasOpen&&isP){var db=s.querySelector('.inf-drop-body');if(db){db.style.transition='none';db.style.maxHeight='999999px';}infLoadPresents();}else if(wasOpen&&isP){var db=s.querySelector('.inf-drop-body');if(db){db.style.transition='none';db.style.maxHeight='';}}}
+function infToggle(btn){var s=btn.closest('.inf-drop');var wasOpen=s.classList.contains('open');var lazy=btn.getAttribute('data-lazy');document.querySelectorAll('.inf-drop.open').forEach(function(d){if(d!==s){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';}});s.classList.toggle('open');wasOpen?_infStop(btn):_infSpin(btn);var body=s.querySelector('.inf-drop-body');if(!wasOpen&&lazy){if(body){body.style.transition='none';body.style.maxHeight='999999px';}infLoad(lazy);}else if(wasOpen&&lazy){if(body){body.style.transition='none';body.style.maxHeight='';}}}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 var _presentsLoaded=false;
 var PRESENTS_CFG={
@@ -317,6 +346,105 @@ function buildPresents(pEl,data,imgMap){
       row.style.marginBottom=open?'8px':'0';
       arr.textContent=open?'-':'/';
     });
+    pEl.appendChild(card);
+  });
+}
+// ── Generic category tabs (banners / pets / skins / loading-screens / materials / potions / foods) ──
+var COS_BASE='https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev';
+var ITM_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev';
+var INF_RO=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+function infRr(r){var i=INF_RO.indexOf((r||'').toLowerCase());return i===-1?INF_RO.length:i;}
+var INF_RG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
+function infHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=INF_RG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
+var INFO_SOURCES={
+  banners:          {url:COS_BASE+'/banners.json',          style:'sub',  fields:[]},
+  pets:             {url:COS_BASE+'/pets.json',             style:'sub',  fields:[{key:'speed',label:'Speed'}]},
+  skins:            {url:COS_BASE+'/skins.json',            style:'sub',  fields:[{key:'unit',label:'Unit'}]},
+  'loading-screens':{url:COS_BASE+'/loading-screens.json',  style:'sub',  fields:[]},
+  materials:        {url:ITM_BASE+'/materials.json',        style:'sub',  fields:[{key:'description',label:'Description'},{key:'obtainment',label:'Obtainment'}]},
+  potions:          {url:ITM_BASE+'/potions.json',          style:'card', fields:[{key:'description',label:''},{key:'type',label:'Type'},{key:'duration',label:'Duration (s)'},{key:'boostMultiplier',label:'Multiplier'}]},
+  foods:            {url:ITM_BASE+'/foods.json',            style:'card', fields:[{key:'exp',label:'EXP'}]}
+};
+// Same override/add logic as PRESENTS_CFG — any field optional. Keyed by category.
+//   overrides: { 'Item Name':{name:'New Name'} / {rarity:'epic'} / {image:'https://...'} / any field }
+//   add:       { 'New Item':{rarity:'rare',image:'https://...',<fields>} }
+var INFO_CFG={
+  banners:          {overrides:{}, add:{}},
+  pets:             {overrides:{}, add:{}},
+  skins:            {overrides:{}, add:{}},
+  'loading-screens':{overrides:{}, add:{}},
+  materials:        {overrides:{}, add:{}},
+  potions:          {overrides:{}, add:{}},
+  foods:            {overrides:{}, add:{}}
+};
+var _catLoaded={};
+function infLoadCategory(catKey){
+  if(_catLoaded[catKey])return;_catLoaded[catKey]=true;
+  var pEl=document.getElementById('inf-'+catKey+'-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  fetch(INFO_SOURCES[catKey].url)
+    .then(function(r){return r.json();})
+    .then(function(data){pEl.innerHTML='';buildCategory(pEl,catKey,data);})
+    .catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);});
+}
+function buildCategory(pEl,catKey,data){
+  if(!pEl||!data)return;
+  var src=INFO_SOURCES[catKey];
+  var cfg=INFO_CFG[catKey]||{overrides:{},add:{}};
+  var ovs=cfg.overrides||{};
+  var allData={};
+  Object.keys(data).forEach(function(k){allData[k]=data[k];});
+  Object.keys(cfg.add||{}).forEach(function(k){allData[k]=cfg.add[k];});
+  Object.keys(allData).sort(function(a,b){
+    var ra=(ovs[a]&&ovs[a].rarity)||allData[a].rarity||'';
+    var rb=(ovs[b]&&ovs[b].rarity)||allData[b].rarity||'';
+    var rd=infRr(ra)-infRr(rb);
+    return rd!==0?rd:a.localeCompare(b);
+  }).forEach(function(name){
+    var base=allData[name]||{};
+    var ov=ovs[name]||{};
+    var displayName=ov.name||name;
+    var displayImg=ov.image||base.image||'';
+    var displayRar=(ov.rarity||base.rarity||'').toLowerCase();
+    var card=document.createElement('div');card.className='inf-card';
+
+    if(src.style==='card'){
+      var crow=document.createElement('div');crow.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+      var cbadge=document.createElement('span');cbadge.className='inf-img'+(displayRar?' inf-rarity-'+displayRar:'');
+      if(!displayRar)cbadge.style.background='rgba(25,24,40,.9)';
+      var cimg=document.createElement('img');cimg.src=displayImg;cimg.alt=displayName;cbadge.appendChild(cimg);
+      var ch4=document.createElement('h4');ch4.style.margin='0';ch4.textContent=displayName;
+      crow.appendChild(cbadge);crow.appendChild(ch4);card.appendChild(crow);
+      var cparts=[];
+      src.fields.forEach(function(f){
+        var v=ov[f.key]!==undefined?ov[f.key]:base[f.key];
+        if(v===undefined||v===null||v==='')return;
+        cparts.push(f.label?('['+f.label+']<br>'+v):String(v));
+      });
+      if(cparts.length){var cp=document.createElement('p');cp.innerHTML=infHl(cparts.join('<br>'));card.appendChild(cp);}
+    } else {
+      var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
+      var badge=document.createElement('span');badge.className='inf-img'+(displayRar?' inf-rarity-'+displayRar:'');
+      if(!displayRar)badge.style.background='rgba(25,24,40,.9)';
+      var img=document.createElement('img');img.src=displayImg;img.alt=displayName;badge.appendChild(img);
+      var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName;
+      var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
+      row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
+      var body=document.createElement('div');body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
+      var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;font-size:11px;color:#ccc;line-height:1.6';
+      var lines=[];
+      src.fields.forEach(function(f){
+        var v=ov[f.key]!==undefined?ov[f.key]:base[f.key];
+        if(v===undefined||v===null||v==='')return;
+        lines.push('['+f.label+']<br>'+v);
+      });
+      if(!lines.length)lines.push('[Rarity]<br>'+(displayRar?displayRar.charAt(0).toUpperCase()+displayRar.slice(1):'—'));
+      inner.innerHTML=infHl(lines.join('<br>'));
+      body.appendChild(inner);card.appendChild(body);
+      var open=false;
+      row.addEventListener('click',function(){open=!open;body.style.maxHeight=open?'2000px':'0';row.style.marginBottom=open?'8px':'0';arr.textContent=open?'-':'/';});
+    }
     pEl.appendChild(card);
   });
 }
