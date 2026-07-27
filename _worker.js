@@ -173,8 +173,8 @@ const NAV_CSS = `<style>
 .inf-subdrop.open .inf-subdrop-body{max-height:1200px}
 .inf-subdrop-inner{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
 .inf-reward-row{display:flex;align-items:center;gap:8px}
-.inf-reward-name{font-size:11px;color:#ccc;flex:1;min-width:0;word-break:break-word}
-.inf-reward-chance{font-size:10px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
+.inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
+.inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
 </style>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
