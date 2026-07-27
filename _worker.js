@@ -337,7 +337,7 @@ function infLoadPresents(){
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){if(pEl){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load presents.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);}});
 }
-function buildPresents(pEl,data,imgMap){
+function buildPresents(pEl,data,rewMap){
   if(!pEl||!data)return;
   var _RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
