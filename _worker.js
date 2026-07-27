@@ -226,23 +226,23 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Blazing Fire': '[OBTAINMENT]<br>● Game 6<br>[SYNERGY BOOST]<br>● {+20%} DoT Damage<br>[SYNERGY PASSIVE]<br>● When applying Burn to an enemy for the first time, Buff this Units Damage by {20%} for 10s (does not stack)'
         },
         enchants:{
-         'Damage 1-3': 'Description here.',
-         'Range 1-3': 'Description here.',
-         'Speed 1-3': 'Description here.',
-         'Puppets Nightmare': 'Description here.',
-         'Engineer': 'Description here.',
-         'Investor': 'Description here.',
-         'Haywire': 'Description here.',
-         'Phantom': 'Description here.',
-         'Blighted': 'Description here.',
-         'Shadow': 'Description here.',
-         'Scooped': 'Description here.',
-         'Springlocked': 'Description here.',
-         'Vengeance': 'Description here.',
-         'Hijacked': 'Description here.',
-         'Champion': 'Description here.',
-         'Prototype': 'Description here.',
-         'Thespian': 'Description here.'
+         'Damage': '[OBTAINMENT]<br>● 25.8% from Enchanting<br>[BOOST]<br>● {+15%} Damage',
+         'Range': '[OBTAINMENT]<br>● 25.8% from Enchanting<br>[BOOST]<br>● {+15%} Range',
+         'Speed': '[OBTAINMENT]<br>● 25.8% from Enchanting<br>[BOOST]<br>● {-12.5%} Cooldown',
+         'Engineer': '[OBTAINMENT]<br>● 12% from Enchanting<br>[BOOST]<br>● {+50%} Unit EXP',
+         'Puppets Nightmare': '[OBTAINMENT]<br>● 10% from Enchanting<br>[BOOST]<br>● {+25%} Range',
+         'Investor': '[OBTAINMENT]<br>● 2% from Enchanting<br>[BOOSTS]<br>● {+25%} Income<br>● {-10%} Cost',
+         'Haywire': '[OBTAINMENT]<br>● 1.5% from Enchanting<br>[BOOST]<br>● {-25%} Cooldown',
+         'Phantom': '[OBTAINMENT]<br>● 0.5% from Enchanting<br>[PITY]<br>● 300<br>[BOOSTS]<br>● {+10%} Damage<br>● {-12%} Cooldown<br>● {+35%} Range',
+         'Blighted': '[OBTAINMENT]<br>● 0.25% from Enchanting<br>[PITY]<br>● 900<br>[BOOSTS]<br>● {+12.5%} Damage<br>● {-25%} Cooldown<br>● {+5%} Range',
+         'Shadow': '[OBTAINMENT]<br>● 0.1% from Enchanting<br>[PITY]<br>● 1500<br>[BOOSTS]<br>● {+50%} Damage<br>● {-12.5%} Cooldown',
+         'Scooped': '[OBTAINMENT]<br>● 0.05% from Enchanting<br>[PITY]<br>● 2500<br>[BOOSTS]<br>● {+50%} Crit Damage<br>● {+50%} Crit Chance',
+         'Springlocked': '[OBTAINMENT]<br>● 0.04% from Enchanting<br>[PITY]<br>● 3000<br>[BOOSTS]<br>● {+80%} Damage<br>● {+10%} Range<br>● {+30%} True Damage<br>● {+10%} Cooldown',
+         'Vengeance': '[OBTAINMENT]<br>● 0.02% from Enchanting<br>[PITY]<br>● 6000<br>[BOOSTS]<br>● {+90%} Damage<br>● {+15%} Range<br>● {-5%} Cooldown',
+         'Hijacked': '[OBTAINMENT]<br>● 0.004% from Enchanting<br>[PITY]<br>● 30000<br>[BOOSTS]<br>● {+120%} Damage<br>● {+5%} Range<br>● {-7.5%} Cooldown<br>[PASSIVE]<br>● Locks Units placements 1. in return gain {+180%} Damage per placement lost',
+         'Champion': '[OBTAINMENT]<br>● Exclusive<br>[BOOSTS]<br>● {+75%} Damage<br>● {+20%} Range<br>● {-12%} Cooldown',
+         'Prototype': '[OBTAINMENT]<br>● Exclusive<br>[BOOSTS]<br>● {+100%} Damage<br>● {+20%} True Damage<br>● {+10%} Range<br>● {-12%} Cooldown',
+         'Thespian': '[OBTAINMENT]<br>● Exclusive<br>[BOOSTS]<br>● {+100%} Damage<br>● {+20%} True Damage<br>● {+10%} Range<br>● {-12%} Cooldown'
         }
       };
       var RAR_GRAD={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
