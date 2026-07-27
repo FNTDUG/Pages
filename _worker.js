@@ -408,7 +408,7 @@ var INFO_SOURCES={
 //   hide:      [ 'Exact Item Name', ... ]   ← removes those entries from the tab
 var INFO_CFG={
   banners:          {overrides:{}, add:{}, hide:[]},
-  pets:             {overrides:{}, add:{}, hide:[]},
+  pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   'loading-screens':{overrides:{}, add:{}, hide:[]},
   materials:        {overrides:{}, add:{}, hide:[]},
