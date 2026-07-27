@@ -405,14 +405,15 @@ var INFO_SOURCES={
 // Same override/add logic as PRESENTS_CFG — any field optional. Keyed by category.
 //   overrides: { 'Item Name':{name:'New Name'} / {rarity:'epic'} / {image:'https://...'} / any field }
 //   add:       { 'New Item':{rarity:'rare',image:'https://...',<fields>} }
+//   hide:      [ 'Exact Item Name', ... ]   ← removes those entries from the tab
 var INFO_CFG={
-  banners:          {overrides:{}, add:{}},
-  pets:             {overrides:{}, add:{}},
-  skins:            {overrides:{}, add:{}},
-  'loading-screens':{overrides:{}, add:{}},
-  materials:        {overrides:{}, add:{}},
-  potions:          {overrides:{}, add:{}},
-  foods:            {overrides:{}, add:{}}
+  banners:          {overrides:{}, add:{}, hide:[]},
+  pets:             {overrides:{}, add:{}, hide:[]},
+  skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
+  'loading-screens':{overrides:{}, add:{}, hide:[]},
+  materials:        {overrides:{}, add:{}, hide:[]},
+  potions:          {overrides:{}, add:{}, hide:[]},
+  foods:            {overrides:{}, add:{}, hide:[]}
 };
 var _catLoaded={};
 function infLoadCategory(catKey){
@@ -440,9 +441,10 @@ function buildCategory(pEl,catKey,data,unitRar){
   var src=INFO_SOURCES[catKey];
   var cfg=INFO_CFG[catKey]||{overrides:{},add:{}};
   var ovs=cfg.overrides||{};
+  var hideSet={};(cfg.hide||[]).forEach(function(h){hideSet[String(h).toLowerCase()]=1;});
   var allData={};
-  Object.keys(data).forEach(function(k){allData[k]=data[k];});
-  Object.keys(cfg.add||{}).forEach(function(k){allData[k]=cfg.add[k];});
+  Object.keys(data).forEach(function(k){if(!hideSet[k.toLowerCase()])allData[k]=data[k];});
+  Object.keys(cfg.add||{}).forEach(function(k){if(!hideSet[k.toLowerCase()])allData[k]=cfg.add[k];});
 
   // Fold "Shiny X" variants into their base item
   var shinyMap={};
