@@ -147,7 +147,8 @@ const NAV_CSS = `<style>
 .inf-mg-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25)}
 .inf-mg-item:hover{background:#232427}
 .inf-mg-item:active{transform:scale(.99)}
-.inf-mg-play{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:rgba(255,164,91,.15);color:#ffa45b;font-size:11px}
+.inf-mg-play{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:rgba(255,164,91,.15)}
+.inf-mg-play::before{content:'';display:block;width:0;height:0;border-style:solid;border-width:6px 0 6px 9px;border-color:transparent transparent transparent #ffa45b;margin-left:2px}
 .inf-mg-name{flex:1;line-height:1.4}
 .inf-mg-fs{position:fixed;inset:0;z-index:20000;background:#000;display:flex;align-items:center;justify-content:center}
 .inf-mg-fs video{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:#000}
@@ -198,13 +199,6 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
   </div>
   <div id="ug-info-body" style="flex:1">
     <div class="inf-drop">
-      <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner">
-        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play">&#9654;</span><span class="inf-mg-name">Circus Baby (Normal Ending)</span></button>
-        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play">&#9654;</span><span class="inf-mg-name">Circus Baby (Secret Ending)</span></button>
-      </div></div>
-    </div>
-    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Bytes <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-bytes-inner"></div></div>
     </div>
@@ -239,6 +233,13 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="materials" onclick="infToggle(this)">Materials <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-materials-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner">
+        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play"></span><span class="inf-mg-name">Circus Baby (Normal Ending)</span></button>
+        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play"></span><span class="inf-mg-name">Circus Baby (Secret Ending)</span></button>
+      </div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="potions" onclick="infToggle(this)">Potions <span class="inf-drop-arrow">/</span></button>
