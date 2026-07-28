@@ -143,6 +143,15 @@ const NAV_CSS = `<style>
 .inf-drop-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
 .inf-drop.open .inf-drop-body{max-height:4000px}
 .inf-drop-inner{padding:10px 14px 16px;display:flex;flex-direction:column;gap:8px}
+.inf-mg-item{display:flex;align-items:center;gap:12px;width:100%;background:#1a1b1e;border:none;border-radius:8px;padding:14px;position:relative;cursor:pointer;text-align:left;font-family:'Audiowide',sans-serif;color:#e8e8e8;font-size:13px;letter-spacing:.5px;transition:background .12s,transform .08s}
+.inf-mg-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25)}
+.inf-mg-item:hover{background:#232427}
+.inf-mg-item:active{transform:scale(.99)}
+.inf-mg-play{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:rgba(255,164,91,.15);color:#ffa45b;font-size:11px}
+.inf-mg-name{flex:1;line-height:1.4}
+.inf-mg-fs{position:fixed;inset:0;z-index:20000;background:#000;display:flex;align-items:center;justify-content:center}
+.inf-mg-fs video{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:#000}
+.inf-mg-fs-close{position:fixed;top:14px;right:16px;z-index:20001;width:42px;height:42px;border-radius:50%;background:rgba(20,10,30,.82);border:1px solid rgba(255,164,91,.4);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
 .inf-card{background:#1a1b1e;border-radius:8px;padding:12px 14px;position:relative;line-height:1.75}
 .inf-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ffa45b;border-radius:3px 0 0 3px;box-shadow:0 0 8px rgba(255,164,91,.25)}
 .inf-card h4{font-family:'Audiowide',sans-serif;font-size:15px;color:#ffa45b;margin:0 0 6px;letter-spacing:.5px}
@@ -188,6 +197,13 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
   </div>
   <div id="ug-info-body" style="flex:1">
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner">
+        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play">&#9654;</span><span class="inf-mg-name">Circus Baby (Normal Ending)</span></button>
+        <button class="inf-mg-item" onclick="infPlayMinigame('https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4')"><span class="inf-mg-play">&#9654;</span><span class="inf-mg-name">Circus Baby (Secret Ending)</span></button>
+      </div></div>
+    </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Bytes <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-bytes-inner"></div></div>
@@ -555,6 +571,41 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
   }
   return card;
+}
+function infPlayMinigame(url){
+  var fs=document.createElement('div');fs.className='inf-mg-fs';
+  var v=document.createElement('video');
+  v.src=url;v.controls=true;v.autoplay=true;v.playsInline=true;
+  v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
+  var close=document.createElement('button');close.className='inf-mg-fs-close';
+  close.setAttribute('aria-label','Close');close.innerHTML='&#x2715;';
+  function done(){
+    try{v.pause();}catch(e){}
+    document.removeEventListener('fullscreenchange',onFsChange);
+    document.removeEventListener('webkitfullscreenchange',onFsChange);
+    var fsel=document.fullscreenElement||document.webkitFullscreenElement;
+    if(fsel){(document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);}
+    if(fs.parentNode)fs.parentNode.removeChild(fs);
+  }
+  function onFsChange(){
+    var fsel=document.fullscreenElement||document.webkitFullscreenElement;
+    if(fsel===fs){fs._entered=true;}else if(fs._entered){done();}
+  }
+  close.addEventListener('click',function(e){e.stopPropagation();done();});
+  fs.addEventListener('click',function(e){if(e.target===fs)done();});
+  v.addEventListener('webkitendfullscreen',done);
+  fs.appendChild(v);fs.appendChild(close);document.body.appendChild(fs);
+  v.play().catch(function(){});
+  // Try real fullscreen; the fixed overlay already covers the screen as a fallback.
+  var rq=fs.requestFullscreen||fs.webkitRequestFullscreen||fs.msRequestFullscreen;
+  if(rq){
+    document.addEventListener('fullscreenchange',onFsChange);
+    document.addEventListener('webkitfullscreenchange',onFsChange);
+    try{var pr=rq.call(fs);if(pr&&pr.catch)pr.catch(function(){});}catch(e){}
+  }else if(v.webkitEnterFullscreen){
+    if(v.readyState>=1){try{v.webkitEnterFullscreen();}catch(e){}}
+    else{v.addEventListener('loadedmetadata',function(){try{v.webkitEnterFullscreen();}catch(e){}},{once:true});}
+  }
 }
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
