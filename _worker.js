@@ -722,18 +722,30 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
 const ACTIVE_SCRIPT = `<script>
 (function(){
   var p = window.location.pathname.replace(/[/]+$/, '') || '/';
-  document.querySelectorAll('#ug-topnav [data-nav-href]').forEach(function(el){
-    if(el.getAttribute('data-nav-href') === p) el.classList.add('active');
-  });
-  document.querySelectorAll('#ug-mobile-nav [data-nav-href]').forEach(function(el){
-    if(el.getAttribute('data-nav-href') === p){
-      el.classList.add('active');
-      var sec = el.closest('.ug-mn-section');
-      if(sec){
-        sec.classList.add('open');
-        var btn = sec.querySelector('.ug-mn-section-btn');
-        if(btn && typeof ugMnSpinStart === 'function') ugMnSpinStart(btn);
-      }
+  // Score a nav href against the current path: exact match wins, otherwise
+  // the longest href the path sits under (so deep links like
+  // /fntd2/unit-engine/Golden-Freddy still highlight /fntd2/unit-engine).
+  function score(href){
+    if(!href) return -1;
+    if(href === p) return href.length + 1;
+    if(href !== '/' && p.indexOf(href + '/') === 0) return href.length;
+    return -1;
+  }
+  function markBest(sel, onMatch){
+    var best = null, bestScore = -1;
+    document.querySelectorAll(sel).forEach(function(el){
+      var s = score(el.getAttribute('data-nav-href'));
+      if(s > bestScore){ bestScore = s; best = el; }
+    });
+    if(best){ best.classList.add('active'); if(onMatch) onMatch(best); }
+  }
+  markBest('#ug-topnav [data-nav-href]');
+  markBest('#ug-mobile-nav [data-nav-href]', function(el){
+    var sec = el.closest('.ug-mn-section');
+    if(sec){
+      sec.classList.add('open');
+      var btn = sec.querySelector('.ug-mn-section-btn');
+      if(btn && typeof ugMnSpinStart === 'function') ugMnSpinStart(btn);
     }
   });
 })();
