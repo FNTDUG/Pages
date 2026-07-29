@@ -150,6 +150,12 @@ const NAV_CSS = `<style>
 .inf-mg-play{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:rgba(255,164,91,.15)}
 .inf-mg-play::before{content:'';display:block;width:0;height:0;border-style:solid;border-width:6px 0 6px 9px;border-color:transparent transparent transparent #ffa45b;margin-left:2px}
 .inf-mg-name{flex:1;line-height:1.4}
+.inf-mg-wrap{display:flex;flex-direction:column}
+.inf-mg-drop{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.inf-mg-wrap.open .inf-mg-drop{max-height:80vh;margin-top:8px}
+.inf-mg-video-wrap{position:relative;cursor:pointer;border-radius:8px;overflow:hidden;background:#000;border:1px solid rgba(255,164,91,.25);line-height:0}
+.inf-mg-video{display:block;width:100%;height:auto;max-height:76vh;background:#000}
+.inf-mg-fs-hint{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.62);color:#fff;font-size:8px;font-family:'Press Start 2P',monospace;padding:4px 6px;border-radius:5px;pointer-events:none;letter-spacing:.5px}
 .inf-mg-fs{position:fixed;inset:0;z-index:20000;background:#000;display:flex;align-items:center;justify-content:center}
 .inf-mg-fs video{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:#000}
 .inf-mg-fs-close{position:fixed;top:14px;right:16px;z-index:20001;width:42px;height:42px;border-radius:50%;background:rgba(20,10,30,.82);border:1px solid rgba(255,164,91,.4);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
@@ -266,7 +272,7 @@ function infToggle(btn){
 }
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
-function infClose(body){if(!body)return;_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
+function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
 function infLoad(lazy){if(lazy==='presents')return infLoadPresents();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
@@ -593,11 +599,31 @@ var MINIGAMES=[
       var c=document.createElement('div');c.className='inf-card';
       var p=document.createElement('p');p.innerHTML=hl(it.text);c.appendChild(p);el.appendChild(c);
     }else if(it.video!=null){
+      var url=it.url;
+      var wrap=document.createElement('div');wrap.className='inf-mg-wrap';
       var b=document.createElement('button');b.type='button';b.className='inf-mg-item';
-      b.addEventListener('click',(function(u){return function(){infPlayMinigame(u);};})(it.url));
       var pl=document.createElement('span');pl.className='inf-mg-play';
       var nm=document.createElement('span');nm.className='inf-mg-name';nm.textContent=it.video;
-      b.appendChild(pl);b.appendChild(nm);el.appendChild(b);
+      b.appendChild(pl);b.appendChild(nm);
+      var drop=document.createElement('div');drop.className='inf-mg-drop';
+      var vw=document.createElement('div');vw.className='inf-mg-video-wrap';
+      var v=document.createElement('video');v.className='inf-mg-video';v.loop=true;v.playsInline=true;
+      v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='metadata';
+      var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent='Tap to fullscreen';
+      vw.appendChild(v);vw.appendChild(hint);drop.appendChild(vw);
+      // Click the button: slide the inline preview open (or closed) and play it.
+      b.addEventListener('click',function(){
+        var isOpen=wrap.classList.contains('open');
+        el.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){if(w!==wrap){w.classList.remove('open');var ov=w.querySelector('.inf-mg-video');if(ov){try{ov.pause();}catch(e){}}}});
+        if(isOpen){wrap.classList.remove('open');try{v.pause();}catch(e){}return;}
+        wrap.classList.add('open');
+        if(!v.getAttribute('src'))v.src=url;
+        try{v.currentTime=0;}catch(e){}
+        v.play().catch(function(){});
+      });
+      // Tap the preview: go fullscreen.
+      vw.addEventListener('click',function(){try{v.pause();}catch(e){}infPlayMinigame(url);});
+      wrap.appendChild(b);wrap.appendChild(drop);el.appendChild(wrap);
     }
   });
 })();
