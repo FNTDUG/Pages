@@ -272,7 +272,7 @@ function infToggle(btn){
 }
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
-function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
+function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
 function infLoad(lazy){if(lazy==='presents')return infLoadPresents();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
@@ -614,33 +614,46 @@ var MINIGAMES=[
       // Click the button: slide the inline preview open (or closed) and play it.
       b.addEventListener('click',function(){
         var isOpen=wrap.classList.contains('open');
-        el.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){if(w!==wrap){w.classList.remove('open');var ov=w.querySelector('.inf-mg-video');if(ov){try{ov.pause();}catch(e){}}}});
-        if(isOpen){wrap.classList.remove('open');try{v.pause();}catch(e){}return;}
+        el.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){if(w!==wrap){w.classList.remove('open');var ov=w.querySelector('.inf-mg-video');if(ov){try{ov.pause();ov.currentTime=0;}catch(e){}}}});
+        if(isOpen){wrap.classList.remove('open');try{v.pause();v.currentTime=0;}catch(e){}return;}
         wrap.classList.add('open');
         if(!v.getAttribute('src'))v.src=url;
-        try{v.currentTime=0;}catch(e){}
         v.play().catch(function(){});
       });
-      // Tap the preview: go fullscreen.
-      vw.addEventListener('click',function(){try{v.pause();}catch(e){}infPlayMinigame(url);});
+      // Tap the preview: go fullscreen at the same spot; resume inline on exit.
+      vw.addEventListener('click',function(){
+        var t=0;try{t=v.currentTime||0;}catch(e){}
+        try{v.pause();}catch(e){}
+        infPlayMinigame(url,{startTime:t,onExit:function(ct){
+          try{v.currentTime=ct;}catch(e){}
+          if(wrap.classList.contains('open'))v.play().catch(function(){});
+        }});
+      });
       wrap.appendChild(b);wrap.appendChild(drop);el.appendChild(wrap);
     }
   });
 })();
-function infPlayMinigame(url){
+function infPlayMinigame(url,opts){
+  opts=opts||{};
   var fs=document.createElement('div');fs.className='inf-mg-fs';
   var v=document.createElement('video');
-  v.src=url;v.controls=true;v.autoplay=true;v.playsInline=true;
+  v.src=url;v.controls=true;v.playsInline=true;
   v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
+  var startAt=opts.startTime||0;
+  if(startAt>0){var _seek=function(){try{v.currentTime=startAt;}catch(e){}};if(v.readyState>=1)_seek();else v.addEventListener('loadedmetadata',_seek,{once:true});}
+  var _exited=false;
   var close=document.createElement('button');close.className='inf-mg-fs-close';
   close.setAttribute('aria-label','Close');close.innerHTML='&#x2715;';
   function done(){
+    if(_exited)return;_exited=true;
+    var ct=0;try{ct=v.currentTime||0;}catch(e){}
     try{v.pause();}catch(e){}
     document.removeEventListener('fullscreenchange',onFsChange);
     document.removeEventListener('webkitfullscreenchange',onFsChange);
     var fsel=document.fullscreenElement||document.webkitFullscreenElement;
     if(fsel){(document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);}
     if(fs.parentNode)fs.parentNode.removeChild(fs);
+    if(opts.onExit){try{opts.onExit(ct);}catch(e){}}
   }
   function onFsChange(){
     var fsel=document.fullscreenElement||document.webkitFullscreenElement;
