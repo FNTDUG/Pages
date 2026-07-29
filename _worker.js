@@ -583,10 +583,10 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 //   [Header]  {bold}  ~rarity:text~   and <br> for line breaks.
 var MINIGAMES=[
   { text:'[Circus Baby Minigame]<br>[Location]<br>● Game 5<br>● To Trigger this Minigame you must defeat the {Arcade} Enemy, with a {10%} chance of spawning on Waves {5} and {12} respectively' },
-  { video:'Circus Baby (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/CircusBabyMinigame.mp4' },
+  { video:'Circus Baby (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/babynormal.mp4' },
   { video:'Circus Baby (Secret Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4' },
-  { text:'[Foxy Minigame]<br>[Location]<br>● Game 2<br>● To Trigger this Minigame you must defeat the {Arcade} Enemy, with a {10%} chance of spawning on Waves {5} and {12} respectively' },
-  { video:'Foxy (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/foxyminigame.mp4' }
+  { text:'[Foxy Go Minigame]<br>[Location]<br>● Game 2<br>● To Trigger this Minigame you must defeat the {Arcade} Enemy, with a {10%} chance of spawning on Waves {5} and {12} respectively' },
+  { video:'Foxy Go (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/gogogo.mp4' }
 ];
 (function(){
   var el=document.getElementById('inf-minigames-inner');
