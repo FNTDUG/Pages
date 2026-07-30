@@ -429,9 +429,9 @@ var EVOLUTIONS=[
   {name:'Deep Sea Calamity Endo',ing:[['25','Serpent Endos'],['3','Ships'],['250','AFK Presents']]},
   {name:'Gaia Chica',ing:[['1','Blossom Chica'],['1','Grassy Heart'],['2','Clocks'],['25','Agony'],['200','Raid Tokens'],['250','Souls']]},
   {name:'Nature Reclaimed Foxy',ing:[['1','Overgrown Foxy'],['1','Clock'],['200','Agony'],['250','Batteries'],['300','Springs']]},
-  {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Tokens']]},
-  {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Tokens']]},
-  {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Tokens']]},
+  {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Coins']]},
+  {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Coins']]},
+  {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Coins']]},
   {name:'Trash-o-Tron',ing:[['1','Pan Stan'],['1','Bucket Bob'],['1','No. 1 Crate'],['50','Batteries'],['100','Springs'],['25','Salvage Tokens']]},
   {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Tokens']]},
   {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Bears']]},
@@ -464,6 +464,8 @@ function infLoadEvolutions(){
     (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
     function addObj(pool,obj){Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};put(pool,n,o.image,o.rarity);});}
     addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
+    // Coins = the base game currency; not in any JSON, so give it its render manually.
+    put('material','Coins','https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/coins.webp','');
     pEl.innerHTML='';
     buildEvolutions(pEl,lut);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -472,6 +474,8 @@ function infLoadEvolutions(){
 function buildEvolutions(pEl,lut){
   if(!pEl)return;
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+  var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+  function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function look(nm){
     var raw=(nm||'').toLowerCase();
     var ks=[];var al=EVO_ALIAS[raw];if(al)ks.push(al.toLowerCase());
@@ -479,7 +483,12 @@ function buildEvolutions(pEl,lut){
     for(var i=0;i<ks.length;i++){if(lut[ks[i]])return lut[ks[i]];}
     return null;
   }
-  EVOLUTIONS.forEach(function(ev){
+  // Sort evolutions by result rarity, then alphabetically (same as the other tabs).
+  var evos=EVOLUTIONS.slice().sort(function(a,b){
+    var rd=rank((look(a.name)||{}).rarity)-rank((look(b.name)||{}).rarity);
+    return rd!==0?rd:(a.display||a.name).localeCompare(b.display||b.name);
+  });
+  evos.forEach(function(ev){
     var head=look(ev.name)||{};
     var displayName=ev.display||ev.name;
     var card=document.createElement('div');card.className='inf-card';
@@ -492,10 +501,12 @@ function buildEvolutions(pEl,lut){
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
-    ev.ing.forEach(function(pair){
-      var qty=pair[0];var written=pair[1];
-      var m=look(written);
-      var nm=m?m.name:written;var rar=m?m.rarity:'';var iu=m?m.img:'';
+    var ings=ev.ing.map(function(pair){
+      var m=look(pair[1]);
+      return {qty:pair[0],nm:m?m.name:pair[1],rar:m?m.rarity:'',iu:m?m.img:'',pool:m?m.pool:''};
+    }).sort(function(a,b){var rd=rank(a.rar)-rank(b.rar);return rd!==0?rd:a.nm.localeCompare(b.nm);});
+    ings.forEach(function(o){
+      var qty=o.qty;var nm=o.nm;var rar=o.rar;var iu=o.iu;
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
       var rb=document.createElement('span');rb.className='inf-img'+(rar?' inf-rarity-'+rar:'');
       if(!rar)rb.style.background='rgba(25,24,40,.9)';
@@ -505,7 +516,7 @@ function buildEvolutions(pEl,lut){
       if(g){rname.style.cssText='background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
       rname.textContent=nm;
       var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent='×'+qty;
-      if(m&&m.pool==='unit'){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(nm);}
+      if(o.pool==='unit'){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(nm);}
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rq);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
