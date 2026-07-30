@@ -490,6 +490,7 @@ function buildEvolutions(pEl,lut){
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
   var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
+  function cap(p){return p?p.charAt(0).toUpperCase()+p.slice(1):'';}
   function look(nm){
     var raw=(nm||'').toLowerCase();
     var ks=[];var al=EVO_ALIAS[raw];if(al)ks.push(al.toLowerCase());
@@ -510,7 +511,7 @@ function buildEvolutions(pEl,lut){
     var badge=document.createElement('span');badge.className='inf-img'+(head.rarity?' inf-rarity-'+head.rarity:'');
     if(!head.rarity)badge.style.background='rgba(25,24,40,.9)';
     var img=document.createElement('img');img.src=head.img||EVO_PLACEHOLDER;img.alt=displayName;badge.appendChild(img);
-    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName+(head.pool?' ('+head.pool+')':'');
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName+(head.pool?' ('+cap(head.pool)+')':'');
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
@@ -528,7 +529,7 @@ function buildEvolutions(pEl,lut){
       var rname=document.createElement('div');rname.className='inf-reward-name';
       var g=RG[rar];
       if(g){rname.style.cssText='background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
-      rname.textContent=nm+(o.pool?' ('+o.pool+')':'');
+      rname.textContent=nm+(o.pool?' ('+cap(o.pool)+')':'');
       var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent='×'+qty;
       if(o.pool==='unit'){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(nm);}
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rq);inner.appendChild(rrow);
