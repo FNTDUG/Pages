@@ -439,7 +439,20 @@ var EVOLUTIONS=[
   {name:'Mech-Lizabeth',ing:[['1','Elizabeth'],['3','Endo 01s'],['1','Ice Cream Mech Suit'],['50','Ice Cream Cones']]},
   {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Coins']]},
   {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Season 5 Present'],['15','Raid Tokens']]},
-  {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]}
+  {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]},
+  {name:'Circus Baby',ing:[['1','Ballora'],['1','Elizabeth'],['125','Ice Cream Cone'],['15','Funtime Freddy']]},
+  {name:'Leviathan Mangle',ing:[['200','Freddy With a Glock'],['75','Beach Ball']]},
+  {name:'Valkyrie Chica',ing:[['200','Freddy With a Glock'],['75','Grenade']]},
+  {name:'Deadeye Freddy',ing:[['200','Freddy With a Glock'],['75','Cowboy Hat']]},
+  {name:'Gravelord Foxy',ing:[['200','Freddy With a Glock'],['75','Gravestone']]},
+  {name:'Undead Chica',ing:[['10','Ghost Bonnie']]},
+  {name:'BBnJ',ing:[['30','Ghost Bonnie'],['10','Mummy Freddy']]},
+  {name:'Masked Bullies',ing:[['25','Nightmare Freddy'],['10','Nightmare Bonnie'],['5','Nightmare Foxy'],['10','Freddy'],['10','Bonnie'],['10','Chica'],['15','Foxy'],['150','Agony']]},
+  {name:'Silver Key',ing:[['5','Silver Ingot']]},
+  {name:'Gold Key',ing:[['8','Gold Ingot']]},
+  {name:'Faz Key',ing:[['10','Faz Ingot']]},
+  {name:'Soul Key',ing:[['12','Soul Ingot']]},
+  {name:'Glitch Key',ing:[['5','Bronze Ingot'],['5','Silver Ingot'],['5','Gold Ingot'],['3','Faz Ingot'],['3','Soul Ingot'],['10','Glitch Ingot']]}
 ];
 function infLoadEvolutions(){
   if(_catLoaded.evolutions)return;_catLoaded.evolutions=true;
