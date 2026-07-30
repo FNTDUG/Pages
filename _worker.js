@@ -354,8 +354,12 @@ function infLoadPresents(){
     var rewMap={};
     function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
     function addArr(type,arr){(Array.isArray(arr)?arr:[]).forEach(function(u){if(u.name)rewMap[type+'|'+u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});}
-    function addObj(type,obj){Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};rewMap[type+'|'+n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});}
+    function addObj(type,obj){var ck=INF_REWARD_CFG_KEY[type];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};rewMap[type+'|'+n.toLowerCase()]={img:ov.image||o.image||'',rarity:nr(ov.rarity||o.rarity),name:ov.name||''};});}
     addArr('unit',res[1]);addObj('skin',res[2]);addObj('pet',res[3]);addObj('banner',res[4]);addObj('loading screen',res[5]);addObj('material',res[6]);addObj('food',res[7]);addObj('potion',res[8]);
+    // "Currency" rewards aren't in any JSON: rename Tokens→Coins (coins render) and give Souls the Soul material render.
+    var _soul=rewMap['material|soul']||{};
+    rewMap['currency|tokens']={img:INF_COINS_IMG,rarity:'',name:'Coins'};
+    rewMap['currency|souls']={img:_soul.img||'',rarity:_soul.rarity||'',name:'Souls'};
     if(pEl)pEl.innerHTML='';
     buildPresents(pEl,presentsData,rewMap);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -377,7 +381,7 @@ function buildPresents(pEl,data,rewMap){
     var displayRar=(ov.rarity||p.rarity||'').toLowerCase();
     var rewards=(p.rewards||[]).slice();
     var rovs=PRESENTS_CFG.rewardOverrides[name]||{};
-    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var look=rewMap[((ty||'Unit').toLowerCase())+'|'+((nm||'').toLowerCase())]||{};return {type:ty,name:nm,amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
+    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var look=rewMap[((ty||'Unit').toLowerCase())+'|'+((nm||'').toLowerCase())]||{};return {type:ty,name:(look.name||nm),amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
     (PRESENTS_CFG.addRewards[name]||[]).forEach(function(r){rewards.push(r);});
     rewards.sort(function(a,b){var rd=_rr(a.rarity)-_rr(b.rarity);return rd!==0?rd:(a.name||'').localeCompare(b.name||'');});
     var card=document.createElement('div');card.className='inf-card';
@@ -473,12 +477,12 @@ function infLoadEvolutions(){
     // any name collision (e.g. "Cupcake" is both a unit and a food).
     var lut={};
     function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
-    function put(pool,name,img,rar){if(!name)return;var k=name.toLowerCase();if(lut[k])return;lut[k]={img:img||'',rarity:nr(rar),pool:pool,name:name};}
+    function put(pool,name,img,rar,keyName){if(!name)return;var k=(keyName||name).toLowerCase();if(lut[k])return;lut[k]={img:img||'',rarity:nr(rar),pool:pool,name:name};}
     (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
-    function addObj(pool,obj){Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};put(pool,n,o.image,o.rarity);});}
+    function addObj(pool,obj){var ck=INF_REWARD_CFG_KEY[pool];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};put(pool,ov.name||n,ov.image||o.image,ov.rarity||o.rarity,n);});}
     addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
     // Coins = the base game currency; not in any JSON, so give it its render manually.
-    put('material','Coins','https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/coins.webp','');
+    put('material','Coins',INF_COINS_IMG,'');
     pEl.innerHTML='';
     buildEvolutions(pEl,lut);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -569,6 +573,10 @@ var INFO_CFG={
   potions:          {overrides:{}, add:{}, hide:[]},
   foods:            {overrides:{}, add:{}, hide:[]}
 };
+// Reward/ingredient type (as used in the Presents & Evolutions lookups) → its INFO_CFG key,
+// so category overrides (rarity/name/image) apply everywhere an item shows up, not just its own tab.
+var INF_REWARD_CFG_KEY={skin:'skins',pet:'pets',banner:'banners','loading screen':'loading-screens',material:'materials',food:'foods',potion:'potions'};
+var INF_COINS_IMG='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/coins.webp';
 var _catLoaded={};
 function infLoadCategory(catKey){
   if(_catLoaded[catKey])return;_catLoaded[catKey]=true;
