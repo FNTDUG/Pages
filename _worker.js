@@ -510,7 +510,7 @@ function buildEvolutions(pEl,lut){
     var badge=document.createElement('span');badge.className='inf-img'+(head.rarity?' inf-rarity-'+head.rarity:'');
     if(!head.rarity)badge.style.background='rgba(25,24,40,.9)';
     var img=document.createElement('img');img.src=head.img||EVO_PLACEHOLDER;img.alt=displayName;badge.appendChild(img);
-    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName;
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName+(head.pool?' ('+head.pool+')':'');
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
