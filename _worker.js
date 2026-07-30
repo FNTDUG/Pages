@@ -434,11 +434,11 @@ var EVOLUTIONS=[
   {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Coins']]},
   {name:'Trash-o-Tron',ing:[['1','Pan Stan'],['1','Bucket Bob'],['1','No. 1 Crate'],['50','Batteries'],['100','Springs'],['25','Salvage Tokens']]},
   {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Tokens']]},
-  {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Bears']]},
+  {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Freddy']]},
   {name:'Arch Angler Toy Bonnie',ing:[['1','Fisherman Toy Bonnie'],['1','Shark Withered Foxy'],['1','Shark'],['175','Agony'],['300','Soda']]},
   {name:'Mech-Lizabeth',ing:[['1','Elizabeth'],['3','Endo 01s'],['1','Ice Cream Mech Suit'],['50','Ice Cream Cones']]},
   {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Coins']]},
-  {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Current Seasonal Presents'],['15','Raid Tokens']]},
+  {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Season 5 Present'],['15','Raid Tokens']]},
   {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]}
 ];
 function infLoadEvolutions(){
@@ -471,6 +471,7 @@ function infLoadEvolutions(){
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
 }
+var EVO_PLACEHOLDER='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/placeholder-freddy.png';
 function buildEvolutions(pEl,lut){
   if(!pEl)return;
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
@@ -495,7 +496,7 @@ function buildEvolutions(pEl,lut){
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
     var badge=document.createElement('span');badge.className='inf-img'+(head.rarity?' inf-rarity-'+head.rarity:'');
     if(!head.rarity)badge.style.background='rgba(25,24,40,.9)';
-    var img=document.createElement('img');img.src=head.img||'';img.alt=displayName;badge.appendChild(img);
+    var img=document.createElement('img');img.src=head.img||EVO_PLACEHOLDER;img.alt=displayName;badge.appendChild(img);
     var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName;
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
@@ -510,11 +511,11 @@ function buildEvolutions(pEl,lut){
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
       var rb=document.createElement('span');rb.className='inf-img'+(rar?' inf-rarity-'+rar:'');
       if(!rar)rb.style.background='rgba(25,24,40,.9)';
-      var ri=document.createElement('img');ri.src=iu;ri.alt=nm;rb.appendChild(ri);
+      var ri=document.createElement('img');ri.src=iu||EVO_PLACEHOLDER;ri.alt=nm;rb.appendChild(ri);
       var rname=document.createElement('div');rname.className='inf-reward-name';
       var g=RG[rar];
       if(g){rname.style.cssText='background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
-      rname.textContent=nm;
+      rname.textContent=nm+(o.pool?' ('+o.pool+')':'');
       var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent='×'+qty;
       if(o.pool==='unit'){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(nm);}
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rq);inner.appendChild(rrow);
