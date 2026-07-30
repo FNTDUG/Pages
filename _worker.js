@@ -217,6 +217,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="evolutions" onclick="infToggle(this)">Evolutions <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
@@ -273,7 +277,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -399,6 +403,110 @@ function buildPresents(pEl,data,rewMap){
       var rchance=document.createElement('div');rchance.className='inf-reward-chance';rchance.textContent=r.chance!=null?r.chance+'%':'';
       if((r.type||'').toLowerCase()==='unit'&&r.name){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(r.name);}
       rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rchance);inner.appendChild(rrow);
+    });
+    body.appendChild(inner);card.appendChild(body);
+    row.addEventListener('click',function(){infToggleExp(row,body,arr);});
+    pEl.appendChild(card);
+  });
+}
+// ── Evolutions tab (like Bytes/Enchants; ingredient images pulled from every JSON source) ──
+// Each entry: { name:'Result Unit', display:'optional shown title', ing:[ ['qty','Ingredient'], ... ] }
+// Ingredient names are matched (case-insensitive) against units + materials + foods + potions +
+// presents + skins + pets. EVO_ALIAS maps names that differ from the JSON key; unmatched names
+// still render with a neutral badge and no image.
+var EVO_ALIAS={
+  'trash-o-tron':'Trash o Tron','mech-lizabeth':'Mecha-Lizabeth',
+  'blossom chicas':'Blossom Chica','overgrown foxies':'Overgrown Foxy',
+  'batteries':'Battery','tvs':'Television','tv':'Television',
+  'raid tokens':'Raid Coins','pickles':'Jar of Pickles',
+  'mechanical bomb':'Mechanical Bombs','hazzard sign':'Hazard Sign',
+  'paperpals':'PaperPals'
+};
+var EVOLUTIONS=[
+  {name:'Kronos Endo Freddy',ing:[['1','Time Lord Withered Freddy'],['3','Blossom Chicas'],['20','Overgrown Foxies'],['1','Clock']]},
+  {name:'Hero PaperPals',display:'Hero Paperpals',ing:[['1','Paperpals'],['10','Springs'],['10','Batteries'],['20','Souls']]},
+  {name:'Fathomless Withered Foxy',ing:[['1','Shark Withered Foxy'],['1','Deep Sea Calamity Endo'],['25','Serpent Endos'],['1','Pressure Sensor'],['250','Apocalypse Presents']]},
+  {name:'Deep Sea Calamity Endo',ing:[['25','Serpent Endos'],['3','Ships'],['250','AFK Presents']]},
+  {name:'Gaia Chica',ing:[['1','Blossom Chica'],['1','Grassy Heart'],['2','Clocks'],['25','Agony'],['200','Raid Tokens'],['250','Souls']]},
+  {name:'Nature Reclaimed Foxy',ing:[['1','Overgrown Foxy'],['1','Clock'],['200','Agony'],['250','Batteries'],['300','Springs']]},
+  {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Tokens']]},
+  {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Tokens']]},
+  {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Tokens']]},
+  {name:'Trash-o-Tron',ing:[['1','Pan Stan'],['1','Bucket Bob'],['1','No. 1 Crate'],['50','Batteries'],['100','Springs'],['25','Salvage Tokens']]},
+  {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Tokens']]},
+  {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Bears']]},
+  {name:'Arch Angler Toy Bonnie',ing:[['1','Fisherman Toy Bonnie'],['1','Shark Withered Foxy'],['1','Shark'],['175','Agony'],['300','Soda']]},
+  {name:'Mech-Lizabeth',ing:[['1','Elizabeth'],['3','Endo 01s'],['1','Ice Cream Mech Suit'],['50','Ice Cream Cones']]},
+  {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Coins']]},
+  {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Current Seasonal Presents'],['15','Raid Tokens']]},
+  {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]}
+];
+function infLoadEvolutions(){
+  if(_catLoaded.evolutions)return;_catLoaded.evolutions=true;
+  var pEl=document.getElementById('inf-evolutions-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  Promise.all([
+    J('/inf-data/units',[]),
+    J('/inf-data/materials',{}),
+    J('/inf-data/foods',{}),
+    J('/inf-data/potions',{}),
+    J('/inf-data/presents',{}),
+    J('/inf-data/skins',{}),
+    J('/inf-data/pets',{})
+  ]).then(function(res){
+    // Combined name -> {img,rarity,pool,name} lookup. Units added first so they win
+    // any name collision (e.g. "Cupcake" is both a unit and a food).
+    var lut={};
+    function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+    function put(pool,name,img,rar){if(!name)return;var k=name.toLowerCase();if(lut[k])return;lut[k]={img:img||'',rarity:nr(rar),pool:pool,name:name};}
+    (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
+    function addObj(pool,obj){Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};put(pool,n,o.image,o.rarity);});}
+    addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
+    pEl.innerHTML='';
+    buildEvolutions(pEl,lut);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildEvolutions(pEl,lut){
+  if(!pEl)return;
+  var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+  function look(nm){
+    var raw=(nm||'').toLowerCase();
+    var ks=[];var al=EVO_ALIAS[raw];if(al)ks.push(al.toLowerCase());
+    ks.push(raw);if(raw.slice(-1)==='s')ks.push(raw.slice(0,-1));
+    for(var i=0;i<ks.length;i++){if(lut[ks[i]])return lut[ks[i]];}
+    return null;
+  }
+  EVOLUTIONS.forEach(function(ev){
+    var head=look(ev.name)||{};
+    var displayName=ev.display||ev.name;
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
+    var badge=document.createElement('span');badge.className='inf-img'+(head.rarity?' inf-rarity-'+head.rarity:'');
+    if(!head.rarity)badge.style.background='rgba(25,24,40,.9)';
+    var img=document.createElement('img');img.src=head.img||'';img.alt=displayName;badge.appendChild(img);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=displayName;
+    var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
+    row.appendChild(badge);row.appendChild(h4);row.appendChild(arr);card.appendChild(row);
+    var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
+    var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
+    ev.ing.forEach(function(pair){
+      var qty=pair[0];var written=pair[1];
+      var m=look(written);
+      var nm=m?m.name:written;var rar=m?m.rarity:'';var iu=m?m.img:'';
+      var rrow=document.createElement('div');rrow.className='inf-reward-row';
+      var rb=document.createElement('span');rb.className='inf-img'+(rar?' inf-rarity-'+rar:'');
+      if(!rar)rb.style.background='rgba(25,24,40,.9)';
+      var ri=document.createElement('img');ri.src=iu;ri.alt=nm;rb.appendChild(ri);
+      var rname=document.createElement('div');rname.className='inf-reward-name';
+      var g=RG[rar];
+      if(g){rname.style.cssText='background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;flex:1;min-width:0;font-size:13px;word-break:break-word';}
+      rname.textContent=nm;
+      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent='×'+qty;
+      if(m&&m.pool==='unit'){rrow.style.cursor='pointer';(function(un){rrow.addEventListener('click',function(e){e.stopPropagation();window.location.href='/fntd2/unit-engine/'+encodeURIComponent(un.split(' ').join('-'));});})(nm);}
+      rrow.appendChild(rb);rrow.appendChild(rname);rrow.appendChild(rq);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
