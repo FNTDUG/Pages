@@ -688,11 +688,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         _top: [
            '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>[1] No Change<br>[2] Reroll Stats within the Bytes Stat Range<br>[3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>[4] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passives Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
          ],
-         'The Box': '[OBTAINMENT]<br>● Chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
-         'Boss Drain': '[OBTAINMENT]<br>● Purchasable in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
-         'Reaper': '[OBTAINMENT]<br>● Chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE {0% ~ +40%}',
-         'KABOOM!': '[OBTAINMENT]<br>● Chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
-         'The Fan': '[OBTAINMENT]<br>● Chance when leveling up in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
+         'The Box': '[OBTAINMENT]<br>● 0.05% Drop chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
+         'Boss Drain': '[OBTAINMENT]<br>● Purchasable for 50 Raid Coins the in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
+         'Reaper': '[OBTAINMENT]<br>● 0.01% Drop chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE {0% ~ +40%}',
+         'KABOOM!': '[OBTAINMENT]<br>● 3% Drop chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
+         'The Fan': '[OBTAINMENT]<br>● 0.5% Drop chance when selecting a Modifier in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
          'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVES]<br>● Able to give any single Element Boost<br>● If the Unit and UFO share the same Element, gain a Damage Boost<br>[STATS]<br>● DAMAGE (Same Element): {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}'
         },
