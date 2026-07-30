@@ -429,7 +429,7 @@ var INFO_SOURCES={
 var INFO_CFG={
   banners:          {overrides:{}, add:{}, hide:[]},
   pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
-  skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
+  skins:            {overrides:{['Volcanic Party Packer Cupcake':{secret}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   'loading-screens':{overrides:{}, add:{}, hide:[]},
   materials:        {overrides:{}, add:{}, hide:[]},
   potions:          {overrides:{}, add:{}, hide:[]},
