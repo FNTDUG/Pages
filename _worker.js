@@ -727,10 +727,11 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   return card;
 }
 // ── Establishments list ────────────────────────────────────────────────
-// Poster/decor items that grant boosts. No sub-dropdown: each row shows its
-// rarity, name and boost, and clicking the image opens it fullscreen (same
-// lightbox as User Banners / Loading Screens). Images live in the R2 bucket
-// below, keyed by a slug of the name (e.g. "Fazbear Mafia" -> fazbear-mafia.png).
+// Boost cards obtained from Establishment Card Packs. Cards are grouped under
+// their pack (each an expandable dropdown) and show rarity, boost and drop odds.
+// Clicking a card image opens it fullscreen (same lightbox as the User Banners /
+// Loading Screens tabs). Images live in the R2 bucket below, keyed by a slug of
+// the name (e.g. "Fazbear Mafia" -> fazbear-mafia.png).
 var EST_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/establishments/';
 var ESTABLISHMENTS=[
   {name:'Fazbear Mafia',rarity:'secret',desc:'+10% Coin Boost'},
@@ -765,6 +766,12 @@ var ESTABLISHMENTS=[
   {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
   {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
 ];
+// Card packs — Cost/Type + per-rarity pull weights. Odds are derived from these
+// and the card rarities/weights above. "Tokens" is shown as Coins.
+var EST_PACKS=[
+  {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Coins',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
+  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Coin Card Apex','Faz Rating Card Apex']}
+];
 (function(){
   var el=document.getElementById('inf-establishments-inner');
   if(!el)return;
@@ -772,22 +779,43 @@ var ESTABLISHMENTS=[
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-  ESTABLISHMENTS.slice().sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(it){
-    var img=EST_BASE+slug(it.name)+'.png';
+  function pct(p){return (p<1?p.toFixed(2):p.toFixed(1))+'%';}
+  var estBy={};ESTABLISHMENTS.forEach(function(e){estBy[e.name]=e;});
+  EST_PACKS.forEach(function(pack){
+    var totW=0;Object.keys(pack.rarities).forEach(function(k){totW+=pack.rarities[k];});
     var card=document.createElement('div');card.className='inf-card';
-    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:zoom-in';
-    var badge=document.createElement('span');badge.className='inf-img'+(it.rarity?' inf-rarity-'+it.rarity:'');
-    if(!it.rarity)badge.style.background='rgba(25,24,40,.9)';
-    var im=document.createElement('img');im.src=img;im.alt=it.name;badge.appendChild(im);
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
+    var badge=document.createElement('span');badge.className='inf-img inf-rarity-'+pack.rarity;
+    var pim=document.createElement('img');pim.src=EST_BASE+slug(pack.name)+'.png';pim.alt=pack.name;badge.appendChild(pim);
     var col=document.createElement('div');col.style.cssText='flex:1;min-width:0';
-    var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=it.name;
-    var d=document.createElement('div');var g=RG[it.rarity];
-    if(g){d.style.cssText='font-size:12px;margin-top:2px;font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}
-    else{d.style.cssText='font-size:12px;color:#fff;opacity:.9;margin-top:2px';}
-    d.textContent=it.desc;
-    col.appendChild(h4);col.appendChild(d);
-    row.appendChild(badge);row.appendChild(col);card.appendChild(row);
-    row.addEventListener('click',function(){infLightbox(img);});
+    var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=pack.name;
+    var sub=document.createElement('div');sub.style.cssText='font-size:11px;color:#bbb;margin-top:2px';sub.textContent='Cost: '+pack.cost;
+    col.appendChild(h4);col.appendChild(sub);
+    var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
+    row.appendChild(badge);row.appendChild(col);row.appendChild(arr);card.appendChild(row);
+    var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
+    var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
+    pack.cards.map(function(cn){
+      var e=estBy[cn]||{};var r=e.rarity||'';
+      return {name:cn,rarity:r,desc:e.desc||'',chance:(totW>0?(pack.rarities[r]||0)/totW*100:0)};
+    }).sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(c){
+      var iu=EST_BASE+slug(c.name)+'.png';
+      var rrow=document.createElement('div');rrow.className='inf-reward-row';
+      var rb=document.createElement('span');rb.className='inf-img'+(c.rarity?' inf-rarity-'+c.rarity:'');rb.style.cursor='zoom-in';
+      var ri=document.createElement('img');ri.src=iu;ri.alt=c.name;rb.appendChild(ri);
+      (function(u){rb.addEventListener('click',function(ev){ev.stopPropagation();infLightbox(u);});})(iu);
+      var cc=document.createElement('div');cc.style.cssText='flex:1;min-width:0';
+      var cnm=document.createElement('div');cnm.className='inf-reward-name';cnm.textContent=c.name;
+      var cd=document.createElement('div');var g=RG[c.rarity];
+      if(g){cd.style.cssText='font-size:11px;margin-top:2px;font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}
+      else{cd.style.cssText='font-size:11px;color:#fff;margin-top:2px';}
+      cd.textContent=c.desc;
+      cc.appendChild(cnm);cc.appendChild(cd);
+      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent=pct(c.chance);
+      rrow.appendChild(rb);rrow.appendChild(cc);rrow.appendChild(rq);inner.appendChild(rrow);
+    });
+    body.appendChild(inner);card.appendChild(body);
+    row.addEventListener('click',function(){infToggleExp(row,body,arr);});
     el.appendChild(card);
   });
 })();
