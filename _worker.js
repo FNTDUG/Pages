@@ -769,6 +769,7 @@ var ESTABLISHMENTS=[
   var el=document.getElementById('inf-establishments-inner');
   if(!el)return;
   var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+  var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
   ESTABLISHMENTS.slice().sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(it){
@@ -780,7 +781,10 @@ var ESTABLISHMENTS=[
     var im=document.createElement('img');im.src=img;im.alt=it.name;badge.appendChild(im);
     var col=document.createElement('div');col.style.cssText='flex:1;min-width:0';
     var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=it.name;
-    var d=document.createElement('div');d.style.cssText='font-size:12px;color:#fff;opacity:.9;margin-top:2px';d.textContent=it.desc;
+    var d=document.createElement('div');var g=RG[it.rarity];
+    if(g){d.style.cssText='font-size:12px;margin-top:2px;font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}
+    else{d.style.cssText='font-size:12px;color:#fff;opacity:.9;margin-top:2px';}
+    d.textContent=it.desc;
     col.appendChild(h4);col.appendChild(d);
     row.appendChild(badge);row.appendChild(col);card.appendChild(row);
     row.addEventListener('click',function(){infLightbox(img);});
