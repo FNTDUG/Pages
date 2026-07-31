@@ -769,8 +769,8 @@ var ESTABLISHMENTS=[
 // Card packs — Cost/Type + per-rarity pull weights. Odds are derived from these
 // and the card rarities/weights above. "Tokens" is shown as Coins.
 var EST_PACKS=[
-  {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Coins',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cur:'Coins',refunds:{uncommon:50,rare:50,epic:200,mythic:400,secret:2000,nightmare:10000},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
-  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cur:'Souls',refunds:{uncommon:5,rare:5,epic:20,mythic:40,secret:200,nightmare:1000,apex:2000},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Coin Card Apex','Faz Rating Card Apex']}
+  {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Coins',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
+  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Coin Card Apex','Faz Rating Card Apex']}
 ];
 (function(){
   var el=document.getElementById('inf-establishments-inner');
@@ -795,7 +795,7 @@ var EST_PACKS=[
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     pack.cards.map(function(cn){
       var e=estBy[cn]||{};var r=e.rarity||'';
-      return {name:cn,rarity:r,desc:e.desc||'',chance:(pack.rarities[r]!=null?pack.rarities[r]:0),refund:(pack.refunds&&pack.refunds[r]!=null?pack.refunds[r]:null)};
+      return {name:cn,rarity:r,desc:e.desc||'',chance:(pack.rarities[r]!=null?pack.rarities[r]:0)};
     }).sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(c){
       var iu=EST_BASE+slug(c.name)+'.png';
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
@@ -809,10 +809,8 @@ var EST_PACKS=[
       else{cd.style.cssText='font-size:12px;color:#fff;margin-top:2px';}
       cd.textContent=c.desc;
       cc.appendChild(cnm);cc.appendChild(cd);
-      var right=document.createElement('div');right.style.cssText='text-align:right;flex-shrink:0';
-      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent=c.chance+'%';right.appendChild(rq);
-      if(c.refund!=null){var rf=document.createElement('div');rf.style.cssText='font-size:10px;color:#8fe0a0;margin-top:2px;white-space:nowrap';rf.textContent='Refund: '+c.refund+' '+pack.cur;right.appendChild(rf);}
-      rrow.appendChild(rb);rrow.appendChild(cc);rrow.appendChild(right);inner.appendChild(rrow);
+      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent=c.chance+'%';
+      rrow.appendChild(rb);rrow.appendChild(cc);rrow.appendChild(rq);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
