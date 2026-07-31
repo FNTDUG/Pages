@@ -221,6 +221,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Establishments <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-establishments-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
@@ -247,10 +251,6 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner"></div></div>
-    </div>
-    <div class="inf-drop">
-      <button class="inf-drop-btn" onclick="infToggle(this)">Establishments <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-establishments-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="potions" onclick="infToggle(this)">Potions <span class="inf-drop-arrow">/</span></button>
@@ -761,7 +761,7 @@ var ESTABLISHMENTS=[
   {name:'Raid Coin Card Secret',rarity:'secret',desc:'+10% Raid Coin Boost'},
   {name:'Raid Coin Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Coin Boost'},
   {name:'Raid Coin Card Apex',rarity:'apex',desc:'+20% Raid Coin Boost'},
-  {name:'Coin Card Apex',rarity:'apex',desc:'+20% Token Boost'},
+  {name:'Coin Card Apex',rarity:'apex',desc:'+20% Coins Boost'},
   {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
   {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
 ];
@@ -780,7 +780,7 @@ var ESTABLISHMENTS=[
     var im=document.createElement('img');im.src=img;im.alt=it.name;badge.appendChild(im);
     var col=document.createElement('div');col.style.cssText='flex:1;min-width:0';
     var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=it.name;
-    var d=document.createElement('div');d.style.cssText='font-size:12px;color:#ffa45b;opacity:.9;margin-top:2px';d.textContent=it.desc;
+    var d=document.createElement('div');d.style.cssText='font-size:12px;color:#fff;opacity:.9;margin-top:2px';d.textContent=it.desc;
     col.appendChild(h4);col.appendChild(d);
     row.appendChild(badge);row.appendChild(col);card.appendChild(row);
     row.addEventListener('click',function(){infLightbox(img);});
