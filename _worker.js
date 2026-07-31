@@ -526,6 +526,7 @@ function buildEvolutions(pEl,lut){
       var m=look(pair[1]);
       return {qty:pair[0],nm:m?m.name:pair[1],rar:m?m.rarity:'',iu:m?m.img:'',pool:m?m.pool:''};
     }).sort(function(a,b){var rd=rank(a.rar)-rank(b.rar);return rd!==0?rd:a.nm.localeCompare(b.nm);});
+    var reqLbl=document.createElement('div');reqLbl.textContent=(ings.length===1?'Requirement':'Requirements');reqLbl.style.cssText="font-family:'Audiowide',sans-serif;font-size:13px;color:#ffa45b;letter-spacing:.5px";inner.appendChild(reqLbl);
     ings.forEach(function(o){
       var qty=o.qty;var nm=o.nm;var rar=o.rar;var iu=o.iu;
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
