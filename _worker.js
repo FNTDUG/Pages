@@ -427,6 +427,8 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
+  {name:'Harvest Festival Foxy',ing:[['30','Ghost Bonnies'],['10','Mummy Freddys']]},
+  {name:'Mummy Freddy',ing:[['10','Ghost Bonnies']]},
   {name:'Kronos Endo Freddy',ing:[['1','Time Lord Withered Freddy'],['3','Blossom Chicas'],['20','Overgrown Foxies'],['1','Clock']]},
   {name:'Hero PaperPals',display:'Hero Paperpals',ing:[['1','Paperpals'],['10','Springs'],['10','Batteries'],['20','Souls']]},
   {name:'Fathomless Withered Foxy',ing:[['1','Shark Withered Foxy'],['1','Deep Sea Calamity Endo'],['25','Serpent Endos'],['1','Pressure Sensor'],['250','Apocalypse Presents']]},
