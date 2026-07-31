@@ -249,6 +249,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Establishments <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-establishments-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="potions" onclick="infToggle(this)">Potions <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-potions-inner"></div></div>
     </div>
@@ -722,6 +726,67 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   }
   return card;
 }
+// ── Establishments list ────────────────────────────────────────────────
+// Poster/decor items that grant boosts. No sub-dropdown: each row shows its
+// rarity, name and boost, and clicking the image opens it fullscreen (same
+// lightbox as User Banners / Loading Screens). Images live in the R2 bucket
+// below, keyed by a slug of the name (e.g. "Fazbear Mafia" -> fazbear-mafia.png).
+var EST_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/establishments/';
+var ESTABLISHMENTS=[
+  {name:'Fazbear Mafia',rarity:'secret',desc:'+10% Coin Boost'},
+  {name:'Arcade',rarity:'rare',desc:'+2.5% Coin Boost'},
+  {name:'Tshirt',rarity:'rare',desc:'3% Merchant Discount'},
+  {name:'Crying Helpy',rarity:'secret',desc:'10% Merchant Discount'},
+  {name:'Bonnie and Chica Fight',rarity:'mythic',desc:'7.5% Merchant Discount'},
+  {name:'Scrooge McHelpy',rarity:'nightmare',desc:'+12.5% Coin Boost'},
+  {name:'Chocolate Coin',rarity:'uncommon',desc:'+1.5% Coin Boost'},
+  {name:'Paycheck',rarity:'mythic',desc:'+7.5% Coin Boost'},
+  {name:'Ticket Eater',rarity:'epic',desc:'+5% Coin Boost'},
+  {name:'Sale',rarity:'uncommon',desc:'2% Merchant Discount'},
+  {name:'Pimptrap',rarity:'nightmare',desc:'12.5% Merchant Discount'},
+  {name:'Puppet Souls',rarity:'secret',desc:'+5% Soul Boost'},
+  {name:'Catalog',rarity:'epic',desc:'5% Merchant Discount'},
+  {name:'Freddy Fazboost',rarity:'secret',desc:'+5% Faz-Rating Boost'},
+  {name:'Springbonnie',rarity:'nightmare',desc:'+8% Soul Boost'},
+  {name:'Shhh',rarity:'mythic',desc:'+3% Soul Boost'},
+  {name:'You Won!',rarity:'nightmare',desc:'+5% Luck Boost'},
+  {name:'Clover',rarity:'mythic',desc:'+2% Luck Boost'},
+  {name:'Peaceful Luck',rarity:'secret',desc:'+4% Luck Boost'},
+  {name:"Foxy's Throne",rarity:'nightmare',desc:'+10% Faz-Rating Boost'},
+  {name:'In the jar',rarity:'mythic',desc:'+2% Faz-Rating Boost'},
+  {name:'Raid Coin Card Uncommon',rarity:'uncommon',desc:'+1.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Rare',rarity:'rare',desc:'+2.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Epic',rarity:'epic',desc:'+5% Raid Coin Boost'},
+  {name:'Raid Coin Card Mythical',rarity:'mythic',desc:'+7.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Secret',rarity:'secret',desc:'+10% Raid Coin Boost'},
+  {name:'Raid Coin Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Apex',rarity:'apex',desc:'+20% Raid Coin Boost'},
+  {name:'Coin Card Apex',rarity:'apex',desc:'+20% Token Boost'},
+  {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
+  {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
+];
+(function(){
+  var el=document.getElementById('inf-establishments-inner');
+  if(!el)return;
+  var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
+  function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
+  function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+  ESTABLISHMENTS.slice().sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(it){
+    var img=EST_BASE+slug(it.name)+'.png';
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:zoom-in';
+    var badge=document.createElement('span');badge.className='inf-img'+(it.rarity?' inf-rarity-'+it.rarity:'');
+    if(!it.rarity)badge.style.background='rgba(25,24,40,.9)';
+    var im=document.createElement('img');im.src=img;im.alt=it.name;badge.appendChild(im);
+    var col=document.createElement('div');col.style.cssText='flex:1;min-width:0';
+    var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=it.name;
+    var d=document.createElement('div');d.style.cssText='font-size:12px;color:#ffa45b;opacity:.9;margin-top:2px';d.textContent=it.desc;
+    col.appendChild(h4);col.appendChild(d);
+    row.appendChild(badge);row.appendChild(col);card.appendChild(row);
+    row.addEventListener('click',function(){infLightbox(img);});
+    el.appendChild(card);
+  });
+})();
 // ── Minigames list ────────────────────────────────────────────────────
 // Each entry is either a video button or a text box. Add/reorder freely.
 // A { text: '...' } box can sit at the top or between any video buttons.
