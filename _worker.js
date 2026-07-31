@@ -779,17 +779,15 @@ var EST_PACKS=[
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-  function pct(p){return (p<1?p.toFixed(2):p.toFixed(1))+'%';}
   var estBy={};ESTABLISHMENTS.forEach(function(e){estBy[e.name]=e;});
   EST_PACKS.forEach(function(pack){
-    var totW=0;Object.keys(pack.rarities).forEach(function(k){totW+=pack.rarities[k];});
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer';
     var badge=document.createElement('span');badge.className='inf-img inf-rarity-'+pack.rarity;
     var pim=document.createElement('img');pim.src=EST_BASE+slug(pack.name)+'.png';pim.alt=pack.name;badge.appendChild(pim);
     var col=document.createElement('div');col.style.cssText='flex:1;min-width:0';
     var h4=document.createElement('h4');h4.style.cssText='margin:0';h4.textContent=pack.name;
-    var sub=document.createElement('div');sub.style.cssText='font-size:11px;color:#bbb;margin-top:2px';sub.textContent='Cost: '+pack.cost;
+    var sub=document.createElement('div');sub.style.cssText='font-size:14px;color:#fff;font-weight:700;margin-top:3px';sub.textContent='Cost: '+pack.cost;
     col.appendChild(h4);col.appendChild(sub);
     var arr=document.createElement('span');arr.style.cssText='color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6';arr.textContent='/';
     row.appendChild(badge);row.appendChild(col);row.appendChild(arr);card.appendChild(row);
@@ -797,7 +795,7 @@ var EST_PACKS=[
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     pack.cards.map(function(cn){
       var e=estBy[cn]||{};var r=e.rarity||'';
-      return {name:cn,rarity:r,desc:e.desc||'',chance:(totW>0?(pack.rarities[r]||0)/totW*100:0)};
+      return {name:cn,rarity:r,desc:e.desc||'',chance:(pack.rarities[r]!=null?pack.rarities[r]:0)};
     }).sort(function(a,b){var rd=rank(a.rarity)-rank(b.rarity);return rd!==0?rd:a.name.localeCompare(b.name);}).forEach(function(c){
       var iu=EST_BASE+slug(c.name)+'.png';
       var rrow=document.createElement('div');rrow.className='inf-reward-row';
@@ -805,13 +803,13 @@ var EST_PACKS=[
       var ri=document.createElement('img');ri.src=iu;ri.alt=c.name;rb.appendChild(ri);
       (function(u){rb.addEventListener('click',function(ev){ev.stopPropagation();infLightbox(u);});})(iu);
       var cc=document.createElement('div');cc.style.cssText='flex:1;min-width:0';
-      var cnm=document.createElement('div');cnm.className='inf-reward-name';cnm.textContent=c.name;
+      var cnm=document.createElement('div');cnm.className='inf-reward-name';cnm.style.fontFamily="'Audiowide',sans-serif";cnm.style.color='#ffa45b';cnm.textContent=c.name;
       var cd=document.createElement('div');var g=RG[c.rarity];
       if(g){cd.style.cssText='font-size:11px;margin-top:2px;font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}
       else{cd.style.cssText='font-size:11px;color:#fff;margin-top:2px';}
       cd.textContent=c.desc;
       cc.appendChild(cnm);cc.appendChild(cd);
-      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent=pct(c.chance);
+      var rq=document.createElement('div');rq.className='inf-reward-chance';rq.textContent=c.chance+'%';
       rrow.appendChild(rb);rrow.appendChild(cc);rrow.appendChild(rq);inner.appendChild(rrow);
     });
     body.appendChild(inner);card.appendChild(body);
