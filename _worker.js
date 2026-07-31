@@ -485,7 +485,7 @@ function infLoadEvolutions(){
     // any name collision (e.g. "Cupcake" is both a unit and a food).
     var lut={};
     function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
-    function put(pool,name,img,rar,keyName){if(!name)return;var k=(keyName||name).toLowerCase();if(lut[k])return;lut[k]={img:img||'',rarity:nr(rar),pool:pool,name:name};}
+    function put(pool,name,img,rar,keyName){if(!name)return;var k=(keyName||name).toLowerCase();var entry={img:img||'',rarity:nr(rar),pool:pool,name:name};lut[pool+':'+k]=entry;if(!lut[k])lut[k]=entry;}
     (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
     function addObj(pool,obj){var ck=INF_REWARD_CFG_KEY[pool];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};put(pool,ov.name||n,ov.image||o.image,ov.rarity||o.rarity,n);});}
     addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
@@ -503,11 +503,15 @@ function buildEvolutions(pEl,lut){
   var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function cap(p){return p?p.charAt(0).toUpperCase()+p.slice(1):'';}
-  function look(nm){
+  // A 3rd ingredient element (e.g. 'pet') forces which pool to pull from when a
+  // name exists in more than one (e.g. a pet named the same as a unit).
+  function look(nm,hint){
     var raw=(nm||'').toLowerCase();
     var ks=[];var al=EVO_ALIAS[raw];if(al)ks.push(al.toLowerCase());
     ks.push(raw);if(raw.slice(-1)==='s')ks.push(raw.slice(0,-1));
-    for(var i=0;i<ks.length;i++){if(lut[ks[i]])return lut[ks[i]];}
+    var i;
+    if(hint){for(i=0;i<ks.length;i++){if(lut[hint+':'+ks[i]])return lut[hint+':'+ks[i]];}}
+    for(i=0;i<ks.length;i++){if(lut[ks[i]])return lut[ks[i]];}
     return null;
   }
   // Sort evolutions by result rarity, then alphabetically (same as the other tabs).
@@ -529,7 +533,7 @@ function buildEvolutions(pEl,lut){
     var body=document.createElement('div');body.className='inf-exp-body';body.style.cssText='max-height:0;overflow:hidden;transition:max-height .3s ease';
     var inner=document.createElement('div');inner.style.cssText='margin-top:8px;padding:8px;background:rgba(0,0,0,.4);border-radius:6px;display:flex;flex-direction:column;gap:6px';
     var ings=ev.ing.map(function(pair){
-      var m=look(pair[1]);
+      var m=look(pair[1],pair[2]);
       return {qty:pair[0],nm:m?m.name:pair[1],rar:m?m.rarity:'',iu:m?m.img:'',pool:m?m.pool:''};
     }).sort(function(a,b){var rd=rank(a.rar)-rank(b.rar);return rd!==0?rd:a.nm.localeCompare(b.nm);});
     var reqLbl=document.createElement('div');reqLbl.textContent=(ings.length===1?'REQUIREMENT':'REQUIREMENTS');reqLbl.style.cssText="font-family:'Audiowide',sans-serif;font-size:13px;color:#ffa45b;letter-spacing:.5px";inner.appendChild(reqLbl);
