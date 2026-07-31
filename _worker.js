@@ -569,7 +569,7 @@ var INFO_CFG={
   pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   skins:            {overrides:{'Volcanic Party Packer Cupcake':{rarity:'secret'}}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   'loading-screens':{overrides:{}, add:{}, hide:[]},
-  materials:        {overrides:{}, add:{}, hide:[]},
+  materials:        {overrides:{'Soul':{description:''}}, add:{}, hide:[]},
   potions:          {overrides:{}, add:{}, hide:[]},
   foods:            {overrides:{}, add:{}, hide:[]}
 };
