@@ -217,7 +217,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
-      <button class="inf-drop-btn" onclick="infToggle(this)">Endo Chips <span class="inf-drop-arrow">/</span></button>
+      <button class="inf-drop-btn" onclick="infToggle(this)">Stat Chips <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endo-chips-inner"></div></div>
     </div>
     <div class="inf-drop">
