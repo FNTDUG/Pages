@@ -745,10 +745,10 @@ var ENDO_CHIPS_TOP="[Stat Rolls]<br>● You can reroll the {Stats} of your unit 
 var ENDO_CHIPS=[
   {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'[Chance]<br>● 29.9%', range:'[Range]<br>● DMG 0% ~ 5%<br>● RNG/CD 0% ~ 2.5%'},
   {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'[Chance]<br>● 35%',   range:'[Range]<br>● DMG 5% ~ 10%<br>● RNG/CD 2.5% ~ 5%'},
-  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[Chance]<br>● 28%',   range:'[Range]<br>● DMG 10% ~ +15%<br>● RNG/CD 5% ~ 7.5%'},
+  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[Chance]<br>● 28%',   range:'[Range]<br>● DMG 10% ~ 15%<br>● RNG/CD 5% ~ 7.5%'},
   {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[Chance]<br>● 5%',    range:'[Range]<br>● DMG 15% ~ 18%<br>● RNG/CD 7.5% ~ 9%'},
   {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[Chance]<br>● 1.5%',  range:'[Range]<br>● DMG 18% ~ 20%<br>● RNG/CD 9% ~ 10%'},
-  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br>● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11'},
+  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br>● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11%'},
   {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[Chance]<br>● 0.1%', range:'[Range]<br>● DMG 25%<br>● RNG/CD 12.5%'}
 ];
 (function(){
@@ -759,7 +759,7 @@ var ENDO_CHIPS=[
   if(ENDO_CHIPS_TOP){var _tc=document.createElement('div');_tc.className='inf-card';var _tp=document.createElement('p');_tp.innerHTML=_ecHl(ENDO_CHIPS_TOP);_tc.appendChild(_tp);el.appendChild(_tc);}
   ENDO_CHIPS.forEach(function(ch){
     var card=document.createElement('div');card.className='inf-card';
-    var row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-start;gap:10px';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
     var badge=document.createElement('span');badge.className='inf-img';badge.style.background=ch.grad;
     if(ch.img){
       var im=document.createElement('img');im.src=ch.img;im.alt='Glitched';badge.appendChild(im);
@@ -769,11 +769,10 @@ var ENDO_CHIPS=[
       lt.style.cssText='font-family:Audiowide,sans-serif;font-weight:700;line-height:1;font-size:'+(ch.label.length>1?'13px':'20px')+';background:'+ch.grad+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
       inner.appendChild(lt);badge.appendChild(inner);
     }
-    var txt=document.createElement('div');txt.style.cssText='flex:1;min-width:0;font-size:13px;color:#ccc;line-height:1.7';
-    var l1=document.createElement('div');l1.innerHTML=_ecHl(ch.chance);
-    var l2=document.createElement('div');l2.style.marginTop='6px';l2.innerHTML=_ecHl(ch.range);
-    txt.appendChild(l1);txt.appendChild(l2);
-    row.appendChild(badge);row.appendChild(txt);card.appendChild(row);
+    var cEl=document.createElement('div');cEl.style.cssText='flex:1;min-width:0;font-size:13px;color:#ccc;line-height:1.7';cEl.innerHTML=_ecHl(ch.chance);
+    row.appendChild(badge);row.appendChild(cEl);
+    var rEl=document.createElement('div');rEl.style.cssText='font-size:13px;color:#ccc;line-height:1.7';rEl.innerHTML=_ecHl(ch.range);
+    card.appendChild(row);card.appendChild(rEl);
     el.appendChild(card);
   });
 })();
