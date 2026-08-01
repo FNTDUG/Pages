@@ -749,7 +749,7 @@ var ENDO_CHIPS=[
   {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[Chance]<br>● 5%',    range:'[Range]<br● DMG 15% ~ 18%<br>● RNG/CD 7.5% ~ 9%'},
   {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[Chance]<br>● 1.5%',  range:'[Range]<br● DMG 18% ~ 20%<br>● RNG/CD 9% ~ 10%'},
   {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11'},
-  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'0.1% Chance', range:' DMG 25% RNG/CD 12.5%'}
+  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[Chance]<br>● 0.1%', range:'[Range]<br● DMG 25%<br>● RNG/CD 12.5%'}
 ];
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
