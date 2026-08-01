@@ -744,24 +744,22 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 var ENDO_CHIPS_TOP="[Stat Rolls]<br>● You can reroll the {Stats} of your unit with {Endo Chips}, and you can lock {Stats} that you don't want to reroll with {Springlocks}. For better luck when rolling {Stats}, you can build {Worthiness} on a unit when it kills Enemies. It takes {10k kills} for {max Worthiness} and a unit's worst {Stat} roll at {max Worthiness} is {A tier}. If your unit is {Fully Glitched} (FG) it will have a flashy new purple border";
 var ENDO_CHIPS=[
   {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'[Chance]<br>● 29.9%', range:'[Range]<br>● DMG 0% ~ 5%<br>● RNG/CD 0% ~ 2.5%'},
-  {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'[Chance]<br>● 35%',   range:'[Range]<br● DMG 5% ~ 10%<br>● RNG/CD 2.5% ~ 5%'},
-  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[Chance]<br>● 28%',   range:'[Range]<br● DMG 10% ~ +15%<br>● RNG/CD 5% ~ 7.5%'},
-  {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[Chance]<br>● 5%',    range:'[Range]<br● DMG 15% ~ 18%<br>● RNG/CD 7.5% ~ 9%'},
-  {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[Chance]<br>● 1.5%',  range:'[Range]<br● DMG 18% ~ 20%<br>● RNG/CD 9% ~ 10%'},
-  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11'},
-  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[Chance]<br>● 0.1%', range:'[Range]<br● DMG 25%<br>● RNG/CD 12.5%'}
+  {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'[Chance]<br>● 35%',   range:'[Range]<br>● DMG 5% ~ 10%<br>● RNG/CD 2.5% ~ 5%'},
+  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[Chance]<br>● 28%',   range:'[Range]<br>● DMG 10% ~ +15%<br>● RNG/CD 5% ~ 7.5%'},
+  {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[Chance]<br>● 5%',    range:'[Range]<br>● DMG 15% ~ 18%<br>● RNG/CD 7.5% ~ 9%'},
+  {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[Chance]<br>● 1.5%',  range:'[Range]<br>● DMG 18% ~ 20%<br>● RNG/CD 9% ~ 10%'},
+  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br>● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11'},
+  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[Chance]<br>● 0.1%', range:'[Range]<br>● DMG 25%<br>● RNG/CD 12.5%'}
 ];
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
   if(!el)return;
-  if(ENDO_CHIPS_TOP){
-    var _ecRG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
-    function _ecHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=_ecRG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
-    var _tc=document.createElement('div');_tc.className='inf-card';var _tp=document.createElement('p');_tp.innerHTML=_ecHl(ENDO_CHIPS_TOP);_tc.appendChild(_tp);el.appendChild(_tc);
-  }
+  var _ecRG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+  function _ecHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=_ecRG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
+  if(ENDO_CHIPS_TOP){var _tc=document.createElement('div');_tc.className='inf-card';var _tp=document.createElement('p');_tp.innerHTML=_ecHl(ENDO_CHIPS_TOP);_tc.appendChild(_tp);el.appendChild(_tc);}
   ENDO_CHIPS.forEach(function(ch){
     var card=document.createElement('div');card.className='inf-card';
-    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-start;gap:10px';
     var badge=document.createElement('span');badge.className='inf-img';badge.style.background=ch.grad;
     if(ch.img){
       var im=document.createElement('img');im.src=ch.img;im.alt='Glitched';badge.appendChild(im);
@@ -771,9 +769,9 @@ var ENDO_CHIPS=[
       lt.style.cssText='font-family:Audiowide,sans-serif;font-weight:700;line-height:1;font-size:'+(ch.label.length>1?'13px':'20px')+';background:'+ch.grad+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
       inner.appendChild(lt);badge.appendChild(inner);
     }
-    var txt=document.createElement('div');txt.style.cssText='flex:1;min-width:0';
-    var l1=document.createElement('div');l1.style.cssText='font-size:13px;color:#e8e8e8;font-weight:600;line-height:1.55';l1.textContent=ch.chance;
-    var l2=document.createElement('div');l2.style.cssText='font-size:13px;color:#e8e8e8;font-weight:600;line-height:1.55';l2.textContent=ch.range;
+    var txt=document.createElement('div');txt.style.cssText='flex:1;min-width:0;font-size:13px;color:#ccc;line-height:1.7';
+    var l1=document.createElement('div');l1.innerHTML=_ecHl(ch.chance);
+    var l2=document.createElement('div');l2.style.marginTop='6px';l2.innerHTML=_ecHl(ch.range);
     txt.appendChild(l1);txt.appendChild(l2);
     row.appendChild(badge);row.appendChild(txt);card.appendChild(row);
     el.appendChild(card);
