@@ -217,6 +217,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Endo Chips <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endo-chips-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="evolutions" onclick="infToggle(this)">Evolutions <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
     </div>
@@ -731,6 +735,42 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   }
   return card;
 }
+// ── Endo Chips ──────────────────────────────────────────────────────────
+// Hardcoded, styled like the Bytes/Enchants tab. Each card = a rarity badge
+// (a gradient-coloured letter, or the Glitched render) + its drop chance and
+// stat range. To edit: change labels/gradients/chance/range below.
+var ENDO_CHIPS=[
+  {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'29.9% Chance', range:'+0% – +5%'},
+  {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'35% Chance',   range:'+5% – +10%'},
+  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'28% Chance',   range:'+10% – +15%'},
+  {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'5% Chance',    range:'+15% – +18%'},
+  {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'1.5% Chance',  range:'+18% – +20%'},
+  {label:'SS', grad:'linear-gradient(135deg,#FF8800,#FF0C0C)', chance:'0.5% Chance',  range:'+20% – +22%'},
+  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#B14EFF,#00E0FF)', chance:'0.1% Chance', range:'+25%'}
+];
+(function(){
+  var el=document.getElementById('inf-endo-chips-inner');
+  if(!el)return;
+  ENDO_CHIPS.forEach(function(ch){
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px';
+    var badge=document.createElement('span');badge.className='inf-img';badge.style.background=ch.grad;
+    if(ch.img){
+      var im=document.createElement('img');im.src=ch.img;im.alt='Glitched';badge.appendChild(im);
+    }else{
+      var inner=document.createElement('div');inner.style.cssText='width:100%;height:100%;border-radius:8px;background:rgba(10,8,22,.9);display:flex;align-items:center;justify-content:center';
+      var lt=document.createElement('span');lt.textContent=ch.label;
+      lt.style.cssText='font-family:Audiowide,sans-serif;font-weight:700;line-height:1;font-size:'+(ch.label.length>1?'13px':'20px')+';background:'+ch.grad+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
+      inner.appendChild(lt);badge.appendChild(inner);
+    }
+    var txt=document.createElement('div');txt.style.cssText='flex:1;min-width:0';
+    var l1=document.createElement('div');l1.style.cssText='font-size:13px;color:#e8e8e8;font-weight:600;line-height:1.55';l1.textContent=ch.chance;
+    var l2=document.createElement('div');l2.style.cssText='font-size:13px;color:#e8e8e8;font-weight:600;line-height:1.55';l2.textContent=ch.range;
+    txt.appendChild(l1);txt.appendChild(l2);
+    row.appendChild(badge);row.appendChild(txt);card.appendChild(row);
+    el.appendChild(card);
+  });
+})();
 // ── Establishments list ────────────────────────────────────────────────
 // Boost cards obtained from Establishment Card Packs. Cards are grouped under
 // their pack (each an expandable dropdown) and show rarity, boost and drop odds.
