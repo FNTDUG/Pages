@@ -743,13 +743,13 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 // Set to a string to show it; supports [HEADER], {bold}, ~rarity:text~ and <br>.
 var ENDO_CHIPS_TOP="[Stat Rolls]<br>● You can reroll the {Stats} of your unit with {Endo Chips}, and you can lock {Stats} that you don't want to reroll with {Springlocks}. For better luck when rolling {Stats}, you can build {Worthiness} on a unit when it kills Enemies. It takes {10k kills} for {max Worthiness} and a unit's worst {Stat} roll at {max Worthiness} is {A tier}. If your unit is {Fully Glitched} (FG) it will have a flashy new purple border";
 var ENDO_CHIPS=[
-  {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'[Chance]<br>● 29.9%', range:'[Range]<br>● DMG 0% ~ 5%<br>● RNG/CD 0% ~ 2.5%'},
-  {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'[Chance]<br>● 35%',   range:'[Range]<br>● DMG 5% ~ 10%<br>● RNG/CD 2.5% ~ 5%'},
-  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[Chance]<br>● 28%',   range:'[Range]<br>● DMG 10% ~ 15%<br>● RNG/CD 5% ~ 7.5%'},
-  {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[Chance]<br>● 5%',    range:'[Range]<br>● DMG 15% ~ 18%<br>● RNG/CD 7.5% ~ 9%'},
-  {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[Chance]<br>● 1.5%',  range:'[Range]<br>● DMG 18% ~ 20%<br>● RNG/CD 9% ~ 10%'},
-  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[Chance]<br>● 0.5%',  range:'[Range]<br>● DMG 20% ~ 22%<br>● RNG/CD 10% ~ 11%'},
-  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[Chance]<br>● 0.1%', range:'[Range]<br>● DMG 25%<br>● RNG/CD 12.5%'}
+  {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'[CHANCE]<br>● {29.9%}', range:'[RANGE]<br>● DMG {0% ~ 5%}<br>● RNG/CD {0% ~ 2.5%}'},
+  {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'[CHANCE]<br>● {35%}',   range:'[RANGE]<br>● DMG {5% ~ 10%}<br>● RNG/CD {2.5% ~ 5%}'},
+  {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'[CHANCE]<br>● {28%}',   range:'[RANGE]<br>● DMG {10% ~ 15%}<br>● RNG/CD {5% ~ 7.5%}'},
+  {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[CHANCE]<br>● {5%}',    range:'[RANGE]<br>● DMG {15% ~ 18%}<br>● RNG/CD {7.5% ~ 9%}'},
+  {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[CHANCE]<br>● {1.5%}',  range:'[RANGE]<br>● DMG {18% ~ 20%}<br>● RNG/CD {9% ~ 10%}'},
+  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[CHANCE]<br>● {0.5%}',  range:'[RANGE]<br>● DMG {20% ~ 22%}<br>● RNG/CD {10% ~ 11%}'},
+  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[CHANCE]<br>● {0.1%}', range:'[RANGE]<br>● DMG {25%}<br>● RNG/CD {12.5%}'}
 ];
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
