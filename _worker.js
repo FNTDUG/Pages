@@ -741,7 +741,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 // stat range. To edit: change labels/gradients/chance/range below.
 // Optional note card shown above the list (like the Bytes/Chips [_top] blurb).
 // Set to a string to show it; supports [HEADER], {bold}, ~rarity:text~ and <br>.
-var ENDO_CHIPS_TOP='[Stat rolls]<br>● You can reroll the {Stats} of your unit with {Endo Chips}, and you can lock {Stats} that you don't want to reroll with {Springlocks}. For better luck when rolling {Stats}, you can build {Worthiness} on a unit when it kills Enemies. It takes {10k kills} for {max Worthiness} and a unit's worst {Stat} roll at {max Worthiness} is {A tier}. If your unit is {Fully Glitched} (FG) it will have a flashy new purple border';
+var ENDO_CHIPS_TOP="[Stat rolls]<br>● You can reroll the {Stats} of your unit with {Endo Chips}, and you can lock {Stats} that you don't want to reroll with {Springlocks}. For better luck when rolling {Stats}, you can build {Worthiness} on a unit when it kills Enemies. It takes {10k kills} for {max Worthiness} and a unit's worst {Stat} roll at {max Worthiness} is {A tier}. If your unit is {Fully Glitched} (FG) it will have a flashy new purple border";
 var ENDO_CHIPS=[
   {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'29.9% Chance', range:'DMG 0% ~ 5% RNG/CD 0% ~ 2.5%'},
   {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'35% Chance',   range:'DMG 5% ~ 10% RNG/CD 2.5% ~ 5%'},
