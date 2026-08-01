@@ -217,32 +217,16 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
     <div class="inf-drop">
-      <button class="inf-drop-btn" data-lazy="evolutions" onclick="infToggle(this)">Evolutions <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
-    </div>
-    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Establishments <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-establishments-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="evolutions" onclick="infToggle(this)">Evolutions <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="foods" onclick="infToggle(this)">Food <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-foods-inner"></div></div>
-    </div>
-    <div class="inf-drop">
-      <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
-    </div>
-    <div class="inf-drop">
-      <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
-    </div>
-    <div class="inf-drop">
-      <button class="inf-drop-btn" data-lazy="pets" onclick="infToggle(this)">Pets <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-pets-inner"></div></div>
-    </div>
-    <div class="inf-drop">
-      <button class="inf-drop-btn" data-lazy="skins" onclick="infToggle(this)">Unit Skins <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-skins-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="loading-screens" onclick="infToggle(this)">Loading Screens <span class="inf-drop-arrow">/</span></button>
@@ -257,12 +241,28 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="pets" onclick="infToggle(this)">Pets <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-pets-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="potions" onclick="infToggle(this)">Potions <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-potions-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="presents" onclick="infToggle(this)">Presents <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Stat Chips <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endo-chips-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="skins" onclick="infToggle(this)">Unit Skins <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-skins-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
     </div>
   </div>
 </div>
