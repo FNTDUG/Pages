@@ -739,18 +739,26 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 // Hardcoded, styled like the Bytes/Enchants tab. Each card = a rarity badge
 // (a gradient-coloured letter, or the Glitched render) + its drop chance and
 // stat range. To edit: change labels/gradients/chance/range below.
+// Optional note card shown above the list (like the Bytes/Chips [_top] blurb).
+// Set to a string to show it; supports [HEADER], {bold}, ~rarity:text~ and <br>.
+var ENDO_CHIPS_TOP='';
 var ENDO_CHIPS=[
   {label:'D',  grad:'linear-gradient(135deg,#E6E6E6,#8C8C8C)', chance:'29.9% Chance', range:'+0% – +5%'},
   {label:'C',  grad:'linear-gradient(135deg,#6BFF5C,#2A9D3A)', chance:'35% Chance',   range:'+5% – +10%'},
   {label:'B',  grad:'linear-gradient(135deg,#58A6FF,#1C3AA0)', chance:'28% Chance',   range:'+10% – +15%'},
   {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'5% Chance',    range:'+15% – +18%'},
   {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'1.5% Chance',  range:'+18% – +20%'},
-  {label:'SS', grad:'linear-gradient(135deg,#FF8800,#FF0C0C)', chance:'0.5% Chance',  range:'+20% – +22%'},
-  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#B14EFF,#00E0FF)', chance:'0.1% Chance', range:'+25%'}
+  {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'0.5% Chance',  range:'+20% – +22%'},
+  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'0.1% Chance', range:'+25%'}
 ];
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
   if(!el)return;
+  if(ENDO_CHIPS_TOP){
+    var _ecRG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+    function _ecHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=_ecRG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
+    var _tc=document.createElement('div');_tc.className='inf-card';var _tp=document.createElement('p');_tp.innerHTML=_ecHl(ENDO_CHIPS_TOP);_tc.appendChild(_tp);el.appendChild(_tc);
+  }
   ENDO_CHIPS.forEach(function(ch){
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px';
