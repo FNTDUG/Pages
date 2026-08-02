@@ -624,6 +624,9 @@ var HERO_QUESTS=[
     'Beat Game 1 Night 6 on Nightmare Mode',
     'Beat Game 2 Night 6 on Nightmare Mode',
     'Beat Game 3 Night 6 on Nightmare Mode'
+  ]},
+  {unit:'Chipper', present:'Chipper Present', quests:[
+    'Beating the Minigame on Game 5 (Circus Baby) through Normal Ending has a 5% chance to drop his present, beating it through Secret Ending has a 10% chance'
   ]}
 ];
 function infLoadHeroQuests(){
@@ -648,14 +651,15 @@ function buildHeroQuests(pEl,uMap,pMap){
     var p=pMap[h.present.toLowerCase()]||{};
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
-    var ub=document.createElement('span');ub.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');if(!u.rarity)ub.style.background='rgba(25,24,40,.9)';
+    var ub=document.createElement('span');ub.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');ub.style.margin='0';if(!u.rarity)ub.style.background='rgba(25,24,40,.9)';
     var ui=document.createElement('img');ui.src=u.img||'';ui.alt=h.unit;ub.appendChild(ui);
-    var pb=document.createElement('span');pb.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');if(!p.rarity)pb.style.background='rgba(25,24,40,.9)';
+    var pb=document.createElement('span');pb.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');pb.style.margin='0';if(!p.rarity)pb.style.background='rgba(25,24,40,.9)';
     var pi=document.createElement('img');pi.src=p.img||'';pi.alt=h.present;pb.appendChild(pi);
     var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=h.unit;
-    row.appendChild(ub);row.appendChild(pb);row.appendChild(h4);card.appendChild(row);
+    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
+    row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px';qh.textContent='Quests';card.appendChild(qh);
-    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;text-transform:uppercase';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
 }
