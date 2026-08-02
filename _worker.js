@@ -590,6 +590,14 @@ var HERO_QUESTS=[
     'Beat Nightmare Game 3 Night 6 with only 3 units',
     'Roll Phantom on 3 Phantom units'
   ]},
+  {unit:'Old Man Consequences', present:'Old Man Consequences Present', quests:[
+    'Reach wave 100 on Boss Raid with every unit sharing the same element',
+    'Obtain Time Lord Withered Freddy',
+    'Open 50 Boss Raid Presents',
+    'Beat Game 1 Night 6 on Nightmare Mode',
+    'Beat Game 2 Night 6 on Nightmare Mode',
+    'Beat Game 3 Night 6 on Nightmare Mode'
+  ]},
   {unit:'Nightmare Fredbear', present:'Nightmare Fredbear Present', quests:[
     'Complete Game 4 Night 6 on Nightmare Mode',
     'Get to wave 135 with Dark element only on Boss Raid',
@@ -603,13 +611,8 @@ var HERO_QUESTS=[
     'Beat all Game 5 nights on Nightmare',
     'Get to wave 100 in Endless 5 with Elizabeth on the team'
   ]},
-  {unit:'Michael Afton', present:'Michael Afton Present', quests:[
-    'Complete all Game 6 nights on Nightmare Mode',
-    'Kill 5k enemies',
-    'Complete Game 5 Night 6 with 3+ Rust element units, 5 times',
-    'Complete Game 3 Night 6 with 3+ Rust element units, 5 times',
-    'Open 100 Establishment Card Packs',
-    'Reach wave 100 on Game 6 Endless with Ennard and 2+ Rust units'
+  {unit:'Chipper', present:'Chipper Present', header:'Obtainment', quests:[
+    'Beating the Minigame on Game 5 (Circus Baby) through Normal Ending has a 5% chance to drop his present, beating it through Secret Ending has a 10% chance'
   ]},
   {unit:'Animdude', present:'Animdude Present', quests:[
     'Reach 1.25k Trophies',
@@ -617,16 +620,13 @@ var HERO_QUESTS=[
     'Play 30 PvP games',
     'Kill 250 Special enemies'
   ]},
-  {unit:'Old Man Consequences', present:'Old Man Consequences Present', quests:[
-    'Reach wave 100 on Boss Raid with every unit sharing the same element',
-    'Obtain Time Lord Withered Freddy',
-    'Open 50 Boss Raid Presents',
-    'Beat Game 1 Night 6 on Nightmare Mode',
-    'Beat Game 2 Night 6 on Nightmare Mode',
-    'Beat Game 3 Night 6 on Nightmare Mode'
-  ]},
-  {unit:'Chipper', present:'Chipper Present', quests:[
-    'Beating the Minigame on Game 5 (Circus Baby) through Normal Ending has a 5% chance to drop his present, beating it through Secret Ending has a 10% chance'
+  {unit:'Michael Afton', present:'Michael Afton Present', quests:[
+    'Complete all Game 6 nights on Nightmare Mode',
+    'Kill 5k enemies',
+    'Complete Game 5 Night 6 with 3+ Rust element units, 5 times',
+    'Complete Game 3 Night 6 with 3+ Rust element units, 5 times',
+    'Open 100 Establishment Card Packs',
+    'Reach wave 100 on Game 6 Endless with Ennard and 2+ Rust units'
   ]}
 ];
 function infLoadHeroQuests(){
@@ -658,8 +658,8 @@ function buildHeroQuests(pEl,uMap,pMap){
     var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=h.unit;
     var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
     row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
-    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px';qh.textContent='Quests';card.appendChild(qh);
-    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;text-transform:uppercase';qd.textContent='● '+q;card.appendChild(qd);});
+    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent=h.header||'Quests';card.appendChild(qh);
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
 }
