@@ -1089,7 +1089,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'The Fan': '[OBTAINMENT]<br>● 0.5% Drop chance when selecting a Modifier in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
          'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVES]<br>● Able to give any single Element Boost<br>● If the Unit and UFO share the same Element, gain a Damage Boost<br>[STATS]<br>● DAMAGE (Same Element): {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}',
-         'Neon Bee': '[OBTAINMENT]<br>● 0.05%% Drop chance when Summoning<br>[PASSIVE]<br>● {+5%} Damage per unique DoT instance on an Enemy<br>[STAT]<br>● DoT Damage: {+5%}<br>● DoT Duration: {-25 ~ +25%}'
+         'Neon Bee': '[OBTAINMENT]<br>● 0.05% Drop chance when Summoning<br>[PASSIVE]<br>● {+5%} Damage per unique DoT instance on an Enemy<br>[STATS]<br>● DoT Damage: {+5%}<br>● DoT Duration: {-25 ~ +25%}'
         },
         chips:{
          _top: [
