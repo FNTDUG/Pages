@@ -229,6 +229,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-foods-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="hero-quests" onclick="infToggle(this)">Hero Quests <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-hero-quests-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="loading-screens" onclick="infToggle(this)">Loading Screens <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-loading-screens-inner"></div></div>
     </div>
@@ -285,7 +289,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -557,6 +561,101 @@ function buildEvolutions(pEl,lut){
     });
     body.appendChild(inner);card.appendChild(body);
     row.addEventListener('click',function(){infToggleExp(row,body,arr);});
+    pEl.appendChild(card);
+  });
+}
+// ── Hero Quests tab ─────────────────────────────────────────────────────
+// Each hero shows its unit render + present render, then the quests to unlock it.
+// Images/rarities are pulled from the units + presents JSON by name.
+var HERO_QUESTS=[
+  {unit:'Golden Freddy', present:'Hero Present 1', quests:[
+    'Beat Game 1 Night 6',
+    'Reach wave 50 in Game 1 Endless',
+    'Obtain 3 Mythic Units OR 1 Secret Unit'
+  ]},
+  {unit:'Puppet', present:'Hero Present 2', quests:[
+    'Beat Game 2 Night 6',
+    'Reach wave 50 in Game 2 Endless with at least 3 Withered Animatronics',
+    'Obtain 3 Shiny Units',
+    'Reach Level 100 on 3 Units',
+    'Obtain Withered Freddy, Bonnie, Chica, and Foxy',
+    'Reach 2.5k Faz-Rating',
+    'Enchant Withered Animatronics 250 times'
+  ]},
+  {unit:'Springtrap', present:'Hero Present 3', quests:[
+    'Get 25k Faz-Rating',
+    'Get to wave 100 on Game 3 Endless',
+    'Reach Level 100 on Phantom BB',
+    'Summon 1 Withered Golden Freddy',
+    'Beat Nightmare Game 3 Night 6 with only 3 units',
+    'Roll Phantom on 3 Phantom units'
+  ]},
+  {unit:'Nightmare Fredbear', present:'Nightmare Fredbear Present', quests:[
+    'Complete Game 4 Night 6 on Nightmare Mode',
+    'Get to wave 135 with Dark element only on Boss Raid',
+    'Delete 50 Light units',
+    'Obtain 4 units with "Nightmare" in the name',
+    'Get to wave 100 in Game 4 with only Dark element units'
+  ]},
+  {unit:'Ennard', present:'Ennard Present', quests:[
+    'Get to Boss Raid 135 with only Electric units',
+    'Buy 1250 items from the Merchant',
+    'Beat all Game 5 nights on Nightmare',
+    'Get to wave 100 in Endless 5 with Elizabeth on the team'
+  ]},
+  {unit:'Michael Afton', present:'Michael Afton Present', quests:[
+    'Complete all Game 6 nights on Nightmare Mode',
+    'Kill 5k enemies',
+    'Complete Game 5 Night 6 with 3+ Rust element units, 5 times',
+    'Complete Game 3 Night 6 with 3+ Rust element units, 5 times',
+    'Open 100 Establishment Card Packs',
+    'Reach wave 100 on Game 6 Endless with Ennard and 2+ Rust units'
+  ]},
+  {unit:'Animdude', present:'Animdude Present', quests:[
+    'Reach 1.25k Trophies',
+    'Beat 5 Minigames',
+    'Play 30 PvP games',
+    'Kill 250 Special enemies'
+  ]},
+  {unit:'Old Man Consequences', present:'Old Man Consequences Present', quests:[
+    'Reach wave 100 on Boss Raid with every unit sharing the same element',
+    'Obtain Time Lord Withered Freddy',
+    'Open 50 Boss Raid Presents',
+    'Beat Game 1 Night 6 on Nightmare Mode',
+    'Beat Game 2 Night 6 on Nightmare Mode',
+    'Beat Game 3 Night 6 on Nightmare Mode'
+  ]}
+];
+function infLoadHeroQuests(){
+  if(_catLoaded['hero-quests'])return;_catLoaded['hero-quests']=true;
+  var pEl=document.getElementById('inf-hero-quests-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{})]).then(function(res){
+    var uMap={};(Array.isArray(res[0])?res[0]:[]).forEach(function(u){if(u.name)uMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});
+    var pMap={};Object.keys(res[1]||{}).forEach(function(n){var o=res[1][n]||{};pMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
+    pEl.innerHTML='';
+    buildHeroQuests(pEl,uMap,pMap);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildHeroQuests(pEl,uMap,pMap){
+  if(!pEl)return;
+  HERO_QUESTS.forEach(function(h){
+    var u=uMap[h.unit.toLowerCase()]||{};
+    var p=pMap[h.present.toLowerCase()]||{};
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var ub=document.createElement('span');ub.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');if(!u.rarity)ub.style.background='rgba(25,24,40,.9)';
+    var ui=document.createElement('img');ui.src=u.img||'';ui.alt=h.unit;ub.appendChild(ui);
+    var pb=document.createElement('span');pb.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');if(!p.rarity)pb.style.background='rgba(25,24,40,.9)';
+    var pi=document.createElement('img');pi.src=p.img||'';pi.alt=h.present;pb.appendChild(pi);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=h.unit;
+    row.appendChild(ub);row.appendChild(pb);row.appendChild(h4);card.appendChild(row);
+    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px';qh.textContent='Quests';card.appendChild(qh);
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
 }
