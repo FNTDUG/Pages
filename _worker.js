@@ -198,7 +198,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
 <div id="ug-info-panel" role="dialog" aria-label="Info">
   <div class="ug-mn-header">
     <div class="ug-mn-brand">
-      <img class="ug-mn-brand-logo" src="https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glowy.webp" alt="FNTD">
+      <img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD">
       <span class="ug-mn-brand-name" style="letter-spacing:2px">INFO</span>
     </div>
     <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
@@ -513,7 +513,7 @@ function infLoadEvolutions(){
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
 }
-var EVO_PLACEHOLDER='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/placeholder-freddy.png';
+var EVO_PLACEHOLDER='https://images.fntduserguide.com/placeholder-freddy.png';
 function buildEvolutions(pEl,lut){
   if(!pEl)return;
   var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
@@ -769,7 +769,7 @@ function buildPrestige(pEl,map){
   if(!pEl)return;
   var hc=document.createElement('div');hc.className='inf-card';
   var hr=document.createElement('div');hr.style.cssText='display:flex;align-items:center;gap:12px';
-  var him=document.createElement('img');him.src='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/toy%20chuddy.png';him.alt='Toy Chuddy';him.style.cssText='width:60px;height:60px;object-fit:contain;flex-shrink:0';
+  var him=document.createElement('img');him.src='https://images.fntduserguide.com/toy%20chuddy.png';him.alt='Toy Chuddy';him.style.cssText='width:60px;height:60px;object-fit:contain;flex-shrink:0';
   var ht=document.createElement('div');
   var h1=document.createElement('div');h1.style.cssText='font-family:Audiowide,sans-serif;color:#ffa45b;font-size:1.05em;margin-bottom:2px';h1.textContent='Welcome Back!';
   var h2=document.createElement('div');h2.style.cssText='color:#ccc;font-size:13px';h2.textContent='What would you like to do today?';
@@ -798,8 +798,8 @@ function buildPrestige(pEl,map){
   pEl.appendChild(sc);
 }
 // ── Generic category tabs (banners / pets / skins / loading-screens / materials / potions / foods) ──
-var COS_BASE='https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev';
-var ITM_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev';
+var COS_BASE='https://cosmetics.fntduserguide.com';
+var ITM_BASE='https://items.fntduserguide.com';
 var INF_RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
 function infRr(r){var i=INF_RO.indexOf((r||'').toLowerCase());return i===-1?INF_RO.length:i;}
 var INF_RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
@@ -830,7 +830,7 @@ var INFO_CFG={
 // Reward/ingredient type (as used in the Presents & Evolutions lookups) → its INFO_CFG key,
 // so category overrides (rarity/name/image) apply everywhere an item shows up, not just its own tab.
 var INF_REWARD_CFG_KEY={skin:'skins',pet:'pets',banner:'banners','loading screen':'loading-screens',material:'materials',food:'foods',potion:'potions'};
-var INF_COINS_IMG='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/coins.webp';
+var INF_COINS_IMG='https://images.fntduserguide.com/coins.webp';
 var _catLoaded={};
 function infLoadCategory(catKey){
   if(_catLoaded[catKey])return;_catLoaded[catKey]=true;
@@ -986,7 +986,7 @@ var ENDO_CHIPS=[
   {label:'A',  grad:'linear-gradient(135deg,#FF35FF,#87009F)', chance:'[CHANCE]<br>● {5% (1/20)}',    range:'[RANGE]<br>● DMG {15% ~ 18%}<br>● RNG/CD {7.5% ~ 9%}'},
   {label:'S',  grad:'linear-gradient(135deg,#FFB81F,#FFFF00)', chance:'[CHANCE]<br>● {1.5% (1/66)}',  range:'[RANGE]<br>● DMG {18% ~ 20%}<br>● RNG/CD {9% ~ 10%}'},
   {label:'SS', grad:'linear-gradient(135deg,#FFB81F,#FFD700)', chance:'[CHANCE]<br>● {0.5% (1/200)}',  range:'[RANGE]<br>● DMG {20% ~ 22%}<br>● RNG/CD {10% ~ 11%}'},
-  {img:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[CHANCE]<br>● {0.1% (1/1k)}', range:'[RANGE]<br>● DMG {25%}<br>● RNG/CD {12.5%}'}
+  {img:'https://images.fntduserguide.com/glitched-removebg-preview%20(1).png', grad:'linear-gradient(135deg,#9913CD,#6801B7,#000000,#6801B7,#E9C1FE,#9913CD)', chance:'[CHANCE]<br>● {0.1% (1/1k)}', range:'[RANGE]<br>● DMG {25%}<br>● RNG/CD {12.5%}'}
 ];
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
@@ -1019,7 +1019,7 @@ var ENDO_CHIPS=[
 // Clicking a card image opens it fullscreen (same lightbox as the User Banners /
 // Loading Screens tabs). Images live in the R2 bucket below, keyed by a slug of
 // the name (e.g. "Fazbear Mafia" -> fazbear-mafia.png).
-var EST_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/establishments/';
+var EST_BASE='https://items.fntduserguide.com/establishments/';
 var ESTABLISHMENTS=[
   {name:'Fazbear Mafia',rarity:'secret',desc:'+10% Token Boost'},
   {name:'Arcade',rarity:'rare',desc:'+2.5% Token Boost'},
@@ -1111,10 +1111,10 @@ var EST_PACKS=[
 //   [Header]  {bold}  ~rarity:text~   and <br> for line breaks.
 var MINIGAMES=[
   { text:'[Circus Baby Minigame]<br>[Location]<br>● Game 5<br>● To Trigger this Minigame you must defeat the {Arcade} Enemy, with a {10%} chance of spawning on Waves {5} and {12} respectively' },
-  { video:'Circus Baby (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/babynormal.mp4' },
-  { video:'Circus Baby (Secret Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/cbminigameDsdf.mp4' },
+  { video:'Circus Baby (Normal Ending)', url:'https://images.fntduserguide.com/babynormal.mp4' },
+  { video:'Circus Baby (Secret Ending)', url:'https://images.fntduserguide.com/cbminigameDsdf.mp4' },
   { text:'[Foxy Go Minigame]<br>[Location]<br>● Game 2<br>● To Trigger this Minigame you must defeat the {Arcade} Enemy, with a {10%} chance of spawning on Waves {5} and {12} respectively' },
-  { video:'Foxy Go (Normal Ending)', url:'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/gogogo.mp4' }
+  { video:'Foxy Go (Normal Ending)', url:'https://images.fntduserguide.com/gogogo.mp4' }
 ];
 (function(){
   var el=document.getElementById('inf-minigames-inner');
@@ -1342,15 +1342,15 @@ const ACTIVE_SCRIPT = `<script>
 <\/script>`;
 
 const INF_PROXY = {
-  'presents':        'https://pub-71c3b160626949ae8220d0daad5a9fc8.r2.dev/fntd2-presents.json',
+  'presents':        'https://presents.fntduserguide.com/fntd2-presents.json',
   'units':           'https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',
-  'skins':           'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/skins.json',
-  'pets':            'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/pets.json',
-  'banners':         'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/banners.json',
-  'loading-screens': 'https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev/loading-screens.json',
-  'materials':       'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/materials.json',
-  'foods':           'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/foods.json',
-  'potions':         'https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/potions.json'
+  'skins':           'https://cosmetics.fntduserguide.com/skins.json',
+  'pets':            'https://cosmetics.fntduserguide.com/pets.json',
+  'banners':         'https://cosmetics.fntduserguide.com/banners.json',
+  'loading-screens': 'https://cosmetics.fntduserguide.com/loading-screens.json',
+  'materials':       'https://items.fntduserguide.com/materials.json',
+  'foods':           'https://items.fntduserguide.com/foods.json',
+  'potions':         'https://items.fntduserguide.com/potions.json'
 };
 
 export default {
@@ -1361,7 +1361,15 @@ export default {
       const target = INF_PROXY[url.pathname.slice('/inf-data/'.length)];
       if (!target) return new Response('Not found', { status: 404 });
       const up = await fetch(target, { cf: { cacheTtl: 300, cacheEverything: true } });
-      return new Response(up.body, {
+      // Rewrite any r2.dev image URLs stored inside the JSON to the custom domains, so
+      // renders resolve on the custom domain (CORS) and we can retire the r2.dev dev URLs.
+      let body = await up.text();
+      body = body
+        .replace(/pub-ded986176f754f5fb54de94d2fb15509\.r2\.dev/g, 'cosmetics.fntduserguide.com')
+        .replace(/pub-bd8c71834de64b078aa68df269b7d92e\.r2\.dev/g, 'items.fntduserguide.com')
+        .replace(/pub-71c3b160626949ae8220d0daad5a9fc8\.r2\.dev/g, 'presents.fntduserguide.com')
+        .replace(/pub-147ea4ffd88444cba282e819b9168c94\.r2\.dev/g, 'images.fntduserguide.com');
+      return new Response(body, {
         status: up.status,
         headers: {
           'content-type': 'application/json; charset=utf-8',
@@ -1387,10 +1395,10 @@ export default {
         element(el) { el.append(NAV_CSS, { html: true }); }
       })
       .on('img.ug-header-logo', {
-        element(el) { el.setAttribute('src', 'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/circle_done.png'); }
+        element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
       })
       .on('img.ug-mn-brand-logo', {
-        element(el) { el.setAttribute('src', 'https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/glowy.webp'); }
+        element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/glowy.webp'); }
       })
       .on('.ug-mn-body', {
         element(el) { el.setInnerContent(MOBILE_NAV_BODY, { html: true }); }
