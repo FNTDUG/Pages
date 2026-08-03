@@ -442,7 +442,7 @@ var EVO_ALIAS={
   'trash-o-tron':'Trash o Tron','mech-lizabeth':'Mecha-Lizabeth',
   'blossom chicas':'Blossom Chica','overgrown foxies':'Overgrown Foxy',
   'batteries':'Battery','tvs':'Television','tv':'Television',
-  'raid tokens':'Raid Tokens','pickles':'Jar of Pickles',
+  'raid tokens':'Raid Coins','pickles':'Jar of Pickles',
   'mechanical bomb':'Mechanical Bombs','hazzard sign':'Hazard Sign',
   'paperpals':'PaperPals'
 };
@@ -456,19 +456,19 @@ var EVOLUTIONS=[
   {name:'Hero PaperPals',display:'Hero Paperpals',ing:[['1','Paperpals'],['10','Springs'],['10','Batteries'],['20','Souls']]},
   {name:'Fathomless Withered Foxy',ing:[['1','Shark Withered Foxy'],['1','Deep Sea Calamity Endo'],['25','Serpent Endos'],['1','Pressure Sensor'],['250','Apocalypse Presents']]},
   {name:'Deep Sea Calamity Endo',ing:[['25','Serpent Endos'],['3','Ships'],['250','AFK Presents']]},
-  {name:'Gaia Chica',ing:[['1','Blossom Chica'],['1','Grassy Heart'],['2','Clocks'],['25','Agony'],['200','Raid Tokens'],['250','Souls']]},
+  {name:'Gaia Chica',ing:[['1','Blossom Chica'],['1','Grassy Heart'],['2','Clocks'],['25','Agony'],['200','Raid Coins'],['250','Souls']]},
   {name:'Nature Reclaimed Foxy',ing:[['1','Overgrown Foxy'],['1','Clock'],['200','Agony'],['250','Batteries'],['300','Springs']]},
   {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Tokens']]},
   {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Tokens']]},
   {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Tokens']]},
   {name:'Trash-o-Tron',ing:[['1','Pan Stan'],['1','Bucket Bob'],['1','No. 1 Crate'],['50','Batteries'],['100','Springs'],['25','Salvage Tokens']]},
-  {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Tokens']]},
+  {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Coins']]},
   {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Freddy']]},
   {name:'Arch Angler Toy Bonnie',ing:[['1','Fisherman Toy Bonnie'],['1','Shark Withered Foxy'],['1','Shark'],['175','Agony'],['300','Soda']]},
   {name:'Mech-Lizabeth',ing:[['1','Elizabeth'],['3','Endo 01s'],['1','Ice Cream Mech Suit'],['50','Ice Cream Cones']]},
-  {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Tokens']]},
-  {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Season 5 Present'],['15','Raid Tokens']]},
-  {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]},
+  {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Coins']]},
+  {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Season 5 Present'],['15','Raid Coins']]},
+  {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Coins']]},
   {name:'Circus Baby',ing:[['1','Ballora'],['1','Elizabeth'],['125','Ice Cream Cone'],['15','Funtime Freddy']]},
   {name:'Leviathan Mangle',ing:[['200','Freddy With a Glock'],['75','Beach Ball']]},
   {name:'Valkyrie Chica',ing:[['200','Freddy With a Glock'],['75','Grenade']]},
@@ -1042,13 +1042,13 @@ var ESTABLISHMENTS=[
   {name:'Peaceful Luck',rarity:'secret',desc:'+4% Luck Boost'},
   {name:"Foxy's Throne",rarity:'nightmare',desc:'+10% Faz-Rating Boost'},
   {name:'In the jar',rarity:'mythic',desc:'+2% Faz-Rating Boost'},
-  {name:'Raid Token Card Uncommon',rarity:'uncommon',desc:'+1.5% Raid Token Boost'},
-  {name:'Raid Token Card Rare',rarity:'rare',desc:'+2.5% Raid Token Boost'},
-  {name:'Raid Token Card Epic',rarity:'epic',desc:'+5% Raid Token Boost'},
-  {name:'Raid Token Card Mythical',rarity:'mythic',desc:'+7.5% Raid Token Boost'},
-  {name:'Raid Token Card Secret',rarity:'secret',desc:'+10% Raid Token Boost'},
-  {name:'Raid Token Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Token Boost'},
-  {name:'Raid Token Card Apex',rarity:'apex',desc:'+20% Raid Token Boost'},
+  {name:'Raid Coin Card Uncommon',rarity:'uncommon',desc:'+1.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Rare',rarity:'rare',desc:'+2.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Epic',rarity:'epic',desc:'+5% Raid Coin Boost'},
+  {name:'Raid Coin Card Mythical',rarity:'mythic',desc:'+7.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Secret',rarity:'secret',desc:'+10% Raid Coin Boost'},
+  {name:'Raid Coin Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Coin Boost'},
+  {name:'Raid Coin Card Apex',rarity:'apex',desc:'+20% Raid Coin Boost'},
   {name:'Token Card Apex',rarity:'apex',desc:'+20% Tokens Boost'},
   {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
   {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
@@ -1057,7 +1057,7 @@ var ESTABLISHMENTS=[
 // and the card rarities/weights above.
 var EST_PACKS=[
   {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Tokens',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
-  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Token Card Uncommon','Raid Token Card Rare','Raid Token Card Epic','Raid Token Card Mythical','Raid Token Card Secret','Raid Token Card Nightmare','Raid Token Card Apex','Luck Card Apex','Token Card Apex','Faz Rating Card Apex']}
+  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Token Card Apex','Faz Rating Card Apex']}
 ];
 (function(){
   var el=document.getElementById('inf-establishments-inner');
@@ -1217,7 +1217,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
            '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>[1] No Change<br>[2] Reroll Stats within the Bytes Stat Range<br>[3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>[4] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passives Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
          ],
          'The Box': '[OBTAINMENT]<br>● 0.05% Drop chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
-         'Boss Drain': '[OBTAINMENT]<br>● Purchasable for 50 Raid Tokens the in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
+         'Boss Drain': '[OBTAINMENT]<br>● Purchasable for 50 Raid Coins the in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
          'Reaper': '[OBTAINMENT]<br>● 0.01% Drop chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE {0% ~ +40%}',
          'KABOOM!': '[OBTAINMENT]<br>● 3% Drop chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
          'The Fan': '[OBTAINMENT]<br>● 0.5% Drop chance when selecting a Modifier in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
