@@ -257,6 +257,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="shop-quests" onclick="infToggle(this)">Shop Quests <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-shop-quests-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Stat Chips <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endo-chips-inner"></div></div>
     </div>
@@ -289,7 +293,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -660,6 +664,74 @@ function buildHeroQuests(pEl,uMap,pMap){
     var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
     row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent=h.header||'Quests';card.appendChild(qh);
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    pEl.appendChild(card);
+  });
+}
+var SHOP_QUESTS=[
+  {unit:'Funtime Chica', present:'Funtime Chica Present', cost:20000, quests:[
+    'Reach Wave 150 on Boss Raids with 3+ Light Units',
+    'Have Units receive Funtime Foxys Boost for 850 seconds (14m)',
+    'Defeat 650 Dark Enemies',
+    'Use 3 Types of Chicas and Beat Game 6 on Nightmare Mode'
+  ]},
+  {unit:'Henry Emily', present:'Henry Emily Present', cost:50000, quests:[
+    'Buy 5 Units from the Merchant',
+    'Roll Endo 01 from any Banner',
+    'Get 250 kills with Summons',
+    'Summon 650 times'
+  ]},
+  {unit:'Scrap Baby', present:'Scrap Baby Present', cost:60000, quests:[
+    'Reach Wave 100 in Endless Game 6 with 3+ Rust Units',
+    'Kill 20 Game 6 Bosses',
+    'Delete 10 Fire Units',
+    'Get 850 kills with Elizabeth Unit'
+  ]},
+  {unit:'Music Man', present:'Music Man Present', cost:40000, quests:[
+    'Beat 15 Nights with Electric Units only',
+    'Reach Wave 165 on Boss Raids with Electric Units only',
+    'Reach Wave 115 on Endless Game 6 with 3+ Electric Units',
+    'Dance for 15 seconds in any Game 6 Map'
+  ]},
+  {unit:'El Chip', present:'El Chip Present', cost:30000, quests:[
+    'Buy 25 Food Items from the Merchant',
+    'Reach Wave 120 on Endless Game 4 with 2+ Nature Units',
+    'Roll Scooped Enchant on any Unit',
+    'Feed Units a total of 100 times'
+  ]}
+];
+function infLoadShopQuests(){
+  if(_catLoaded['shop-quests'])return;_catLoaded['shop-quests']=true;
+  var pEl=document.getElementById('inf-shop-quests-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{})]).then(function(res){
+    var uMap={};(Array.isArray(res[0])?res[0]:[]).forEach(function(u){if(u.name)uMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});
+    var pMap={};Object.keys(res[1]||{}).forEach(function(n){var o=res[1][n]||{};pMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
+    pEl.innerHTML='';
+    buildShopQuests(pEl,uMap,pMap);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildShopQuests(pEl,uMap,pMap){
+  if(!pEl)return;
+  SHOP_QUESTS.forEach(function(h){
+    var u=uMap[h.unit.toLowerCase()]||{};
+    var p=pMap[h.present.toLowerCase()]||{};
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var ub=document.createElement('span');ub.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');ub.style.margin='0';if(!u.rarity)ub.style.background='rgba(25,24,40,.9)';
+    var ui=document.createElement('img');ui.src=u.img||'';ui.alt=h.unit;ub.appendChild(ui);
+    var pb=document.createElement('span');pb.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');pb.style.margin='0';if(!p.rarity)pb.style.background='rgba(25,24,40,.9)';
+    var pi=document.createElement('img');pi.src=p.img||'';pi.alt=h.present;pb.appendChild(pi);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=h.unit;
+    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
+    row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
+    var ch=document.createElement('div');ch.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';ch.textContent='Unlock Cost';card.appendChild(ch);
+    var cd=document.createElement('div');cd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin-bottom:6px';cd.textContent='● '+Number(h.cost).toLocaleString()+' Coins';card.appendChild(cd);
+    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
