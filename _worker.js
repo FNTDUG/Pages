@@ -225,6 +225,22 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Faz-rating Prestige <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-prestige-inner">
+        <div class="inf-card">
+          <div style="display:flex;align-items:center;gap:12px">
+            <img src="https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/toy%20chuddy.png" alt="Toy Chuddy" style="width:60px;height:60px;object-fit:contain;flex-shrink:0">
+            <div><div style="font-family:Audiowide,sans-serif;color:#ffa45b;font-size:1.05em;margin-bottom:2px">Welcome Back!</div><div style="color:#ccc;font-size:13px">What would you like to do today?</div></div>
+          </div>
+        </div>
+        <div class="inf-card"><div style="color:#ccc;font-size:13px;line-height:1.65">Upon reaching 100k Faz-Rating, you have the option to Prestige. When you Prestige, you gain 10 Prestige Coins that can be used in the Prestige Shop and your Faz-Rating milestones are refreshed. If you have more than 100k Faz-Rating when Prestiging, only 100k is taken away</div></div>
+        <div class="inf-card">
+          <div style="font-family:Audiowide,sans-serif;color:#ffa45b;font-weight:600;font-size:1.01em;margin-bottom:6px;text-transform:uppercase">Prestige Shop</div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="color:#e8e8e8;font-size:13px;flex:1">Radiant Astral Bonnie <span style="color:#888">(skin)</span></span><span style="color:#ffa45b;font-size:13px;white-space:nowrap">10 Prestige Coins</span></div>
+        </div>
+      </div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="foods" onclick="infToggle(this)">Food <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-foods-inner"></div></div>
     </div>
@@ -372,9 +388,9 @@ function infLoadPresents(){
     function addArr(type,arr){(Array.isArray(arr)?arr:[]).forEach(function(u){if(u.name)rewMap[type+'|'+u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});}
     function addObj(type,obj){var ck=INF_REWARD_CFG_KEY[type];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};rewMap[type+'|'+n.toLowerCase()]={img:ov.image||o.image||'',rarity:nr(ov.rarity||o.rarity),name:ov.name||''};});}
     addArr('unit',res[1]);addObj('skin',res[2]);addObj('pet',res[3]);addObj('banner',res[4]);addObj('loading screen',res[5]);addObj('material',res[6]);addObj('food',res[7]);addObj('potion',res[8]);
-    // "Currency" rewards aren't in any JSON: rename Tokens→Coins (coins render) and give Souls the Soul material render.
+    // "Currency" rewards aren't in any JSON: give Tokens the coins render and give Souls the Soul material render.
     var _soul=rewMap['material|soul']||{};
-    rewMap['currency|tokens']={img:INF_COINS_IMG,rarity:'',name:'Coins'};
+    rewMap['currency|tokens']={img:INF_COINS_IMG,rarity:'',name:'Tokens'};
     rewMap['currency|souls']={img:_soul.img||'',rarity:_soul.rarity||'',name:'Souls'};
     if(pEl)pEl.innerHTML='';
     buildPresents(pEl,presentsData,rewMap);
@@ -438,7 +454,7 @@ var EVO_ALIAS={
   'trash-o-tron':'Trash o Tron','mech-lizabeth':'Mecha-Lizabeth',
   'blossom chicas':'Blossom Chica','overgrown foxies':'Overgrown Foxy',
   'batteries':'Battery','tvs':'Television','tv':'Television',
-  'raid tokens':'Raid Coins','pickles':'Jar of Pickles',
+  'raid tokens':'Raid Tokens','pickles':'Jar of Pickles',
   'mechanical bomb':'Mechanical Bombs','hazzard sign':'Hazard Sign',
   'paperpals':'PaperPals'
 };
@@ -454,15 +470,15 @@ var EVOLUTIONS=[
   {name:'Deep Sea Calamity Endo',ing:[['25','Serpent Endos'],['3','Ships'],['250','AFK Presents']]},
   {name:'Gaia Chica',ing:[['1','Blossom Chica'],['1','Grassy Heart'],['2','Clocks'],['25','Agony'],['200','Raid Tokens'],['250','Souls']]},
   {name:'Nature Reclaimed Foxy',ing:[['1','Overgrown Foxy'],['1','Clock'],['200','Agony'],['250','Batteries'],['300','Springs']]},
-  {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Coins']]},
-  {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Coins']]},
-  {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Coins']]},
+  {name:'Afterbite Withered Golden Freddy',ing:[['1','Withered Golden Freddy'],['1','Hazzard Sign'],['100','Springs'],['250','Souls'],['50K','Tokens']]},
+  {name:'Foxy.exe',ing:[['1','Withered Foxy'],['1','Glitched TV'],['50','TVs'],['50','Batteries'],['25K','Tokens']]},
+  {name:'Commander Withered Freddy',ing:[['1','Withered Freddy'],['1','Colonel Hat'],['50','Springs'],['50','Ash'],['25K','Tokens']]},
   {name:'Trash-o-Tron',ing:[['1','Pan Stan'],['1','Bucket Bob'],['1','No. 1 Crate'],['50','Batteries'],['100','Springs'],['25','Salvage Tokens']]},
   {name:'Bombwork Cupcake',ing:[['1','Clockwork Cupcake'],['1','Mechanical Bomb'],['200','Ash'],['150','Batteries'],['75','Springs'],['5','Raid Tokens']]},
   {name:'Party Never Ends Cupcake',ing:[['1','Cupcake'],['1','Assortment of Costumes'],['5','Ice Cream Cones'],['175','Sodas'],['125','Candy Bars'],['15','Chocolate Freddy']]},
   {name:'Arch Angler Toy Bonnie',ing:[['1','Fisherman Toy Bonnie'],['1','Shark Withered Foxy'],['1','Shark'],['175','Agony'],['300','Soda']]},
   {name:'Mech-Lizabeth',ing:[['1','Elizabeth'],['3','Endo 01s'],['1','Ice Cream Mech Suit'],['50','Ice Cream Cones']]},
-  {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Coins']]},
+  {name:'Mechanic Endo 01',ing:[['1','Endo 01'],['1','Welding Gear'],['100','Pickles'],['100','Springs'],['150','TVs'],['15','Raid Tokens']]},
   {name:'Aqua Strike Toy Chica',ing:[['1','Toy Chica'],['12','Mythic+ Water Element Units'],['1','Water Balloons'],['100','Ice Cream Cones'],['50','Season 5 Present'],['15','Raid Tokens']]},
   {name:'Salvaged Toy Bonnie',ing:[['1','Toy Bonnie'],['12','Mythic+ Dark Element Units'],['1','Cloak'],['100','Ash'],['50','Season 5 Presents'],['15','Raid Tokens']]},
   {name:'Circus Baby',ing:[['1','Ballora'],['1','Elizabeth'],['125','Ice Cream Cone'],['15','Funtime Freddy']]},
@@ -502,8 +518,8 @@ function infLoadEvolutions(){
     (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
     function addObj(pool,obj){var ck=INF_REWARD_CFG_KEY[pool];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};put(pool,ov.name||n,ov.image||o.image,ov.rarity||o.rarity,n);});}
     addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
-    // Coins = the base game currency; not in any JSON, so give it its render manually.
-    put('material','Coins',INF_COINS_IMG,'');
+    // Tokens = the base game currency; not in any JSON, so give it its render manually.
+    put('material','Tokens',INF_COINS_IMG,'');
     pEl.innerHTML='';
     buildEvolutions(pEl,lut);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -730,7 +746,7 @@ function buildShopQuests(pEl,uMap,pMap){
     var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
     row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
     var ch=document.createElement('div');ch.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';ch.textContent='Unlock Cost';card.appendChild(ch);
-    var cd=document.createElement('div');cd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin-bottom:6px';cd.textContent='● '+Number(h.cost).toLocaleString()+' Coins';card.appendChild(cd);
+    var cd=document.createElement('div');cd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin-bottom:6px';cd.textContent='● '+Number(h.cost).toLocaleString()+' Tokens';card.appendChild(cd);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
@@ -960,15 +976,15 @@ var ENDO_CHIPS=[
 // the name (e.g. "Fazbear Mafia" -> fazbear-mafia.png).
 var EST_BASE='https://pub-bd8c71834de64b078aa68df269b7d92e.r2.dev/establishments/';
 var ESTABLISHMENTS=[
-  {name:'Fazbear Mafia',rarity:'secret',desc:'+10% Coin Boost'},
-  {name:'Arcade',rarity:'rare',desc:'+2.5% Coin Boost'},
+  {name:'Fazbear Mafia',rarity:'secret',desc:'+10% Token Boost'},
+  {name:'Arcade',rarity:'rare',desc:'+2.5% Token Boost'},
   {name:'Tshirt',rarity:'rare',desc:'3% Merchant Discount'},
   {name:'Crying Helpy',rarity:'secret',desc:'10% Merchant Discount'},
   {name:'Bonnie and Chica Fight',rarity:'mythic',desc:'7.5% Merchant Discount'},
-  {name:'Scrooge McHelpy',rarity:'nightmare',desc:'+12.5% Coin Boost'},
-  {name:'Chocolate Coin',rarity:'uncommon',desc:'+1.5% Coin Boost'},
-  {name:'Paycheck',rarity:'mythic',desc:'+7.5% Coin Boost'},
-  {name:'Ticket Eater',rarity:'epic',desc:'+5% Coin Boost'},
+  {name:'Scrooge McHelpy',rarity:'nightmare',desc:'+12.5% Token Boost'},
+  {name:'Chocolate Coin',rarity:'uncommon',desc:'+1.5% Token Boost'},
+  {name:'Paycheck',rarity:'mythic',desc:'+7.5% Token Boost'},
+  {name:'Ticket Eater',rarity:'epic',desc:'+5% Token Boost'},
   {name:'Sale',rarity:'uncommon',desc:'2% Merchant Discount'},
   {name:'Pimptrap',rarity:'nightmare',desc:'12.5% Merchant Discount'},
   {name:'Puppet Souls',rarity:'secret',desc:'+5% Soul Boost'},
@@ -981,22 +997,22 @@ var ESTABLISHMENTS=[
   {name:'Peaceful Luck',rarity:'secret',desc:'+4% Luck Boost'},
   {name:"Foxy's Throne",rarity:'nightmare',desc:'+10% Faz-Rating Boost'},
   {name:'In the jar',rarity:'mythic',desc:'+2% Faz-Rating Boost'},
-  {name:'Raid Coin Card Uncommon',rarity:'uncommon',desc:'+1.5% Raid Coin Boost'},
-  {name:'Raid Coin Card Rare',rarity:'rare',desc:'+2.5% Raid Coin Boost'},
-  {name:'Raid Coin Card Epic',rarity:'epic',desc:'+5% Raid Coin Boost'},
-  {name:'Raid Coin Card Mythical',rarity:'mythic',desc:'+7.5% Raid Coin Boost'},
-  {name:'Raid Coin Card Secret',rarity:'secret',desc:'+10% Raid Coin Boost'},
-  {name:'Raid Coin Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Coin Boost'},
-  {name:'Raid Coin Card Apex',rarity:'apex',desc:'+20% Raid Coin Boost'},
-  {name:'Coin Card Apex',rarity:'apex',desc:'+20% Coins Boost'},
+  {name:'Raid Token Card Uncommon',rarity:'uncommon',desc:'+1.5% Raid Token Boost'},
+  {name:'Raid Token Card Rare',rarity:'rare',desc:'+2.5% Raid Token Boost'},
+  {name:'Raid Token Card Epic',rarity:'epic',desc:'+5% Raid Token Boost'},
+  {name:'Raid Token Card Mythical',rarity:'mythic',desc:'+7.5% Raid Token Boost'},
+  {name:'Raid Token Card Secret',rarity:'secret',desc:'+10% Raid Token Boost'},
+  {name:'Raid Token Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Token Boost'},
+  {name:'Raid Token Card Apex',rarity:'apex',desc:'+20% Raid Token Boost'},
+  {name:'Token Card Apex',rarity:'apex',desc:'+20% Tokens Boost'},
   {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
   {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
 ];
 // Card packs — Cost/Type + per-rarity pull weights. Odds are derived from these
-// and the card rarities/weights above. "Tokens" is shown as Coins.
+// and the card rarities/weights above.
 var EST_PACKS=[
-  {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Coins',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
-  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Coin Card Apex','Faz Rating Card Apex']}
+  {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Tokens',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
+  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Token Card Uncommon','Raid Token Card Rare','Raid Token Card Epic','Raid Token Card Mythical','Raid Token Card Secret','Raid Token Card Nightmare','Raid Token Card Apex','Luck Card Apex','Token Card Apex','Faz Rating Card Apex']}
 ];
 (function(){
   var el=document.getElementById('inf-establishments-inner');
@@ -1156,7 +1172,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
            '[AGONIZATION]<br>● Requiring a Remnanet. This action can give 1 of 4 Agonization States<br>[1] No Change<br>[2] Reroll Stats within the Bytes Stat Range<br>[3] Rerolls Stats and Raise the Bytes Stat Ranges by {1% ~ 30%} e.g. {1% > 1.3%}<br>[4] Rerolls Byte Stats within its Range, add a random Byte Passive, and increases the Passives Range by {-5% ~ 10%} e.g. {1% > 1.1%}'
          ],
          'The Box': '[OBTAINMENT]<br>● 0.05% Drop chance when opening any present<br>[STATS]<br>● COOLDOWN: {+10% ~ -10%}<br>● RANGE: {-20% ~ +20%}<br>● DAMAGE: {-20% ~ +20%}',
-         'Boss Drain': '[OBTAINMENT]<br>● Purchasable for 50 Raid Coins the in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
+         'Boss Drain': '[OBTAINMENT]<br>● Purchasable for 50 Raid Tokens the in Boss Raids Shop<br>[STATS]<br>● DAMAGE: {0% ~ +10%}<br>● BOSS DAMAGE: {-20% ~ +25%}',
          'Reaper': '[OBTAINMENT]<br>● 0.01% Drop chance when killing any Enemy<br>[STAT]<br>● CRIT DAMAGE {0% ~ +40%}',
          'KABOOM!': '[OBTAINMENT]<br>● 3% Drop chance after completing any Quest<br>[PASSIVE]<br>● Unit Attack Type Changes to Circle<br>[STATS]<br>● RANGE: {0% ~ +25%}',
          'The Fan': '[OBTAINMENT]<br>● 0.5% Drop chance when selecting a Modifier in Boss Raids<br>[PASSIVE]<br>● Slow based on Bytes Stats<br>[STATS]<br>● CHARGE COOLDOWN: {30s ~ 25s}<br>● SLOW%: {-5% ~ -20%}<br>● SLOW DURATION: {2s ~ 5s}<br>● APPLY DURATION: {3s ~ 8s}',
@@ -1168,7 +1184,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          _top: [
            '[OBTAINMENT]<br>● Select a Game, then Night 7, and a difficulty level of 2 or higher. Each rarity of Chip is a ~rare:30%~, ~epic:20%~, ~mythic:20%~, ~secret:15%~, ~nightmare:15%~ drop chance respectively. Whether or not it is Part A or Part B is random',
            '[BASE STATS]<br>● Buff Potency: {+6% ~ +30%}<br>● Follow Up Damage: {+6% ~ +30%}<br>● Damage: {+5% ~ +25%}<br>● Cooldown: {-2.5% ~ -12.5%}<br>● DoT Damage: {+6% ~ +30%}<br>● Crit Chance: {+5% ~ +25%}<br>● Range: {+5% ~ +25%}<br>● Crit Damage: {+8% ~ +40%}',
-           '[STAT BONUSES]<br>[Chip Rarity]<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>[SubStats]<br>● Chips can have {3} or {4 SubStats} when obtained. Chips with {3 SubStats} can be upgraded to have {4 SubStats}, at the cost of Coins by the Workshop entrance. Chips with {4 SubStats} gain a {20% Buff}<br>{3 SubStats Range}<br>● Buff Potency: {+2% ~ +10%}<br>● Follow Up Damage: {+2.5% ~ +12.5%}<br>● Damage: {+2% ~ +10%}<br>● Cooldown: {-1% ~ -5%}<br>● DoT Damage: {+2% ~ +10%}<br>● Crit Chance: {+1.5% ~ +7.5%}<br>● Range: {+2% ~ +10%}<br>● Crit Damage: {+3% ~ +15%}'
+           '[STAT BONUSES]<br>[Chip Rarity]<br>~nightmare:● Nightmare: +5%~<br>~secret:● Secret: +3.75%~<br>~mythic:● Mythic: +2.5%~<br>~epic:● Epic: +1.25%~<br>[SubStats]<br>● Chips can have {3} or {4 SubStats} when obtained. Chips with {3 SubStats} can be upgraded to have {4 SubStats}, at the cost of Tokens by the Workshop entrance. Chips with {4 SubStats} gain a {20% Buff}<br>{3 SubStats Range}<br>● Buff Potency: {+2% ~ +10%}<br>● Follow Up Damage: {+2.5% ~ +12.5%}<br>● Damage: {+2% ~ +10%}<br>● Cooldown: {-1% ~ -5%}<br>● DoT Damage: {+2% ~ +10%}<br>● Crit Chance: {+1.5% ~ +7.5%}<br>● Range: {+2% ~ +10%}<br>● Crit Damage: {+3% ~ +15%}'
          ],
          'Overwhelming Power': '[OBTAINMENT]<br>● Game 1<br>[SYNERGY BOOST]<br>● {+15%} Damage<br>[SYNERGY PASSIVE]<br>● Buff Damage by {+0.5%} per enemy in Range ({+5%} cap)',
          'Rapid Strikes': '[OBTAINMENT]<br>● Game 3<br>[SYNERGY BOOSTS]<br>● {-5%} Cooldown<br>● {+25%} Follow Up Damage<br>[SYNERGY PASSIVE]<br>● Enemies hit by Follow Ups take {+15%} Damage from this Unit for 3s',
