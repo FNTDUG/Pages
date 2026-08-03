@@ -350,22 +350,7 @@
   .ug-thumb-item img{width:100%;height:100%;object-fit:cover;display:block}
 
   /* ===== FOOTER ===== */
-  #ug-footer{
-    position:relative;overflow:hidden;
-    background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);
-    box-shadow:0 -4px 28px rgba(104,31,98,.45);
-    padding:22px 20px;text-align:center;
-    font-size:13px;color:#fff;line-height:2.2;margin-top:24px;
-  }
-  #ug-footer::before{
-    content:'';position:absolute;inset:0;pointer-events:none;
-    background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
-  }
-  #ug-footer p{position:relative;z-index:1;}
-  #ug-footer a{color:var(--ug-accent);text-decoration:none;position:relative;z-index:1;}
-  #ug-footer a:hover{text-decoration:underline}
-
-  /* ===== MOBILE ===== */
+/* ===== MOBILE ===== */
   @media(max-width:768px){
     #ug-hamburger{display:flex}
     #ug-topnav{display:none}
@@ -2057,16 +2042,7 @@
     })();
     </script>
 
-  <footer id="ug-footer">
-    <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
-    <p>
-      <a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a>
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a>
-    </p>
-    <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a></p>
-    <p>&copy; 2025 www.fntduserguide.com</p>
-  </footer>
+  <footer id="ug-footer"></footer>
   </div><!-- /ug-main -->
 
   <!-- ===== SITE SCRIPTS ===== -->
