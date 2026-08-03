@@ -191,7 +191,20 @@ const NAV_CSS = `<style>
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
+/* ── Site footer (single-source: content + style come from the worker) ── */
+#ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}
+#ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+#ug-footer p{position:relative;z-index:1}
+#ug-footer a{color:#ffa45b;text-decoration:none;position:relative;z-index:1}
+#ug-footer a:hover{text-decoration:underline}
 </style>`;
+// Single-source site footer — injected into every page's <footer id="ug-footer">.
+// Change links/text here once instead of in each page.
+const FOOTER_HTML = `
+      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
+      <p><a href="https://discord.gg/TwSCRdNhK3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a></p>
+      <p>&copy; 2025 www.fntduserguide.com</p>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
 <div id="ug-info-overlay" onclick="ugInfoClose()"></div>
@@ -1412,6 +1425,9 @@ export default {
       })
       .on('.ug-tn-inner', {
         element(el) { el.setInnerContent(DESKTOP_NAV_INNER, { html: true }); }
+      })
+      .on('footer#ug-footer', {
+        element(el) { el.setInnerContent(FOOTER_HTML, { html: true }); }
       })
       .on('body', {
         element(el) {
