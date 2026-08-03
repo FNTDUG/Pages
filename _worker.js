@@ -779,18 +779,19 @@ function buildPrestige(pEl,map){
   ec.appendChild(ep);pEl.appendChild(ec);
   var sc=document.createElement('div');sc.className='inf-card';
   var sh=document.createElement('div');sh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:8px;text-transform:uppercase';sh.textContent='Prestige Shop';sc.appendChild(sh);
+  var pt=map['prestige token']||{};
   PRESTIGE_SHOP.forEach(function(it){
     var m=map[it.name.toLowerCase()]||{};
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
     var ib=document.createElement('span');ib.className='inf-img'+(m.rarity?' inf-rarity-'+m.rarity:'');ib.style.margin='0';if(!m.rarity)ib.style.background='rgba(25,24,40,.9)';
     var ii=document.createElement('img');ii.src=m.img||'';ii.alt=it.name;ib.appendChild(ii);
-    var nm=document.createElement('div');nm.style.cssText='flex:1;font-size:13px';
-    var ns=document.createElement('span');var g=INF_RG[m.rarity];if(g){ns.style.cssText='font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}else{ns.style.cssText='font-weight:600;color:#e8e8e8';}ns.textContent=it.name;nm.appendChild(ns);
-    if(it.type){var ty=document.createElement('span');ty.style.cssText='color:#888;margin-left:5px';ty.textContent='('+it.type+')';nm.appendChild(ty);}
+    var nm=document.createElement('div');var g=INF_RG[m.rarity];var _nb='flex:1;min-width:0;font-size:13px;font-weight:600;word-break:break-word;';
+    if(g){nm.style.cssText=_nb+'background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}else{nm.style.cssText=_nb+'color:#e8e8e8';}
+    nm.textContent=it.name+(it.type?' ('+it.type+')':'');
     var cost=document.createElement('div');cost.style.cssText='display:flex;align-items:center;gap:5px;flex-shrink:0';
     var cn=document.createElement('span');cn.style.cssText='color:#ffcc33;font-weight:600;font-size:13px';cn.textContent=Number(it.cost).toLocaleString();
-    var tb=document.createElement('span');tb.className='inf-img';tb.style.margin='0';tb.style.background='rgba(25,24,40,.9)';tb.title='Prestige Tokens';
-    var ti=document.createElement('img');ti.src=INF_COINS_IMG;ti.alt='Prestige Tokens';tb.appendChild(ti);
+    var tb=document.createElement('span');tb.className='inf-img'+(pt.rarity?' inf-rarity-'+pt.rarity:'');tb.style.margin='0';if(!pt.rarity)tb.style.background='rgba(25,24,40,.9)';tb.title='Prestige Tokens';
+    var ti=document.createElement('img');ti.src=pt.img||INF_COINS_IMG;ti.alt='Prestige Tokens';tb.appendChild(ti);
     cost.appendChild(cn);cost.appendChild(tb);
     row.appendChild(ib);row.appendChild(nm);row.appendChild(cost);sc.appendChild(row);
   });
