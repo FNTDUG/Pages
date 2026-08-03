@@ -1393,9 +1393,12 @@ export default {
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
+    // Canonical always points at the www host so www stays the ranked/indexed URL
+    // (keeps the *.pages.dev preview and the apex from being indexed as duplicates).
+    const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
     return new HTMLRewriter()
       .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); }
+        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); }
       })
       .on('img.ug-header-logo', {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
