@@ -225,20 +225,8 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
     </div>
     <div class="inf-drop">
-      <button class="inf-drop-btn" onclick="infToggle(this)">Faz-rating Prestige <span class="inf-drop-arrow">/</span></button>
-      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-prestige-inner">
-        <div class="inf-card">
-          <div style="display:flex;align-items:center;gap:12px">
-            <img src="https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/toy%20chuddy.png" alt="Toy Chuddy" style="width:60px;height:60px;object-fit:contain;flex-shrink:0">
-            <div><div style="font-family:Audiowide,sans-serif;color:#ffa45b;font-size:1.05em;margin-bottom:2px">Welcome Back!</div><div style="color:#ccc;font-size:13px">What would you like to do today?</div></div>
-          </div>
-        </div>
-        <div class="inf-card"><div style="color:#ccc;font-size:13px;line-height:1.65">Upon reaching 100k Faz-Rating, you have the option to Prestige. When you Prestige, you gain 10 Prestige Coins that can be used in the Prestige Shop and your Faz-Rating milestones are refreshed. If you have more than 100k Faz-Rating when Prestiging, only 100k is taken away</div></div>
-        <div class="inf-card">
-          <div style="font-family:Audiowide,sans-serif;color:#ffa45b;font-weight:600;font-size:1.01em;margin-bottom:6px;text-transform:uppercase">Prestige Shop</div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="color:#e8e8e8;font-size:13px;flex:1">Radiant Astral Bonnie <span style="color:#888">(skin)</span></span><span style="color:#ffa45b;font-size:13px;white-space:nowrap">10 Prestige Coins</span></div>
-        </div>
-      </div></div>
+      <button class="inf-drop-btn" data-lazy="prestige" onclick="infToggle(this)">Faz-rating Prestige <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-prestige-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="foods" onclick="infToggle(this)">Food <span class="inf-drop-arrow">/</span></button>
@@ -309,7 +297,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -751,6 +739,62 @@ function buildShopQuests(pEl,uMap,pMap){
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
+}
+// Prestige Shop items are looked up generically across every item source (skins/units/presents/pets/etc.)
+var PRESTIGE_SHOP=[
+  {name:'Radiant Astral Bonnie', type:'skin', cost:10}
+];
+function infLoadPrestige(){
+  if(_catLoaded['prestige'])return;_catLoaded['prestige']=true;
+  var pEl=document.getElementById('inf-prestige-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+  Promise.all([
+    J('/inf-data/units',[]),J('/inf-data/presents',{}),J('/inf-data/skins',{}),
+    J('/inf-data/pets',{}),J('/inf-data/materials',{}),J('/inf-data/foods',{}),
+    J('/inf-data/potions',{}),J('/inf-data/banners',{}),J('/inf-data/loading-screens',{})
+  ]).then(function(res){
+    var map={};
+    function addArr(src){if(Array.isArray(src))src.forEach(function(o){if(o&&o.name){var k=o.name.toLowerCase();if(!map[k])map[k]={img:o.imgNormal||o.image||o.img||'',rarity:nr(o.rarity)};}});}
+    function addObj(src){if(src&&typeof src==='object'&&!Array.isArray(src))Object.keys(src).forEach(function(n){var o=src[n];if(o&&typeof o==='object'){var k=n.toLowerCase();if(!map[k])map[k]={img:o.image||o.img||o.imgNormal||'',rarity:nr(o.rarity)};}});}
+    addArr(res[0]);for(var i=1;i<res.length;i++)addObj(res[i]);
+    pEl.innerHTML='';
+    buildPrestige(pEl,map);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildPrestige(pEl,map){
+  if(!pEl)return;
+  var hc=document.createElement('div');hc.className='inf-card';
+  var hr=document.createElement('div');hr.style.cssText='display:flex;align-items:center;gap:12px';
+  var him=document.createElement('img');him.src='https://pub-147ea4ffd88444cba282e819b9168c94.r2.dev/toy%20chuddy.png';him.alt='Toy Chuddy';him.style.cssText='width:60px;height:60px;object-fit:contain;flex-shrink:0';
+  var ht=document.createElement('div');
+  var h1=document.createElement('div');h1.style.cssText='font-family:Audiowide,sans-serif;color:#ffa45b;font-size:1.05em;margin-bottom:2px';h1.textContent='Welcome Back!';
+  var h2=document.createElement('div');h2.style.cssText='color:#ccc;font-size:13px';h2.textContent='What would you like to do today?';
+  ht.appendChild(h1);ht.appendChild(h2);hr.appendChild(him);hr.appendChild(ht);hc.appendChild(hr);pEl.appendChild(hc);
+  var ec=document.createElement('div');ec.className='inf-card';
+  var ep=document.createElement('div');ep.style.cssText='color:#ccc;font-size:13px;line-height:1.65';ep.textContent='Upon reaching 100k Faz-Rating, you have the option to Prestige. When you Prestige, you gain 10 Prestige Tokens that can be used in the Prestige Shop and your Faz-Rating milestones are refreshed. If you have more than 100k Faz-Rating when Prestiging, only 100k is taken away';
+  ec.appendChild(ep);pEl.appendChild(ec);
+  var sc=document.createElement('div');sc.className='inf-card';
+  var sh=document.createElement('div');sh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:8px;text-transform:uppercase';sh.textContent='Prestige Shop';sc.appendChild(sh);
+  PRESTIGE_SHOP.forEach(function(it){
+    var m=map[it.name.toLowerCase()]||{};
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var ib=document.createElement('span');ib.className='inf-img'+(m.rarity?' inf-rarity-'+m.rarity:'');ib.style.margin='0';if(!m.rarity)ib.style.background='rgba(25,24,40,.9)';
+    var ii=document.createElement('img');ii.src=m.img||'';ii.alt=it.name;ib.appendChild(ii);
+    var nm=document.createElement('div');nm.style.cssText='flex:1;font-size:13px';
+    var ns=document.createElement('span');var g=INF_RG[m.rarity];if(g){ns.style.cssText='font-weight:600;background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';}else{ns.style.cssText='font-weight:600;color:#e8e8e8';}ns.textContent=it.name;nm.appendChild(ns);
+    if(it.type){var ty=document.createElement('span');ty.style.cssText='color:#888;margin-left:5px';ty.textContent='('+it.type+')';nm.appendChild(ty);}
+    var cost=document.createElement('div');cost.style.cssText='display:flex;align-items:center;gap:5px;flex-shrink:0';
+    var cn=document.createElement('span');cn.style.cssText='color:#ffcc33;font-weight:600;font-size:13px';cn.textContent=Number(it.cost).toLocaleString();
+    var tb=document.createElement('span');tb.className='inf-img';tb.style.margin='0';tb.style.background='rgba(25,24,40,.9)';tb.title='Prestige Tokens';
+    var ti=document.createElement('img');ti.src=INF_COINS_IMG;ti.alt='Prestige Tokens';tb.appendChild(ti);
+    cost.appendChild(cn);cost.appendChild(tb);
+    row.appendChild(ib);row.appendChild(nm);row.appendChild(cost);sc.appendChild(row);
+  });
+  pEl.appendChild(sc);
 }
 // ── Generic category tabs (banners / pets / skins / loading-screens / materials / potions / foods) ──
 var COS_BASE='https://pub-ded986176f754f5fb54de94d2fb15509.r2.dev';
