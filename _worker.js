@@ -447,7 +447,7 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
-  {name:'Patient White Rabbit',ing:[['1','Vessel Plushtrap'],['1000','Souls'],['100','Springs'],['100','Challenge Coin'],['25','Agony']]},
+  {name:'Patient White Rabbit',ing:[['1','Vessel Plushtrap'],['1000','Souls'],['100','Springs'],['100','Challenge Tokens'],['25','Agony']]},
   {name:'Purple Guy',ing:[['1','Golden Freddy','pet'],['1','Mangle','pet'],['1','Puppet','pet']]},
   {name:'Spring Duo',ing:[['450','Spring'],['300','Phantom Freddy'],['125','Phantom Chica'],['50','Phantom Foxy'],['100','Ash'],['450','Battery']]},
   {name:'Harvest Festival Foxy',ing:[['30','Ghost Bonnies'],['10','Mummy Freddys']]},
