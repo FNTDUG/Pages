@@ -1320,21 +1320,24 @@ const ACTIVE_SCRIPT = `<script>
 (function(){
   var bs=document.querySelectorAll('.ug-status-badge[data-gh-file]');
   if(!bs.length)return;
+  var TTL=1800000; // re-check GitHub at most every 30 min — protects the 60/hr API limit
   bs.forEach(function(b){
     var file=b.getAttribute('data-gh-file');
     var repo=b.getAttribute('data-gh-repo')||'FNTDUG/Pages';
     var suffix=b.textContent.trim();
     var key='ugh:'+repo+':'+file;
-    var hit=sessionStorage.getItem(key);
-    if(hit){b.textContent='Last updated - '+hit+(suffix?' '+suffix:'');return;}
+    function show(s){b.textContent='Last updated - '+s+(suffix?' '+suffix:'');}
+    var cached=null;
+    try{cached=JSON.parse(sessionStorage.getItem(key)||'null');}catch(e){}
+    if(cached&&cached.d){show(cached.d);if(Date.now()-(cached.t||0)<TTL)return;} // show cached, revalidate if stale
     fetch('https://api.github.com/repos/'+repo+'/commits?path='+encodeURIComponent(file)+'&per_page=1')
       .then(function(r){return r.json();})
       .then(function(d){
         if(!d||!d[0])return;
         var dt=new Date(d[0].commit.committer.date);
         var s=(dt.getMonth()+1)+'/'+dt.getDate()+'/'+String(dt.getFullYear()).slice(2);
-        sessionStorage.setItem(key,s);
-        b.textContent='Last updated - '+s+(suffix?' '+suffix:'');
+        try{sessionStorage.setItem(key,JSON.stringify({d:s,t:Date.now()}));}catch(e){}
+        show(s);
       })
       .catch(function(){});
   });
