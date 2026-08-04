@@ -274,6 +274,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-presents-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Shiny Transfer <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-shiny-transfer-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="shop-quests" onclick="infToggle(this)">Shop Quests <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-shop-quests-inner"></div></div>
     </div>
@@ -308,7 +312,7 @@ function infToggle(btn){
   infOpen(body);
 }
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
-function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);}
+function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
 function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
@@ -1173,6 +1177,29 @@ var MINIGAMES=[
       });
       wrap.appendChild(b);wrap.appendChild(drop);el.appendChild(wrap);
     }
+  });
+})();
+(function(){
+  var el=document.getElementById('inf-shiny-transfer-inner');
+  if(!el)return;
+  var msg="At the cost of Souls, you can transfer the Shiny status from one unit, to a non-Shiny version of that EXACT unit. You cannot transfer Shiny to a unit that isn't the unit you're taking Shiny away from (I.E Shiny Freddy to Normal Chica). The best way to use this is if you have a non-Shiny with really good Stats and a good Enchant, but open a Shiny of the same unit later on. This allows you to give Shiny to an already set up unit without having to spend all those resources again";
+  var c=document.createElement('div');c.className='inf-card';
+  var p=document.createElement('p');p.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin:0';p.textContent=msg;
+  c.appendChild(p);el.appendChild(c);
+  var vw=document.createElement('div');vw.className='inf-mg-video-wrap';
+  var v=document.createElement('video');v.className='inf-mg-video';v.loop=true;v.playsInline=true;
+  v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='none';
+  v.setAttribute('data-inf-autoplay','1');v.setAttribute('data-src','https://images.fntduserguide.com/shinytransfer.mp4');
+  var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent='Tap to fullscreen';
+  vw.appendChild(v);vw.appendChild(hint);el.appendChild(vw);
+  // Tap the preview: fullscreen at the same spot; resume inline on exit if the tab is still open.
+  vw.addEventListener('click',function(){
+    var t=0;try{t=v.currentTime||0;}catch(e){}
+    try{v.pause();}catch(e){}
+    infPlayMinigame(v.getAttribute('data-src'),{startTime:t,onExit:function(ct){
+      try{v.currentTime=ct;}catch(e){}
+      var dp=el.closest('.inf-drop');if(dp&&dp.classList.contains('open'))v.play().catch(function(){});
+    }});
   });
 })();
 function infPlayMinigame(url,opts){
