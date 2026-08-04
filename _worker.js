@@ -1396,11 +1396,15 @@ export default {
       });
     }
 
-    // Deep links like /fntd2/unit-engine/<UnitName> serve the unit-engine page;
-    // the page's JS reads the unit name from the path and opens it.
+    // Deep links like /base/<segment> serve the base page; the page's JS reads the
+    // segment to open the right unit (unit-engine) / mode (tierlists) / tab (metas).
     let assetReq = request;
-    if (/^\/fntd2\/unit-engine\/.+/.test(url.pathname)) {
-      assetReq = new Request(new URL('/fntd2/unit-engine', url).toString(), request);
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams'];
+    for (let _i = 0; _i < _deepBases.length; _i++) {
+      if (url.pathname.indexOf(_deepBases[_i] + '/') === 0) {
+        assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
+        break;
+      }
     }
 
     const response = await env.ASSETS.fetch(assetReq);
