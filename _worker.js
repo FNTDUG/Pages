@@ -1182,7 +1182,7 @@ var MINIGAMES=[
 (function(){
   var el=document.getElementById('inf-shiny-transfer-inner');
   if(!el)return;
-  var msg="At the cost of Souls, you can transfer the Shiny status from one unit, to a non-Shiny version of that EXACT unit. You cannot transfer Shiny to a unit that isn't the unit you're taking Shiny away from (I.E Shiny Freddy to Normal Chica). The best way to use this is if you have a non-Shiny with really good Stats and a good Enchant, but open a Shiny of the same unit later on. This allows you to give Shiny to an already set up unit without having to spend all those resources again";
+  var msg="This can be found in the Workshop under the Enchant interface (see video). At the cost of Souls, you can transfer the Shiny status from one unit, to a non-Shiny version of that EXACT unit. You cannot transfer Shiny to a unit that isn't the unit you're taking Shiny away from (I.E Shiny Freddy to Normal Chica). The best way to use this is if you have a non-Shiny with really good Stats and a good Enchant, but open a Shiny of the same unit later on. This allows you to give Shiny to an already set up unit without having to spend all those resources again";
   var c=document.createElement('div');c.className='inf-card';
   var p=document.createElement('p');p.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin:0';p.textContent=msg;
   c.appendChild(p);el.appendChild(c);
