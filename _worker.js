@@ -1410,6 +1410,8 @@ export default {
     // Canonical always points at the www host so www stays the ranked/indexed URL
     // (keeps the *.pages.dev preview and the apex from being indexed as duplicates).
     const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
+    // The INFO panel is game content — skip it on the standalone Privacy Policy page.
+    const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
     return new HTMLRewriter()
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); }
@@ -1431,6 +1433,7 @@ export default {
       })
       .on('body', {
         element(el) {
+          if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
         }
