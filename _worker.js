@@ -1017,7 +1017,7 @@ var ELEMENTS=[
   {name:'Rust',        img:ELEM_IB+'rustelement.webp',
    desc:'[ENEMY]<br>● {-0.15x} Movement speed & {+20%} HP<br>[UNIT]<br>● {+3%} Cooldown & {+6%} damage'},
   {name:'Electricity', img:ELEM_IB+'electricityelement.webp',
-   desc:'[ENEMY]<br>● {1.15x} Movement speed boost<br>[UNIT]<br>● {-3%} Cooldown to all units in range (caps at {15%})'},
+   desc:'[ENEMY]<br>● {1.15x} Movement speed boost<br>[UNIT]<br>● {-1%} Cooldown to all units in range (caps at {15%})'},
   {name:'Fire',        img:ELEM_IB+'fireelement.webp',
    desc:'[ENEMY]<br>● {-6%} Damage taken from burn effects<br>[UNIT]<br>● Attacks apply {3%} burn/second'},
   {name:'Light',       img:ELEM_IB+'lightelement.webp',
@@ -1025,7 +1025,7 @@ var ELEMENTS=[
   {name:'Dark/Light',        img:ELEM_IB+'dark%3Alightelement.webp',
    desc:'[ENEMY]<br>● {1.15x} Base damage dealt (effectively does nothing)<br>● {-35%} Stun duration<br>[UNIT]<br>● {+3%} Damage<br>● {-3%} Cooldown'},
   {name:'Electricity/Light', img:ELEM_IB+'electricity%3Alightelement.webp',
-   desc:'[ENEMY]<br>● {1.15x} Movement speed boost<br>● {-35%} Stun duration<br>[UNIT]<br>● {-3%} Cooldown to all units in range (caps at {15%})<br>● {-3%} Cooldown'},
+   desc:'[ENEMY]<br>● {1.15x} Movement speed boost<br>● {-35%} Stun duration<br>[UNIT]<br>● {-1%} Cooldown to all units in range (caps at {15%})<br>● {-1%} Cooldown'},
   {name:'Fire/Rust',         img:ELEM_IB+'fire%3Arustelement.webp',
    desc:'[ENEMY]<br>● {-6%} Damage taken from burn effects<br>● {-0.15x} Movement speed & {+20%} HP<br>[UNIT]<br>● Attacks apply {3%} burn/second<br>● {+3%} Cooldown & {+6%} damage'},
   {name:'Nature/Rust',       img:ELEM_IB+'nature%3Arustelement.webp',
@@ -1035,7 +1035,7 @@ var ELEMENTS=[
   {name:'Dark/Water',        img:ELEM_IB+'dark%3Awaterelement.webp',
    desc:'[ENEMY]<br>● {1.15x} Base damage dealt (effectively does nothing)<br>● {-30%} Movement speed & immune to slows<br>[UNIT]<br>● {+3%} Damage<br>● {+3%} Range to all units on the map (stacks indefinitely)'},
   {name:'Water/Electricity', img:ELEM_IB+'water%3Aelectricityelement.webp',
-   desc:'[ENEMY]<br>● {-30%} Movement speed & immune to slows<br>● {1.15x} Movement speed boost<br>[UNIT]<br>● {+3%} Range to all units on the map (stacks indefinitely)<br>● {-3%} Cooldown to all units in range (caps at {15%})'}
+   desc:'[ENEMY]<br>● {-30%} Movement speed & immune to slows<br>● {1.15x} Movement speed boost<br>[UNIT]<br>● {+3%} Range to all units on the map (stacks indefinitely)<br>● {-1%} Cooldown to all units in range (caps at {15%})'}
 ];
 (function(){
   var el=document.getElementById('inf-elements-inner');
