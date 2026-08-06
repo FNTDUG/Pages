@@ -1002,7 +1002,9 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 // To edit: change the rows below. Supports [HEADER], {bold} and <br>.
 var ELEMENT_GRAD='linear-gradient(90deg,#b7ff9c,#79ff5c,#9aff72,#6dff52,#b7ff9c)';
 var ELEM_IB='https://images.fntduserguide.com/';
-var ELEMENTS_TOP='[DUAL ELEMENTS]<br>● Enemies and units with two elements gain {both} effects, one from each element';
+// Dual elements are listed after the eight base ones. A dual carries both of
+// its parents' effects (one line per parent), which is how the Unit Engine's
+// ELEMENT_INFO describes them too — keep the two in step when editing.
 var ELEMENTS=[
   {name:'Neutral',     img:ELEM_IB+'neutralelement.webp',
    desc:'[ENEMY]<br>● Takes {0.85x} damage<br>[UNIT]<br>● {+3%} to all stats'},
@@ -1019,13 +1021,26 @@ var ELEMENTS=[
   {name:'Fire',        img:ELEM_IB+'fireelement.webp',
    desc:'[ENEMY]<br>● {-6%} damage taken from burn effects<br>[UNIT]<br>● Attacks apply {3%} burn/second'},
   {name:'Light',       img:ELEM_IB+'lightelement.webp',
-   desc:'[ENEMY]<br>● {-35%} stun duration<br>[UNIT]<br>● {-3%} cooldown'}
+   desc:'[ENEMY]<br>● {-35%} stun duration<br>[UNIT]<br>● {-3%} cooldown'},
+  {name:'Dark/Light',        img:ELEM_IB+'dark%3Alightelement.webp',
+   desc:'[ENEMY]<br>● {1.15x} base damage dealt (effectively does nothing)<br>● {-35%} stun duration<br>[UNIT]<br>● {+3%} damage<br>● {-3%} cooldown'},
+  {name:'Electricity/Light', img:ELEM_IB+'electricity%3Alightelement.webp',
+   desc:'[ENEMY]<br>● {1.15x} movement speed boost<br>● {-35%} stun duration<br>[UNIT]<br>● {-3%} cooldown to all units in range (caps at {15%})<br>● {-3%} cooldown'},
+  {name:'Fire/Rust',         img:ELEM_IB+'fire%3Arustelement.webp',
+   desc:'[ENEMY]<br>● {-6%} damage taken from burn effects<br>● {-0.15x} movement speed & {+20%} HP<br>[UNIT]<br>● Attacks apply {3%} burn/second<br>● {+3%} cooldown & {+6%} damage'},
+  {name:'Nature/Rust',       img:ELEM_IB+'nature%3Arustelement.webp',
+   desc:'[ENEMY]<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>● {-0.15x} movement speed & {+20%} HP<br>[UNIT]<br>● {+1} stock per placement<br>● {+3%} cooldown & {+6%} damage'},
+  {name:'Nature/Dark',       img:ELEM_IB+'nature%3Adarkelement.webp',
+   desc:'[ENEMY]<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>● {1.15x} base damage dealt (effectively does nothing)<br>[UNIT]<br>● {+1} stock per placement<br>● {+3%} damage'},
+  {name:'Dark/Water',        img:ELEM_IB+'dark%3Awaterelement.webp',
+   desc:'[ENEMY]<br>● {1.15x} base damage dealt (effectively does nothing)<br>● {-30%} movement speed & immune to slows<br>[UNIT]<br>● {+3%} damage<br>● {+3%} range to all units on the map (stacks indefinitely)'},
+  {name:'Water/Electricity', img:ELEM_IB+'water%3Aelectricityelement.webp',
+   desc:'[ENEMY]<br>● {-30%} movement speed & immune to slows<br>● {1.15x} movement speed boost<br>[UNIT]<br>● {+3%} range to all units on the map (stacks indefinitely)<br>● {-3%} cooldown to all units in range (caps at {15%})'}
 ];
 (function(){
   var el=document.getElementById('inf-elements-inner');
   if(!el)return;
   function _elHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>');}
-  if(ELEMENTS_TOP){var tc=document.createElement('div');tc.className='inf-card';var tp=document.createElement('p');tp.innerHTML=_elHl(ELEMENTS_TOP);tc.appendChild(tp);el.appendChild(tc);}
   ELEMENTS.forEach(function(e){
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
