@@ -226,6 +226,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-chips-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Elements <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-elements-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
     </div>
@@ -990,6 +994,50 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   }
   return card;
 }
+// ── Elements ────────────────────────────────────────────────────────────
+// Hardcoded, styled like the Bytes tab: icon badge + name on one row, details
+// beneath. Icons are the base-element entries copied from ELEMENT_ICONS in the
+// Unit Engine; the badge border and the element name both use the Unit Engine's
+// ELEMENT_TEXT_GRADIENT (the same green it puts on element passive titles).
+// To edit: change the rows below. Supports [HEADER], {bold} and <br>.
+var ELEMENT_GRAD='linear-gradient(90deg,#b7ff9c,#79ff5c,#9aff72,#6dff52,#b7ff9c)';
+var ELEM_IB='https://images.fntduserguide.com/';
+var ELEMENTS_TOP='[DUAL ELEMENTS]<br>● Enemies and units with two elements gain {both} effects, one from each element';
+var ELEMENTS=[
+  {name:'Neutral',     img:ELEM_IB+'neutralelement.webp',
+   desc:'[ENEMY]<br>● Takes {0.85x} damage<br>[UNIT]<br>● {+3%} to all stats'},
+  {name:'Nature',      img:ELEM_IB+'natureelement.webp',
+   desc:'[ENEMY]<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>[UNIT]<br>● {+1} stock per placement'},
+  {name:'Dark',        img:ELEM_IB+'darkelement.webp',
+   desc:'[ENEMY]<br>● {1.15x} base damage dealt (effectively does nothing)<br>[UNIT]<br>● {+3%} damage'},
+  {name:'Water',       img:ELEM_IB+'waterelement.webp',
+   desc:'[ENEMY]<br>● {-30%} movement speed & immune to slows<br>[UNIT]<br>● {+3%} range to all units on the map (stacks indefinitely)'},
+  {name:'Rust',        img:ELEM_IB+'rustelement.webp',
+   desc:'[ENEMY]<br>● {-0.15x} movement speed & {+20%} HP<br>[UNIT]<br>● {+3%} cooldown & {+6%} damage'},
+  {name:'Electricity', img:ELEM_IB+'electricityelement.webp',
+   desc:'[ENEMY]<br>● {1.15x} movement speed boost<br>[UNIT]<br>● {-3%} cooldown to all units in range (caps at {15%})'},
+  {name:'Fire',        img:ELEM_IB+'fireelement.webp',
+   desc:'[ENEMY]<br>● {-6%} damage taken from burn effects<br>[UNIT]<br>● Attacks apply {3%} burn/second'},
+  {name:'Light',       img:ELEM_IB+'lightelement.webp',
+   desc:'[ENEMY]<br>● {-35%} stun duration<br>[UNIT]<br>● {-3%} cooldown'}
+];
+(function(){
+  var el=document.getElementById('inf-elements-inner');
+  if(!el)return;
+  function _elHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>');}
+  if(ELEMENTS_TOP){var tc=document.createElement('div');tc.className='inf-card';var tp=document.createElement('p');tp.innerHTML=_elHl(ELEMENTS_TOP);tc.appendChild(tp);el.appendChild(tc);}
+  ELEMENTS.forEach(function(e){
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var badge=document.createElement('span');badge.className='inf-img';badge.style.background=ELEMENT_GRAD;
+    var im=document.createElement('img');im.src=e.img;im.alt=e.name;im.loading='lazy';badge.appendChild(im);
+    var h4=document.createElement('h4');h4.textContent=e.name;
+    h4.style.cssText='margin:0;background:'+ELEMENT_GRAD+';-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent';
+    row.appendChild(badge);row.appendChild(h4);card.appendChild(row);
+    var p=document.createElement('p');p.innerHTML=_elHl(e.desc);card.appendChild(p);
+    el.appendChild(card);
+  });
+})();
 // ── Endo Chips ──────────────────────────────────────────────────────────
 // Hardcoded, styled like the Bytes/Enchants tab. Each card = a rarity badge
 // (a gradient-coloured letter, or the Glitched render) + its drop chance and
