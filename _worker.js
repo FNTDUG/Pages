@@ -724,6 +724,12 @@ var SHOP_QUESTS=[
     'Reach Wave 120 on Endless Game 4 with 2+ Nature Units',
     'Roll Scooped Enchant on any Unit',
     'Feed Units a total of 100 times'
+  ]},
+  {unit:'Stitchwraith', present:'Stitchwraith Present', cost:50000, quests:[
+    'Beat 10 Nights with 4+ Light Units',
+    'Beat 10 Nights with 4+ Dark Units',
+    'Reach Wave 200 on Boss Raids with 4+ Dark or Light Element Units',
+    'Spend 1000 Souls'
   ]}
 ];
 function infLoadShopQuests(){
