@@ -658,6 +658,13 @@ var HERO_QUESTS=[
     'Complete Game 3 Night 6 with 3+ Rust element units, 5 times',
     'Open 100 Establishment Card Packs',
     'Reach wave 100 on Game 6 Endless with Ennard and 2+ Rust units'
+  ]},
+  {unit:'Vengeful Spirit', present:'Vengeful Spirit Present', quests:[
+    'Spend 10,000 Souls',
+    'Beat all Game 7 Nights on Nightmare Mode',
+    'Beat 20 Springtrap Bosses',
+    'Beat 25 Nights with Springtrap equipped',
+    'Beat Game 7 Custom Night on max difficulty'
   ]}
 ];
 function infLoadHeroQuests(){
