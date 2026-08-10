@@ -845,7 +845,7 @@ var INFO_CFG={
   pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael']},
   'loading-screens':{overrides:{}, add:{}, hide:[]},
-  materials:        {overrides:{'Soul':{description:''}}, add:{}, hide:[]},
+  materials:        {overrides:{'Soul':{description:''}}, add:{}, hide:[Normal Material]},
   potions:          {overrides:{}, add:{}, hide:[]},
   foods:            {overrides:{}, add:{}, hide:[]}
 };
