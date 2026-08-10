@@ -468,6 +468,11 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
+  {name:'Scott Cawthon',ing:[['1','Rare Scott'],['1','Scott Plushie']]},
+  {name:'Ragequit Scott',ing:[['1','Epic Scott'],['1','Scott Cawthon']]},
+  {name:'Theory Crusher Scott',ing:[['1','Mythic Scott'],['1','Ragequit Scott']]},
+  {name:'Overlord Scott',ing:[['1','Secret Scott'],['1','Theory Crusher Scott']]},
+  {name:'Planet Buster Scott',ing:[['1','Nightmare Scott'],['1','Overlord Scott']]},
   {name:'Mr. Hippo',ing:[['1','Happy Frog'],['250','Souls'],['80','Golden Fazbear Trophy'],['10','Nedd Bear'],['25','Orville Elephant'],['20','PigPatch'],['50','Spring'],['5','Salvage Token']]},
   {name:'Cthulhu Nightmare Foxy',ing:[['3','Cthulhu Coin']]},
   {name:'Patient White Rabbit',ing:[['1','Vessel Plushtrap'],['1000','Souls'],['100','Springs'],['100','Challenge Tokens'],['25','Agony']]},
