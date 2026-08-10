@@ -1328,7 +1328,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'UFO': '[OBTAINMENTS]<br>● 100% Drop chance when winning a minigame<br>● 25% Drop chance when losing a minigame<br>[PASSIVES]<br>● Able to give any single Element Boost<br>● If the Unit and UFO share the same Element, gain a Damage Boost<br>[STATS]<br>● DAMAGE (Same Element): {+2% ~ +10%}<br>● ACTIVE DAMAGE: {+10% ~ +35%}',
          'Pearl': '[OBTAINMENT]<br>● 1% Drop chance when losing a Stock (not Story)<br>[STAT]<br>● INCOME: {-50% ~ +50%}',
          'Neon Bee': '[OBTAINMENT]<br>● 0.05% Drop chance when Summoning<br>[PASSIVE]<br>● {+5%} Damage per unique DoT instance on an Enemy<br>[STATS]<br>● DoT Damage: {+5%}<br>● DoT Duration: {-25 ~ +25%}',
-         'Medpod': '[OBTAINMENT]<br>● 0.085% chance per card from Card Packs<br>[PASSIVE]<br>● Reduces enemy regeneration in the equipped unit's range<br>[STATS]<br>● Anti-Regen: {0% ~ -25%}'
+         'Medpod': "[OBTAINMENT]<br>● 0.085% chance per card from Card Packs<br>[PASSIVE]<br>● Reduces enemy regeneration in the equipped unit's range<br>[STATS]<br>● Anti-Regen: {0% ~ -25%}"
         },
         chips:{
          _top: [
@@ -1342,7 +1342,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Weak Point': '[OBTAINMENT]<br>● Game 2<br>[SYNERGY BOOSTS]<br>● {+15%} Crit Rate<br>● {+30%} Crit Damage',
          'Eye Augmentation': '[OBTAINMENT]<br>● Game 4<br>[SYNERGY BOOSTS]<br>● {+15%} Range<br>● {+10%} Damage',
          'Blazing Fire': '[OBTAINMENT]<br>● Game 6<br>[SYNERGY BOOST]<br>● {+20%} DoT Damage<br>[SYNERGY PASSIVE]<br>● When applying Burn to an enemy for the first time, Buff this Units Damage by {20%} for 10s (does not stack)',
-         'Serrated Edge': '[OBTAINMENT]<br>● Game 7<br>[SYNERGY BOOST]<br>● {+30%} MBleed Damage<br>[SYNERGY PASSIVE]<br>● When applying Bleed, gain {+5%} Damage and {+15%} Range for 10s (does not stack)'
+         'Serrated Edge': '[OBTAINMENT]<br>● Game 7<br>[SYNERGY BOOST]<br>● {+30%} Bleed Damage<br>[SYNERGY PASSIVE]<br>● When applying Bleed, gain {+5%} Damage and {+15%} Range for 10s (does not stack)'
         },
         enchants:{
          'Damage': '[OBTAINMENT]<br>● 25.8% from Enchanting<br>[BOOST]<br>● {+15%} Damage',
