@@ -468,6 +468,7 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
+  {name:'Mr. Hippo',ing:[['250','Souls'],['80','Golden Faz-bear Trophy'],['10','Nedd Bear'],['25','Orville'],['20','Pig Patch'],['50','Spring'],['5','Salvage Token']]},
   {name:'Cthulhu Nightmare Foxy',ing:[['3','Cthulhu Coin']]},
   {name:'Patient White Rabbit',ing:[['1','Vessel Plushtrap'],['1000','Souls'],['100','Springs'],['100','Challenge Tokens'],['25','Agony']]},
   {name:'Purple Guy',ing:[['1','Golden Freddy','pet'],['1','Mangle','pet'],['1','Puppet','pet']]},
