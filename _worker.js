@@ -109,8 +109,14 @@ const NAV_CSS = `<style>
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
 /* Sound toggle — same shell as the Menu/INFO buttons, round because it is
    icon-only. Two states: speaker with waves (on), speaker with a cross and a
-   red pill (off). */
-#ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:86px;right:12px;z-index:1099;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+   red pill (off).
+   z-index sits just under the INFO overlay (1048) and panel (1050), unlike the
+   INFO button itself at 1099 which stays on top so it can be tapped to close.
+   The sound button has no job while a panel is open, so it slides underneath
+   instead of floating over the panel's content. The nav drawer and the INFO
+   panel are both anchored right and wider than this button, so either one
+   covers it completely. */
+#ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:86px;right:12px;z-index:1047;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-sound-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
 #ug-sound-btn svg{width:16px;height:16px;display:block}
 #ug-sound-btn .ug-snd-off{display:none}
