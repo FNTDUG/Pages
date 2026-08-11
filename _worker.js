@@ -110,7 +110,7 @@ const NAV_CSS = `<style>
 /* Sound toggle — same shell as the Menu/INFO buttons, round because it is
    icon-only. Two states: speaker with waves (on), speaker with a cross and a
    red pill (off). */
-#ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:83px;right:12px;z-index:1099;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+#ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:86px;right:12px;z-index:1099;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-sound-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
 #ug-sound-btn svg{width:16px;height:16px;display:block}
 #ug-sound-btn .ug-snd-off{display:none}
@@ -134,7 +134,7 @@ const NAV_CSS = `<style>
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
   #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-sound-btn{top:112px;right:12px;width:46px;height:46px}
+  #ug-sound-btn{top:116px;right:12px;width:46px;height:46px}
   #ug-sound-btn svg{width:22px;height:22px}
   #ug-mobile-nav{width:350px!important}
   #ug-info-panel{width:420px}
