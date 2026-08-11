@@ -107,6 +107,13 @@ const NAV_CSS = `<style>
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:1040!important}
 #ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
+/* Sound toggle — same pill as the Menu/INFO buttons, stacked under them. */
+#ug-mic-btn{display:flex;align-items:center;gap:6px;position:fixed;top:83px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+#ug-mic-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
+#ug-mic-btn svg{width:13px;height:13px;flex-shrink:0}
+#ug-mic-btn .ug-mic-slash{display:none}
+#ug-mic-btn.muted{color:rgba(255,150,150,.95);border-color:rgba(255,120,120,.5)}
+#ug-mic-btn.muted .ug-mic-slash{display:block}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
 #ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
@@ -117,11 +124,15 @@ const NAV_CSS = `<style>
 @media(max-width:768px){
   #ug-hamburger:hover,#ug-hamburger:focus,#ug-hamburger:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
   #ug-info-btn:hover,#ug-info-btn:focus,#ug-info-btn:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
+  #ug-mic-btn:hover,#ug-mic-btn:focus,#ug-mic-btn:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
+  #ug-mic-btn.muted:hover,#ug-mic-btn.muted:focus,#ug-mic-btn.muted:active{border-color:rgba(255,120,120,.5)!important}
 }
 @media(min-width:769px){
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
   #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-mic-btn{top:112px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
+  #ug-mic-btn svg{width:17px;height:17px}
   #ug-mobile-nav{width:350px!important}
   #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
@@ -208,6 +219,99 @@ const FOOTER_HTML = `
       <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
       <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a></p>
       <p>&copy; 2025 www.fntduserguide.com</p>`;
+
+// ─── SOUND GOVERNOR ───────────────────────────────────────────────────────────
+// Injected into <head> so it is in place before any page script can create a
+// sound. Every noise on the site funnels through HTMLMediaElement.play(): the
+// BBN terminals' new Audio() voice lines, the <audio> tags inside the Unit
+// Engine and Trade Calculator (which arrive long after load, fetched from the
+// characters.json repo and inlined with createContextualFragment), and the INFO
+// panel's videos. Patching the prototype once covers all of them, whenever they
+// appear, without touching a single page.
+//
+// Muting STOPS audio rather than turning it down. A media element left playing
+// at volume 0 still holds the device's audio focus, and on phones that pauses
+// or ducks whatever the visitor already had going — so turning our sound "off"
+// would kill their music. Video is treated differently: it is muted but left
+// running, so a video someone is watching is silenced, not interrupted.
+const SOUND_GOVERNOR = `<script>
+(function(){
+  var KEY='ug:sound';
+  var muted=false;
+  try{muted=localStorage.getItem(KEY)==='off';}catch(e){}
+  var ctxs=[];
+
+  function silence(el){
+    if(el.tagName==='VIDEO'){
+      // Only mark what we muted ourselves, so unmuting later never un-silences
+      // something a page deliberately kept quiet (the BBN camera feed sets
+      // muted=true on purpose).
+      if(!el.muted){el.muted=true;el.setAttribute('data-ug-silenced','');}
+    }else{
+      try{el.pause();}catch(e){}
+    }
+  }
+  function restore(el){
+    if(el.getAttribute&&el.getAttribute('data-ug-silenced')!==null){
+      el.muted=false;el.removeAttribute('data-ug-silenced');
+    }
+  }
+  function applyAll(){
+    var m=document.querySelectorAll('audio,video');
+    for(var i=0;i<m.length;i++){if(muted){silence(m[i]);}else{restore(m[i]);}}
+    for(var j=0;j<ctxs.length;j++){try{if(muted){ctxs[j].suspend();}else{ctxs[j].resume();}}catch(e){}}
+  }
+
+  var MP=window.HTMLMediaElement&&HTMLMediaElement.prototype;
+  if(MP&&MP.play){
+    var nativePlay=MP.play;
+    MP.play=function(){
+      if(muted){
+        if(this.tagName==='VIDEO'){silence(this);}
+        // Resolve rather than reject: callers treat a rejection as "autoplay was
+        // blocked" and retry on first tap, which would just fail again.
+        else{try{this.pause();}catch(e){}return Promise.resolve();}
+      }
+      return nativePlay.apply(this,arguments);
+    };
+  }
+  // Catches anything that starts without going through play() — an autoplay
+  // attribute, say. 'play' does not bubble, hence capture.
+  document.addEventListener('play',function(e){if(muted)silence(e.target);},true);
+
+  // Nothing uses Web Audio today, but a suspended context is the only way to
+  // stop it holding audio focus if anything ever does.
+  ['AudioContext','webkitAudioContext'].forEach(function(n){
+    var C=window[n];if(!C)return;
+    function W(o){var c=new C(o);ctxs.push(c);if(muted){try{c.suspend();}catch(e){}}return c;}
+    W.prototype=C.prototype;window[n]=W;
+  });
+
+  function paint(){
+    var b=document.getElementById('ug-mic-btn');if(!b)return;
+    b.classList.toggle('muted',muted);
+    b.setAttribute('aria-pressed',muted?'true':'false');
+    b.setAttribute('aria-label',muted?'Unmute site sounds':'Mute site sounds');
+    var t=b.querySelector('.ug-mic-txt');if(t)t.textContent=muted?'MUTED':'SOUND';
+  }
+  window.ugSoundPaint=paint;
+  window.ugSoundMuted=function(){return muted;};
+  window.ugSoundToggle=function(){
+    muted=!muted;
+    try{localStorage.setItem(KEY,muted?'off':'on');}catch(e){}
+    applyAll();paint();
+  };
+  if(muted){
+    document.addEventListener('DOMContentLoaded',applyAll);
+    window.addEventListener('load',applyAll);
+  }
+})();
+<\/script>`;
+
+// The button itself — same pill as Menu/INFO. Appended to <body> on every page,
+// including the Privacy Policy (it is site chrome, not game content).
+const MIC_HTML = `<button id="ug-mic-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="22"></line><line class="ug-mic-slash" x1="3" y1="3" x2="21" y2="21"></line></svg><span class="ug-mic-txt">SOUND</span></button>
+<script>ugSoundPaint();<\/script>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
 <div id="ug-info-overlay" onclick="ugInfoClose()"></div>
@@ -1601,7 +1705,7 @@ export default {
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
     return new HTMLRewriter()
       .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
+        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
       .on('img.ug-header-logo', {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
@@ -1620,6 +1724,9 @@ export default {
       })
       .on('body', {
         element(el) {
+          // With no INFO button above it, the sound toggle moves up into its slot.
+          if (noInfoPanel) el.append('<style>#ug-mic-btn{top:47px}@media(min-width:769px){#ug-mic-btn{top:63px}}</style>', { html: true });
+          el.append(MIC_HTML, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
