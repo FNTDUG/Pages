@@ -107,13 +107,16 @@ const NAV_CSS = `<style>
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:1040!important}
 #ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
-/* Sound toggle — same pill as the Menu/INFO buttons, stacked under them. */
-#ug-mic-btn{display:flex;align-items:center;gap:6px;position:fixed;top:83px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
-#ug-mic-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
-#ug-mic-btn svg{width:13px;height:13px;flex-shrink:0}
-#ug-mic-btn .ug-mic-slash{display:none}
-#ug-mic-btn.muted{color:rgba(255,150,150,.95);border-color:rgba(255,120,120,.5)}
-#ug-mic-btn.muted .ug-mic-slash{display:block}
+/* Sound toggle — same shell as the Menu/INFO buttons, round because it is
+   icon-only. Two states: speaker with waves (on), speaker with a cross and a
+   red pill (off). */
+#ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:83px;right:12px;z-index:1099;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
+#ug-sound-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
+#ug-sound-btn svg{width:16px;height:16px;display:block}
+#ug-sound-btn .ug-snd-off{display:none}
+#ug-sound-btn.muted{color:#ff9090;border-color:rgba(255,120,120,.55);background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95))}
+#ug-sound-btn.muted .ug-snd-on{display:none}
+#ug-sound-btn.muted .ug-snd-off{display:block}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
 #ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
@@ -124,15 +127,15 @@ const NAV_CSS = `<style>
 @media(max-width:768px){
   #ug-hamburger:hover,#ug-hamburger:focus,#ug-hamburger:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
   #ug-info-btn:hover,#ug-info-btn:focus,#ug-info-btn:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
-  #ug-mic-btn:hover,#ug-mic-btn:focus,#ug-mic-btn:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
-  #ug-mic-btn.muted:hover,#ug-mic-btn.muted:focus,#ug-mic-btn.muted:active{border-color:rgba(255,120,120,.5)!important}
+  #ug-sound-btn:hover,#ug-sound-btn:focus,#ug-sound-btn:active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95))!important;border-color:rgba(255,164,91,.45)!important;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)!important;outline:none!important}
+  #ug-sound-btn.muted:hover,#ug-sound-btn.muted:focus,#ug-sound-btn.muted:active{background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95))!important;border-color:rgba(255,120,120,.55)!important}
 }
 @media(min-width:769px){
   #ug-hamburger{top:14px;right:12px;padding:11px 20px 11px 16px;font-size:13px;border-radius:28px;gap:8px}
   #ug-hamburger .hmb-icon{font-size:21px}
   #ug-info-btn{top:63px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-mic-btn{top:112px;right:12px;padding:14px 20px 14px 16px;font-size:13px;border-radius:28px;gap:8px}
-  #ug-mic-btn svg{width:17px;height:17px}
+  #ug-sound-btn{top:112px;right:12px;width:46px;height:46px}
+  #ug-sound-btn svg{width:22px;height:22px}
   #ug-mobile-nav{width:350px!important}
   #ug-info-panel{width:420px}
   .ug-mn-brand-logo{width:44px;height:44px}
@@ -288,11 +291,11 @@ const SOUND_GOVERNOR = `<script>
   });
 
   function paint(){
-    var b=document.getElementById('ug-mic-btn');if(!b)return;
+    var b=document.getElementById('ug-sound-btn');if(!b)return;
     b.classList.toggle('muted',muted);
     b.setAttribute('aria-pressed',muted?'true':'false');
-    b.setAttribute('aria-label',muted?'Unmute site sounds':'Mute site sounds');
-    var t=b.querySelector('.ug-mic-txt');if(t)t.textContent=muted?'MUTED':'SOUND';
+    var lbl=muted?'Unmute site sounds':'Mute site sounds';
+    b.setAttribute('aria-label',lbl);b.setAttribute('title',lbl);
   }
   window.ugSoundPaint=paint;
   window.ugSoundMuted=function(){return muted;};
@@ -308,9 +311,11 @@ const SOUND_GOVERNOR = `<script>
 })();
 <\/script>`;
 
-// The button itself — same pill as Menu/INFO. Appended to <body> on every page,
-// including the Privacy Policy (it is site chrome, not game content).
-const MIC_HTML = `<button id="ug-mic-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="22"></line><line class="ug-mic-slash" x1="3" y1="3" x2="21" y2="21"></line></svg><span class="ug-mic-txt">SOUND</span></button>
+// The button itself. Appended to <body> on every page, including the Privacy
+// Policy (it is site chrome, not game content). The speaker cone is always
+// drawn; the waves and the cross swap on the .muted class, so the two states
+// read differently at a glance rather than relying on colour alone.
+const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" title="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke-linejoin="round"></path><g class="ug-snd-on"><path d="M15.8 9.3a4 4 0 0 1 0 5.4"></path><path d="M18.4 6.8a7.5 7.5 0 0 1 0 10.4"></path></g><g class="ug-snd-off"><path d="M16.5 9.5l5 5"></path><path d="M21.5 9.5l-5 5"></path></g></svg></button>
 <script>ugSoundPaint();<\/script>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -1725,8 +1730,8 @@ export default {
       .on('body', {
         element(el) {
           // With no INFO button above it, the sound toggle moves up into its slot.
-          if (noInfoPanel) el.append('<style>#ug-mic-btn{top:47px}@media(min-width:769px){#ug-mic-btn{top:63px}}</style>', { html: true });
-          el.append(MIC_HTML, { html: true });
+          if (noInfoPanel) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
+          el.append(SOUND_BTN_HTML, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
