@@ -166,6 +166,9 @@ const NAV_CSS = `<style>
 .inf-card p+p{margin-top:6px}
 .inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:10px;padding:2px;margin:0 3px;flex-shrink:0;overflow:hidden}
 .inf-img img{width:100%;height:100%;object-fit:contain;border-radius:8px;display:block;background:rgba(10,8,22,.9)}
+/* Status Effects icons are pixel art — keep the edges crisp instead of letting
+   the browser smooth them. Scoped to that tab so no other badge is affected. */
+#inf-status-effects-inner .inf-img img{image-rendering:pixelated;image-rendering:crisp-edges}
 .inf-rarity-nightmare{background:linear-gradient(135deg,#492590,#2A1E42)}
 .inf-rarity-secret{background:linear-gradient(135deg,#FF8800,#FF0C0C)}
 .inf-rarity-mythic{background:linear-gradient(135deg,#FFB81F,#FFFF00)}
@@ -288,6 +291,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Stat Chips <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endo-chips-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Status Effects <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-status-effects-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="skins" onclick="infToggle(this)">Unit Skins <span class="inf-drop-arrow">/</span></button>
@@ -1069,6 +1076,62 @@ var ELEMENTS=[
     h4.style.cssText='margin:0;background:'+ELEMENT_GRAD+';-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent';
     row.appendChild(badge);row.appendChild(h4);card.appendChild(row);
     var p=document.createElement('p');p.innerHTML=_elHl(e.desc);card.appendChild(p);
+    el.appendChild(card);
+  });
+})();
+// ── Status Effects ──────────────────────────────────────────────────────
+// Hardcoded, styled like the Elements tab: icon badge + name on one row,
+// description beneath. Listed A-Z. Icons are the pixel-art status heads from
+// the images bucket, named after the effect (anti-regen.webp, bleed.webp, …).
+// Each row carries three colours sampled from its own art:
+//   c  = the badge gradient's bright stop, and the name's darker stop
+//   g2 = the badge gradient's deep stop   (badge reads bright -> deep, like
+//        the rarity badges' #FF8800 -> #FF0C0C)
+//   t1 = the name gradient's light stop   (kept light so it stays legible)
+// To edit: change the rows below. Supports [HEADER], {bold} and <br>.
+var STAT_IB='https://images.fntduserguide.com/';
+var STATUS_EFFECTS=[
+  {key:'anti-regen',name:'Anti-Regen',c:'#4ade80',g2:'#148f41',t1:'#86e9aa',
+   desc:'Reduces enemy health regeneration by a %'},
+  {key:'bleed',     name:'Bleed',     c:'#e0313f',g2:'#7e0e17',t1:'#e96f78',
+   desc:'Enemies take damage every second based on a % of a unit’s damage'},
+  {key:'burn',      name:'Burn',      c:'#ff8a1f',g2:'#994900',t1:'#feaf66',
+   desc:'Enemies take damage every second based on a % of a unit’s damage'},
+  {key:'death',     name:'Death',     c:'#b8bcc8',g2:'#667195',t1:'#e0e1e7',
+   desc:'Enemies take {3x} damage from the unit(s) that applied Death'},
+  {key:'malware',   name:'Malware',   c:'#4dfd8a',g2:'#00c544',t1:'#93fdb8',
+   desc:'Enemy generates {+100%} income'},
+  {key:'marked',    name:'Marked',    c:'#ff5252',g2:'#cc0000',t1:'#ff9999',
+   desc:'Has special effects depending on the unit that marked the enemy'},
+  {key:'poison',    name:'Poison',    c:'#a8d61a',g2:'#4c6208',t1:'#c3e94d',
+   desc:'Enemies take damage every second based on a % of a unit’s damage'},
+  {key:'rooted',    name:'Rooted',    c:'#5cb469',g2:'#276330',t1:'#8cca96',
+   desc:'Slow that increases by {2%} every second, up to {30%}, then Stuns affected enemies after they reach {30%} Slow from Rooted'},
+  {key:'scarred',   name:'Scarred',   c:'#c2569b',g2:'#702254',t1:'#d48aba',
+   desc:'Non-boss enemies lose {0.25%} of their health every second'},
+  {key:'slow',      name:'Slow',      c:'#7fc7dd',g2:'#2690b0',t1:'#b7dfeb',
+   desc:'Reduces enemy movement speed by a % (max {60%})'},
+  {key:'soaked',    name:'Soaked',    c:'#35a8ff',g2:'#0063af',t1:'#7cc6ff',
+   desc:'Enemies receive {+10%} damage from Water units. Fire units deal {+25%} damage and remove Soaked. Electric units deal {+10%} damage, Stun affected enemies for {1.5s}, and remove Soaked'},
+  {key:'stun',      name:'Stun',      c:'#7fd6f0',g2:'#11aad8',t1:'#beeaf7',
+   desc:'Freezes an enemy in place for a duration ({7s} CD)'},
+  {key:'wither',    name:'Wither',    c:'#a98fc4',g2:'#66418d',t1:'#ccbddc',
+   desc:'Increases the damage enemies receive by a %'}
+];
+(function(){
+  var el=document.getElementById('inf-status-effects-inner');
+  if(!el)return;
+  STATUS_EFFECTS.forEach(function(s){
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var badge=document.createElement('span');badge.className='inf-img';
+    badge.style.background='linear-gradient(135deg,'+s.c+','+s.g2+')';
+    var im=document.createElement('img');im.src=STAT_IB+s.key+'.webp';im.alt=s.name;im.loading='lazy';
+    badge.appendChild(im);
+    var h4=document.createElement('h4');h4.textContent=s.name;
+    h4.style.cssText='margin:0;background:linear-gradient(135deg,'+s.t1+','+s.c+');-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent';
+    row.appendChild(badge);row.appendChild(h4);card.appendChild(row);
+    var p=document.createElement('p');p.innerHTML=infHl(s.desc);card.appendChild(p);
     el.appendChild(card);
   });
 })();
