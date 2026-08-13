@@ -1747,6 +1747,10 @@ const ACTIVE_SCRIPT = `<script>
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
+// Universe ids allowed through /game-thumb/, so the route cannot be used as an
+// open proxy for arbitrary Roblox assets. Same ids the home page stats use.
+const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624'];
+
 const INF_PROXY = {
   'presents':        'https://presents.fntduserguide.com/fntd2-presents.json',
   'units':           'https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',
@@ -1781,6 +1785,32 @@ export default {
           'content-type': 'application/json; charset=utf-8',
           'access-control-allow-origin': '*',
           'cache-control': 'public, max-age=300'
+        }
+      });
+    }
+
+    // Live game icons for the home page cards. The thumbnails API hands back a
+    // time-limited CDN url (they carry a 180DAY- prefix and rotate), so it is
+    // looked up per request and cached at the edge instead of being pasted into
+    // index.html, where it would quietly break a few months later.
+    if (url.pathname.startsWith('/game-thumb/')) {
+      const id = url.pathname.slice('/game-thumb/'.length);
+      if (!GAME_UNIVERSES.includes(id)) return new Response('Not found', { status: 404 });
+      const api = 'https://thumbnails.roblox.com/v1/games/icons?universeIds=' + id +
+                  '&size=512x512&format=Png&isCircular=false';
+      const meta = await fetch(api, { cf: { cacheTtl: 21600, cacheEverything: true } });
+      const j = await meta.json().catch(() => null);
+      const src = j && j.data && j.data[0] && j.data[0].imageUrl;
+      // On failure return 502 rather than a placeholder: the <img> has an
+      // onerror fallback to the previous artwork, so the card still fills.
+      if (!src) return new Response('Upstream unavailable', { status: 502 });
+      const img = await fetch(src, { cf: { cacheTtl: 86400, cacheEverything: true } });
+      return new Response(img.body, {
+        status: img.status,
+        headers: {
+          'content-type': img.headers.get('content-type') || 'image/png',
+          'cache-control': 'public, max-age=86400',
+          'access-control-allow-origin': '*'
         }
       });
     }

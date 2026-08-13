@@ -85,8 +85,17 @@
   .game-info-btn{display:block;width:320px;height:320px;border-radius:12px;text-decoration:none;flex-shrink:0}
   .glow-card{position:relative;width:100%;height:100%;border:3px solid #f69b55;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 0 15px rgba(64,18,83,0.4);transition:box-shadow 0.3s ease,transform 0.3s ease}
   .game-info-btn:hover .glow-card{box-shadow:0 0 25px 8px #401253;transform:scale(1.05)}
-  .glow-card img{position:absolute;top:50%;left:50%;width:110%;height:110%;object-fit:cover;transform:translate(-50%,-50%);transition:transform 0.5s ease}
-  .game-info-btn:hover .glow-card img{transform:translate(-50%,-50%) scale(1.1)}
+  /* Icon comes live from Roblox via the worker's /game-thumb/ route. It is
+     512x512 and the card is square, so object-fit:contain shows the whole icon
+     with nothing cropped - hence no scaling here and no zoom on hover, either
+     of which would clip the edges. The card itself still lifts on hover. */
+  .glow-card img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;background:#0b0a16}
+  .gc-shade{position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
+  /* Centred in the space above the stat boxes (hence bottom:63px), then nudged
+     down 20px. These numbers were set in the tuner, not guessed. */
+  .gc-title{position:absolute;left:0;right:0;top:0;bottom:63px;display:flex;align-items:center;justify-content:center;padding:0 14px;text-align:center;font-family:'Press Start 2P',cursive;color:#fff;line-height:1.5;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6);transform:translateY(20px);pointer-events:none}
+  .gc-title span{font-size:38px}
+  .gc-title--sm span{font-size:30px}   /* titles that wrap to two lines */
   .stats-wrapper{position:absolute;bottom:15px;left:50%;transform:translateX(-50%);width:90%;display:flex;justify-content:space-between;gap:10px}
   .stat-box{flex:1;background:rgba(0,0,0,0.85);border:2px solid #f69b55;border-radius:8px;padding:8px 6px;text-align:center;box-shadow:0 0 10px rgba(64,18,83,0.7)}
   .stat-label{font-family:'Audiowide',sans-serif;font-size:12px;color:#f69b55;margin-bottom:4px;letter-spacing:1px}
@@ -146,7 +155,10 @@
           <div style="font-family:'Audiowide',sans-serif;font-size:24px;color:#fff;text-align:center;margin-bottom:10px;letter-spacing:.5px">Bite By Night</div>
           <a href="/bbn/bite-by-night-directory" class="game-info-btn">
             <div class="glow-card">
-              <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-4-edited-high.png?enable-io=true&crop=1%3A1&width=1920" alt="Bite by Night">
+              <img src="/game-thumb/8202280624" alt="Bite by Night" loading="lazy"
+                   onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-4-edited-high.png?enable-io=true&crop=1%3A1&width=1920'">
+              <div class="gc-shade"></div>
+              <div class="gc-title gc-title--sm"><span>Bite By Night</span></div>
               <div class="stats-wrapper">
                 <div class="stat-box">
                   <div class="stat-label">Players</div>
@@ -170,7 +182,10 @@
           <div style="font-family:'Audiowide',sans-serif;font-size:24px;color:#fff;text-align:center;margin-bottom:10px;letter-spacing:.5px">FNTD1</div>
           <a href="/fntd1" class="game-info-btn">
             <div class="glow-card">
-              <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&width=532" alt="FNTD1">
+              <img src="/game-thumb/5479908441" alt="FNTD1" loading="lazy"
+                   onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&width=532'">
+              <div class="gc-shade"></div>
+              <div class="gc-title"><span>FNTD1</span></div>
               <div class="stats-wrapper">
                 <div class="stat-box">
                   <div class="stat-label">Players</div>
@@ -190,7 +205,10 @@
           <div style="font-family:'Audiowide',sans-serif;font-size:24px;color:#fff;text-align:center;margin-bottom:10px;letter-spacing:.5px">FNTD2</div>
           <a href="/fntd2/fntd2-directory" class="game-info-btn">
             <div class="glow-card">
-              <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&crop=1.0048%3A1&width=532" alt="FNTD2">
+              <img src="/game-thumb/7934320560" alt="FNTD2" loading="lazy"
+                   onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&crop=1.0048%3A1&width=532'">
+              <div class="gc-shade"></div>
+              <div class="gc-title"><span>FNTD2</span></div>
               <div class="stats-wrapper">
                 <div class="stat-box">
                   <div class="stat-label">Players</div>
