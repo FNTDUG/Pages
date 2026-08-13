@@ -1306,7 +1306,7 @@ var STATUS_EFFECTS=[
   {key:'death',     name:'Death',     c:'#b8bcc8',g2:'#667195',t1:'#e0e1e7',
    desc:'Enemies take {3x} damage from the unit(s) that applied Death'},
   {key:'malware',   name:'Malware',   c:'#4dfd8a',g2:'#00c544',t1:'#93fdb8',
-   desc:'Enemy generates {+100%} income'},
+   desc:'Affected units take {+35%} damage from DoT effects and are Stunned {15%} longer'},
   {key:'marked',    name:'Marked',    c:'#ff5252',g2:'#cc0000',t1:'#ff9999',
    desc:'Has special effects depending on the unit that marked the enemy'},
   {key:'poison',    name:'Poison',    c:'#a8d61a',g2:'#4c6208',t1:'#c3e94d',
