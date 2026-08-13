@@ -336,6 +336,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
   </div>
   <div id="ug-info-body" style="flex:1">
     <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Attack Types <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-attack-types-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Bytes <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-bytes-inner"></div></div>
     </div>
@@ -1191,6 +1195,31 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
   }
   return card;
 }
+// ── Attack Types ────────────────────────────────────────────────────────
+// Hardcoded and text-only — there are no icons for these, so the cards are
+// just a name and a description, no badge. Listed A-Z.
+// To edit: change the rows below. Supports [HEADER], {bold} and <br>.
+var ATTACK_TYPES=[
+  {name:'Cone AOE',   desc:'Damages enemies in a forward-facing spread that widens with distance.'},
+  {name:'Continuous', desc:'Continuously attacks enemies while they stay in range. Can combine with other attack types.'},
+  {name:'Explosion',  desc:'Damages enemies within a circular radius around a target point.'},
+  {name:'Full',       desc:'Damages every enemy on the map.'},
+  {name:'Full AOE',   desc:'Damages every enemy currently in this unit’s range.'},
+  {name:'Line',       desc:'Damages all enemies in a straight path extending from the unit.'},
+  {name:'Ricochet',   desc:'Attacks bounce between multiple enemies in range.'},
+  {name:'Single',     desc:'Damages one enemy per attack.'},
+  {name:'Support',    desc:'Units provide boosts to other units within their range.'}
+];
+(function(){
+  var el=document.getElementById('inf-attack-types-inner');
+  if(!el)return;
+  ATTACK_TYPES.forEach(function(a){
+    var card=document.createElement('div');card.className='inf-card';
+    var h4=document.createElement('h4');h4.textContent=a.name;card.appendChild(h4);
+    var p=document.createElement('p');p.innerHTML=infHl(a.desc);card.appendChild(p);
+    el.appendChild(card);
+  });
+})();
 // ── Elements ────────────────────────────────────────────────────────────
 // Hardcoded, styled like the Bytes tab: icon badge + name on one row, details
 // beneath. Icons are the base-element entries copied from ELEMENT_ICONS in the
