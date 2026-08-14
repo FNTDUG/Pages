@@ -1304,7 +1304,7 @@ var STATUS_EFFECTS=[
   {key:'burn',      name:'Burn',      c:'#ff8a1f',g2:'#994900',t1:'#feaf66',
    desc:'Enemies take damage every second based on a % of a unit’s damage'},
   {key:'death',     name:'Death',     c:'#b8bcc8',g2:'#667195',t1:'#e0e1e7',
-   desc:'Enemies take {3x} damage from the unit(s) that applied Death'},
+   desc:'Has special effects depending on the unit that marked the enemy'},
   {key:'malware',   name:'Malware',   c:'#4dfd8a',g2:'#00c544',t1:'#93fdb8',
    desc:'Affected units take {+35%} damage from DoT effects and are Stunned {15%} longer'},
   {key:'marked',    name:'Marked',    c:'#ff5252',g2:'#cc0000',t1:'#ff9999',
