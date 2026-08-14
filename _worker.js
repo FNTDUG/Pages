@@ -29,7 +29,9 @@ const MOBILE_NAV_BODY = `
     <a href="/fntd2/story-index"         class="ug-mn-child" data-nav-href="/fntd2/story-index">Story &amp; Index</a>
     <a href="/fntd2/endless-index"       class="ug-mn-child" data-nav-href="/fntd2/endless-index">Endless &amp; Index</a>
     <a href="/fntd2/boss-raids-index"    class="ug-mn-child" data-nav-href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a>
+    <!-- HIDDEN-EVENT-SE: delete this comment wrapper to bring the link back
     <a href="/fntd2/event-story-endless" class="ug-mn-child" data-nav-href="/fntd2/event-story-endless">Event Story &amp; Endless</a>
+    -->
   </div>
 </div>
 <div class="ug-mn-section">
@@ -78,7 +80,9 @@ const DESKTOP_NAV_INNER = `
     <a href="/fntd2/story-index"          data-nav-href="/fntd2/story-index">Story &amp; Index</a>
     <a href="/fntd2/endless-index"        data-nav-href="/fntd2/endless-index">Endless &amp; Index</a>
     <a href="/fntd2/boss-raids-index"     data-nav-href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a>
+    <!-- HIDDEN-EVENT-SE: delete this comment wrapper to bring the link back
     <a href="/fntd2/event-story-endless"  data-nav-href="/fntd2/event-story-endless">Event Story &amp; Endless</a>
+    -->
   </div>
 </div>
 <div class="ug-tn-item">
