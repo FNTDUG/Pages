@@ -373,6 +373,32 @@
         'border-radius:4px;cursor:pointer;user-select:none;transition:opacity .15s,border-color .15s,color .15s}',
       '.meta-clutter-btn:hover{background:rgba(246,155,85,0.12)}',
       '.meta-clutter-btn.cltr-off{border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.3)}',
+      /* camera button — shares the clutter button's frame so the controls row stays even */
+      '.meta-cam-btn{display:inline-flex;align-items:center;justify-content:center;' +
+        'padding:4px 8px;background:rgba(0,0,0,0.65);' +
+        'border:1px solid rgba(246,155,85,0.75);color:#ffa45b;' +
+        'border-radius:4px;cursor:pointer;user-select:none;transition:opacity .15s,border-color .15s,color .15s}',
+      '.meta-cam-btn:hover{background:rgba(246,155,85,0.12)}',
+      '.meta-cam-btn[disabled]{opacity:.5;cursor:default}',
+      '.meta-cam-btn svg{display:block;width:11px;height:11px}',
+      '.metaControls{gap:6px}',
+      '.seamlessControls .meta-cam-btn{padding:clamp(3px,0.42vw,6px) clamp(6px,0.84vw,11px)}',
+      '.seamlessControls .meta-cam-btn svg{width:clamp(8px,1.1vw,12px);height:clamp(8px,1.1vw,12px)}',
+      '.seamlessControls{gap:clamp(4px,0.7vw,8px)}',
+
+      '.meta-shot-overlay{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.86);' +
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+        'gap:16px;padding:20px;box-sizing:border-box}',
+      '.meta-shot-overlay img{max-width:92vw;max-height:66vh;border-radius:10px;' +
+        'box-shadow:0 10px 34px rgba(0,0,0,0.75)}',
+      '.meta-shot-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}',
+      '.meta-shot-btn{font-family:"Press Start 2P",monospace;font-size:11px;padding:12px 18px;' +
+        'border-radius:10px;cursor:pointer;border:2px solid;transition:background .12s,color .12s,border-color .12s}',
+      '.meta-shot-save{background:#2a1f3a;border-color:#ffc84d;color:#ffc84d}',
+      '.meta-shot-save:hover{background:#3a2a4a;color:#fff}',
+      '.meta-shot-close{background:rgba(30,30,40,0.9);border-color:rgba(255,255,255,0.25);color:#ccc}',
+      '.meta-shot-close:hover{color:#fff;border-color:rgba(255,255,255,0.5)}',
+      '@media(max-width:600px){.meta-shot-btn{font-size:9px;padding:10px 14px}}',
       '.meta-clutter-off .meta-byte,' +
       '.meta-clutter-off .meta-chip,' +
       '.meta-clutter-off .meta-enchant,' +
@@ -554,6 +580,279 @@
 
   function hideTip() { tip.style.opacity = '0'; tip.style.display = 'none'; }
 
+  /* ── Capture ──────────────────────────────────────────────────────────────
+     Same behaviour as the trade calculator's screenshot button. html2canvas is
+     pulled in on first click rather than up front, so a page that never uses
+     the button never pays for the library.
+     Unit renders come from the fntd2-units R2 bucket, which must send CORS
+     headers or html2canvas cannot read them and the cards render blank.        */
+  var _h2cState = 0;   // 0 = untouched, 1 = loading, 2 = ready, 3 = failed
+  var _h2cWaiting = [];
+  function withHtml2Canvas(cb) {
+    if (typeof window.html2canvas === 'function') { cb(true); return; }
+    if (_h2cState === 3) { cb(false); return; }
+    _h2cWaiting.push(cb);
+    if (_h2cState === 1) return;
+    _h2cState = 1;
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    s.onload = function () {
+      _h2cState = typeof window.html2canvas === 'function' ? 2 : 3;
+      var q = _h2cWaiting; _h2cWaiting = [];
+      q.forEach(function (f) { f(_h2cState === 2); });
+    };
+    s.onerror = function () {
+      _h2cState = 3;
+      var q = _h2cWaiting; _h2cWaiting = [];
+      q.forEach(function (f) { f(false); });
+    };
+    (document.head || document.documentElement).appendChild(s);
+  }
+
+  /* Point an <img> at a url in CORS mode. html2canvas re-requests every image
+     with crossOrigin set; if the first load was plain, the browser reuses that
+     cached non-CORS copy, the check fails, and the image is dropped from the
+     capture — instantly, with no network round trip. Setting crossOrigin on the
+     original load is what makes the cached copy usable. Must precede .src.     */
+  function _metaImgSrc(im, url) {
+    im.crossOrigin = 'anonymous';
+    im.src = url || '';
+    im.addEventListener('error', function () {
+      // CORS unavailable for this one — retry plain so the page still shows it
+      // (it just will not make it into a capture).
+      if (im.getAttribute('crossorigin')) {
+        var s = im.getAttribute('src');
+        im.removeAttribute('crossorigin');
+        im.src = s;
+      }
+    });
+  }
+
+  /* Same problem for CSS background-image, which has no crossOrigin attribute:
+     warm the cache with a CORS fetch first, then apply it. */
+  function _metaSetBg(el, url) {
+    if (!url) return;
+    var pre = new Image();
+    pre.crossOrigin = 'anonymous';
+    var apply = function () { el.style.backgroundImage = 'url(' + url + ')'; };
+    pre.onload = apply;
+    pre.onerror = apply;   // show it regardless; only the capture suffers
+    pre.src = url;
+  }
+
+  /* Every URL the capture needs: <img> sources plus CSS background-image urls
+     (the root's artwork, rarity plates, and so on, which have no crossOrigin
+     attribute to set). */
+  function _metaImageUrls(rootEl) {
+    var urls = {};
+    Array.prototype.forEach.call(rootEl.querySelectorAll('img'), function (im) {
+      var s = im.getAttribute('src');
+      if (s && s.indexOf('data:') !== 0) urls[s] = 1;
+    });
+    var els = [rootEl].concat(Array.prototype.slice.call(rootEl.querySelectorAll('*')));
+    els.forEach(function (el) {
+      var bg;
+      try { bg = window.getComputedStyle(el).backgroundImage; } catch (e) { return; }
+      if (!bg || bg === 'none') return;
+      var re = /url\((['"]?)(.*?)\1\)/g, m;
+      while ((m = re.exec(bg))) {
+        if (m[2] && m[2].indexOf('data:') !== 0) urls[m[2]] = 1;
+      }
+    });
+    return Object.keys(urls);
+  }
+
+  /* html2canvas re-requests every image with crossOrigin set (useCORS). If the
+     browser cache only holds a plain non-CORS copy it reuses that, the CORS
+     check fails, and the image is dropped from the render — the page still
+     looks right, so the loss is invisible until you look at the screenshot.
+     Fetching each URL once in CORS mode first puts a CORS-valid copy in the
+     cache, so html2canvas's own loads all hit. Also clears loading="lazy",
+     which would otherwise leave below-the-fold cards unfetched. */
+  /* Can html2canvas read this image? It re-requests with crossOrigin, so an
+     image the browser only holds a plain non-CORS copy of will fail — drawing
+     it to a throwaway canvas and reading a pixel back is the same test. */
+  function _metaReadable(im) {
+    if (!im || !im.naturalWidth) return false;
+    try {
+      var c = document.createElement('canvas');
+      c.width = 1; c.height = 1;
+      var x = c.getContext('2d');
+      x.drawImage(im, 0, 0, 1, 1);
+      x.getImageData(0, 0, 1, 1);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  /* Anything not readable gets re-fetched in CORS mode with the cache bypassed
+     and handed to the clone as a blob: url, which is same-origin and needs no
+     CORS at all. That also replaces the poisoned cache entry, so later captures
+     are cheap. Returns a { url -> blobUrl } map for onclone to apply. */
+  function _metaPreloadImages(rootEl, cb) {
+    Array.prototype.forEach.call(rootEl.querySelectorAll('img[loading]'), function (im) {
+      im.removeAttribute('loading');
+    });
+
+    var byUrl = {};
+    Array.prototype.forEach.call(rootEl.querySelectorAll('img'), function (im) {
+      var s = im.getAttribute('src');
+      if (s) byUrl[s] = byUrl[s] || im;
+    });
+
+    var need = _metaImageUrls(rootEl).filter(function (u) {
+      return !_metaReadable(byUrl[u]);   // background urls have no <img>, so always re-fetched
+    });
+
+    var map = {}, pending = need.length, finished = false;
+    function finish() { if (!finished) { finished = true; cb(map); } }
+    if (!pending) return finish();
+
+    need.forEach(function (u) {
+      var settle = function () { if (--pending <= 0) finish(); };
+      if (!window.fetch) return settle();
+      window.fetch(u, { mode: 'cors', cache: 'reload', credentials: 'omit' })
+        .then(function (r) { return r.ok ? r.blob() : null; })
+        .then(function (b) {
+          if (b) { try { map[u] = URL.createObjectURL(b); } catch (e) {} }
+          settle();
+        })
+        .catch(settle);   // best effort: a failure just means that one drops
+    });
+    setTimeout(finish, 20000);   // never leave the button stuck on a stalled image
+  }
+
+  function _metaDlBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  /* Preview + Save. Saving from that button is a FRESH user gesture, which is
+     what iOS needs for navigator.share -> Save to Photos (sharing straight
+     after the async capture loses the original tap's activation). */
+  function _metaShowShot(blob, filename) {
+    if (!blob) return;
+    var canShareFiles = false;
+    try {
+      canShareFiles = !!(navigator.canShare &&
+        navigator.canShare({ files: [new File([blob], filename, { type: 'image/png' })] }));
+    } catch (e) {}
+    var touch = (navigator.maxTouchPoints || 0) > 0 || ('ontouchstart' in window);
+    if (!(canShareFiles && touch)) { _metaDlBlob(blob, filename); return; }
+
+    var overlay = document.createElement('div'); overlay.className = 'meta-shot-overlay';
+    var img = document.createElement('img'); img.src = URL.createObjectURL(blob);
+    overlay.appendChild(img);
+    function close() {
+      try { URL.revokeObjectURL(img.src); } catch (e) {}
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }
+    var actions = document.createElement('div'); actions.className = 'meta-shot-actions';
+    var save = document.createElement('button'); save.type = 'button';
+    save.className = 'meta-shot-btn meta-shot-save';
+    save.textContent = canShareFiles ? 'Save Image' : 'Download';
+    save.addEventListener('click', function () {
+      if (!canShareFiles) { _metaDlBlob(blob, filename); close(); return; }
+      navigator.share({ files: [new File([blob], filename, { type: 'image/png' })] })
+        .then(close)
+        .catch(function (err) {
+          if (err && err.name === 'AbortError') return;   // user cancelled the sheet
+          _metaDlBlob(blob, filename); close();           // genuine failure -> download
+        });
+    });
+    var closeB = document.createElement('button'); closeB.type = 'button';
+    closeB.className = 'meta-shot-btn meta-shot-close'; closeB.textContent = 'Close';
+    closeB.addEventListener('click', close);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    actions.appendChild(save); actions.appendChild(closeB); overlay.appendChild(actions);
+    document.body.appendChild(overlay);
+  }
+
+  function _metaCapture(rootEl, filename, btn) {
+    _metaPreloadImages(rootEl, function (blobMap) {
+    function _revoke() {
+      Object.keys(blobMap).forEach(function (k) {
+        try { URL.revokeObjectURL(blobMap[k]); } catch (e) {}
+      });
+    }
+    withHtml2Canvas(function (ok) {
+      if (!ok) { if (btn) { btn.disabled = false; btn.title = 'Screenshot unavailable'; } _revoke(); return; }
+      window.html2canvas(rootEl, {
+        backgroundColor: '#07060f', useCORS: true, scale: 2, logging: false,
+        windowWidth: 1400, windowHeight: Math.max(2000, window.innerHeight || 900),
+        onclone: function (doc) {
+          // The live roots are full-bleed via width:100vw + left:50% + translateX(-50%).
+          // In the clone that offset would push the render half a viewport sideways,
+          // so pin them to a plain fixed-width block instead.
+          ['.metaRoot', '.seamlessRoot'].forEach(function (sel) {
+            Array.prototype.forEach.call(doc.querySelectorAll(sel), function (el) {
+              el.style.width = '1400px'; el.style.left = '0';
+              el.style.transform = 'none'; el.style.marginBottom = '0';
+            });
+          });
+          if (doc.documentElement) doc.documentElement.style.width = '1400px';
+          if (doc.body) { doc.body.style.width = '1400px'; doc.body.style.margin = '0'; }
+          // html2canvas renders the clone in an off-screen iframe, so images still
+          // marked loading="lazy" are never in its viewport and the browser never
+          // fetches them — they paint blank. Strip it in the clone.
+          Array.prototype.forEach.call(doc.querySelectorAll('img[loading]'), function (im) {
+            im.removeAttribute('loading');
+          });
+          // Swap in the same-origin blob copies fetched above, so html2canvas
+          // never has to make a cross-origin request of its own.
+          Array.prototype.forEach.call(doc.querySelectorAll('img'), function (im) {
+            var s = im.getAttribute('src');
+            if (s && blobMap[s]) { im.removeAttribute('crossorigin'); im.src = blobMap[s]; }
+          });
+          var _bgEls = [doc.documentElement].concat(
+            Array.prototype.slice.call(doc.querySelectorAll('*')));
+          _bgEls.forEach(function (el) {
+            if (!el || !el.style) return;
+            var bg = el.style.backgroundImage;
+            if (!bg || bg === 'none') return;
+            Object.keys(blobMap).forEach(function (u) {
+              if (bg.indexOf(u) !== -1) el.style.backgroundImage = 'url("' + blobMap[u] + '")';
+            });
+          });
+          // Controls are UI, not content — keep them out of the shot.
+          Array.prototype.forEach.call(
+            doc.querySelectorAll('.metaControls,.seamlessControls'),
+            function (el) { el.style.display = 'none'; }
+          );
+        }
+      }).then(function (canvas) {
+        canvas.toBlob(function (blob) {
+          _metaShowShot(blob, filename);
+          if (btn) btn.disabled = false;
+          _revoke();
+        }, 'image/png');
+      }).catch(function (e) {
+        console.error('Meta screenshot failed:', e);
+        if (btn) btn.disabled = false;
+        _revoke();
+      });
+    });
+    });
+  }
+
+  function makeCamBtn(rootEl, nameFn) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'meta-cam-btn';
+    btn.setAttribute('aria-label', 'Screenshot');
+    btn.title = 'Screenshot';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>' +
+      '<circle cx="12" cy="13" r="4"></circle></svg>';
+    btn.addEventListener('click', function () {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      _metaCapture(rootEl, (typeof nameFn === 'function' ? nameFn() : 'fntd-meta') + '.png', btn);
+    });
+    return btn;
+  }
+
   function makeClutterBtn(container) {
     var on = true;
     var btn = document.createElement('button');
@@ -582,16 +881,34 @@
         var inner = document.createElement('div'); inner.className = 'meta-card-inner';
 
         var img = document.createElement('img');
-        img.className = 'meta-card-img'; img.src = u.img || ''; img.alt = unitCfg.name;
+        img.className = 'meta-card-img'; img.alt = unitCfg.name;
+        // Load in CORS mode so the browser caches a CORS-valid copy. html2canvas
+        // re-requests these with crossOrigin set; if the cache only holds a plain
+        // non-CORS response the browser reuses it, the CORS check fails, and the
+        // render is silently dropped from the screenshot while the page looks fine.
+        // Must be set before .src — assigning it afterwards has no effect.
+        img.crossOrigin = 'anonymous';
+        img.src = u.img || '';
         img.draggable = false; img.loading = 'lazy';
-        img.onerror = function () { this.style.cssText = 'width:100%;height:100%;display:block'; this.removeAttribute('src'); };
+        img.onerror = function () {
+          // If CORS is unavailable, retry as a plain load so the page still shows
+          // the render (it just will not appear in a capture).
+          if (this.getAttribute('crossorigin') && this.getAttribute('src')) {
+            var s = this.getAttribute('src');
+            this.removeAttribute('crossorigin');
+            this.src = s;
+            return;
+          }
+          this.style.cssText = 'width:100%;height:100%;display:block';
+          this.removeAttribute('src');
+        };
         inner.appendChild(img);
 
         var enchData = META_CFG.enchants[unitCfg.enchant];
         if (enchData) {
           var eW = document.createElement('div'); eW.className = 'meta-enchant'; eW.style.background = enchData.color;
           var eI = document.createElement('div'); eI.className = 'meta-enchant-inner';
-          var eM = document.createElement('img'); eM.src = enchData.url; eM.alt = unitCfg.enchant;
+          var eM = document.createElement('img'); _metaImgSrc(eM, enchData.url); eM.alt = unitCfg.enchant;
           eI.appendChild(eM); eW.appendChild(eI); inner.appendChild(eW);
         }
 
@@ -602,7 +919,7 @@
           bW.className = 'meta-byte' + (bSh ? ' meta-shiny' : ''); bW.style.background = getRarityBg(unitCfg.byte, bR);
           if (bSh) bW.style.backgroundSize = '200% 200%';
           var bI = document.createElement('div'); bI.className = 'meta-byte-inner';
-          var bM = document.createElement('img'); bM.src = byteData.url; bM.alt = unitCfg.byte;
+          var bM = document.createElement('img'); _metaImgSrc(bM, byteData.url); bM.alt = unitCfg.byte;
           bI.appendChild(bM); bW.appendChild(bI); inner.appendChild(bW);
         }
 
@@ -612,7 +929,7 @@
           rW.className = 'meta-replacement' + (rSh ? ' meta-shiny' : ''); rW.style.background = getRarityBg(unitCfg.replacement, rR);
           if (rSh) rW.style.backgroundSize = '200% 200%';
           var rI = document.createElement('div'); rI.className = 'meta-replacement-inner';
-          var rM = document.createElement('img'); rM.src = rU.img || ''; rM.alt = unitCfg.replacement; rM.draggable = false; rM.loading = 'lazy';
+          var rM = document.createElement('img'); _metaImgSrc(rM, rU.img || ''); rM.alt = unitCfg.replacement; rM.draggable = false; rM.loading = 'lazy';
           rI.appendChild(rM); rW.appendChild(rI); inner.appendChild(rW);
         }
 
@@ -637,7 +954,7 @@
             cW.style.background = getRarityBg(unitCfg.chip, chR);
             if (chSh) cW.style.backgroundSize = '200% 200%';
             var cI = document.createElement('div'); cI.className = 'meta-chip-inner';
-            var cM = document.createElement('img'); cM.src = chipD.url; cM.alt = unitCfg.chip;
+            var cM = document.createElement('img'); _metaImgSrc(cM, chipD.url); cM.alt = unitCfg.chip;
             cI.appendChild(cM); cW.appendChild(cI); inner.appendChild(cW);
           }
         }
@@ -666,13 +983,16 @@
   function renderMeta(mountEl, META_CFG) {
     var root = document.createElement('div');
     root.className = 'metaRoot';
-    root.style.backgroundImage = 'url(' + META_CFG.background + ')';
+    _metaSetBg(root, META_CFG.background);
 
     var titleEl = document.createElement('div');
     titleEl.className = 'metaTitle'; titleEl.textContent = META_CFG.title;
     root.appendChild(titleEl);
 
     var controls = document.createElement('div'); controls.className = 'metaControls';
+    controls.appendChild(makeCamBtn(root, function () {
+      return 'fntd-meta-' + (String(META_CFG.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'team');
+    }));
     controls.appendChild(makeClutterBtn(root));
     root.appendChild(controls);
 
@@ -681,7 +1001,7 @@
 
     var footer = document.createElement('div'); footer.className = 'metaFooter';
     if (META_CFG.logoUrl) {
-      var logoEl = document.createElement('img'); logoEl.className = 'metaLogo'; logoEl.src = META_CFG.logoUrl; logoEl.alt = '';
+      var logoEl = document.createElement('img'); logoEl.className = 'metaLogo'; _metaImgSrc(logoEl, META_CFG.logoUrl); logoEl.alt = '';
       footer.appendChild(logoEl);
     }
     var siteEl = document.createElement('div'); siteEl.className = 'metaSiteUrl'; siteEl.textContent = META_CFG.siteUrl;
@@ -705,12 +1025,12 @@
 
     var root = document.createElement('div');
     root.className = 'seamlessRoot';
-    root.style.backgroundImage = 'url(' + (shared.background || '') + ')';
+    _metaSetBg(root, shared.background || '');
 
     /* ── fixed header ── */
     var header = document.createElement('div'); header.className = 'seamlessHeader';
     if (shared.logoUrl) {
-      var logo = document.createElement('img'); logo.className = 'seamlessLogo'; logo.src = shared.logoUrl; logo.alt = '';
+      var logo = document.createElement('img'); logo.className = 'seamlessLogo'; _metaImgSrc(logo, shared.logoUrl); logo.alt = '';
       header.appendChild(logo);
     }
     var siteName = document.createElement('div'); siteName.className = 'seamlessSiteName';
@@ -724,6 +1044,14 @@
     }
 
     var controls = document.createElement('div'); controls.className = 'seamlessControls';
+    controls.appendChild(makeCamBtn(root, function () {
+      var idx = 0;
+      for (var i = 0; i < pageWrappers.length; i++) {
+        if (pageWrappers[i].style.display !== 'none') { idx = i; break; }
+      }
+      var t = (pages[idx] && pages[idx].pageTitle) || seamCfg.pageTitle || '';
+      return 'fntd-meta-' + (String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'teams');
+    }));
     controls.appendChild(makeClutterBtn(root));
     root.appendChild(controls);
 
