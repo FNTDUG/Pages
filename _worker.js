@@ -1659,17 +1659,45 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var RAR_GRAD={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
       function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=RAR_GRAD[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
       function textCard(desc){var c=document.createElement('div');c.className='inf-card';var p=document.createElement('p');p.innerHTML=hl(desc);c.appendChild(p);return c;}
-      function card(name,imgUrl,rarCls,borderBg,desc){
+      function card(name,imgUrl,rarCls,borderBg,desc,imgUrl2){
         var c=document.createElement('div');c.className='inf-card';
         var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
-        var badge=document.createElement('span');badge.className='inf-img'+(rarCls?' inf-rarity-'+rarCls:'');
-        if(borderBg)badge.style.background=borderBg;
-        var img=document.createElement('img');img.src=imgUrl||'';img.alt=name;badge.appendChild(img);
+        function mkBadge(src,alt){
+          var b=document.createElement('span');b.className='inf-img'+(rarCls?' inf-rarity-'+rarCls:'');
+          if(borderBg)b.style.background=borderBg;
+          var i=document.createElement('img');i.src=src||'';i.alt=alt;b.appendChild(i);
+          return b;
+        }
+        var badge=mkBadge(imgUrl,name);
         var h4=document.createElement('h4');h4.style.margin='0';h4.textContent=name;
-        row.appendChild(badge);row.appendChild(h4);c.appendChild(row);
+        if(imgUrl2){
+          // Two-part item (chips drop as Part A or Part B): show both side by
+          // side, same grouping the Hero/Shop Quest cards use for unit+present.
+          badge.style.margin='0';
+          var badge2=mkBadge(imgUrl2,name+' Part B');badge2.style.margin='0';
+          var badges=document.createElement('div');
+          badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';
+          badges.appendChild(badge);badges.appendChild(badge2);
+          h4.style.flex='1';
+          row.appendChild(badges);
+        }else{
+          row.appendChild(badge);
+        }
+        row.appendChild(h4);c.appendChild(row);
         var p=document.createElement('p');if(desc)p.innerHTML=hl(desc);c.appendChild(p);
         return c;
       }
+      // Chips drop as Part A or Part B; the shared feed only carries Part A, so
+      // the B renders are listed here and shown as a second badge.
+      var CHIP_PART_B={
+        'Blazing Fire':'https://images.fntduserguide.com/blazing%20fire%20B.png',
+        'Crowd Culler':'https://images.fntduserguide.com/crowd%20culler%20B.png',
+        'Eye Augmentation':'https://images.fntduserguide.com/eye%20B.png',
+        'Overwhelming Power':'https://images.fntduserguide.com/overwhemling%20B.png',
+        'Rapid Strikes':'https://images.fntduserguide.com/rapid%20B.png',
+        'Serrated Edge':'https://images.fntduserguide.com/serrated%20edge%20B.png',
+        'Weak Point':'https://images.fntduserguide.com/weak%20point%20B.png'
+      };
       var RAR_ORDER=['hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
       function rarRank(r){var i=RAR_ORDER.indexOf((r||'').toLowerCase());return i===-1?RAR_ORDER.length:i;}
       function sorted(obj,getRar){return Object.keys(obj).sort(function(a,b){var rd=rarRank(getRar(obj[a]))-rarRank(getRar(obj[b]));return rd!==0?rd:a.localeCompare(b);});}
@@ -1677,7 +1705,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
       var bEl=document.getElementById('inf-bytes-inner');
       if(bEl){addTops(bEl,DESCS.bytes._top);if(sh.bytes)sorted(sh.bytes,function(v){return v.rarity;}).forEach(function(n){var b=sh.bytes[n];bEl.appendChild(card(n,b.url,b.rarity,null,(DESCS.bytes[n]||'')));});}
       var cEl=document.getElementById('inf-chips-inner');
-      if(cEl){addTops(cEl,DESCS.chips._top);if(sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||'')));});}
+      if(cEl){addTops(cEl,DESCS.chips._top);if(sh.chips)sorted(sh.chips,function(v){return v.rarity;}).forEach(function(n){var c=sh.chips[n];cEl.appendChild(card(n,c.url,c.rarity,null,(DESCS.chips[n]||''),CHIP_PART_B[n]));});}
       var eEl=document.getElementById('inf-enchants-inner');
       if(eEl&&sh.enchants){addTops(eEl,DESCS.enchants._top);var _eSeen={};Object.keys(DESCS.enchants).forEach(function(n){if(n==='_top')return;if(sh.enchants[n]){_eSeen[n]=1;var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,(DESCS.enchants[n]||'')));}});Object.keys(sh.enchants).sort(function(a,b){return a.localeCompare(b);}).forEach(function(n){if(!_eSeen[n]){var e=sh.enchants[n];eEl.appendChild(card(n,e.url,null,e.color,''));}});}
     })
