@@ -410,6 +410,8 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="shop-quests" onclick="infToggle(this)">Shop Quests <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-shop-quests-inner"></div></div>
+      <button class="inf-drop-btn" data-lazy="endless-quests" onclick="infToggle(this)">Endless Quests <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endless-quests-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Stat Chips <span class="inf-drop-arrow">/</span></button>
@@ -448,7 +450,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -908,6 +910,102 @@ function buildShopQuests(pEl,uMap,pMap){
     var cd=document.createElement('div');cd.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin-bottom:6px';cd.textContent='● '+Number(h.cost).toLocaleString()+' Tokens';card.appendChild(cd);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    pEl.appendChild(card);
+  });
+}
+// ── Endless Quests tab ──────────────────────────────────────────────────
+// Completing a set unlocks a drop chance for that unit's present rather than
+// the present itself, so the reward line differs from Hero/Shop Quests.
+var ENDLESS_REWARD='Once completed, 2% chance for this Units present to drop after Wave 100';
+var ENDLESS_QUESTS=[
+  {unit:'Sparky', present:'Sparky Present', mode:'Endless 1', quests:[
+    'Reach Wave 100',
+    'Beat Game 1 Night 6 on Normal',
+    'Enchant a Unit 50 times',
+    'Purchase 25 Items or Units from the Merchant',
+    'Salvage 10 times'
+  ]},
+  {unit:'Toy Foxy', present:'Toy Foxy Present', mode:'Endless 2', quests:[
+    'Reach Wave 100 with a Water Unit on your team',
+    'Beat Game 2 Night 6 on Normal',
+    'Delete 25 Uncommon Foxys',
+    'Enchant 50 times',
+    'Purchase 35 Items or Units from the Merchant',
+    'Salvage 25 times'
+  ]},
+  {unit:'Fredtrap', present:'Fredtrap Present', mode:'Endless 3', quests:[
+    'Reach Wave 100 with a Hero Unit on your team',
+    'Beat Game 3 Night 6',
+    'Spend 10,000 Tokens',
+    'Purchase 5 Establishment 1 Packs',
+    'Salvage 50 times'
+  ]},
+  {unit:'Nightmare Shadow Bonnie', present:'Nightmare Shadow Bonnie Present', mode:'Endless 4', quests:[
+    'Reach Wave 100 with a Dark Element Unit on your team',
+    'Beat Game 4 Night 6 on Normal with a Hero on your team',
+    'Roll a 1% or lower Enchant',
+    'Salvage 50 times',
+    'Spend 10,000 Tokens',
+    'Obtain a Mythic+ Rarity Unit in Shiny form'
+  ]},
+  {unit:'Funtime Bonnie', present:'Funtime Bonnie Present', mode:'Endless 5', quests:[
+    'Reach Wave 100 with an Electric Unit on your team',
+    'Beat Game 5 Night 6 on Normal with a Hero Unit on your team',
+    'Roll Vengeance Enchant',
+    'Purchase 50 Items or Units from the Merchant',
+    'Obtain 3 Hero Units',
+    'Salvage 100 times'
+  ]},
+  {unit:'Showtime Freddy', present:'Showtime Freddy Present', mode:'Endless 6', quests:[
+    'Reach Wave 100 with a Rust Element Unit and Hero on your team',
+    'Beat Game 6 Night 6 on Normal',
+    'Beat Game 1 Night 6 on Nightmare',
+    'Roll Vengeance Enchant on a Hero Unit',
+    'Obtain a Secret Rarity Unit from any Banner',
+    'Reach Wave 50 on Boss Raids',
+    'Reach Tier 25 on any Battle Pass'
+  ]},
+  {unit:'Hoax Purple Guy', present:'Hoax Purple Guy Present', mode:'Endless 7', quests:[
+    'Deal 1,000,000 Bleed damage',
+    'Beat 100 Nights',
+    'Beat 10 Nights with Withered Golden Freddy on your team'
+  ]}
+];
+function infLoadEndlessQuests(){
+  if(_catLoaded['endless-quests'])return;_catLoaded['endless-quests']=true;
+  var pEl=document.getElementById('inf-endless-quests-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{})]).then(function(res){
+    var uMap={};(Array.isArray(res[0])?res[0]:[]).forEach(function(u){if(u.name)uMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});
+    var pMap={};Object.keys(res[1]||{}).forEach(function(n){var o=res[1][n]||{};pMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
+    pEl.innerHTML='';
+    buildEndlessQuests(pEl,uMap,pMap);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildEndlessQuests(pEl,uMap,pMap){
+  if(!pEl)return;
+  ENDLESS_QUESTS.forEach(function(h){
+    var u=uMap[h.unit.toLowerCase()]||{};
+    var p=pMap[h.present.toLowerCase()]||{};
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var ub=document.createElement('span');ub.className='inf-img'+(u.rarity?' inf-rarity-'+u.rarity:'');ub.style.margin='0';if(!u.rarity)ub.style.background='rgba(25,24,40,.9)';
+    var ui=document.createElement('img');ui.src=u.img||'';ui.alt=h.unit;ub.appendChild(ui);
+    var pb=document.createElement('span');pb.className='inf-img'+(p.rarity?' inf-rarity-'+p.rarity:'');pb.style.margin='0';if(!p.rarity)pb.style.background='rgba(25,24,40,.9)';
+    var pi=document.createElement('img');pi.src=p.img||'';pi.alt=h.present;pb.appendChild(pi);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=h.unit;
+    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
+    row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
+    var mh=document.createElement('div');mh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';mh.textContent='Mode';card.appendChild(mh);
+    var md=document.createElement('div');md.style.cssText='font-size:13px;color:#ccc;line-height:1.7;margin-bottom:6px';md.textContent='● '+h.mode;card.appendChild(md);
+    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    var rh=document.createElement('div');rh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin:6px 0 2px;text-transform:uppercase';rh.textContent='Reward';card.appendChild(rh);
+    var rd=document.createElement('div');rd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';rd.textContent='● '+ENDLESS_REWARD;card.appendChild(rd);
     pEl.appendChild(card);
   });
 }
