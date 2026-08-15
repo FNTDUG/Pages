@@ -918,7 +918,7 @@ function buildShopQuests(pEl,uMap,pMap){
 // ── Endless Quests tab ──────────────────────────────────────────────────
 // Completing a set unlocks a drop chance for that unit's present rather than
 // the present itself, so the reward line differs from Hero/Shop Quests.
-var ENDLESS_REWARD='Once completed, 2% chance for this Units present to drop after Wave 100';
+var ENDLESS_REWARD='Unit Present for the first time completing, After which 2% chance for this Units present to drop after Wave 100';
 var ENDLESS_QUESTS=[
   {unit:'Sparky', present:'Sparky Present', mode:'Endless 1', quests:[
     'Reach Wave 100',
