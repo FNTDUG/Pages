@@ -358,6 +358,8 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="endless-quests" onclick="infToggle(this)">Endless Quests <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-endless-quests-inner"></div></div>
     </div>
