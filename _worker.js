@@ -352,6 +352,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-chips-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="community-quests" onclick="infToggle(this)">Community Quests <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-community-quests-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Elements <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-elements-inner"></div></div>
     </div>
@@ -394,6 +398,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner"></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="permanent-quests" onclick="infToggle(this)">Permanent Quests <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-permanent-quests-inner"></div></div>
     </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="pets" onclick="infToggle(this)">Pets <span class="inf-drop-arrow">/</span></button>
@@ -452,7 +460,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -1008,6 +1016,126 @@ function buildEndlessQuests(pEl,uMap,pMap){
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     var rh=document.createElement('div');rh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin:6px 0 2px;text-transform:uppercase';rh.textContent='Reward';card.appendChild(rh);
     var rd=document.createElement('div');rd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';rd.textContent='● '+ENDLESS_REWARD;card.appendChild(rd);
+    pEl.appendChild(card);
+  });
+}
+
+// ── Permanent / Community Quests tabs ───────────────────────────────────
+// Same shape as Hero/Shop Quests, except a reward can be a skin rather than a
+// present. Skin entries carry { skin: "<skin name>" }; the base unit and the
+// skin art both come from the skins feed, so only the name is hardcoded here.
+var PERMANENT_QUESTS=[
+  {unit:'Bones of the Past Nightmare Freddy', present:'Bones of the Past Nightmare Freddy Present', quests:[
+    'Get 1500 kills with Fire or Dark units',
+    'Get 500 kills with a Summon',
+    'Obtain 2 Nightmare units from Summons or Presents',
+    "Reach Wave 120 on Boss Raids with 3 Fire units and the Gravelord's Hook modifier equipped"
+  ]},
+  {unit:'Foxy Fighters', present:'Foxy Fighters Present', quests:[
+    'Obtain 250 trophies',
+    'Send 50 enemies in PvP',
+    'Win 2 PvP games',
+    'Open 5 Skin Boxes'
+  ]}
+];
+var COMMUNITY_QUESTS=[
+  {unit:'Fallen Angel Nightmarionne', present:'Fallen Angel Nightmarionne Present', quests:[
+    'Reach Wave 150 on Boss Raids with The Puppet and only Dark element units',
+    'Get The Puppet to level 100',
+    'Get Vengeance on The Puppet',
+    'Kill 5000 enemies with Light element units'
+  ]},
+  {unit:'Firework Shadow Freddy', present:'Firework Shadow Freddy Present', quests:[
+    'Kill 1000 enemies with Shadow Freddy',
+    'Reach Wave 100 with Shadow Freddy and 3+ Fire element units in Endless 2',
+    'Sell 5 Fire element units',
+    'Clear 20 Nights with Shadow Freddy equipped'
+  ]},
+  {skin:'Scooped Ice Cream Michael', quests:[
+    'Get Michael Afton to level 100',
+    'Reach Wave 100 in Endless 6 with Michael Afton and 3+ Electric element units',
+    'Get Scooped or rarer on Michael Afton',
+    'Clear Game 5 Night 6 on Nightmare with Michael Afton equipped',
+    'Clear 20 Nights with Michael Afton equipped'
+  ]},
+  {skin:'Glacier Springtrap', quests:[
+    'Kill 5000 enemies with Water element units',
+    'Reach Wave 100 on Endless 3 with Springtrap, 3+ Water units, and no other Fire units',
+    'Reach Wave 150 on Boss Raids with only Water element units'
+  ]},
+  {unit:'King in Purple Purple Guy', present:'King in Purple Purple Guy Present', quests:[
+    'Reach Wave 150 in Boss Raids with 2 Dark and 2 Light element units',
+    'Reach level 100 on any Dark element unit',
+    'Kill 5000 enemies with Light element units',
+    'Kill 5000 enemies with Dark element units',
+    'Roll Vengeance or higher on any Light element unit'
+  ]},
+  {unit:'Dirt Boss Freddy', present:'Dirt Boss Freddy Present', quests:[
+    'Kill 1500 enemies with any Freddy',
+    'Reach Wave 150 in Endless with 3 Rust element units',
+    'Sell 5 Rust element units',
+    'Clear 20 Nights with any Freddy'
+  ]},
+  {skin:'Island Vacation Dragon Endo 01', quests:[
+    'Get Dragon Endo 01 to level 100',
+    'Reach Wave 100 on Endless 6 with Dragon Endo 01 and 3+ Fire element units',
+    'Reach Wave 150 in Boss Raids with Dragon Endo 01 equipped 3 times',
+    'Clear Game 7 Night 7 on 20 difficulty with 2 Fire units',
+    'Clear 20 Nights with Dragon Endo 01 equipped'
+  ]},
+  {skin:'Ballad of the Streets Ballora', quests:[
+    'Kill 5000 enemies with Electric element units',
+    'Reach Wave 100 on Endless 3 with any Ballora unit, 3+ Electric units, and no other Rust units',
+    'Reach Wave 150 on Boss Raids with only Electric element units'
+  ]}
+];
+function infLoadQuestSet(key, innerId, list){
+  if(_catLoaded[key])return;_catLoaded[key]=true;
+  var pEl=document.getElementById(innerId);
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
+  function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
+  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{}),J('/inf-data/skins',{})]).then(function(res){
+    var uMap={};(Array.isArray(res[0])?res[0]:[]).forEach(function(u){if(u.name)uMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});
+    var pMap={};Object.keys(res[1]||{}).forEach(function(n){var o=res[1][n]||{};pMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
+    var sMap={};Object.keys(res[2]||{}).forEach(function(n){var o=res[2][n]||{};sMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity),unit:o.unit||''};});
+    pEl.innerHTML='';
+    buildQuestSet(pEl,list,uMap,pMap,sMap);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function infLoadPermanentQuests(){infLoadQuestSet('permanent-quests','inf-permanent-quests-inner',PERMANENT_QUESTS);}
+function infLoadCommunityQuests(){infLoadQuestSet('community-quests','inf-community-quests-inner',COMMUNITY_QUESTS);}
+function buildQuestSet(pEl,list,uMap,pMap,sMap){
+  if(!pEl)return;
+  list.forEach(function(h){
+    // A skin reward shows its base unit next to the skin art; a unit reward
+    // shows the unit next to its present, exactly like Hero/Shop Quests.
+    var isSkin=!!h.skin;
+    var sEntry=isSkin?(sMap[h.skin.toLowerCase()]||{}):null;
+    var title=isSkin?h.skin:h.unit;
+    var u=uMap[((isSkin?(sEntry.unit||''):h.unit)||'').toLowerCase()]||{};
+    var r=isSkin?{img:sEntry.img||'',rarity:sEntry.rarity||''}:(pMap[(h.present||'').toLowerCase()]||{});
+    var card=document.createElement('div');card.className='inf-card';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    // Unreleased entries resolve to nothing yet; leave the badge as an empty
+    // plate rather than an <img> with no src, which renders a broken icon.
+    function badge(src,rar){
+      var b=document.createElement('span');
+      b.className='inf-img'+(rar?' inf-rarity-'+rar:'');
+      b.style.margin='0';
+      if(!rar)b.style.background='rgba(25,24,40,.9)';
+      if(src){var i=document.createElement('img');i.src=src;i.alt=title;b.appendChild(i);}
+      return b;
+    }
+    var ub=badge(u.img,u.rarity);
+    var rb=badge(r.img,r.rarity);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=title+(isSkin?' (Skin)':'');
+    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(rb);
+    row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
+    var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
+    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
     pEl.appendChild(card);
   });
 }
