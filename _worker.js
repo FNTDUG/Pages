@@ -610,7 +610,7 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
-  {name:'Ice Cream Mech Suit',ing:[['76','Ice Cream Cones'],['50','Spring'],['15','Ash'],['25','Television']]},
+  {name:'Ice Cream Mech Suit',ing:[['75','Ice Cream Cones'],['50','Spring'],['15','Ash'],['25','Television']]},
   {name:'Void Shaper Shadow Freddy',ing:[['1','Shadow Freddy'],['1','Shadow Hands'],['25','Agony'],['500','Souls']]},
   {name:'Ocular Nightmare BB',ing:[['1','Nightmare BB'],['1','Nightmare Balloons'],['250','Souls'],['100','Ash'],['50','Agony']]},
   {name:'Pyro Spring Bonnie',ing:[['1','Patient White Rabbit'],['1','Pyro Armguard'],['1','Pyro Chestplate'],['1','Pyro Helmet'],['1','Pyro Leggings'],['2500','Souls'],['250','Spring']]},
