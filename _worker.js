@@ -1945,6 +1945,93 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
 })();
 <\/script>`;
 
+
+// ── Work In Progress notice ─────────────────────────────────────────────
+// Flip a page to true to show the notice on it. That is the only edit needed;
+// the overlay is injected by the worker, so the page files stay untouched.
+const WIP_PAGES = {
+  '/fntd2/tierlists-1':        false,
+  '/fntd2/meta-teams':         false,
+  '/fntd2/story-index':        false,
+  '/fntd2/endless-index':      false,
+  '/fntd2/boss-raids-index':   false,
+  '/fntd2/event-story-endless':false
+};
+// Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
+// so the flag still applies if a page is reached that way.
+function wipActive(pathname) {
+  let p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');
+  if (p === '') p = '/';
+  if (WIP_PAGES[p] === true) return true;
+  // Deep links (/fntd2/tierlists-1/Golden-Freddy) are served the base page, so
+  // they need the notice too when that page is flagged.
+  for (const base in WIP_PAGES) {
+    if (WIP_PAGES[base] === true && p.indexOf(base + '/') === 0) return true;
+  }
+  return false;
+}
+const WIP_HTML = `
+<style>
+.wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.wip-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:wipIn .22s ease-out}
+@keyframes wipIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+/* A horizontal shift advances a diagonal gradient by dx*sin(angle), so the travel
+   distance and the stop period must agree or the loop jumps. At 45deg a 40px shift
+   advances the pattern by 40*sin(45)=28.284px. No background-size: scaling a
+   repeating gradient changes its period and breaks that again. */
+.wip-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:wipSlide 1.1s linear infinite}
+@keyframes wipSlide{from{background-position:0 0}to{background-position:40px 0}}
+@media (prefers-reduced-motion:reduce){.wip-stripe{animation:none}}
+.wip-body{padding:26px 26px 22px;text-align:center}
+.wip-kicker{font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-shadow:0 0 14px rgba(255,164,91,.35);margin-bottom:14px}
+.wip-msg{font-size:14.5px;line-height:1.75;color:#e6e2ef;max-width:40ch;margin:0 auto}
+.wip-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:18px 26px 24px}
+.wip-btn{font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.6px;padding:12px 22px;border-radius:9px;cursor:pointer;transition:background .14s,border-color .14s,color .14s,transform .1s;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b}
+.wip-btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.wip-btn:active{transform:translateY(1px)}
+.wip-btn.secondary{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.04)}
+.wip-btn.secondary:hover{color:#fff;border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.08)}
+.wip-btn:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+@media (max-width:520px){.wip-kicker{font-size:9px}.wip-msg{font-size:13.5px}.wip-btn{width:100%}}
+</style>
+<div class="wip-veil" id="wipVeil" role="dialog" aria-modal="true" aria-labelledby="wipKicker" aria-describedby="wipMsg">
+  <div class="wip-panel">
+    <div class="wip-stripe" aria-hidden="true"></div>
+    <div class="wip-body">
+      <div class="wip-kicker" id="wipKicker">WORK IN PROGRESS</div>
+      <p class="wip-msg" id="wipMsg">This page is currently a Work In Progress from the last update. Our team is working on updating it ASAP!</p>
+    </div>
+    <div class="wip-actions">
+      <button class="wip-btn" id="wipContinue" type="button">Continue</button>
+      <button class="wip-btn secondary" id="wipBack" type="button">Back</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var veil=document.getElementById('wipVeil');
+  if(!veil)return;
+  var prevOverflow=document.body.style.overflow;
+  document.body.style.overflow='hidden';
+  function dismiss(){
+    if(veil.parentNode)veil.parentNode.removeChild(veil);
+    document.body.style.overflow=prevOverflow;
+    document.removeEventListener('keydown',onKey);
+  }
+  function onKey(e){ if(e.key==='Escape')dismiss(); }
+  // Continue lets them read the page anyway; Escape does the same, being the
+  // non-destructive choice.
+  document.getElementById('wipContinue').addEventListener('click',dismiss);
+  document.addEventListener('keydown',onKey);
+  // Back returns where they came from, or the section index if opened directly.
+  document.getElementById('wipBack').addEventListener('click',function(){
+    if(document.referrer&&history.length>1)history.back();
+    else window.location.href='/fntd2';
+  });
+  document.getElementById('wipContinue').focus();
+})();
+<\/script>`;
+
 const ACTIVE_SCRIPT = `<script>
 (function(){
   var p = window.location.pathname.replace(/[/]+$/, '') || '/';
@@ -2126,6 +2213,7 @@ export default {
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
+          if (wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
         }
       })
       .transform(response);
