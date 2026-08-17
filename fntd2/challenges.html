@@ -118,15 +118,21 @@ body.ch-modal #ug-hamburger{display:none!important}
 
 .chNote{font-size:12px;color:#7d7790;text-align:center;margin-top:22px;line-height:1.7}
 @media(max-width:640px){
+  /* Card height comes from its content on a phone. .ch-inner's height:100%
+     against an auto-height button resolves to a box shorter than the content
+     it holds, which let the reward tiles spill onto the card below. */
   .ch-card{aspect-ratio:auto;min-height:0}
+  .ch-inner{height:auto;gap:10px}
   .ch-name{font-size:12px}.chRw{width:38px;height:38px}
   .chPop-name{font-size:16px}.chSec{font-size:12px}.chRestr{font-size:9px}
   /* reclaim the overlay gutter — 40px is a lot of a 360px screen */
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
   /* Close sits above the title rather than beside it, so a long challenge
-     name is not squeezed into whatever width the button leaves. */
-  .chPop-close{position:static;display:block;margin:0 0 10px auto}
+     name is not squeezed into whatever width the button leaves. It must stay
+     positioned: .chVeil is absolute and would otherwise paint over a static
+     button and eat the tap. */
+  .chPop-close{position:relative;top:auto;right:auto;z-index:2;display:block;margin:0 0 10px auto}
   /* The engine packs six slots into one nowrap row, which collapses each unit
      to ~42px on a phone. Wrap to three-per-row so the art stays legible; the
      desktop single row is untouched because this only applies under 640px. */
