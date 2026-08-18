@@ -2034,6 +2034,142 @@ const WIP_HTML = `
 })();
 <\/script>`;
 
+// ── GitHub outage notice ────────────────────────────────────────────────
+// Every content page pulls its data at runtime from GitHub: raw.githubusercontent
+// for units/metas/patch notes, githack for the Unit Engine and Trade Calculator
+// fragments. When GitHub breaks those requests fail and the page renders empty,
+// so this explains why instead of leaving a bare "Failed to load" line.
+//
+// Deliberately hard to trigger — three things must ALL hold:
+//   1. a real request to a GitHub host failed on this page,
+//   2. this site's own origin is still reachable (so it is not the visitor's
+//      connection), and
+//   3. /gh-health, checked from the edge, agrees GitHub is unhealthy.
+// A visitor whose page loaded fine can never see it. A visitor who is simply
+// offline fails step 2, so it stays silent rather than blaming GitHub.
+//
+// Same panel as the WIP notice; only the wording and buttons differ.
+const OUTAGE_HTML = `
+<style>
+.gho-veil{position:fixed;inset:0;z-index:9001;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.gho-veil[hidden]{display:none}
+.gho-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:ghoIn .22s ease-out}
+@keyframes ghoIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+/* Same 45deg stripe geometry as the WIP notice: a 40px shift advances the
+   pattern by 40*sin(45)=28.284px, so the travel and the stop period must agree
+   or the loop visibly jumps. */
+.gho-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:ghoSlide 1.1s linear infinite}
+@keyframes ghoSlide{from{background-position:0 0}to{background-position:40px 0}}
+@media (prefers-reduced-motion:reduce){.gho-stripe{animation:none}}
+.gho-body{padding:26px 26px 22px;text-align:center}
+.gho-kicker{font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-shadow:0 0 14px rgba(255,164,91,.35);margin-bottom:14px}
+.gho-msg{font-size:14.5px;line-height:1.75;color:#e6e2ef;max-width:40ch;margin:0 auto}
+.gho-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:18px 26px 24px}
+.gho-btn{font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.6px;padding:12px 22px;border-radius:9px;cursor:pointer;transition:background .14s,border-color .14s,color .14s,transform .1s;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b}
+.gho-btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.gho-btn:active{transform:translateY(1px)}
+.gho-btn.secondary{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.04)}
+.gho-btn.secondary:hover{color:#fff;border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.08)}
+.gho-btn:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+@media (max-width:520px){.gho-kicker{font-size:9px}.gho-msg{font-size:13.5px}.gho-btn{width:100%}}
+</style>
+<div class="gho-veil" id="ghoVeil" hidden role="dialog" aria-modal="true" aria-labelledby="ghoKicker" aria-describedby="ghoMsg">
+  <div class="gho-panel">
+    <div class="gho-stripe" aria-hidden="true"></div>
+    <div class="gho-body">
+      <div class="gho-kicker" id="ghoKicker">GITHUB IS DOWN</div>
+      <p class="gho-msg" id="ghoMsg">This site loads its unit data, tier lists and patch notes from GitHub, which is currently having an outage. Those sections will fill back in on their own once GitHub recovers.</p>
+    </div>
+    <div class="gho-actions">
+      <button class="gho-btn" id="ghoRetry" type="button">Try Again</button>
+      <button class="gho-btn secondary" id="ghoDismiss" type="button">Continue</button>
+    </div>
+  </div>
+</div>`;
+
+const OUTAGE_SCRIPT = `<script>
+(function(){
+  var HOSTS={'raw.githubusercontent.com':1,'raw.githack.com':1,'rawcdn.githack.com':1,'cdn.jsdelivr.net':1,'api.github.com':1};
+  function isGH(u){ try{ return HOSTS[new URL(u,location.href).hostname]===1; }catch(e){ return false; } }
+
+  var fired=false,pending=false,timer=null;
+
+  // One dropped request on mobile looks exactly like the first second of an
+  // outage, so a failure only opens an investigation — the authoritative retry
+  // happens edge-side inside /gh-health.
+  function suspect(){
+    if(fired||pending||timer)return;
+    timer=setTimeout(function(){ timer=null; diagnose(); },1200);
+  }
+
+  function diagnose(){
+    if(fired||pending)return;
+    pending=true;
+    // Step 1: our own origin. If that is unreachable the visitor is offline or
+    // we are down; either way it is not GitHub, so say nothing at all.
+    fetch('/_up',{cache:'no-store'})
+      .then(function(r){ if(!r.ok)throw new Error('origin'); return fetch('/gh-health',{cache:'no-store'}); })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if(j&&j.ok===false){ show(); } else { pending=false; } })
+      .catch(function(){ pending=false; });
+  }
+
+  function show(){
+    if(fired)return;
+    var veil=document.getElementById('ghoVeil');
+    if(!veil)return;
+    fired=true;
+    veil.hidden=false;
+    var prev=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    function dismiss(){
+      veil.hidden=true;
+      document.body.style.overflow=prev;
+      document.removeEventListener('keydown',onKey);
+    }
+    function onKey(e){ if(e.key==='Escape')dismiss(); }
+    document.addEventListener('keydown',onKey);
+    document.getElementById('ghoDismiss').addEventListener('click',dismiss);
+    document.getElementById('ghoRetry').addEventListener('click',function(){ location.reload(); });
+    document.getElementById('ghoRetry').focus();
+  }
+
+  // Observe fetch without changing it: the caller still receives the original
+  // promise, and our listener settles on its own branch.
+  var _fetch=window.fetch;
+  if(_fetch){
+    window.fetch=function(input){
+      var u=(typeof input==='string')?input:(input&&input.url);
+      var p=_fetch.apply(this,arguments);
+      if(u&&isGH(u)) p.then(function(r){ if(!r.ok)suspect(); },function(){ suspect(); });
+      return p;
+    };
+  }
+
+  // tierlist.js and metas.html use XHR rather than fetch.
+  var _open=XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open=function(m,u){ this._ghoUrl=u; return _open.apply(this,arguments); };
+  var _send=XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.send=function(){
+    var x=this;
+    if(x._ghoUrl&&isGH(x._ghoUrl)){
+      x.addEventListener('error',suspect);
+      x.addEventListener('load',function(){ if(x.status>=400)suspect(); });
+    }
+    return _send.apply(this,arguments);
+  };
+
+  // <script src="...githack..."> failures surface as resource errors, not through
+  // fetch or XHR, and only in the capture phase.
+  window.addEventListener('error',function(e){
+    var t=e&&e.target;
+    if(!t||t===window)return;
+    var u=t.src||t.href;
+    if(u&&(t.tagName==='SCRIPT'||t.tagName==='LINK')&&isGH(u)) suspect();
+  },true);
+})();
+<\/script>`;
+
 const ACTIVE_SCRIPT = `<script>
 (function(){
   var p = window.location.pathname.replace(/[/]+$/, '') || '/';
@@ -2116,10 +2252,70 @@ const INF_PROXY = {
   'potions':         'https://items.fntduserguide.com/potions.json'
 };
 
+// Ground truth for the outage notice: the file the site actually needs, read
+// from a Cloudflare datacenter. That vantage point is what separates "GitHub is
+// down for everyone" from "this one visitor cannot reach GitHub" (ISP block,
+// browser extension, school wifi).
+const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
+async function ghRawOk() {
+  try {
+    const r = await fetch(GH_PROBE, { method: 'HEAD', cf: { cacheTtl: 0 } });
+    // 429 is this worker being rate limited, not GitHub being down. Reporting an
+    // outage on it would show the notice to everyone behind a busy edge IP.
+    if (r.status === 429) return true;
+    return r.status < 500;
+  } catch (e) {
+    return false;
+  }
+}
+async function ghHealth() {
+  // githubstatus.com is Atlassian Statuspage on CloudFront — separate infra from
+  // GitHub, so it stays up precisely when GitHub does not.
+  let indicator = 'unknown';
+  try {
+    const s = await fetch('https://www.githubstatus.com/api/v2/status.json', { cf: { cacheTtl: 30 } });
+    const j = await s.json();
+    indicator = (j && j.status && j.status.indicator) || 'unknown';
+  } catch (e) { /* status page unreachable proves nothing on its own */ }
+  // 'minor' covers things like a slow Actions queue, which does not break this
+  // site — only escalate on the levels that actually take content down.
+  if (indicator === 'major' || indicator === 'critical') return { ok: false, reason: 'status' };
+  // A single failed probe can be a transient hiccup between this datacenter and
+  // GitHub, so it only counts when it fails twice. This also catches the 5-15
+  // minute window before GitHub posts an incident, which the status page misses.
+  if (!(await ghRawOk()) && !(await ghRawOk())) return { ok: false, reason: 'unreachable' };
+  return { ok: true };
+}
+
 export default {
   async fetch(request, env) {
-    // Same-origin JSON proxy so the browser never needs CORS on the r2.dev buckets
     const url = new URL(request.url);
+
+    // Same-origin liveness probe for the outage notice. Deliberately touches
+    // nothing external, so a failure here means the visitor is offline (or we are
+    // down) rather than GitHub being broken. Not named /ads.txt or similar —
+    // content blockers filter those names and would fake an offline reading.
+    if (url.pathname === '/_up') {
+      return new Response(null, {
+        status: 204,
+        headers: { 'cache-control': 'no-store', 'access-control-allow-origin': '*' }
+      });
+    }
+
+    // Edge verdict on GitHub, cached so it costs one upstream check per 45s per
+    // PoP however many visitors ask.
+    if (url.pathname === '/gh-health') {
+      const verdict = await ghHealth();
+      return new Response(JSON.stringify(verdict), {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'access-control-allow-origin': '*',
+          'cache-control': 'public, max-age=45'
+        }
+      });
+    }
+
+    // Same-origin JSON proxy so the browser never needs CORS on the r2.dev buckets
     if (url.pathname.startsWith('/inf-data/')) {
       const target = INF_PROXY[url.pathname.slice('/inf-data/'.length)];
       if (!target) return new Response('Not found', { status: 404 });
@@ -2212,6 +2408,10 @@ export default {
           // With no INFO button above it, the sound toggle moves up into its slot.
           if (noInfoPanel) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
+          // Every page, including the ones without the INFO panel: the notice
+          // costs nothing until a GitHub request on that page actually fails.
+          el.append(OUTAGE_HTML, { html: true });
+          el.append(OUTAGE_SCRIPT, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
