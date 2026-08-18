@@ -1952,12 +1952,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
 // Flip a page to true to show the notice on it. That is the only edit needed;
 // the overlay is injected by the worker, so the page files stay untouched.
 const WIP_PAGES = {
-  '/fntd2/tierlists-1':        true,
-  '/fntd2/meta-teams':         true,
-  '/fntd2/story-index':        true,
-  '/fntd2/endless-index':      true,
-  '/fntd2/boss-raids-index':   true,
-  '/fntd2/event-story-endless':true
+  '/fntd2/tierlists-1':         false,
+  '/fntd2/meta-teams':          false,
+  '/fntd2/story-index':         false,
+  '/fntd2/endless-index':       false,
+  '/fntd2/boss-raids-index':    false,
+  '/fntd2/event-story-endless': false
 };
 // Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
 // so the flag still applies if a page is reached that way.
