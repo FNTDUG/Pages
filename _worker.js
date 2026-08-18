@@ -2078,7 +2078,7 @@ const OUTAGE_HTML = `
     <div class="gho-stripe" aria-hidden="true"></div>
     <div class="gho-body">
       <div class="gho-kicker" id="ghoKicker">GITHUB IS DOWN</div>
-      <p class="gho-msg" id="ghoMsg">This site loads its unit data, tier lists and patch notes from GitHub, which is currently having an outage. Those sections will fill back in on their own once GitHub recovers.</p>
+      <p class="gho-msg" id="ghoMsg">This site loads its unit data, TierLists and Patch Notes from GitHub, which is currently having an outage. Those sections will fill back in on their own once GitHub recovers.</p>
     </div>
     <div class="gho-actions">
       <button class="gho-btn" id="ghoRetry" type="button">Try Again</button>
