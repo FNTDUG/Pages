@@ -102,9 +102,15 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRline{margin-bottom:3px}
 .chPop .chRw{width:58px;height:58px}
 .chPop .chRw .chQty{font-size:7px}
-.chPop-close{position:absolute;top:8px;right:10px;z-index:2;font-family:'Audiowide',sans-serif;font-size:12px;
+/* Sticky rather than absolute: .chPop is the scrolling container, so an absolute
+   button scrolled out of reach on a long challenge. Sticky pins it to the top
+   left for the whole scroll. It now sits in the flow ahead of .chPop-in, so its
+   own left margin has to supply the gutter that .chPop-in's padding gives
+   everything else. Background is near-opaque because content passes under it. */
+.chPop-close{position:sticky;top:8px;z-index:2;display:block;width:max-content;
+  margin:8px 0 0 16px;font-family:'Audiowide',sans-serif;font-size:12px;
   padding:7px 13px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,164,91,.5);
-  background:rgba(10,8,20,.8);color:var(--ug-accent)}
+  background:rgba(10,8,20,.92);color:var(--ug-accent)}
 .chPop-close:hover{background:rgba(255,164,91,.16)}
 
 /* The engine appends #metaTip to <body> at z-index:10000, which lands under the
@@ -115,6 +121,14 @@ body.ch-modal #ug-hamburger{display:none!important}
 #teamStore{position:absolute;left:-99999px;top:0;width:900px}
 #teamStore .metaTitle,#teamStore .metaControls,#teamStore .metaFooter{display:none}
 .chPop .metaRow{--mg:6px}
+/* metas.html sizes captions clamp(5px,0.85vw,10px), which bottoms out on its 5px
+   floor on a phone — 0.85vw is only ~3px at 360px wide, and unreadable. Raising
+   the floor to 8px and steepening the slope keeps the same 10px ceiling the
+   original intends, so desktop is unchanged while phones roughly double. Left
+   outside the 640px block deliberately: scoping it there would leave a cliff at
+   the breakpoint (10px at 640px, 5.4px at 641px) and tablets are nearly as bad
+   as phones — 0.85vw is still under 6px at 700px. */
+.chPop .meta-caption{font-size:clamp(8px,2.3vw,10px)}
 
 .chNote{font-size:12px;color:#7d7790;text-align:center;margin-top:22px;line-height:1.7}
 @media(max-width:640px){
@@ -128,11 +142,9 @@ body.ch-modal #ug-hamburger{display:none!important}
   /* reclaim the overlay gutter — 40px is a lot of a 360px screen */
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
-  /* Close sits above the title rather than beside it, so a long challenge
-     name is not squeezed into whatever width the button leaves. It must stay
-     positioned: .chVeil is absolute and would otherwise paint over a static
-     button and eat the tap. */
-  .chPop-close{position:relative;top:auto;right:auto;z-index:2;display:block;margin:0 0 10px auto}
+  /* Close already sits above the title at every width; only the gutter changes,
+     to line up with .chPop-in's tighter phone padding. */
+  .chPop-close{margin-left:12px}
   /* The engine packs six slots into one nowrap row, which collapses each unit
      to ~42px on a phone. Wrap to three-per-row so the art stays legible; the
      desktop single row is untouched because this only applies under 640px. */
