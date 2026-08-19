@@ -87,12 +87,22 @@
 .chOv[hidden]{display:none}
 /* the site pins the hamburger at max z-index, so hide it while the modal is up */
 body.ch-modal #ug-hamburger{display:none!important}
-.chPop{position:relative;width:min(860px,100%);max-height:88vh;overflow:auto;border:2px solid rgba(255,255,255,.8);
+/* The frame itself no longer scrolls — .chPop-in does. That is what lets Close
+   stay absolute (costing no layout space) while still being unscrollable: it is
+   pinned to a container that never moves. It also stops .chVeil, which is
+   absolute against this box, from sliding off the top on a long challenge. */
+.chPop{position:relative;width:min(860px,100%);max-height:88vh;overflow:hidden;
+  display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.8);
   border-radius:2px;background:#150c28 center/cover no-repeat;animation:chPopIn .18s ease-out}
 @keyframes chPopIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
 .chPop .chVeil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,4,14,.55) 0%,rgba(6,4,14,.35) 40%,rgba(6,4,14,.8) 100%)}
-.chPop-in{position:relative;z-index:1;padding:14px 16px 18px}
-.chPop-name{font-family:'Press Start 2P',monospace;font-size:22px;line-height:1.2;
+/* min-height:0 so this flex child may shrink below its content and actually
+   scroll, instead of stretching .chPop past its max-height. */
+.chPop-in{position:relative;z-index:1;flex:1;min-height:0;overflow:auto;padding:14px 16px 18px}
+/* Reserve the corner the Close button sits in, so a long name ("Overcoming the
+   Odds") wraps beside it instead of running underneath. Close reaches ~75px in
+   from the frame edge and .chPop-in's padding already covers 16 of those. */
+.chPop-name{font-family:'Press Start 2P',monospace;font-size:22px;line-height:1.2;padding-right:68px;
   text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
 .chPop-diff{font-family:'Press Start 2P',monospace;font-size:10px;margin-top:7px;color:#c07bf0;text-shadow:1px 1px 0 #000}
 .chSec{font-family:'Press Start 2P',monospace;font-size:14px;margin:26px 0 8px;
@@ -102,14 +112,9 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRline{margin-bottom:3px}
 .chPop .chRw{width:58px;height:58px}
 .chPop .chRw .chQty{font-size:7px}
-/* Sticky rather than absolute: .chPop is the scrolling container, so an absolute
-   button scrolled out of reach on a long challenge. Sticky pins it to the top
-   right for the whole scroll. It sits in the flow ahead of .chPop-in, so
-   margin-left:auto is what pushes it right and the right margin supplies the
-   gutter .chPop-in's padding gives everything else. Background is near-opaque
-   because content passes under it. */
-.chPop-close{position:sticky;top:8px;z-index:2;display:block;width:max-content;
-  margin:8px 16px 0 auto;font-family:'Audiowide',sans-serif;font-size:12px;
+/* Absolute against .chPop, which no longer scrolls, so it holds its corner for
+   the whole scroll without occupying a line of its own. */
+.chPop-close{position:absolute;top:8px;right:10px;z-index:2;font-family:'Audiowide',sans-serif;font-size:12px;
   padding:7px 13px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,164,91,.5);
   background:rgba(10,8,20,.92);color:var(--ug-accent)}
 .chPop-close:hover{background:rgba(255,164,91,.16)}
@@ -143,9 +148,6 @@ body.ch-modal #ug-hamburger{display:none!important}
   /* reclaim the overlay gutter — 40px is a lot of a 360px screen */
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
-  /* Close already sits above the title at every width; only the gutter changes,
-     to line up with .chPop-in's tighter phone padding. */
-  .chPop-close{margin-right:12px}
   /* The engine packs six slots into one nowrap row, which collapses each unit
      to ~42px on a phone. Wrap to three-per-row so the art stays legible; the
      desktop single row is untouched because this only applies under 640px. */
