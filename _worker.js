@@ -541,10 +541,6 @@ function infLoadPresents(){
     function addArr(type,arr){(Array.isArray(arr)?arr:[]).forEach(function(u){if(u.name)rewMap[type+'|'+u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});}
     function addObj(type,obj){var ck=INF_REWARD_CFG_KEY[type];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};rewMap[type+'|'+n.toLowerCase()]={img:ov.image||o.image||'',rarity:nr(ov.rarity||o.rarity),name:ov.name||''};});}
     addArr('unit',res[1]);addObj('skin',res[2]);addObj('pet',res[3]);addObj('banner',res[4]);addObj('loading screen',res[5]);addObj('material',res[6]);addObj('food',res[7]);addObj('potion',res[8]);
-    // "Currency" rewards aren't in any JSON: give Tokens the coins render and give Souls the Soul material render.
-    var _soul=rewMap['material|soul']||{};
-    rewMap['currency|tokens']={img:INF_COINS_IMG,rarity:'',name:'Tokens'};
-    rewMap['currency|souls']={img:_soul.img||'',rarity:_soul.rarity||'',name:'Souls'};
     if(pEl)pEl.innerHTML='';
     buildPresents(pEl,presentsData,rewMap);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -552,6 +548,13 @@ function infLoadPresents(){
 }
 function buildPresents(pEl,data,rewMap){
   if(!pEl||!data)return;
+  // A reward's declared type does not always match the feed it lives in: the
+  // presents feed types Tokens and Souls as "Currency", but both are materials.
+  // Falling back to the name when the typed key misses means an item resolves
+  // wherever it was added, with no per-item wiring. rewMap is built units-first,
+  // so a unit still wins a name shared with a food or pet.
+  var byName={};
+  Object.keys(rewMap).forEach(function(k){var n=k.slice(k.indexOf('|')+1);if(!byName[n])byName[n]=rewMap[k];});
   var _RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
   var _RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
@@ -566,7 +569,7 @@ function buildPresents(pEl,data,rewMap){
     var displayRar=(ov.rarity||p.rarity||'').toLowerCase();
     var rewards=(p.rewards||[]).slice();
     var rovs=PRESENTS_CFG.rewardOverrides[name]||{};
-    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var look=rewMap[((ty||'Unit').toLowerCase())+'|'+((nm||'').toLowerCase())]||{};return {type:ty,name:(look.name||nm),amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
+    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var lk=(nm||'').toLowerCase();var look=rewMap[((ty||'Unit').toLowerCase())+'|'+lk]||byName[lk]||{};return {type:ty,name:(look.name||nm),amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
     (PRESENTS_CFG.addRewards[name]||[]).forEach(function(r){rewards.push(r);});
     rewards.sort(function(a,b){var rd=_rr(a.rarity)-_rr(b.rarity);return rd!==0?rd:(a.name||'').localeCompare(b.name||'');});
     var card=document.createElement('div');card.className='inf-card';
@@ -682,8 +685,6 @@ function infLoadEvolutions(){
     (Array.isArray(res[0])?res[0]:[]).forEach(function(u){put('unit',u.name,u.imgNormal,u.rarity);});
     function addObj(pool,obj){var ck=INF_REWARD_CFG_KEY[pool];var ovs=(ck&&INFO_CFG[ck]&&INFO_CFG[ck].overrides)||{};Object.keys(obj||{}).forEach(function(n){var o=obj[n]||{};var ov=ovs[n]||{};put(pool,ov.name||n,ov.image||o.image,ov.rarity||o.rarity,n);});}
     addObj('material',res[1]);addObj('food',res[2]);addObj('potion',res[3]);addObj('present',res[4]);addObj('skin',res[5]);addObj('pet',res[6]);
-    // Tokens = the base game currency; not in any JSON, so give it its render manually.
-    put('material','Tokens',INF_COINS_IMG,'');
     pEl.innerHTML='';
     buildEvolutions(pEl,lut);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
@@ -2253,6 +2254,26 @@ const ADSENSE_LOADER =
 // open proxy for arbitrary Roblox assets. Same ids the home page stats use.
 const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624'];
 
+// Items the game has but the wiki feed does not carry. Merged into their feed on
+// the way through the proxy, so every consumer sees them from one definition:
+// the INFO panel's own tab, present rewards, evolution ingredients, prestige and
+// anything added later. Kept here rather than hand-edited into the R2 bucket so
+// they are version controlled and the pipeline worker cannot overwrite them.
+//
+// A real feed entry always wins, so each of these retires itself automatically
+// the day the wiki starts carrying it.
+//
+// These two are currencies rather than true materials, and the presents feed
+// types them "Currency". They live in materials so they stay browsable in that
+// tab; the Presents tab still labels them Currency, because that label comes
+// from the reward's own type and not from this lookup.
+const EXTRA_ITEMS = {
+  materials: {
+    'Tokens': { rarity: 'mythic',    image: 'https://images.fntduserguide.com/coins.webp' },
+    'Souls':  { rarity: 'nightmare', image: 'https://items.fntduserguide.com/materials/soul.png' }
+  }
+};
+
 const INF_PROXY = {
   'presents':        'https://presents.fntduserguide.com/fntd2-presents.json',
   'units':           'https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',
@@ -2330,7 +2351,8 @@ export default {
 
     // Same-origin JSON proxy so the browser never needs CORS on the r2.dev buckets
     if (url.pathname.startsWith('/inf-data/')) {
-      const target = INF_PROXY[url.pathname.slice('/inf-data/'.length)];
+      const feed = url.pathname.slice('/inf-data/'.length);
+      const target = INF_PROXY[feed];
       if (!target) return new Response('Not found', { status: 404 });
       const up = await fetch(target, { cf: { cacheTtl: 300, cacheEverything: true } });
       // Rewrite any r2.dev image URLs stored inside the JSON to the custom domains, so
@@ -2341,6 +2363,19 @@ export default {
         .replace(/pub-bd8c71834de64b078aa68df269b7d92e\.r2\.dev/g, 'items.fntduserguide.com')
         .replace(/pub-71c3b160626949ae8220d0daad5a9fc8\.r2\.dev/g, 'presents.fntduserguide.com')
         .replace(/pub-147ea4ffd88444cba282e819b9168c94\.r2\.dev/g, 'images.fntduserguide.com');
+      // Fold in anything the wiki does not carry. Only the name-keyed feeds take
+      // extras — the units feed is an array — and an existing entry always wins.
+      const extra = EXTRA_ITEMS[feed];
+      if (extra) {
+        try {
+          const data = JSON.parse(body);
+          if (data && typeof data === 'object' && !Array.isArray(data)) {
+            let added = false;
+            for (const name in extra) if (!(name in data)) { data[name] = extra[name]; added = true; }
+            if (added) body = JSON.stringify(data);
+          }
+        } catch (e) { /* unparseable upstream: pass it through untouched */ }
+      }
       return new Response(body, {
         status: up.status,
         headers: {
