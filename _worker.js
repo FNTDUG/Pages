@@ -2190,6 +2190,88 @@ const OUTAGE_SCRIPT = `<script>
 })();
 <\/script>`;
 
+// Reward tooltip, shared by any page with reward tiles (Challenges today, the
+// nights rewards UI next). It reuses the #metaTip element and .mt-* styling the
+// metas engine already puts on the page, so a reward hover and a unit hover are
+// the same object rather than two that drift apart. On a page where metas has
+// not loaded there is no #metaTip, and this quietly does nothing.
+//
+// Mark a tile with the reward as JSON and it gets the hover:
+//   el.setAttribute('data-rwtip', JSON.stringify({name, qty, rarity, icon}))
+//   el.setAttribute('data-rwtip-tap', '')   // optional, see below
+//
+// Delegated from document rather than bound per tile, because this script is
+// appended to the end of <body> and pages build their tiles during parse — a
+// bound helper would not exist yet for anything rendered up front.
+//
+// tap is opt-in. It listens in the capture phase so it can swallow the event
+// before a card's own handler sees it, which is right for a tile sitting loose
+// in a popup but wrong for one inside a clickable card, where it would stop the
+// card opening. Hover needs no such care and is always on.
+const REWARD_TIP = `<script>
+(function(){
+  var RG={uncommon:'linear-gradient(90deg,#5CFF4D,#3FFF8F)',rare:'linear-gradient(90deg,#58A6FF,#1C3AA0)',
+    epic:'linear-gradient(90deg,#FF35FF,#87009F)',mythic:'linear-gradient(90deg,#FFB81F,#FFFF00)',
+    secret:'linear-gradient(90deg,#FF8800,#FF0C0C)',nightmare:'linear-gradient(90deg,#492590,#2A1E42)',
+    apex:'linear-gradient(90deg,#9D0078,#0063F8)',hero:'linear-gradient(90deg,#FFCD19,#353815,#FFFB85)',
+    exclusive:'linear-gradient(90deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',
+    radiant:'linear-gradient(90deg,#FF6600,#FFCC33)'};
+  function els(){var t=document.getElementById('metaTip'),i=document.getElementById('metaTipInner');return t&&i?[t,i]:null;}
+  function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'';}
+  function row(){var d=document.createElement('div');d.className='mt-row';return d;}
+  function text(s){var d=document.createElement('div');d.className='mt-text';d.textContent=s;return d;}
+  function show(el,cfg){
+    var e=els();if(!e)return;
+    var tip=e[0],inner=e[1],rar=(cfg.rarity||'').toLowerCase(),bg=RG[rar]||'#888888';
+    tip.style.background=bg;tip.style.backgroundSize='';tip.style.animation='';
+    inner.innerHTML='';
+    var n=document.createElement('span');n.className='mt-name';n.textContent=cfg.name||'';inner.appendChild(n);
+    var sep=document.createElement('hr');sep.className='mt-sep';inner.appendChild(sep);
+    var r1=row();
+    if(cfg.icon){
+      var ic=document.createElement('div');ic.className='mt-icon';ic.style.background=bg;
+      var inn=document.createElement('div');inn.className='mt-icon-in';
+      var im=document.createElement('img');im.src=cfg.icon;im.alt='';
+      im.style.cssText='width:100%;height:100%;object-fit:contain;display:block;margin:0;max-width:none';
+      inn.appendChild(im);ic.appendChild(inn);r1.appendChild(ic);
+    }
+    if(cfg.qty)r1.appendChild(text('Amount: '+cfg.qty));
+    inner.appendChild(r1);
+    if(rar){var r2=row();r2.appendChild(text('Rarity: '+cap(rar)));inner.appendChild(r2);}
+    // Same placement the metas engine uses: under the tile, flipped above when
+    // it would run off the bottom, clamped to the viewport either way.
+    tip.style.display='block';tip.style.opacity='0';
+    var r=el.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight;
+    var left=Math.max(4,Math.min(r.left+r.width/2-tw/2,window.innerWidth-tw-4));
+    var top=r.bottom+6;
+    if(top+th>window.innerHeight-4)top=r.top-th-6;
+    tip.style.left=left+'px';tip.style.top=top+'px';tip.style.opacity='1';
+  }
+  function hide(){var e=els();if(e){e[0].style.opacity='0';e[0].style.display='none';}}
+  var cur=null;
+  function tile(n){return n&&n.closest?n.closest('[data-rwtip]'):null;}
+  function cfgOf(el){try{return JSON.parse(el.getAttribute('data-rwtip'));}catch(e){return null;}}
+  function open(el){var c=cfgOf(el);if(c){cur=el;show(el,c);}}
+  document.addEventListener('mouseover',function(ev){
+    var t=tile(ev.target);
+    if(t&&t!==cur)open(t);
+  });
+  document.addEventListener('mouseout',function(ev){
+    if(!cur)return;
+    // ignore the moves between a tile's own children
+    if(ev.relatedTarget&&cur.contains(ev.relatedTarget))return;
+    cur=null;hide();
+  });
+  document.addEventListener('click',function(ev){
+    var t=tile(ev.target);
+    if(t&&t.hasAttribute('data-rwtip-tap')){ev.stopPropagation();open(t);return;}
+    cur=null;hide();
+  },true);
+  window.addEventListener('scroll',function(){cur=null;hide();},{passive:true});
+  window.addEventListener('resize',function(){cur=null;hide();},{passive:true});
+})();
+<\/script>`;
+
 const ACTIVE_SCRIPT = `<script>
 (function(){
   var p = window.location.pathname.replace(/[/]+$/, '') || '/';
@@ -2466,6 +2548,7 @@ export default {
           // costs nothing until a GitHub request on that page actually fails.
           el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
+          el.append(REWARD_TIP, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });

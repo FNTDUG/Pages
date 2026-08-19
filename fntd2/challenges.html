@@ -247,7 +247,12 @@ function rewardTiles(withQty){
   REWARDS.forEach(function(r){
     var t = el('div','chRw');
     t.style.background = RARITY[r.rarity] || '#555';
-    t.title = r.name + ' ' + r.qty;
+    // Same hover card the meta engine shows for units, driven by the worker.
+    // Tap-to-open only in the popup: on the card grid the tile sits inside the
+    // challenge button, and swallowing the tap there would stop it opening.
+    t.setAttribute('aria-label', r.name + ' ' + r.qty);
+    t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:r.qty, rarity:r.rarity, icon:r.icon}));
+    if (withQty) t.setAttribute('data-rwtip-tap','');
     var inn = el('div','chRw-in');
     var im = document.createElement('img'); im.src=r.icon; im.alt=r.name; inn.appendChild(im);
     t.appendChild(inn);
