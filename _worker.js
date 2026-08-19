@@ -2210,6 +2210,9 @@ const OUTAGE_SCRIPT = `<script>
 // card opening. Hover needs no such care and is always on.
 const REWARD_TIP = `<script>
 (function(){
+  // lets a page tell whether the worker is in the loop, so a file opened
+  // directly can install its own copy without doubling up when deployed
+  window.__ugRewardTip=1;
   var RG={uncommon:'linear-gradient(90deg,#5CFF4D,#3FFF8F)',rare:'linear-gradient(90deg,#58A6FF,#1C3AA0)',
     epic:'linear-gradient(90deg,#FF35FF,#87009F)',mythic:'linear-gradient(90deg,#FFB81F,#FFFF00)',
     secret:'linear-gradient(90deg,#FF8800,#FF0C0C)',nightmare:'linear-gradient(90deg,#492590,#2A1E42)',
