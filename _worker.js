@@ -1028,8 +1028,9 @@ function buildEndlessQuests(pEl,uMap,pMap){
 
 // ── Permanent / Community Quests tabs ───────────────────────────────────
 // Same shape as Hero/Shop Quests, except a reward can be a skin rather than a
-// present. Skin entries carry { skin: "<skin name>" }; the base unit and the
-// skin art both come from the skins feed, so only the name is hardcoded here.
+// present. Skin entries carry { skin: "<skin name>" } and nothing else: the art
+// comes from the skins feed and the matching pet from the pets feed, which name
+// it identically, so the one name resolves both halves of the bundle.
 var PERMANENT_QUESTS=[
   {unit:'Bones of the Past Nightmare Freddy', present:'Bones of the Past Nightmare Freddy Present', quests:[
     'Get 1500 kills with Fire or Dark units',
@@ -1102,27 +1103,33 @@ function infLoadQuestSet(key, innerId, list){
   var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
   function J(u,fb){return fetch(u).then(function(r){return r.json();}).catch(function(){return fb;});}
   function nr(r){r=(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
-  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{}),J('/inf-data/skins',{})]).then(function(res){
+  Promise.all([J('/inf-data/units',[]),J('/inf-data/presents',{}),J('/inf-data/skins',{}),J('/inf-data/pets',{})]).then(function(res){
     var uMap={};(Array.isArray(res[0])?res[0]:[]).forEach(function(u){if(u.name)uMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:nr(u.rarity)};});
     var pMap={};Object.keys(res[1]||{}).forEach(function(n){var o=res[1][n]||{};pMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
     var sMap={};Object.keys(res[2]||{}).forEach(function(n){var o=res[2][n]||{};sMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity),unit:o.unit||''};});
+    var petMap={};Object.keys(res[3]||{}).forEach(function(n){var o=res[3][n]||{};petMap[n.toLowerCase()]={img:o.image||'',rarity:nr(o.rarity)};});
     pEl.innerHTML='';
-    buildQuestSet(pEl,list,uMap,pMap,sMap);
+    buildQuestSet(pEl,list,uMap,pMap,sMap,petMap);
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
 }
 function infLoadPermanentQuests(){infLoadQuestSet('permanent-quests','inf-permanent-quests-inner',PERMANENT_QUESTS);}
 function infLoadCommunityQuests(){infLoadQuestSet('community-quests','inf-community-quests-inner',COMMUNITY_QUESTS);}
-function buildQuestSet(pEl,list,uMap,pMap,sMap){
+function buildQuestSet(pEl,list,uMap,pMap,sMap,petMap){
   if(!pEl)return;
   list.forEach(function(h){
-    // A skin reward shows its base unit next to the skin art; a unit reward
-    // shows the unit next to its present, exactly like Hero/Shop Quests.
+    // A unit reward shows the unit next to its present, exactly like Hero/Shop
+    // Quests. A skin reward is a cosmetic bundle instead: the skin ships with a
+    // pet carrying the same name, so it shows those two rather than the base
+    // unit, and spells the pairing out under Reward. Only Community Quests has
+    // skin entries today. A skin with no matching pet still renders, as one
+    // badge and a plain "... Skin" reward.
     var isSkin=!!h.skin;
     var sEntry=isSkin?(sMap[h.skin.toLowerCase()]||{}):null;
+    var pet=isSkin?(petMap&&petMap[h.skin.toLowerCase()]||null):null;
     var title=isSkin?h.skin:h.unit;
-    var u=uMap[((isSkin?(sEntry.unit||''):h.unit)||'').toLowerCase()]||{};
-    var r=isSkin?{img:sEntry.img||'',rarity:sEntry.rarity||''}:(pMap[(h.present||'').toLowerCase()]||{});
+    var u=isSkin?{img:sEntry.img||'',rarity:sEntry.rarity||''}:(uMap[(h.unit||'').toLowerCase()]||{});
+    var r=isSkin?pet:(pMap[(h.present||'').toLowerCase()]||{});
     var card=document.createElement('div');card.className='inf-card';
     var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
     // Unreleased entries resolve to nothing yet; leave the badge as an empty
@@ -1135,13 +1142,19 @@ function buildQuestSet(pEl,list,uMap,pMap,sMap){
       if(src){var i=document.createElement('img');i.src=src;i.alt=title;b.appendChild(i);}
       return b;
     }
-    var ub=badge(u.img,u.rarity);
-    var rb=badge(r.img,r.rarity);
-    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=title+(isSkin?' (Skin)':'');
-    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(rb);
+    var h4=document.createElement('h4');h4.style.cssText='margin:0;flex:1';h4.textContent=title;
+    var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(badge(u.img,u.rarity));
+    if(r)badges.appendChild(badge(r.img,r.rarity));
     row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent='Quests';card.appendChild(qh);
     h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    // Skin bundles state what you actually get, styled like the Endless tab's
+    // Reward. Unit entries keep showing their present as a badge, which already
+    // says it, so they get no Reward line.
+    if(isSkin){
+      var rh=document.createElement('div');rh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin:6px 0 2px;text-transform:uppercase';rh.textContent='Reward';card.appendChild(rh);
+      var rd=document.createElement('div');rd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';rd.textContent='● '+title+(pet?' Skin & Pet':' Skin');card.appendChild(rd);
+    }
     pEl.appendChild(card);
   });
 }
