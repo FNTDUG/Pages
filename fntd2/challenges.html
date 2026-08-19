@@ -327,44 +327,23 @@ document.getElementById('chPopClose').addEventListener('click', closePop);
 document.getElementById('chOv').addEventListener('click', function(e){ if(e.target===this) closePop(); });
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePop(); });
 
-/* Special Challenges reset weekly, at midnight Eastern going into Sunday.
-   Anchored to the Eastern zone rather than a fixed UTC hour: a fixed hour would
-   hold still in UTC but slide by an hour for players twice a year, and the reset
-   they see should stay at midnight their time. RESET_HOUR is the hour of the
-   RESET_WEEKDAY itself, so 0 means the midnight that starts Sunday. */
-var RESET_TZ = 'America/New_York';
-var RESET_WEEKDAY = 0;   // 0-6, Sun-Sat
-var RESET_HOUR = 0;      // 0-23, local to RESET_TZ
+/* Special Challenges reset once a week, on the Sunday evening players see:
+   7pm EST / 8pm EDT, which is the single instant 00:00 UTC Monday.
 
-/* How far the wall clock in tz runs from the true instant: -4h on EDT, -5h on
-   EST. Asking the platform means the DST switch dates are never our problem. */
-function tzOffset(when, tz){
-  var p = {};
-  new Intl.DateTimeFormat('en-US', {timeZone: tz, hour12: false, year: 'numeric',
-    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'})
-    .formatToParts(when).forEach(function(x){ p[x.type] = x.value; });
-  // hour12:false reports midnight as 24 on some engines
-  return Date.UTC(p.year, p.month - 1, p.day, p.hour % 24, p.minute, p.second) - when.getTime();
-}
-
-/* Turn an Eastern wall-clock reading into the instant it actually refers to.
-   Resolved twice because the offset in force at the target can differ from the
-   one in force now, for a reset that sits the far side of a DST switch. */
-function wallToInstant(y, mo, d, h, tz){
-  var naive = Date.UTC(y, mo, d, h, 0, 0, 0);
-  var approx = naive - tzOffset(new Date(naive), tz);
-  return new Date(naive - tzOffset(new Date(approx), tz));
-}
+   Note the weekday is expressed in UTC and so reads as MONDAY, one day later
+   than the Sunday reset it describes — Sunday 7pm in Eastern has already rolled
+   past midnight in UTC. Anchoring to UTC is the point: the reset is a fixed
+   instant that does not move when the US changes its clocks, and only its
+   Eastern reading shifts by an hour across DST. */
+var RESET_WEEKDAY_UTC = 1;   // 0-6, Sun-Sat, in UTC
+var RESET_HOUR_UTC = 0;
 
 function nextReset(now){
-  // now, read as an Eastern wall clock, so getUTCDay() below is the Eastern day
-  var wall = new Date(now.getTime() + tzOffset(now, RESET_TZ));
-  var delta = (RESET_WEEKDAY - wall.getUTCDay() + 7) % 7;
-  var day = wall.getUTCDate() + delta;
-  var t = wallToInstant(wall.getUTCFullYear(), wall.getUTCMonth(), day, RESET_HOUR, RESET_TZ);
-  // already past today's reset: go to next week's. Date.UTC rolls the month over.
-  if (t <= now) t = wallToInstant(wall.getUTCFullYear(), wall.getUTCMonth(), day + 7, RESET_HOUR, RESET_TZ);
-  return t;
+  var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), RESET_HOUR_UTC, 0, 0, 0));
+  var delta = (RESET_WEEKDAY_UTC - d.getUTCDay() + 7) % 7;
+  d.setUTCDate(d.getUTCDate() + delta);
+  if (d <= now) d.setUTCDate(d.getUTCDate() + 7);
+  return d;
 }
 function two(n){ return (n<10?'0':'') + n; }
 
