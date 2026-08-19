@@ -546,6 +546,12 @@ function infLoadPresents(){
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){if(pEl){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load presents.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);}});
 }
+// The presents feed types Tokens and Souls as "Currency", but both are ordinary
+// materials and nothing else in the panel has a currency concept. Correcting it
+// per present would mean a rewardOverrides entry in all 12 presents that give
+// each; one remap by name fixes the label and the lookup everywhere at once.
+// "Material" matches the casing the feed already uses for its other 17 rewards.
+var REWARD_TYPE_FIX={'tokens':'Material','souls':'Material'};
 function buildPresents(pEl,data,rewMap){
   if(!pEl||!data)return;
   // A reward's declared type does not always match the feed it lives in: the
@@ -569,7 +575,7 @@ function buildPresents(pEl,data,rewMap){
     var displayRar=(ov.rarity||p.rarity||'').toLowerCase();
     var rewards=(p.rewards||[]).slice();
     var rovs=PRESENTS_CFG.rewardOverrides[name]||{};
-    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var ty=ro.type||r.type;var nm=ro.name||r.name;var lk=(nm||'').toLowerCase();var look=rewMap[((ty||'Unit').toLowerCase())+'|'+lk]||byName[lk]||{};return {type:ty,name:(look.name||nm),amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
+    rewards=rewards.map(function(r){var ro=rovs[r.name||'']||{};var nm=ro.name||r.name;var lk=(nm||'').toLowerCase();var ty=ro.type||REWARD_TYPE_FIX[lk]||r.type;var look=rewMap[((ty||'Unit').toLowerCase())+'|'+lk]||byName[lk]||{};return {type:ty,name:(look.name||nm),amount:r.amount,chance:r.chance,rarity:(ro.rarity||look.rarity||r.rarity||'').toLowerCase(),img:look.img||''};});
     (PRESENTS_CFG.addRewards[name]||[]).forEach(function(r){rewards.push(r);});
     rewards.sort(function(a,b){var rd=_rr(a.rarity)-_rr(b.rarity);return rd!==0?rd:(a.name||'').localeCompare(b.name||'');});
     var card=document.createElement('div');card.className='inf-card';
