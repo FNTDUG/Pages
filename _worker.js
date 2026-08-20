@@ -2197,8 +2197,9 @@ const OUTAGE_SCRIPT = `<script>
 // not loaded there is no #metaTip, and this quietly does nothing.
 //
 // Mark a tile with the reward as JSON and it gets the hover:
-//   el.setAttribute('data-rwtip', JSON.stringify({name, qty, rarity, icon, label}))
-//   label is optional and titles the amount row — "Amount" unless given.
+//   el.setAttribute('data-rwtip', JSON.stringify({name, qty, rarity, icon, label, note}))
+//   label titles the amount row ("Amount" unless given); note adds a second line
+//   under it, for a drop that has odds as well as an amount. Both optional.
 //   el.setAttribute('data-rwtip-tap', '')   // optional, see below
 //
 // Delegated from document rather than bound per tile, because this script is
@@ -2242,6 +2243,8 @@ const REWARD_TIP = `<script>
     // label defaults to Amount; a drop chance rather than a quantity passes its own
     if(cfg.qty)r1.appendChild(text((cfg.label||'Amount')+': '+cfg.qty));
     inner.appendChild(r1);
+    // optional second line, for a drop that has odds as well as an amount
+    if(cfg.note){var rn=row();rn.appendChild(text(cfg.note));inner.appendChild(rn);}
     if(rar){var r2=row();r2.appendChild(text('Rarity: '+cap(rar)));inner.appendChild(r2);}
     // Same placement the metas engine uses: under the tile, flipped above when
     // it would run off the bottom, clamped to the viewport either way.
