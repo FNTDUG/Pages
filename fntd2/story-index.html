@@ -537,6 +537,14 @@ var RNG_SPECIAL = {
   3: {2:[{name:'Glitched TV',min:1,max:1,chance:12,qtyScale:'tier'}]},
   4: {all:[{name:'Nightmare Balloons',min:1,max:1,chance:5,qtyScale:'tier'}]}
 };
+/* Specials tied to a night rather than to a game: these drop on that night in
+   every game. Night 7 inherits night 6's, the same as the per-game table above.
+   1~2 on Easy and 2~3 on Nightmare is what qtyScale:'tier' already produces —
+   the x1.5 takes 1 to 2 and 2 to 3 — and leaving nmChance off holds the odds at
+   1% across both tiers. */
+var RNG_NIGHT = {
+  6: [{name:"Monty's Mystery Mix",min:1,max:2,chance:1,qtyScale:'tier'}]
+};
 /* Drops that only start once the difficulty is high enough — the same gate the
    chips sit behind.
    The Soldering Iron stays at 1 on Nightmare where every other special goes to
@@ -553,8 +561,9 @@ function rngDropsFor(g,n,d){
   var sp = RNG_SPECIAL[g] || {};
   add(sp.all);
   add(sp[n]);
+  add(RNG_NIGHT[n]);
   // a night-6 special drops on night 7 as well
-  if (n === 7) add(sp[6]);
+  if (n === 7) { add(sp[6]); add(RNG_NIGHT[6]); }
   if (n === 7 && d >= CHIP_MIN_DIFF) add(DIFF_DROPS);
   return out;
 }
