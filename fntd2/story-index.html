@@ -118,7 +118,11 @@
    carry their own, so nothing here competes with them. */
 #metaTip{z-index:2147483010!important}
 body.ch-modal #ug-hamburger{display:none!important}
-.chPop{position:relative;width:min(860px,100%);max-height:88vh;overflow:hidden;
+/* vh on a phone is the LARGE viewport — the height the page would have with the
+   browser's address bar retracted — so while that bar is on screen 88vh is taller
+   than what you can actually see and the popup runs off the bottom. dvh tracks the
+   real height. The vh line stays first as the fallback for anything without dvh. */
+.chPop{position:relative;width:min(860px,100%);max-height:88vh;max-height:88dvh;overflow:hidden;
   display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.8);
   border-radius:2px;background:#150c28 center/cover no-repeat;animation:chPopIn .18s ease-out}
 @keyframes chPopIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
@@ -140,10 +144,10 @@ body.ch-modal #ug-hamburger{display:none!important}
    means the frame is the clip's shape and there is nothing to letterbox. */
 .nrVid{position:fixed;inset:0;z-index:2147483040;display:flex;align-items:center;justify-content:center;
   padding:26px;background:rgba(4,3,10,.9);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-.nrVid video{width:auto;height:auto;max-width:min(1100px,92vw);max-height:84vh;display:block;background:#000;
+.nrVid video{width:auto;height:auto;max-width:min(1100px,92vw);max-height:84vh;max-height:84dvh;display:block;background:#000;
   border:1px solid rgba(255,164,91,.35);border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.75)}
 /* An iframe has no intrinsic size, so it takes a 16:9 frame instead. */
-.nrVid iframe{width:min(1100px,92vw);aspect-ratio:16/9;max-height:84vh;border:0;display:block;background:#000;
+.nrVid iframe{width:min(1100px,92vw);aspect-ratio:16/9;max-height:84vh;max-height:84dvh;border:0;display:block;background:#000;
   border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.75)}
 .nrVid-close{position:fixed;top:14px;right:16px;z-index:2147483041;width:42px;height:42px;border-radius:50%;
   background:rgba(20,10,30,.82);border:1px solid rgba(255,164,91,.4);color:#fff;font-size:20px;cursor:pointer;
@@ -248,8 +252,13 @@ body.ch-modal #ug-hamburger{display:none!important}
      at this width would leave a 65px sliver. Content alone gave 47px, too
      squat to be a comfortable tap target or to show much of the map strip, so
      a floor is set instead. */
-  .ch-card{aspect-ratio:auto;min-height:78px}
-  .ch-inner{height:auto;gap:10px;justify-content:center}
+  /* .ch-card is a <button>, and a button centres its content box vertically no
+     matter what display it is given. Once the card got a min-height taller than
+     its text that quirk showed up as the label floating in the middle. display:flex
+     replaces button layout with flex layout, and the stretched .ch-inner then
+     honours its own flex-start. */
+  .ch-card{aspect-ratio:auto;min-height:78px;display:flex}
+  .ch-inner{height:auto;flex:1;gap:10px;justify-content:flex-start}
   .ch-name{font-size:13px}
   .chPop-name{font-size:16px}.chSec{font-size:12px}
   .chOv{padding:10px}
