@@ -170,7 +170,10 @@ body.ch-modal #ug-hamburger{display:none!important}
 /* Challenges shows tiles bigger inside a popup than on a card; every tile here
    is in a popup, but keeping both sizes means they match if one ever is not. */
 .chPop .chRw{width:58px;height:58px}
-.chPop .chRw .chQty{font-size:7px}
+/* 9px rather than the 7px Challenges uses: an amount and a chance are the only
+   numbers on the tile and they were hard to read against the render. Mobile
+   stays at 7px, where the tile is 46px and a wide amount would not fit. */
+.chPop .chRw .chQty{font-size:9px}
 /* A chip drops as Part A or Part B at random, so it is one drop, not two. Both
    renders share a single plate the same size as every other tile, offset from
    each other so the pair reads as one item with two faces rather than as two
@@ -192,7 +195,7 @@ body.ch-modal #ug-hamburger{display:none!important}
    them on the same line would collide. */
 .chRw .chOdds{position:absolute;right:2px;top:1px;font-family:'Press Start 2P',monospace;font-size:6px;
   color:#ffd9a8;text-shadow:1px 1px 0 #000}
-.chPop .chRw .chOdds{font-size:7px}
+.chPop .chRw .chOdds{font-size:9px}
 
 /* metas.html renders the team; parked off-screen and moved in on open */
 #teamStore{position:absolute;left:-99999px;top:0;width:900px}
@@ -269,6 +272,7 @@ body.ch-modal #ug-hamburger{display:none!important}
   .nrSlide{max-width:min(320px,100%)}
   .chRestr{font-size:9px}
   .chRw{width:46px;height:46px}
+  .chPop .chRw .chQty,.chPop .chRw .chOdds{font-size:7px}
   /* the engine packs six slots into one nowrap row; wrap to three so the art
      stays legible. Desktop keeps its single row. */
   .chPop .metaRow{flex-wrap:wrap;--mg:6px}
