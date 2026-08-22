@@ -244,9 +244,13 @@ body.ch-modal #ug-hamburger{display:none!important}
 #rwRng .ch-rewards + .ch-rewards{margin-top:10px}
 
 @media(max-width:640px){
-  .ch-card{aspect-ratio:auto;min-height:0}
-  .ch-inner{height:auto;gap:10px}
-  .ch-name{font-size:12px}
+  /* Height comes from the content on a phone rather than the 6/1 ratio, which
+     at this width would leave a 65px sliver. Content alone gave 47px, too
+     squat to be a comfortable tap target or to show much of the map strip, so
+     a floor is set instead. */
+  .ch-card{aspect-ratio:auto;min-height:78px}
+  .ch-inner{height:auto;gap:10px;justify-content:center}
+  .ch-name{font-size:13px}
   .chPop-name{font-size:16px}.chSec{font-size:12px}
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
