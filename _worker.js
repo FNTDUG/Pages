@@ -898,7 +898,28 @@ var SHOP_QUESTS=[
     'Beat 10 Nights with 4+ Dark Units',
     'Reach Wave 200 on Boss Raids with 4+ Dark or Light Element Units',
     'Spend 1000 Souls'
-  ]}
+  ]},
+  {unit:'Malachite Foxy', present:'Malachite Foxy Present', cost:40000, quests:[
+    'Deal 1 Billion damage',
+    'Reach wave 200 in any endless',
+    'Deal 100 Million poison damage'
+  ]},
+  {unit:'Phantom Endo 02', present:'Phantom Endo 02 Present', cost:30000, quests:[
+    'Deal 250 Million damage in endless with Dark units',
+    'Reach wave 150 in game 3 endless with Dark units',
+    'Clear 15 Game 3 Nights with 3+ Dark units'
+  ]},
+  {unit:'Phantom Withered Chica', present:'Phantom Withered Chica Present', cost:25000, quests:[
+    'Reach wave 100 in Game 7 endless with 4+ Dark units',
+    'Clear Game 3 Night 6 on Nightmare',
+    'Clear 25 nights using only Dark units'
+  ]},
+  {unit:'White Lily Toy Foxy', present:'White Lily Toy Foxy Present', cost:50000, quests:[
+    'Deal 500 Million damage in Endless with Nature units',
+    'clear  Challenge with 3+ Nature units',
+    'Salvage 3 Fire units',
+    'Reach Wave 200 on Boss Raids with 4+ Nature units'
+  ]},
 ];
 function infLoadShopQuests(){
   if(_catLoaded['shop-quests'])return;_catLoaded['shop-quests']=true;
