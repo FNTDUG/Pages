@@ -2489,20 +2489,38 @@ export default {
     if (url.pathname.startsWith('/game-thumb/')) {
       const id = url.pathname.slice('/game-thumb/'.length);
       if (!GAME_UNIVERSES.includes(id)) return new Response('Not found', { status: 404 });
+      // Two different things are cached here and they want opposite lifetimes.
+      //
+      // This call resolves the CURRENT artwork, so it is the only thing that
+      // notices a new thumbnail. At the old 6h it could serve art the game had
+      // already replaced; 1h keeps the icon close to live for a call that costs
+      // almost nothing. The image fetch below is the opposite case — its URL is
+      // content-addressed by Roblox, so a given URL never changes and it can be
+      // held for a week.
+      //
+      // THUMB_CACHE_V is part of the cache key: changing an entry's TTL does not
+      // evict the copy already stored under that URL, so bump this to force a
+      // refresh the moment a deploy goes out. Roblox ignores the parameter.
+      const THUMB_CACHE_V = 2;
       const api = 'https://thumbnails.roblox.com/v1/games/icons?universeIds=' + id +
-                  '&size=512x512&format=Png&isCircular=false';
-      const meta = await fetch(api, { cf: { cacheTtl: 21600, cacheEverything: true } });
+                  '&size=512x512&format=Png&isCircular=false&r=' + THUMB_CACHE_V;
+      const meta = await fetch(api, { cf: { cacheTtl: 3600, cacheEverything: true } });
       const j = await meta.json().catch(() => null);
       const src = j && j.data && j.data[0] && j.data[0].imageUrl;
       // On failure return 502 rather than a placeholder: the <img> has an
       // onerror fallback to the previous artwork, so the card still fills.
       if (!src) return new Response('Upstream unavailable', { status: 502 });
-      const img = await fetch(src, { cf: { cacheTtl: 86400, cacheEverything: true } });
+      const img = await fetch(src, { cf: { cacheTtl: 604800, cacheEverything: true } });
       return new Response(img.body, {
         status: img.status,
         headers: {
           'content-type': img.headers.get('content-type') || 'image/png',
-          'cache-control': 'public, max-age=86400',
+          // max-age was a day, so a browser that had loaded the home page kept
+          // showing the old icon for a day after the worker had the new one.
+          // An hour to revalidate, and stale-while-revalidate so the card still
+          // paints instantly from cache while the check happens in the
+          // background — the reader never waits on Roblox.
+          'cache-control': 'public, max-age=3600, stale-while-revalidate=86400',
           'access-control-allow-origin': '*'
         }
       });
