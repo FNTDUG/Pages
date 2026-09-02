@@ -138,17 +138,11 @@ body.ch-modal #ug-hamburger{display:none!important}
    it would open behind the very popup you launched it from. */
 .inf-mg-fs{z-index:2147483040!important}
 .inf-mg-fs-close{z-index:2147483041!important}
-/* The player is sized to the clip, not to the screen: a full-viewport box with
-   object-fit:contain letterboxes anything whose aspect does not match, which is
-   the black bars. Letting the video keep its own width and height under a cap
-   means the frame is the clip's shape and there is nothing to letterbox. */
-.nrVid{position:fixed;inset:0;z-index:2147483040;display:flex;align-items:center;justify-content:center;
-  padding:26px;background:rgba(4,3,10,.9);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-.nrVid video{width:auto;height:auto;max-width:min(1100px,92vw);max-height:84vh;max-height:84dvh;display:block;background:#000;
-  border:1px solid rgba(255,164,91,.35);border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.75)}
-/* An iframe has no intrinsic size, so it takes a 16:9 frame instead. */
-.nrVid iframe{width:min(1100px,92vw);aspect-ratio:16/9;max-height:84vh;max-height:84dvh;border:0;display:block;background:#000;
-  border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.75)}
+/* Matches the INFO panel's .inf-mg-fs player, and is only reached when that
+   player is not on the page (a YouTube link, or a local file with no worker). */
+.nrVid{position:fixed;inset:0;z-index:2147483040;display:flex;align-items:center;justify-content:center;background:#000}
+.nrVid video{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:#000}
+.nrVid iframe{width:100%;height:100%;max-width:100%;max-height:100%;border:0;display:block;background:#000}
 .nrVid-close{position:fixed;top:14px;right:16px;z-index:2147483041;width:42px;height:42px;border-radius:50%;
   background:rgba(20,10,30,.82);border:1px solid rgba(255,164,91,.4);color:#fff;font-size:20px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;line-height:1}
@@ -880,23 +874,23 @@ function clearLine(g,n){
   return d;
 }
 
-/* Opens the clip over the page rather than sending you to YouTube.
-   Deliberately not the INFO panel's infPlayMinigame, even for a self-hosted
-   file: that player fills the screen and letterboxes anything that is not the
-   viewport's shape. This one sizes the frame to the clip, so there are no black
-   bars — and it behaves the same locally and on the live site, where the INFO
-   panel may or may not have loaded. A YouTube link cannot go in a <video> at
-   all, so it gets an embed in the same frame. */
+/* Opens the clip over the page rather than sending you to YouTube. A self-hosted
+   file goes to the INFO panel's own player, so the two are literally the same
+   thing and cannot drift apart. That player is injected by the worker and only
+   makes a <video>, so the local copy below still covers a YouTube link and a
+   page opened straight off disk; it is styled to match. */
 function videoEmbed(url){
   var m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{6,})/);
   return m ? 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&rel=0' : null;
 }
 function playVideo(url){
+  var embed = videoEmbed(url);
+  if (!embed && typeof infPlayMinigame === 'function'){ infPlayMinigame(url); return; }
+
   var fs = el('div','nrVid');
   var close = document.createElement('button');
   close.className = 'nrVid-close'; close.type = 'button';
   close.setAttribute('aria-label','Close'); close.innerHTML = '&#x2715;';
-  var embed = videoEmbed(url);
   var media;
   if (embed){
     media = document.createElement('iframe');
@@ -907,19 +901,40 @@ function playVideo(url){
     media.src = url; media.controls = true; media.playsInline = true;
     media.setAttribute('playsinline',''); media.setAttribute('webkit-playsinline','');
   }
+  var exited = false;
   function done(){
-    if (!fs.parentNode) return;
+    if (exited) return;
+    exited = true;
     try { media.pause && media.pause(); } catch(e){}
     media.src = '';                       // stops an embed playing on after close
     document.removeEventListener('keydown', onKey);
-    fs.parentNode.removeChild(fs);
+    document.removeEventListener('fullscreenchange', onFsChange);
+    document.removeEventListener('webkitfullscreenchange', onFsChange);
+    var fsel = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fsel) (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document);
+    if (fs.parentNode) fs.parentNode.removeChild(fs);
   }
   function onKey(e){ if (e.key === 'Escape') done(); }
+  function onFsChange(){
+    var fsel = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fsel === fs) fs._entered = true; else if (fs._entered) done();
+  }
   close.addEventListener('click', function(e){ e.stopPropagation(); done(); });
   fs.addEventListener('click', function(e){ if (e.target === fs) done(); });
+  media.addEventListener('webkitendfullscreen', done);
   document.addEventListener('keydown', onKey);
   fs.appendChild(media); fs.appendChild(close); document.body.appendChild(fs);
   if (media.play) media.play().catch(function(){});
+  // Try real fullscreen; the fixed overlay already covers the screen as a fallback.
+  var rq = fs.requestFullscreen || fs.webkitRequestFullscreen || fs.msRequestFullscreen;
+  if (rq){
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    try { var pr = rq.call(fs); if (pr && pr.catch) pr.catch(function(){}); } catch(e){}
+  } else if (media.webkitEnterFullscreen){
+    if (media.readyState >= 1){ try { media.webkitEnterFullscreen(); } catch(e){} }
+    else media.addEventListener('loadedmetadata', function(){ try { media.webkitEnterFullscreen(); } catch(e){} }, {once:true});
+  }
 }
 
 function renderRewards(){
@@ -1055,9 +1070,13 @@ document.getElementById('nsClose').addEventListener('click', closeNights);
 document.getElementById('rwClose').addEventListener('click', closeRewards);
 document.getElementById('nsOv').addEventListener('click', function(e){ if(e.target===this) closeNights(); });
 document.getElementById('rwOv').addEventListener('click', function(e){ if(e.target===this) closeRewards(); });
-/* Escape peels one layer at a time, matching what the buttons do. */
+/* Escape peels one layer at a time, matching what the buttons do. The video sits
+   above both popups; the INFO panel's player has no key handler of its own, so
+   press its close button rather than reaching past it to a popup underneath. */
 document.addEventListener('keydown', function(e){
   if (e.key !== 'Escape') return;
+  var vidClose = document.querySelector('.inf-mg-fs-close, .nrVid-close');
+  if (vidClose) { vidClose.click(); return; }
   if (!document.getElementById('rwOv').hidden) closeRewards();
   else if (!document.getElementById('nsOv').hidden) closeNights();
 });
