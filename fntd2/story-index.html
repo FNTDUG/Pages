@@ -49,18 +49,9 @@
    block above, so the other pages keep the effect. */
 #ug-main,#ug-hero{background-attachment:scroll}
 
-/* Arcade scanlines over the entire page rather than per panel. One fixed layer
-   above the popups and the meta tooltip, so nothing sits outside the effect and
-   overlapping panels cannot double its density. */
-/* Absolute inside #ug-main, not fixed to the viewport. Fixed leaves the lines
-   standing still while the page slides underneath, which reads as the scanlines
-   racing across the content; Challenges anchors its to the element so they
-   travel with it. Same 4px period and .06 alpha it uses. Popups scroll
-   independently and are position:fixed, so they carry their own .chScan. */
-#ug-main{position:relative}
-.nrArcade{position:absolute;inset:0;pointer-events:none;z-index:900;
-  background:repeating-linear-gradient(to bottom,
-    transparent 0px,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px)}
+/* arcade scanlines, same treatment as Challenges: anchored to the panel and to
+   each popup, not to the page. The site header carries its own pass of this in
+   the shared CSS, so a page-wide layer would run over it twice. */
 .chScan{position:relative}
 .chScan::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:900;border-radius:inherit;
   background:repeating-linear-gradient(to bottom,
@@ -274,7 +265,7 @@ body.ch-modal #ug-hamburger{display:none!important}
 }
 </style>
 
-<div class="chWrap">
+<div class="chWrap chScan">
   <div id="nrGames"></div>
 </div>
 
@@ -1155,9 +1146,6 @@ GAMES.forEach(function(g){ list.appendChild(gameCard(g)); });
 </script>
       <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
-    <!-- Arcade scanlines across the whole page. Inside #ug-main so they scroll
-         with the content rather than standing still in the viewport. -->
-    <div class="nrArcade" aria-hidden="true"></div>
     <footer id="ug-footer"></footer>
   </div>
   
