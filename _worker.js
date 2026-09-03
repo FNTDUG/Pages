@@ -1697,7 +1697,7 @@ var ESTABLISHMENTS=[
   {name:'Raid Coin Card Secret',rarity:'secret',desc:'+10% Raid Coin Boost'},
   {name:'Raid Coin Card Nightmare',rarity:'nightmare',desc:'+12.5% Raid Coin Boost'},
   {name:'Raid Coin Card Apex',rarity:'apex',desc:'+20% Raid Coin Boost'},
-  {name:'Token Card Apex',rarity:'apex',desc:'+20% Tokens Boost'},
+  {name:'Coin Card Apex',rarity:'apex',desc:'+20% Tokens Boost'},
   {name:'Faz Rating Card Apex',rarity:'apex',desc:'+17.5% Faz-Rating Boost'},
   {name:'Luck Card Apex',rarity:'apex',desc:'+7.5% Luck Boost'}
 ];
