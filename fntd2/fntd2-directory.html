@@ -198,9 +198,9 @@
         'border-radius:5px;pointer-events:none;z-index:2}',
       '.meta-label-inner{background:rgba(0,0,0,0.88);color:#39ff14;' +
         'font-family:"Press Start 2P",monospace;' +
-        'font-size:clamp(5px,0.9vw,9px);padding:3px 6px;border-radius:3px;display:block}',
+        'font-size:clamp(8px,2.2vw,9px);padding:3px 6px;border-radius:3px;display:block}',
       '.meta-slot{display:flex;flex-direction:column;align-items:center;gap:clamp(3px,0.6vw,7px)}',
-      '.meta-caption{font-family:"Press Start 2P",monospace;font-size:clamp(5px,0.85vw,10px);' +
+      '.meta-caption{font-family:"Press Start 2P",monospace;font-size:clamp(8px,2.3vw,10px);' +
         'color:#fff;text-align:center;width:100%;line-height:1.5;' +
         'word-break:break-word;text-shadow:0 1px 4px rgba(0,0,0,0.9);user-select:none}',
 
@@ -267,6 +267,9 @@
         '.meta-label{bottom:2px;left:2px;padding:1px}' +
         '.meta-label-inner{border-radius:2px}' +
       '}',
+      '@media(max-width:640px){' +
+        '.metaRow{grid-template-columns:repeat(3,1fr);gap:6px}' +
+      '}',
       '@media(max-width:600px){' +
         '#metaTipInner{font-size:7px;padding:7px 9px;max-width:190px}' +
         '.mt-name{font-size:8px;margin-bottom:4px}' +
@@ -274,7 +277,7 @@
         '.mt-row{gap:5px;margin-top:4px}' +
         '.mt-icon{width:20px;height:20px}' +
         '.mt-text{font-size:6px}' +
-        '.meta-label-inner{font-size:5px;padding:2px 4px}' +
+        '.meta-label-inner{padding:3px 5px}' +
       '}'
     ].join('');
 
