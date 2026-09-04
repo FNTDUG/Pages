@@ -101,6 +101,11 @@
   .stat-box{flex:1;background:rgba(0,0,0,0.85);border:2px solid #f69b55;border-radius:8px;padding:8px 6px;text-align:center;box-shadow:0 0 10px rgba(64,18,83,0.7)}
   .stat-label{font-family:'Audiowide',sans-serif;font-size:12px;color:#f69b55;margin-bottom:4px;letter-spacing:1px}
   .stat-value{font-family:'Press Start 2P',cursive;font-size:12px;color:#ffffff}
+  /* A card with nowhere to go yet: no pointer, no hover lift, and with no stat boxes
+     beneath it the overlay centres against the whole card rather than above them. */
+  .game-info-btn.is-soon{cursor:default}
+  .game-info-btn.is-soon:hover .glow-card{box-shadow:0 0 15px rgba(64,18,83,0.4);transform:none}
+  .game-info-btn.is-soon .gc-title{bottom:0;transform:none}
   .ug-card-desc{font-size:16px;color:#fff;text-align:center;margin-top:12px;max-width:var(--ug-card-w,320px);line-height:1.6}
   .home-info-card{width:var(--ug-card-w,320px);max-width:100%;margin:12px auto 0}
   .home-info-card .info-card-section{background:#1a1b1e;border:none;border-radius:8px;padding:12px 16px;position:relative}
@@ -225,6 +230,21 @@
           <div class="home-info-card"><div class="info-card-section"><p>Need help? Find the best guides, tips, and tricks for FNTD2.</p></div></div>
         </div>
 
+      </div>
+
+      <!-- Row 3: Grimworks — no destination yet, so the card is deliberately inert -->
+      <div class="ug-cards-grid" style="margin-top:24px">
+        <div>
+          <div style="font-family:'Audiowide',sans-serif;font-size:24px;color:#fff;text-align:center;margin-bottom:10px;letter-spacing:.5px">Grimworks</div>
+          <div class="game-info-btn is-soon">
+            <div class="glow-card">
+              <img src="https://images.fntduserguide.com/gw-A-512.png" alt="Grimworks" loading="lazy">
+              <div class="gc-shade"></div>
+              <div class="gc-title"><span>Coming<br>Soon?</span></div>
+            </div>
+          </div>
+          <div class="home-info-card"><div class="info-card-section"><p>Stay tuned for whats to come</p></div></div>
+        </div>
       </div>
     </div>
 
