@@ -2364,6 +2364,16 @@ const ACTIVE_SCRIPT = `<script>
 // It only LOADS AdSense; ads render where a page has an <ins class="adsbygoogle">
 // slot (or via Auto ads). Do not re-add this tag per-page — a second copy on the
 // same page can make the consent message misfire.
+// Home-screen icons. iOS reads the apple-touch-icon tag and nothing else; Android
+// reads the manifest. Injected here rather than per page so all 30 stay in step, and
+// apple-mobile-web-app-title is what stops iOS labelling the icon with a page title
+// like "Unit Engine / FNTD2 | FNTD Userguide".
+const HOME_ICONS =
+  '<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">' +
+  '<link rel="manifest" href="/site.webmanifest">' +
+  '<meta name="apple-mobile-web-app-title" content="FNTD Guide">' +
+  '<meta name="theme-color" content="#681f62">';
+
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
@@ -2569,7 +2579,7 @@ export default {
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
     return new HTMLRewriter()
       .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
+        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
       .on('img.ug-header-logo', {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
