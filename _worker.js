@@ -2374,6 +2374,18 @@ const HOME_ICONS =
   '<meta name="apple-mobile-web-app-title" content="FNTD Guide">' +
   '<meta name="theme-color" content="#681f62">';
 
+// GA4. Injected here rather than per page so every page is counted, including any
+// added later — and so the property can be swapped in one place when the time comes
+// to hand traffic figures to an ad network.
+const ANALYTICS =
+  '<script async src="https://www.googletagmanager.com/gtag/js?id=G-VSK54B7T1G"><\/script>' +
+  '<script>' +
+  'window.dataLayer = window.dataLayer || [];' +
+  'function gtag(){dataLayer.push(arguments);}' +
+  "gtag('js', new Date());" +
+  "gtag('config', 'G-VSK54B7T1G');" +
+  '<\/script>';
+
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
@@ -2579,7 +2591,7 @@ export default {
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
     return new HTMLRewriter()
       .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
+        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
       .on('img.ug-header-logo', {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
