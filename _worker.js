@@ -2593,6 +2593,17 @@ export default {
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
+      // Every page ships a <link rel="icon"> pointing at a 70px jwwb image. Chrome will
+      // reach past something that small and use a manifest icon instead, which is how the
+      // purple home-screen icon ended up in the tab. Point it at a full-size transparent
+      // one so there is nothing better for Chrome to go looking for.
+      .on('link[rel="icon"]', {
+        element(el) {
+          el.setAttribute('href', '/favicon-192.png');
+          el.setAttribute('sizes', '192x192');
+          el.setAttribute('type', 'image/png');
+        }
+      })
       .on('img.ug-header-logo', {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
       })
