@@ -224,11 +224,12 @@ const NAV_CSS = `<style>
 .inf-topstick{position:sticky;top:0;z-index:3}
 .inf-topstick .ug-mn-header{position:static}
 .inf-search{padding:11px 14px;background:rgba(4,1,12,.96);border-bottom:1px solid rgba(255,164,91,.14)}
-.inf-sfield{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,164,91,.22);border-radius:7px;padding:7px 10px;transition:border-color .13s,background .13s}
+.inf-sfield{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,164,91,.22);border-radius:7px;padding:9px 10px;transition:border-color .13s,background .13s}
 .inf-sfield:focus-within{border-color:rgba(255,164,91,.6);background:rgba(255,255,255,.07)}
 .inf-sicon{width:13px;height:13px;flex-shrink:0}
 .inf-sicon circle,.inf-sicon line{stroke:#ffa45b;stroke-width:2;fill:none;stroke-linecap:round;opacity:.6}
-#inf-q{flex:1;min-width:0;background:none;border:none;outline:none;color:#fff;font-family:inherit;font-size:13px;line-height:1.3;padding:0;appearance:none;-webkit-appearance:none;border-radius:0}
+#inf-q{flex:1;min-width:0;background:none;border:none;outline:none;color:#fff;font-family:inherit;font-size:16px;line-height:1.3;padding:0;appearance:none;-webkit-appearance:none;border-radius:0}
+@media(min-width:769px){.inf-sfield{padding:7px 10px}#inf-q{font-size:13px}}
 #inf-q::placeholder{color:rgba(255,255,255,.3)}
 #inf-q::-webkit-search-cancel-button,#inf-q::-webkit-search-decoration{-webkit-appearance:none;display:none}
 .inf-sclear{display:none;width:17px;height:17px;flex-shrink:0;align-items:center;justify-content:center;border:none;border-radius:50%;background:rgba(255,255,255,.13);color:rgba(255,255,255,.6);font-size:10px;line-height:1;cursor:pointer;padding:0;font-family:inherit}
