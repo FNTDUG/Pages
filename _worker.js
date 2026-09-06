@@ -232,25 +232,25 @@ const NAV_CSS = `<style>
 #inf-q::placeholder{color:rgba(255,255,255,.3)}
 #inf-q::-webkit-search-cancel-button,#inf-q::-webkit-search-decoration{-webkit-appearance:none;display:none}
 .inf-sclear{display:none;width:17px;height:17px;flex-shrink:0;align-items:center;justify-content:center;border:none;border-radius:50%;background:rgba(255,255,255,.13);color:rgba(255,255,255,.6);font-size:10px;line-height:1;cursor:pointer;padding:0;font-family:inherit}
-.inf-scount{display:none;margin-top:8px;font-family:'Press Start 2P',cursive;font-size:9px;letter-spacing:2px;color:rgba(255,164,91,.85);line-height:1.6;justify-content:space-between;gap:12px}
+.inf-scount{display:none;margin-top:8px;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1.5px;color:rgba(255,164,91,.85);line-height:1.6;justify-content:space-between;gap:12px}
 #ug-info-panel.searching .inf-sclear{display:flex}
 #ug-info-panel.searching .inf-scount{display:flex}
 #ug-info-panel.searching #ug-info-body{display:none}
 #inf-results{display:none;padding-bottom:22px}
 #ug-info-panel.searching #inf-results{display:block}
 .inf-rgroup{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:14px 14px 7px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.inf-rgroup em{font-style:normal;font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.32)}
+.inf-rgroup em{font-style:normal;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.32)}
 .inf-ritems{padding:0 14px;display:flex;flex-direction:column;gap:8px}
-.inf-rcard{background:#1a1b1e;border-radius:8px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
-.inf-rthumb{width:38px;height:38px;border-radius:10px;padding:2px;flex-shrink:0;background:rgba(255,255,255,.08)}
-.inf-rthumb img{display:block;width:100%;height:100%;border-radius:8px;object-fit:contain;background:#100e14}
-.inf-rmain{flex:1;min-width:0}
-.inf-rname{font-family:'Audiowide',sans-serif;font-size:10.5px;color:#e8e8e8;line-height:1.4}
-.inf-rname mark{background:rgba(255,164,91,.26);color:#ffd2a8;border-radius:2px;padding:0 1px}
-.inf-rmeta{font-size:11px;color:rgba(255,255,255,.44);line-height:1.5;margin-top:3px}
-.inf-rrar{font-family:monospace,Arial;font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-top:4px;display:inline-block;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+.inf-hit{display:flex;align-items:center;gap:10px;cursor:pointer}
+.inf-hit h4{margin:0}
+.inf-hit mark{background:rgba(255,164,91,.26);color:#ffd2a8;border-radius:2px;padding:0 1px}
+.inf-hmain{flex:1;min-width:0}
+.inf-hcat{font-family:monospace,Arial;font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-top:3px}
+.inf-hgo{color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6;flex-shrink:0}
+.inf-drop{transition:background .4s ease}
+.inf-drop.inf-flash{background:rgba(255,164,91,.09)}
 .inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
-.inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
+.inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
 /* ── INFO panel ad slots ── */
 .inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
@@ -392,8 +392,8 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
   <div class="inf-search">
     <div class="inf-sfield">
       <svg class="inf-sicon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"></circle><line x1="10.8" y1="10.8" x2="15" y2="15"></line></svg>
-      <input id="inf-q" type="search" placeholder="Search the guide…" autocomplete="off" spellcheck="false" aria-label="Search the guide" oninput="infSearch(this.value)">
-      <button class="inf-sclear" onclick="infSearchClear()" aria-label="Clear search">&#x2715;</button>
+      <input id="inf-q" type="search" placeholder="Search Info..." autocomplete="off" spellcheck="false" aria-label="Search Info" oninput="infSearch(this.value)" onfocus="infSearchFocus()">
+      <button class="inf-sclear" onclick="infSearchClear(true)" aria-label="Clear search">&#x2715;</button>
     </div>
     <div class="inf-scount" id="inf-scount"></div>
   </div>
@@ -2010,11 +2010,23 @@ function _infMark(name,q){
   return _infEsc(name.slice(0,i))+'<mark>'+_infEsc(name.slice(i,i+q.length))+'</mark>'+_infEsc(name.slice(i+q.length));
 }
 function _infCard(r,q){
-  var g=INF_RG[String(r.rar||'').toLowerCase()];
-  var th=r.img?'<div class="inf-rthumb"'+(g?' style="background:'+g+'"':'')+'><img src="'+_infEsc(r.img)+'" alt="" loading="lazy"></div>':'';
-  var rar=(r.rar&&g)?'<div class="inf-rrar" style="background:'+g+'">'+_infEsc(r.rar)+'</div>':'';
-  var m=r.m?'<div class="inf-rmeta">'+_infEsc(r.m)+'</div>':'';
-  return '<div class="inf-rcard">'+th+'<div class="inf-rmain"><div class="inf-rname">'+_infMark(r.n,q)+'</div>'+m+rar+'</div></div>';
+  var rar=String(r.rar||'').toLowerCase();
+  var badge='<span class="inf-img'+(rar?' inf-rarity-'+_infEsc(rar):'')+'"'+(rar?'':' style="background:rgba(25,24,40,.9)"')+'>'+(r.img?'<img src="'+_infEsc(r.img)+'" alt="" loading="lazy">':'')+'</span>';
+  return '<div class="inf-card"><div class="inf-hit" data-cat="'+_infEsc(r.c)+'">'+badge+'<div class="inf-hmain"><h4>'+_infMark(r.n,q)+'</h4><div class="inf-hcat">'+_infEsc(r.cl)+'</div></div><span class="inf-hgo">&#8250;</span></div></div>';
+}
+var INF_CAT_INNER={'stat-chips':'endo-chips'};
+function infGo(cat){
+  var inner=document.getElementById('inf-'+(INF_CAT_INNER[cat]||cat)+'-inner');
+  var drop=inner&&inner.closest('.inf-drop');
+  var btn=drop&&drop.querySelector('.inf-drop-btn');
+  if(!btn)return;
+  infSearchClear(false);
+  if(!drop.classList.contains('open'))infToggle(btn);
+  var panel=document.getElementById('ug-info-panel'),stick=document.querySelector('.inf-topstick');
+  var top=drop.offsetTop-((stick&&stick.offsetHeight)||0);
+  try{panel.scrollTo({top:top>0?top:0,behavior:'smooth'});}catch(e){panel.scrollTop=top>0?top:0;}
+  drop.classList.add('inf-flash');
+  setTimeout(function(){drop.classList.remove('inf-flash');},1100);
 }
 function _infPaint(q){
   var rows=_infIndex(),hits=[],i;
@@ -2052,7 +2064,9 @@ function _infRunSearch(v){
   });
 }
 function infSearch(v){clearTimeout(_infQTimer);_infQTimer=setTimeout(function(){_infRunSearch(v);},130);}
-function infSearchClear(){var i=document.getElementById('inf-q');if(i){i.value='';i.focus();}clearTimeout(_infQTimer);_infRunSearch('');}
+function infSearchClear(focusIt){var i=document.getElementById('inf-q');if(i){i.value='';if(focusIt)i.focus();else i.blur();}clearTimeout(_infQTimer);_infRunSearch('');}
+function infSearchFocus(){var i=document.getElementById('inf-q');if(i&&i.value){i.value='';clearTimeout(_infQTimer);_infRunSearch('');}}
+(function(){var rs=document.getElementById('inf-results');if(!rs)return;rs.addEventListener('click',function(e){var h=e.target&&e.target.closest?e.target.closest('.inf-hit'):null;if(h&&h.getAttribute('data-cat'))infGo(h.getAttribute('data-cat'));});})();
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 (function(){var ip=document.getElementById('ug-info-panel');ip.addEventListener('wheel',function(e){e.stopPropagation();var atT=ip.scrollTop<=0&&e.deltaY<0;var atB=ip.scrollTop+ip.clientHeight>=ip.scrollHeight-1&&e.deltaY>0;if(atT||atB)e.preventDefault();},{passive:false});ip.addEventListener('touchmove',function(e){e.stopPropagation();},{passive:true});})();
