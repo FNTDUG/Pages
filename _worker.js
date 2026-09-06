@@ -220,6 +220,37 @@ const NAV_CSS = `<style>
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
+/* ── INFO panel search ── */
+.inf-topstick{position:sticky;top:0;z-index:3}
+.inf-topstick .ug-mn-header{position:static}
+.inf-search{padding:11px 14px;background:rgba(4,1,12,.96);border-bottom:1px solid rgba(255,164,91,.14)}
+.inf-sfield{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,164,91,.22);border-radius:7px;padding:7px 10px;transition:border-color .13s,background .13s}
+.inf-sfield:focus-within{border-color:rgba(255,164,91,.6);background:rgba(255,255,255,.07)}
+.inf-sicon{width:13px;height:13px;flex-shrink:0}
+.inf-sicon circle,.inf-sicon line{stroke:#ffa45b;stroke-width:2;fill:none;stroke-linecap:round;opacity:.6}
+#inf-q{flex:1;min-width:0;background:none;border:none;outline:none;color:#fff;font-family:inherit;font-size:13px;line-height:1.3;padding:0;appearance:none;-webkit-appearance:none;border-radius:0}
+#inf-q::placeholder{color:rgba(255,255,255,.3)}
+#inf-q::-webkit-search-cancel-button,#inf-q::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.inf-sclear{display:none;width:17px;height:17px;flex-shrink:0;align-items:center;justify-content:center;border:none;border-radius:50%;background:rgba(255,255,255,.13);color:rgba(255,255,255,.6);font-size:10px;line-height:1;cursor:pointer;padding:0;font-family:inherit}
+.inf-scount{display:none;margin-top:8px;font-family:'Press Start 2P',cursive;font-size:9px;letter-spacing:2px;color:rgba(255,164,91,.85);line-height:1.6;justify-content:space-between;gap:12px}
+#ug-info-panel.searching .inf-sclear{display:flex}
+#ug-info-panel.searching .inf-scount{display:flex}
+#ug-info-panel.searching #ug-info-body{display:none}
+#inf-results{display:none;padding-bottom:22px}
+#ug-info-panel.searching #inf-results{display:block}
+.inf-rgroup{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:14px 14px 7px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.inf-rgroup em{font-style:normal;font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.32)}
+.inf-ritems{padding:0 14px;display:flex;flex-direction:column;gap:8px}
+.inf-rcard{background:#1a1b1e;border-radius:8px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
+.inf-rthumb{width:38px;height:38px;border-radius:10px;padding:2px;flex-shrink:0;background:rgba(255,255,255,.08)}
+.inf-rthumb img{display:block;width:100%;height:100%;border-radius:8px;object-fit:contain;background:#100e14}
+.inf-rmain{flex:1;min-width:0}
+.inf-rname{font-family:'Audiowide',sans-serif;font-size:10.5px;color:#e8e8e8;line-height:1.4}
+.inf-rname mark{background:rgba(255,164,91,.26);color:#ffd2a8;border-radius:2px;padding:0 1px}
+.inf-rmeta{font-size:11px;color:rgba(255,255,255,.44);line-height:1.5;margin-top:3px}
+.inf-rrar{font-family:monospace,Arial;font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-top:4px;display:inline-block;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+.inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
+.inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
 /* ── INFO panel ad slots ── */
 .inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
@@ -350,6 +381,7 @@ const PANEL_AD = `
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
 <div id="ug-info-overlay" onclick="ugInfoClose()"></div>
 <div id="ug-info-panel" role="dialog" aria-label="Info">
+  <div class="inf-topstick">
   <div class="ug-mn-header">
     <div class="ug-mn-brand">
       <img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD">
@@ -357,6 +389,16 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     </div>
     <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
   </div>
+  <div class="inf-search">
+    <div class="inf-sfield">
+      <svg class="inf-sicon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"></circle><line x1="10.8" y1="10.8" x2="15" y2="15"></line></svg>
+      <input id="inf-q" type="search" placeholder="Search the guide…" autocomplete="off" spellcheck="false" aria-label="Search the guide" oninput="infSearch(this.value)">
+      <button class="inf-sclear" onclick="infSearchClear()" aria-label="Clear search">&#x2715;</button>
+    </div>
+    <div class="inf-scount" id="inf-scount"></div>
+  </div>
+  </div>
+  <div id="inf-results"></div>
   <div id="ug-info-body" style="flex:1">
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Attack Types <span class="inf-drop-arrow">/</span></button>
@@ -473,7 +515,7 @@ function ugPanelAds(){
   for(var i=0;i<slots.length;i++){try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}}
 }
 function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';ugPanelAds();}
-function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_ugInfoSY);document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});document.querySelectorAll('.inf-exp-body').forEach(function(b){b.style.maxHeight='0';});_infExp=null;}
+function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_ugInfoSY);document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});document.querySelectorAll('.inf-exp-body').forEach(function(b){b.style.maxHeight='0';});_infExp=null;var _q=document.getElementById('inf-q');if(_q&&_q.value){_q.value='';_infRunSearch('');}}
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
 function _infStop(btn){if(_infTimers.has(btn)){clearInterval(_infTimers.get(btn));_infTimers.delete(btn);}var a=btn.querySelector('.inf-drop-arrow');if(a)a.textContent='/';}
@@ -1901,6 +1943,116 @@ function infPlayMinigame(url,opts){
     else{v.addEventListener('loadedmetadata',function(){try{v.webkitEnterFullscreen();}catch(e){}},{once:true});}
   }
 }
+var _infIdx=null,_infFeedData={},_infFeedsLoaded=false,_infQTimer=null;
+var INF_FEED_CATS=[['presents','Presents'],['pets','Pets'],['skins','Unit Skins'],['banners','User Banners'],['loading-screens','Loading Screens'],['materials','Materials'],['foods','Food'],['potions','Potions']];
+var INF_SHARED_CATS=[['bytes','Bytes'],['chips','Chips'],['enchants','Enchants']];
+function _infSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+function _infEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function _infPlain(s){return String(s==null?'':s).replace(/<br\s*\/?>/gi,' ').replace(/~[a-z]+:([^~]*)~/g,'$1').replace(/<[^>]*>/g,'').replace(/[\[\]{}]/g,'').replace(/\s+/g,' ').trim();}
+function _infQuestRows(list){return list.map(function(q){var r=q.skin?('Skin · '+q.skin):(q.present?('Present · '+q.present):'');return {n:q.unit,m:(r?r+' · ':'')+((q.quests&&q.quests.length)||0)+' quests'};});}
+function _infStaticRows(){
+  var S=[];
+  function add(key,label,rows){for(var i=0;i<rows.length;i++){if(!rows[i].n)continue;rows[i].c=key;rows[i].cl=label;S.push(rows[i]);}}
+  add('attack-types','Attack Types',ATTACK_TYPES.map(function(x){return {n:x.name,m:_infPlain(x.desc)};}));
+  add('elements','Elements',ELEMENTS.map(function(x){return {n:x.name,img:x.img,m:_infPlain(x.desc)};}));
+  add('status-effects','Status Effects',STATUS_EFFECTS.map(function(x){return {n:x.name,img:STAT_IB+x.key+'.webp',m:_infPlain(x.desc)};}));
+  add('stat-chips','Stat Chips',ENDO_CHIPS.map(function(x){return {n:x.label+' Stat Chip',m:_infPlain(x.chance)+' · '+_infPlain(x.range)};}));
+  add('shiny-transfer','Shiny Transfer',[{n:'Shiny Transfer',m:'Move Shiny status between two copies of the same unit, in the Workshop'}]);
+  add('establishments','Establishments',ESTABLISHMENTS.map(function(x){return {n:x.name,rar:x.rarity,img:EST_BASE+_infSlug(x.name)+'.png',m:_infPlain(x.desc)};}));
+  add('minigames','Minigames',MINIGAMES.filter(function(x){return x.video;}).map(function(x){return {n:x.video,m:'Minigame clip'};}));
+  add('evolutions','Evolutions',EVOLUTIONS.map(function(x){return {n:x.display||x.name,m:(x.ing||[]).map(function(i){return i[0]+'× '+i[1];}).join(' · ')};}));
+  add('hero-quests','Hero Quests',_infQuestRows(HERO_QUESTS));
+  add('shop-quests','Shop Quests',_infQuestRows(SHOP_QUESTS));
+  add('endless-quests','Endless Quests',_infQuestRows(ENDLESS_QUESTS));
+  add('permanent-quests','Permanent Quests',_infQuestRows(PERMANENT_QUESTS));
+  add('community-quests','Community Quests',_infQuestRows(COMMUNITY_QUESTS));
+  add('prestige','Faz-rating Prestige',PRESTIGE_SHOP.map(function(x){return {n:x.name,m:x.type+' · '+x.cost+' Faz-rating'};}));
+  var sh=window._infShared;
+  if(sh)INF_SHARED_CATS.forEach(function(p){
+    var d=sh[p[0]];if(!d)return;var rows=[];
+    for(var n in d)rows.push({n:n,rar:(d[n]||{}).rarity,img:(d[n]||{}).url,m:''});
+    add(p[0],p[1],rows);
+  });
+  return S;
+}
+function _infFeedMeta(k,it){
+  if(k==='pets')return it.speed!=null?'Speed '+it.speed:'';
+  if(k==='skins')return it.unit?'Unit · '+it.unit:'';
+  if(k==='foods')return it.exp!=null?'EXP '+it.exp:'';
+  if(k==='materials'||k==='potions')return it.description||it.type||'';
+  if(k==='presents'){var r=it.rewards&&it.rewards[0];var b=(String(it.bundle)==='True'||it.bundle===true)?'Bundle · ':'';return b+(r&&r.name?(r.type+' · '+r.name):'');}
+  return '';
+}
+function _infFeedRows(){
+  var S=[];
+  INF_FEED_CATS.forEach(function(p){
+    var k=p[0],data=_infFeedData[k];if(!data)return;
+    var cfg=INFO_CFG[k]||{},ov=cfg.overrides||{},hide=cfg.hide||[],addl=cfg.add||{};
+    for(var n in data){
+      if(hide.indexOf(n)!==-1)continue;
+      var it=data[n]||{},o=ov[n]||{};
+      S.push({n:o.name||n,c:k,cl:p[1],img:o.image||it.image,rar:o.rarity||it.rarity,m:_infFeedMeta(k,it)});
+    }
+    for(var a in addl)S.push({n:a,c:k,cl:p[1],img:addl[a].image,rar:addl[a].rarity,m:_infFeedMeta(k,addl[a])});
+  });
+  return S;
+}
+function _infLoadFeeds(){
+  if(_infFeedsLoaded)return Promise.resolve();
+  return Promise.all(INF_FEED_CATS.map(function(p){
+    return fetch('/inf-data/'+p[0]).then(function(r){return r.json();}).then(function(d){_infFeedData[p[0]]=d;}).catch(function(){});
+  })).then(function(){_infFeedsLoaded=true;_infIdx=null;});
+}
+function _infIndex(){if(!_infIdx)_infIdx=_infStaticRows().concat(_infFeedRows());return _infIdx;}
+function _infMark(name,q){
+  var i=name.toLowerCase().indexOf(q);
+  if(i===-1)return _infEsc(name);
+  return _infEsc(name.slice(0,i))+'<mark>'+_infEsc(name.slice(i,i+q.length))+'</mark>'+_infEsc(name.slice(i+q.length));
+}
+function _infCard(r,q){
+  var g=INF_RG[String(r.rar||'').toLowerCase()];
+  var th=r.img?'<div class="inf-rthumb"'+(g?' style="background:'+g+'"':'')+'><img src="'+_infEsc(r.img)+'" alt="" loading="lazy"></div>':'';
+  var rar=(r.rar&&g)?'<div class="inf-rrar" style="background:'+g+'">'+_infEsc(r.rar)+'</div>':'';
+  var m=r.m?'<div class="inf-rmeta">'+_infEsc(r.m)+'</div>':'';
+  return '<div class="inf-rcard">'+th+'<div class="inf-rmain"><div class="inf-rname">'+_infMark(r.n,q)+'</div>'+m+rar+'</div></div>';
+}
+function _infPaint(q){
+  var rows=_infIndex(),hits=[],i;
+  for(i=0;i<rows.length;i++)if(String(rows[i].n).toLowerCase().indexOf(q)!==-1)hits.push(rows[i]);
+  hits.sort(function(a,b){
+    var ai=String(a.n).toLowerCase().indexOf(q),bi=String(b.n).toLowerCase().indexOf(q);
+    if(ai!==bi)return ai-bi;
+    if(a.cl!==b.cl)return a.cl<b.cl?-1:1;
+    return String(a.n)<String(b.n)?-1:1;
+  });
+  var CAP=80,shown=hits.slice(0,CAP),order=[],gm={};
+  shown.forEach(function(r){if(!gm[r.cl]){gm[r.cl]=[];order.push(r.cl);}gm[r.cl].push(r);});
+  var h='';
+  if(!hits.length)h='<div class="inf-rempty">No matches for “'+_infEsc(q)+'”'+(_infFeedsLoaded?'':'<br>Still loading the rest of the guide…')+'</div>';
+  else{
+    order.forEach(function(g){
+      h+='<div class="inf-rgroup">'+_infEsc(g)+' <em>'+gm[g].length+'</em></div><div class="inf-ritems">';
+      gm[g].forEach(function(r){h+=_infCard(r,q);});
+      h+='</div>';
+    });
+    if(hits.length>CAP)h+='<div class="inf-rmore">SHOWING '+CAP+' OF '+hits.length+'</div>';
+  }
+  document.getElementById('inf-results').innerHTML=h;
+  var cats=order.length;
+  document.getElementById('inf-scount').innerHTML='<span>'+hits.length+' RESULT'+(hits.length===1?'':'S')+'</span><span>'+cats+' CATEGOR'+(cats===1?'Y':'IES')+'</span>';
+}
+function _infRunSearch(v){
+  var q=String(v||'').trim().toLowerCase(),p=document.getElementById('ug-info-panel');
+  if(q.length<2){p.classList.remove('searching');document.getElementById('inf-results').innerHTML='';document.getElementById('inf-scount').innerHTML='';return;}
+  p.classList.add('searching');
+  _infPaint(q);
+  if(!_infFeedsLoaded)_infLoadFeeds().then(function(){
+    var cur=String((document.getElementById('inf-q')||{}).value||'').trim().toLowerCase();
+    if(cur===q)_infPaint(q);
+  });
+}
+function infSearch(v){clearTimeout(_infQTimer);_infQTimer=setTimeout(function(){_infRunSearch(v);},130);}
+function infSearchClear(){var i=document.getElementById('inf-q');if(i){i.value='';i.focus();}clearTimeout(_infQTimer);_infRunSearch('');}
 function ugInfoToggle(){document.getElementById('ug-info-panel').classList.contains('open')?ugInfoClose():ugInfoOpen()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose()});
 (function(){var ip=document.getElementById('ug-info-panel');ip.addEventListener('wheel',function(e){e.stopPropagation();var atT=ip.scrollTop<=0&&e.deltaY<0;var atB=ip.scrollTop+ip.clientHeight>=ip.scrollHeight-1&&e.deltaY>0;if(atT||atB)e.preventDefault();},{passive:false});ip.addEventListener('touchmove',function(e){e.stopPropagation();},{passive:true});})();
@@ -1908,7 +2060,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
   fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/metas.json')
     .then(function(r){return r.json();})
     .then(function(d){
-      var sh=(d&&d.shared)||{};
+      var sh=(d&&d.shared)||{};window._infShared=sh;_infIdx=null;
       var DESCS={
         bytes:{
         _top: [
