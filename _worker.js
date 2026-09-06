@@ -401,7 +401,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
   </div>
   </div>
   <div id="inf-results"></div>
-  <div id="ug-info-body" style="flex:1">
+  <div id="ug-info-body" style="flex:1">${PANEL_AD}
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Attack Types <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-attack-types-inner"></div></div>
@@ -421,7 +421,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Elements <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-elements-inner"></div></div>
-    </div>${PANEL_AD}
+    </div>
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
@@ -457,7 +457,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="materials" onclick="infToggle(this)">Materials <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-materials-inner"></div></div>
-    </div>
+    </div>${PANEL_AD}
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Minigames <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-minigames-inner"></div></div>
@@ -501,7 +501,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
-    </div>${PANEL_AD}
+    </div>
   </div>
 </div>
 <script>
