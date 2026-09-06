@@ -1948,7 +1948,7 @@ var INF_FEED_CATS=[['presents','Presents'],['pets','Pets'],['skins','Unit Skins'
 var INF_SHARED_CATS=[['bytes','Bytes'],['chips','Chips'],['enchants','Enchants']];
 function _infSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function _infEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function _infPlain(s){return String(s==null?'':s).replace(/<br\s*\/?>/gi,' ').replace(/~[a-z]+:([^~]*)~/g,'$1').replace(/<[^>]*>/g,'').replace(/[\[\]{}]/g,'').replace(/\s+/g,' ').trim();}
+function _infPlain(s){return String(s==null?'':s).replace(/<br\\s*\\/?>/gi,' ').replace(/~[a-z]+:([^~]*)~/g,'$1').replace(/<[^>]*>/g,'').replace(/[\\[\\]{}]/g,'').replace(/\\s+/g,' ').trim();}
 function _infQuestRows(list){return list.map(function(q){var r=q.skin?('Skin · '+q.skin):(q.present?('Present · '+q.present):'');return {n:q.unit,m:(r?r+' · ':'')+((q.quests&&q.quests.length)||0)+' quests'};});}
 function _infStaticRows(){
   var S=[];
