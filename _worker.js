@@ -372,12 +372,11 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 // true. Until then it runs on the site-wide display slot so the placement is
 // visible end to end.
 // ─────────────────────────────────────────────────────────────────────────────
-const PANEL_AD_SLOT = '9010982209';
-const PANEL_AD_FLUID = false;
+const PANEL_AD_SLOT = '6967580595';
+const PANEL_AD_FLUID = true;
 const PANEL_AD = `
-    <div class="inf-ad ad-slot">
-      <div class="inf-ad-label">Advertisement</div>
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="${PANEL_AD_SLOT}"${PANEL_AD_FLUID ? ' data-ad-format="fluid" data-ad-layout="in-article"' : ' data-ad-format="auto" data-full-width-responsive="true"'}></ins>
+    <div class="inf-ad ad-slot">${PANEL_AD_FLUID ? '' : '<div class="inf-ad-label">Advertisement</div>'}
+      <ins class="adsbygoogle" style="display:block;text-align:center" data-ad-client="ca-pub-7017245771068026" data-ad-slot="${PANEL_AD_SLOT}"${PANEL_AD_FLUID ? ' data-ad-layout="in-article" data-ad-format="fluid"' : ' data-ad-format="auto" data-full-width-responsive="true"'}></ins>
     </div>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
@@ -501,7 +500,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
-    </div>
+    </div>${PANEL_AD}
   </div>
 </div>
 <script>
