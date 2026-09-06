@@ -247,6 +247,7 @@ const NAV_CSS = `<style>
 .inf-hmain{flex:1;min-width:0}
 .inf-hcat{font-family:monospace,Arial;font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-top:3px}
 .inf-hgo{color:#ffa45b;font-family:monospace;font-size:13px;opacity:.6;flex-shrink:0}
+.inf-btxt{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:8px;background:#100e14;font-family:'Audiowide',sans-serif;font-size:15px;color:#fff}
 .inf-drop{transition:background .4s ease}
 .inf-drop.inf-flash{background:rgba(255,164,91,.09)}
 .inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
@@ -1943,34 +1944,44 @@ function infPlayMinigame(url,opts){
     else{v.addEventListener('loadedmetadata',function(){try{v.webkitEnterFullscreen();}catch(e){}},{once:true});}
   }
 }
-var _infIdx=null,_infFeedData={},_infFeedsLoaded=false,_infQTimer=null;
+var _infIdx=null,_infFeedData={},_infUnitMap={},_infFeedsLoaded=false,_infQTimer=null;
+function _infNr(r){r=String(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
 var INF_FEED_CATS=[['presents','Presents'],['pets','Pets'],['skins','Unit Skins'],['banners','User Banners'],['loading-screens','Loading Screens'],['materials','Materials'],['foods','Food'],['potions','Potions']];
 var INF_SHARED_CATS=[['bytes','Bytes'],['chips','Chips'],['enchants','Enchants']];
 function _infSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function _infEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function _infPlain(s){return String(s==null?'':s).replace(/<br\\s*\\/?>/gi,' ').replace(/~[a-z]+:([^~]*)~/g,'$1').replace(/<[^>]*>/g,'').replace(/[\\[\\]{}]/g,'').replace(/\\s+/g,' ').trim();}
-function _infQuestRows(list){return list.map(function(q){var r=q.skin?('Skin · '+q.skin):(q.present?('Present · '+q.present):'');return {n:q.unit,m:(r?r+' · ':'')+((q.quests&&q.quests.length)||0)+' quests'};});}
+function _infAnyLookup(name){
+  var k=String(name||'').toLowerCase(),u=_infUnitMap[k];
+  if(u&&u.img)return u;
+  for(var i=0;i<INF_FEED_CATS.length;i++){
+    var d=_infFeedData[INF_FEED_CATS[i][0]];if(!d)continue;
+    for(var n in d)if(n.toLowerCase()===k){var it=d[n]||{};return {img:it.image||'',rarity:_infNr(it.rarity)};}
+  }
+  return {};
+}
+function _infQuestRows(list){return list.map(function(q){var u=_infUnitMap[String(q.unit||'').toLowerCase()]||{};var r=q.skin?('Skin · '+q.skin):(q.present?('Present · '+q.present):'');return {n:q.unit,img:u.img,rar:u.rarity,m:(r?r+' · ':'')+((q.quests&&q.quests.length)||0)+' quests'};});}
 function _infStaticRows(){
   var S=[];
   function add(key,label,rows){for(var i=0;i<rows.length;i++){if(!rows[i].n)continue;rows[i].c=key;rows[i].cl=label;S.push(rows[i]);}}
   add('attack-types','Attack Types',ATTACK_TYPES.map(function(x){return {n:x.name,m:_infPlain(x.desc)};}));
-  add('elements','Elements',ELEMENTS.map(function(x){return {n:x.name,img:x.img,m:_infPlain(x.desc)};}));
-  add('status-effects','Status Effects',STATUS_EFFECTS.map(function(x){return {n:x.name,img:STAT_IB+x.key+'.webp',m:_infPlain(x.desc)};}));
-  add('stat-chips','Stat Chips',ENDO_CHIPS.map(function(x){return {n:x.label+' Stat Chip',m:_infPlain(x.chance)+' · '+_infPlain(x.range)};}));
+  add('elements','Elements',ELEMENTS.map(function(x){return {n:x.name,img:x.img,grad:ELEMENT_GRAD,m:_infPlain(x.desc)};}));
+  add('status-effects','Status Effects',STATUS_EFFECTS.map(function(x){return {n:x.name,img:STAT_IB+x.key+'.webp',grad:'linear-gradient(135deg,'+x.c+','+x.g2+')',m:_infPlain(x.desc)};}));
+  add('stat-chips','Stat Chips',ENDO_CHIPS.map(function(x){return {n:(x.label||'Glitched')+' Stat Chip',grad:x.grad,txt:x.label,img:x.img,m:_infPlain(x.chance)+' · '+_infPlain(x.range)};}));
   add('shiny-transfer','Shiny Transfer',[{n:'Shiny Transfer',m:'Move Shiny status between two copies of the same unit, in the Workshop'}]);
   add('establishments','Establishments',ESTABLISHMENTS.map(function(x){return {n:x.name,rar:x.rarity,img:EST_BASE+_infSlug(x.name)+'.png',m:_infPlain(x.desc)};}));
   add('minigames','Minigames',MINIGAMES.filter(function(x){return x.video;}).map(function(x){return {n:x.video,m:'Minigame clip'};}));
-  add('evolutions','Evolutions',EVOLUTIONS.map(function(x){return {n:x.display||x.name,m:(x.ing||[]).map(function(i){return i[0]+'× '+i[1];}).join(' · ')};}));
+  add('evolutions','Evolutions',EVOLUTIONS.map(function(x){var u=_infAnyLookup(x.name);return {n:x.display||x.name,img:u.img||EVO_PLACEHOLDER,rar:u.rarity,m:(x.ing||[]).map(function(i){return i[0]+'× '+i[1];}).join(' · ')};}));
   add('hero-quests','Hero Quests',_infQuestRows(HERO_QUESTS));
   add('shop-quests','Shop Quests',_infQuestRows(SHOP_QUESTS));
   add('endless-quests','Endless Quests',_infQuestRows(ENDLESS_QUESTS));
   add('permanent-quests','Permanent Quests',_infQuestRows(PERMANENT_QUESTS));
   add('community-quests','Community Quests',_infQuestRows(COMMUNITY_QUESTS));
-  add('prestige','Faz-rating Prestige',PRESTIGE_SHOP.map(function(x){return {n:x.name,m:x.type+' · '+x.cost+' Faz-rating'};}));
+  add('prestige','Faz-rating Prestige',PRESTIGE_SHOP.map(function(x){var u=_infAnyLookup(x.name);return {n:x.name,img:u.img,rar:u.rarity,m:x.type+' · '+x.cost+' Faz-rating'};}));
   var sh=window._infShared;
   if(sh)INF_SHARED_CATS.forEach(function(p){
     var d=sh[p[0]];if(!d)return;var rows=[];
-    for(var n in d)rows.push({n:n,rar:(d[n]||{}).rarity,img:(d[n]||{}).url,m:''});
+    for(var n in d){var e=d[n]||{};rows.push(p[0]==='enchants'?{n:n,grad:e.color,img:e.url,m:''}:{n:n,rar:_infNr(e.rarity),img:e.url,m:''});}
     add(p[0],p[1],rows);
   });
   return S;
@@ -1991,7 +2002,7 @@ function _infFeedRows(){
     for(var n in data){
       if(hide.indexOf(n)!==-1)continue;
       var it=data[n]||{},o=ov[n]||{};
-      S.push({n:o.name||n,c:k,cl:p[1],img:o.image||it.image,rar:o.rarity||it.rarity,m:_infFeedMeta(k,it)});
+      S.push({n:o.name||n,c:k,cl:p[1],img:o.image||it.image,rar:_infNr(o.rarity||it.rarity),m:_infFeedMeta(k,it)});
     }
     for(var a in addl)S.push({n:a,c:k,cl:p[1],img:addl[a].image,rar:addl[a].rarity,m:_infFeedMeta(k,addl[a])});
   });
@@ -1999,9 +2010,13 @@ function _infFeedRows(){
 }
 function _infLoadFeeds(){
   if(_infFeedsLoaded)return Promise.resolve();
-  return Promise.all(INF_FEED_CATS.map(function(p){
+  var jobs=INF_FEED_CATS.map(function(p){
     return fetch('/inf-data/'+p[0]).then(function(r){return r.json();}).then(function(d){_infFeedData[p[0]]=d;}).catch(function(){});
-  })).then(function(){_infFeedsLoaded=true;_infIdx=null;});
+  });
+  jobs.push(fetch('/inf-data/units').then(function(r){return r.json();}).then(function(d){
+    (Array.isArray(d)?d:[]).forEach(function(u){if(u.name)_infUnitMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:_infNr(u.rarity)};});
+  }).catch(function(){}));
+  return Promise.all(jobs).then(function(){_infFeedsLoaded=true;_infIdx=null;});
 }
 function _infIndex(){if(!_infIdx)_infIdx=_infStaticRows().concat(_infFeedRows());return _infIdx;}
 function _infMark(name,q){
@@ -2011,7 +2026,8 @@ function _infMark(name,q){
 }
 function _infCard(r,q){
   var rar=String(r.rar||'').toLowerCase();
-  var badge='<span class="inf-img'+(rar?' inf-rarity-'+_infEsc(rar):'')+'"'+(rar?'':' style="background:rgba(25,24,40,.9)"')+'>'+(r.img?'<img src="'+_infEsc(r.img)+'" alt="" loading="lazy">':'')+'</span>';
+  var bg=r.grad||(rar?'':'rgba(25,24,40,.9)');
+  var badge='<span class="inf-img'+(!r.grad&&rar?' inf-rarity-'+_infEsc(rar):'')+'"'+(bg?' style="background:'+_infEsc(bg)+'"':'')+'>'+(r.img?'<img src="'+_infEsc(r.img)+'" alt="" loading="lazy">':(r.txt?'<span class="inf-btxt">'+_infEsc(r.txt)+'</span>':''))+'</span>';
   return '<div class="inf-card"><div class="inf-hit" data-cat="'+_infEsc(r.c)+'">'+badge+'<div class="inf-hmain"><h4>'+_infMark(r.n,q)+'</h4><div class="inf-hcat">'+_infEsc(r.cl)+'</div></div><span class="inf-hgo">&#8250;</span></div></div>';
 }
 var INF_CAT_INNER={'stat-chips':'endo-chips'};
