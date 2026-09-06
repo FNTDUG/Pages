@@ -220,6 +220,10 @@ const NAV_CSS = `<style>
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
+/* ── INFO panel ad slots ── */
+.inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
+.inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
+.inf-ad ins{display:block}
 /* ── Site footer (single-source: content + style come from the worker) ── */
 #ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}
 #ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
@@ -330,6 +334,19 @@ const SOUND_GOVERNOR = `<script>
 const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" title="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke-linejoin="round"></path><g class="ug-snd-on"><path d="M15.8 9.3a4 4 0 0 1 0 5.4"></path><path d="M18.4 6.8a7.5 7.5 0 0 1 0 10.4"></path></g><g class="ug-snd-off"><path d="M16.5 9.5l5 5"></path><path d="M21.5 9.5l-5 5"></path></g></svg></button>
 <script>ugSoundPaint();<\/script>`;
 
+// ─── INFO PANEL ADS ───────────────────────────────────────────────────────────
+// Swap PANEL_AD_SLOT for a dedicated in-article unit, then set PANEL_AD_FLUID to
+// true. Until then it runs on the site-wide display slot so the placement is
+// visible end to end.
+// ─────────────────────────────────────────────────────────────────────────────
+const PANEL_AD_SLOT = '9010982209';
+const PANEL_AD_FLUID = false;
+const PANEL_AD = `
+    <div class="inf-ad ad-slot">
+      <div class="inf-ad-label">Advertisement</div>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="${PANEL_AD_SLOT}"${PANEL_AD_FLUID ? ' data-ad-format="fluid" data-ad-layout="in-article"' : ' data-ad-format="auto" data-full-width-responsive="true"'}></ins>
+    </div>`;
+
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
 <div id="ug-info-overlay" onclick="ugInfoClose()"></div>
 <div id="ug-info-panel" role="dialog" aria-label="Info">
@@ -360,7 +377,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Elements <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-elements-inner"></div></div>
-    </div>
+    </div>${PANEL_AD}
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Enchants <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-enchants-inner"></div></div>
@@ -440,12 +457,22 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
-    </div>
+    </div>${PANEL_AD}
   </div>
 </div>
 <script>
 var _ugInfoSY=0;
-function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';}
+var _ugPanelAdsPushed=false;
+function ugPanelAds(){
+  if(_ugPanelAdsPushed)return;
+  var t=document.getElementById('cleanModeToggle');
+  if(t&&t.classList.contains('on'))return;
+  var slots=document.querySelectorAll('#ug-info-panel ins.adsbygoogle');
+  if(!slots.length)return;
+  _ugPanelAdsPushed=true;
+  for(var i=0;i<slots.length;i++){try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}}
+}
+function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';ugPanelAds();}
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_ugInfoSY);document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});document.querySelectorAll('.inf-exp-body').forEach(function(b){b.style.maxHeight='0';});_infExp=null;}
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
