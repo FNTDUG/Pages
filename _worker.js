@@ -249,13 +249,17 @@ const NAV_CSS = `<style>
 .rot-meta{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:2px}
 .rot-price{font-size:13.5px;font-weight:700;color:#e8e8e8;margin-top:3px}
 /* ── Hero upgrade paths ── */
-.hp-wrap{margin-top:10px;border-top:1px solid rgba(255,164,91,.14);padding-top:4px}
-.hp-btn-label{font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,164,91,.9);flex:1;text-align:left}
-.hp-arrow{font-family:monospace,Arial;font-size:13px;color:#ffa45b;opacity:.6;flex-shrink:0}
-.inf-subdrop.open .hp-arrow{opacity:1}
-.hp-tier{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.hp-wrap{margin-top:8px}
+.hp-wrap .inf-subdrop{margin-top:6px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.035);border:1px solid rgba(255,164,91,.16);transition:background .14s,border-color .14s}
+.hp-wrap .inf-subdrop.open{background:rgba(255,164,91,.08);border-color:rgba(255,164,91,.45)}
+.hp-wrap .inf-subdrop-btn{padding:10px 12px;gap:10px}
+.hp-btn-label{font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.7);flex:1;text-align:left;transition:color .14s}
+.inf-subdrop.open .hp-btn-label{color:#ffa45b}
+.hp-arrow{font-family:monospace,Arial;font-size:15px;line-height:1;color:rgba(255,164,91,.65);flex-shrink:0;display:inline-block;transition:transform .2s ease,color .14s}
+.inf-subdrop.open .hp-arrow{transform:rotate(90deg);color:#ffa45b}
+.hp-tier{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .hp-tier:last-child{border-bottom:none}
-.hp-badge{margin:0;background:rgba(255,255,255,.07);flex-shrink:0}
+.hp-img{width:42px;height:42px;flex-shrink:0;object-fit:contain;display:block}
 .hp-main{flex:1;min-width:0}
 .hp-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .hp-name{font-family:'Audiowide',sans-serif;font-size:11px;color:#e8e8e8;letter-spacing:.5px}
@@ -1233,21 +1237,23 @@ function buildHeroPaths(card,unit){
   if(!paths||!paths.length)return;
   var slug=String(unit).toLowerCase().split(' ').join('-');
   var wrap=document.createElement('div');wrap.className='hp-wrap';
+  var ph=document.createElement('div');
+  ph.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';
+  ph.textContent='Paths';
+  wrap.appendChild(ph);
   paths.forEach(function(tiers,pi){
     if(!tiers||!tiers.length)return;
     var sd=document.createElement('div');sd.className='inf-subdrop';
     var btn=document.createElement('button');btn.className='inf-subdrop-btn';btn.type='button';
     btn.onclick=function(){infSubToggle(btn);};
     var lbl=document.createElement('span');lbl.className='hp-btn-label';lbl.textContent='Path '+(pi+1);
-    var arr=document.createElement('span');arr.className='hp-arrow';arr.textContent='/';
+    var arr=document.createElement('span');arr.className='hp-arrow';arr.textContent='›';
     btn.appendChild(lbl);btn.appendChild(arr);
     var body=document.createElement('div');body.className='inf-subdrop-body';
     var inner=document.createElement('div');inner.className='inf-subdrop-inner';
     tiers.forEach(function(t,ti){
       var row=document.createElement('div');row.className='hp-tier';
-      var badge=document.createElement('span');badge.className='inf-img hp-badge';
-      var im=document.createElement('img');im.src=HERO_PATH_BASE+slug+'-paths/'+t.i;im.alt='Tier '+(ti+1);im.loading='lazy';
-      badge.appendChild(im);
+      var im=document.createElement('img');im.className='hp-img';im.src=HERO_PATH_BASE+slug+'-paths/'+t.i;im.alt='Tier '+(ti+1);im.loading='lazy';
       var main=document.createElement('div');main.className='hp-main';
       var head=document.createElement('div');head.className='hp-head';
       var nm=document.createElement('span');nm.className='hp-name';nm.textContent='Tier '+(ti+1);
@@ -1256,7 +1262,7 @@ function buildHeroPaths(card,unit){
       main.appendChild(head);
       if(t.q){var qd=document.createElement('div');qd.className='hp-quest';qd.textContent='Quest: '+t.q;main.appendChild(qd);}
       var ed=document.createElement('div');ed.className='hp-eff';ed.textContent=t.e||'';main.appendChild(ed);
-      row.appendChild(badge);row.appendChild(main);inner.appendChild(row);
+      row.appendChild(im);row.appendChild(main);inner.appendChild(row);
     });
     body.appendChild(inner);sd.appendChild(btn);sd.appendChild(body);wrap.appendChild(sd);
   });
