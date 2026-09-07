@@ -256,6 +256,7 @@ const NAV_CSS = `<style>
 /* ── INFO panel ad slots ── */
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
+.ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
 @media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
 .ug-rail-in{position:sticky;top:180px;text-align:center}
@@ -408,6 +409,12 @@ const CONTENT_AD_HTML = `<script>
     ins.setAttribute('data-ad-format','fluid');
     d.appendChild(ins);
     try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+    _unfilled(d,ins);
+  }
+  function _unfilled(box,ins){
+    [1600,4000].forEach(function(ms){setTimeout(function(){
+      if(ins.getAttribute('data-ad-status')==='unfilled')box.style.display='none';
+    },ms);});
   }
   function watch(anchor){
     if(anchor.getAttribute('data-adspot'))return;
@@ -482,6 +489,9 @@ const RAIL_HTML = `<script>
     ins.setAttribute('data-ad-slot','${RAIL_AD_SLOT}');
     r.inner.appendChild(ins);
     try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+    [1600,4000].forEach(function(ms){setTimeout(function(){
+      if(ins.getAttribute('data-ad-status')==='unfilled')r.wrap.style.display='none';
+    },ms);});
   }
   function hide(){if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}}
   function layout(){
@@ -2099,6 +2109,9 @@ function _infAdFill(ph){
   ${PANEL_AD_FLUID ? "ins.setAttribute('data-ad-layout','in-article');ins.setAttribute('data-ad-format','fluid');" : "ins.setAttribute('data-ad-format','auto');ins.setAttribute('data-full-width-responsive','true');"}
   ph.appendChild(ins);
   try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  [1600,4000].forEach(function(ms){setTimeout(function(){
+    if(ins.getAttribute('data-ad-status')==='unfilled')ph.style.display='none';
+  },ms);});
 }
 function _infAdWatch(ph){
   if(!ph)return;
