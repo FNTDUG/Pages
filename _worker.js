@@ -2249,6 +2249,9 @@ function infRotTick(){
 }
 var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',material:'materials',present:'presents',banner:'banners'};
 var ROT_POOL_LABEL={Lobby:'Coins'};
+// Merchant types with no feed behind them. Music has no wiki JSON, so every track
+// falls back to the soundtrack sleeve rather than rendering a blank badge.
+var ROT_TYPE_ART={music:{img:'https://images.fntduserguide.com/Aog%20Background%20Removed.png',rarity:'uncommon'}};
 function _rotPMap(){var d=_infFeedData['presents']||{},m={},n;for(n in d){var o=d[n]||{};m[n.toLowerCase()]={img:o.image||'',rarity:_infNr(o.rarity)};}return m;}
 function _rotLook(name,type){
   var k=String(name||'').toLowerCase();
@@ -2260,7 +2263,10 @@ function _rotLook(name,type){
   var u=_infUnitMap[k];
   if(u&&u.img)return u;
   var a=_infAnyLookup(name);
-  return (a&&a.img)?a:(u||a||{});
+  if(a&&a.img)return a;
+  var t=ROT_TYPE_ART[String(type||'').toLowerCase()];
+  if(t)return t;
+  return u||a||{};
 }
 function _rotCard(name,rarity,meta,type,metaCls,disp){
   var look=_rotLook(name,type);
