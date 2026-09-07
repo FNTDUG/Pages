@@ -256,9 +256,11 @@ const NAV_CSS = `<style>
 /* ── INFO panel ad slots ── */
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
-.ug-xd{display:flex;justify-content:flex-end;margin:0 0 24px}
-.ug-xd-btn{width:44px;height:44px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,164,91,.3);color:rgba(255,255,255,.6);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
+.ug-xd{display:flex;justify-content:flex-end;margin:0 0 18px}
+.ug-xd-btn{position:relative;width:18px;height:18px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,164,91,.28);color:rgba(255,255,255,.5);font-size:8px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
+.ug-xd-btn::after{content:'';position:absolute;inset:-10px}
 .ug-xd-btn:hover{background:rgba(255,164,91,.15);color:#ffa45b}
+.ug-rail-in .ug-xd{margin:0 0 10px}
 .ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
 @media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
@@ -400,7 +402,10 @@ function xdActive(pathname) {
 }
 const XDISMISS_HTML = `<script>
 (function(){
-  function close(box){box.style.display='none';}
+  function close(box){
+    var t=(box.className||'').indexOf('ug-rail-in')!==-1&&box.parentNode?box.parentNode:box;
+    t.style.display='none';
+  }
   function bar(box){
     if(box.getAttribute('data-xd'))return;
     box.setAttribute('data-xd','1');
@@ -416,7 +421,7 @@ const XDISMISS_HTML = `<script>
     box.insertBefore(b,box.firstChild);
   }
   function scan(){
-    var sel='#ug-main .ad-slot, #ug-info-panel .inf-ad';
+    var sel='#ug-main .ad-slot, #ug-info-panel .inf-ad, .ug-rail-in';
     var n=document.querySelectorAll(sel);
     for(var i=0;i<n.length;i++)bar(n[i]);
   }
@@ -429,6 +434,7 @@ const XDISMISS_HTML = `<script>
       var root=document.getElementById(id);
       if(root)new MutationObserver(sched).observe(root,{childList:true,subtree:true});
     });
+    new MutationObserver(sched).observe(document.body,{childList:true});
   }
 })();
 <\/script>`;
