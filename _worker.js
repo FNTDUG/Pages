@@ -415,14 +415,13 @@ const RAIL_HTML = `<script>
     r.inner.appendChild(ins);
     try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
   }
+  function hide(){if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}}
   function layout(){
+    if(clean()){hide();return;}
     var box=content.getBoundingClientRect();
     var free=Math.floor((window.innerWidth-box.width)/2);
     var need=railW||${RAIL_MIN};
-    if(free<need||window.innerWidth<1200){
-      if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}
-      return;
-    }
+    if(free<need||window.innerWidth<1200){hide();return;}
     if(!rails)build();
     if(!railW)railW=free>=${RAIL_WIDE}?300:160;
     var off=Math.max(8,Math.floor((free-railW)/2));
