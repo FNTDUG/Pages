@@ -129,6 +129,13 @@ const NAV_CSS = `<style>
 #ug-sound-btn.muted{color:#ff9090;border-color:rgba(255,120,120,.55);background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95))}
 #ug-sound-btn.muted .ug-snd-on{display:none}
 #ug-sound-btn.muted .ug-snd-off{display:block}
+/* A mobile anchor ad is fixed to the bottom of the viewport above everything, so
+   it covers the last row of the panel. Raising the panel over it is not an option —
+   that obscures a served ad — so the panel reserves the anchor's measured height
+   instead. --ug-anchor is 0 until one is actually detected, so no dead space when
+   anchors are off or on desktop. */
+:root{--ug-anchor:0px}
+@media(max-width:768px){#ug-info-panel{padding-bottom:calc(var(--ug-anchor) + 14px)}}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
 #ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
@@ -2316,12 +2323,41 @@ function infMode(m){
   for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',bs[i].getAttribute('data-mode')===m);
   if(m==='rot')Promise.all([infRotFetch(),_infLoadFeeds()]).then(function(){infRotRender();});
 }
+var UG_OURS={'ug-info-panel':1,'ug-info-overlay':1,'ug-mobile-nav':1,'ug-overlay':1,'ug-hamburger':1,'ug-info-btn':1,'ug-sound-btn':1};
+function ugAnchorPad(){
+  var h=0;
+  if(window.innerWidth<=768){
+    var n=document.body.children;
+    for(var i=0;i<n.length;i++){
+      var el=n[i];
+      if(UG_OURS[el.id])continue;
+      if(String(el.className||'').indexOf('ug-')===0)continue;
+      var cs;try{cs=getComputedStyle(el);}catch(e){continue;}
+      if(cs.position!=='fixed'||cs.display==='none')continue;
+      var r=el.getBoundingClientRect();
+      if(r.height<20||r.height>260)continue;
+      if(r.bottom<window.innerHeight-4)continue;
+      if(r.width<window.innerWidth*0.6)continue;
+      if(r.height>h)h=r.height;
+    }
+  }
+  document.documentElement.style.setProperty('--ug-anchor',Math.round(h)+'px');
+}
+function ugAnchorWatch(){
+  ugAnchorPad();
+  [600,2000,5000].forEach(function(ms){setTimeout(ugAnchorPad,ms);});
+  window.addEventListener('resize',ugAnchorPad,{passive:true});
+  if(typeof MutationObserver!=='undefined')new MutationObserver(function(){
+    clearTimeout(ugAnchorPad._t);ugAnchorPad._t=setTimeout(ugAnchorPad,250);
+  }).observe(document.body,{childList:true});
+}
 function infRotBoot(){
   if(_rotBooted)return;_rotBooted=true;
   var p=document.getElementById('ug-info-panel');
   if(p&&!p.getAttribute('data-mode'))p.setAttribute('data-mode','info');
   infRotFetch();
   setInterval(infRotTick,15000);
+  ugAnchorWatch();
 }
 function _infRotRows(){
   var S=[],d=_rotData;if(!d)return S;
