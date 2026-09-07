@@ -257,8 +257,8 @@ const NAV_CSS = `<style>
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
 .ug-xd{display:flex;justify-content:flex-end;margin:0 0 18px}
-.ug-xd-btn{position:relative;width:18px;height:18px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,164,91,.28);color:rgba(255,255,255,.5);font-size:8px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
-.ug-xd-btn::after{content:'';position:absolute;inset:-10px}
+.ug-xd-btn{position:relative;width:23px;height:23px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,164,91,.28);color:rgba(255,255,255,.5);font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
+.ug-xd-btn::after{content:'';position:absolute;inset:-8px}
 .ug-xd-btn:hover{background:rgba(255,164,91,.15);color:#ffa45b}
 .ug-rail-in .ug-xd{margin:0 0 10px}
 .ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
@@ -408,6 +408,7 @@ const XDISMISS_HTML = `<script>
   }
   function bar(box){
     if(box.getAttribute('data-xd'))return;
+    if(!box.querySelector('ins.adsbygoogle'))return;
     box.setAttribute('data-xd','1');
     var b=document.createElement('div');
     b.className='ug-xd';
@@ -3128,10 +3129,10 @@ export default {
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
-          if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
-          if (noInfoPanel) return;
+          if (noInfoPanel) { if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true }); return; }
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
+          if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
           if (wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
         }
       })
