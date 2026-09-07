@@ -256,6 +256,9 @@ const NAV_CSS = `<style>
 /* ── INFO panel ad slots ── */
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
+.ug-xd{display:flex;justify-content:flex-end;margin:0 0 24px}
+.ug-xd-btn{width:44px;height:44px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,164,91,.3);color:rgba(255,255,255,.6);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
+.ug-xd-btn:hover{background:rgba(255,164,91,.15);color:#ffa45b}
 .ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
 @media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
@@ -382,6 +385,54 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 // true. Until then it runs on the site-wide display slot so the placement is
 // visible end to end.
 // ─────────────────────────────────────────────────────────────────────────────
+// ─── PER-AD DISMISS (TRIAL) ───────────────────────────────────────────────────
+// A close button above each ad, on the listed pages only. The button sits in our
+// own bar with clear separation — never over the ad iframe, which would both
+// obscure the unit and invite the mis-taps that trigger Google's Confirm Click
+// penalty. Add paths to XDISMISS_PAGES to widen the trial.
+// ─────────────────────────────────────────────────────────────────────────────
+const XDISMISS_PAGES = {
+  '/fntd2/tierlists-1': true
+};
+function xdActive(pathname) {
+  const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+  return XDISMISS_PAGES[p] === true;
+}
+const XDISMISS_HTML = `<script>
+(function(){
+  function close(box){box.style.display='none';}
+  function bar(box){
+    if(box.getAttribute('data-xd'))return;
+    box.setAttribute('data-xd','1');
+    var b=document.createElement('div');
+    b.className='ug-xd';
+    var btn=document.createElement('button');
+    btn.className='ug-xd-btn';
+    btn.setAttribute('aria-label','Close this ad');
+    btn.setAttribute('type','button');
+    btn.innerHTML='&#x2715;';
+    btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();close(box);});
+    b.appendChild(btn);
+    box.insertBefore(b,box.firstChild);
+  }
+  function scan(){
+    var sel='#ug-main .ad-slot, #ug-info-panel .inf-ad';
+    var n=document.querySelectorAll(sel);
+    for(var i=0;i<n.length;i++)bar(n[i]);
+  }
+  var t=null;
+  function sched(){clearTimeout(t);t=setTimeout(scan,250);}
+  scan();sched();
+  window.addEventListener('load',sched);
+  if(typeof MutationObserver!=='undefined'){
+    ['ug-main','ug-info-panel'].forEach(function(id){
+      var root=document.getElementById(id);
+      if(root)new MutationObserver(sched).observe(root,{childList:true,subtree:true});
+    });
+  }
+})();
+<\/script>`;
+
 // ─── MOBILE IN-CONTENT ADS ────────────────────────────────────────────────────
 // One ad per CONTENT_AD_EVERY px of rendered content, below CONTENT_AD_MAXW only
 // (wider viewports get the side rails instead). Swap CONTENT_AD_SLOT for its own
@@ -3071,6 +3122,7 @@ export default {
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
+          if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
