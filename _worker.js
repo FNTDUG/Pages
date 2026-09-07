@@ -1776,7 +1776,7 @@ var ESTABLISHMENTS=[
 // and the card rarities/weights above.
 var EST_PACKS=[
   {name:'Establishment Card Pack',rarity:'epic',cost:'1000 Tokens',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1},cards:['Arcade','Tshirt','Bonnie and Chica Fight','Chocolate Coin','Paycheck','Ticket Eater','Sale','Catalog','Shhh','Clover','In the jar','Fazbear Mafia','Crying Helpy','Scrooge McHelpy','Pimptrap','Puppet Souls','Freddy Fazboost','Springbonnie','You Won!','Peaceful Luck',"Foxy's Throne"]},
-  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Token Card Apex','Faz Rating Card Apex']}
+  {name:'Establishment Card Pack 2',rarity:'epic',cost:'30 Souls',rarities:{uncommon:60,rare:32.5,epic:5,mythic:2.5,secret:0.5,nightmare:0.1,apex:0.01},cards:['Raid Coin Card Uncommon','Raid Coin Card Rare','Raid Coin Card Epic','Raid Coin Card Mythical','Raid Coin Card Secret','Raid Coin Card Nightmare','Raid Coin Card Apex','Luck Card Apex','Coin Card Apex','Faz Rating Card Apex']}
 ];
 (function(){
   var el=document.getElementById('inf-establishments-inner');
