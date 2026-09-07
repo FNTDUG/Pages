@@ -268,7 +268,7 @@ const NAV_CSS = `<style>
 .hp-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .hp-name{font-family:'Audiowide',sans-serif;font-size:11px;color:#e8e8e8;letter-spacing:.5px}
 .hp-cost{font-family:'Audiowide',sans-serif;font-size:10px;color:#ffa45b;white-space:nowrap;flex-shrink:0}
-.hp-quest{font-size:11.5px;color:rgba(255,255,255,.5);line-height:1.55;margin-top:3px;font-style:italic}
+.hp-quest{font-size:13px;color:#ccc;line-height:1.7;margin-top:4px}
 .hp-eff{font-size:12.5px;color:#ccc;line-height:1.6;margin-top:3px}
 .rot-group{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:12px 0 2px}
 .rot-group:first-child{padding-top:2px}
@@ -1264,7 +1264,7 @@ function buildHeroPaths(card,unit){
       var cost=document.createElement('span');cost.className='hp-cost';cost.textContent=t.c||'Free';
       head.appendChild(nm);head.appendChild(cost);
       main.appendChild(head);
-      if(t.q){var qd=document.createElement('div');qd.className='hp-quest';qd.textContent='Quest: '+t.q;main.appendChild(qd);}
+      if(t.q){var qd=document.createElement('div');qd.className='hp-quest';qd.textContent='● '+t.q;main.appendChild(qd);}
       var ed=document.createElement('div');ed.className='hp-eff';ed.textContent=t.e||'';main.appendChild(ed);
       row.appendChild(im);row.appendChild(main);inner.appendChild(row);
     });
