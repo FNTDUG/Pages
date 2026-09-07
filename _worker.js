@@ -254,6 +254,9 @@ const NAV_CSS = `<style>
 .inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
 .inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
 /* ── INFO panel ad slots ── */
+.ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
+.ug-rail-in{position:sticky;top:180px;text-align:center}
+@media(max-width:1199px){.ug-rail{display:none!important}}
 .inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-in{padding:16px 0;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-sub{padding:14px 0 2px;border-top:1px solid rgba(255,164,91,.1);border-bottom:0}
@@ -375,6 +378,76 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 // true. Until then it runs on the site-wide display slot so the placement is
 // visible end to end.
 // ─────────────────────────────────────────────────────────────────────────────
+// ─── DESKTOP SIDE RAILS ───────────────────────────────────────────────────────
+// Swap RAIL_AD_SLOT for a dedicated vertical display unit. Until then it runs on
+// the site-wide display slot so the placement is visible end to end.
+// ─────────────────────────────────────────────────────────────────────────────
+const RAIL_AD_SLOT = '9010982209';
+const RAIL_MIN = 180;
+const RAIL_WIDE = 330;
+const RAIL_HTML = `<script>
+(function(){
+  if(!document.querySelector('#ug-main ins.adsbygoogle'))return;
+  var content=document.getElementById('ug-content');
+  if(!content)return;
+  var rails=null,railW=0;
+  function clean(){var t=document.getElementById('cleanModeToggle');return !!(t&&t.classList.contains('on'));}
+  function build(){
+    rails={};
+    ['left','right'].forEach(function(side){
+      var wrap=document.createElement('div');
+      wrap.className='ug-rail ad-slot';
+      var inner=document.createElement('div');
+      inner.className='ug-rail-in';
+      wrap.appendChild(inner);
+      document.body.appendChild(wrap);
+      rails[side]={wrap:wrap,inner:inner};
+    });
+  }
+  function fill(r){
+    if(r.inner.getAttribute('data-on')||clean())return;
+    r.inner.setAttribute('data-on','1');
+    var ins=document.createElement('ins');
+    ins.className='adsbygoogle';
+    ins.style.cssText='display:inline-block;width:'+railW+'px;height:600px';
+    ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+    ins.setAttribute('data-ad-slot','${RAIL_AD_SLOT}');
+    r.inner.appendChild(ins);
+    try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  }
+  function layout(){
+    var box=content.getBoundingClientRect();
+    var free=Math.floor((window.innerWidth-box.width)/2);
+    var need=railW||${RAIL_MIN};
+    if(free<need||window.innerWidth<1200){
+      if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}
+      return;
+    }
+    if(!rails)build();
+    if(!railW)railW=free>=${RAIL_WIDE}?300:160;
+    var off=Math.max(8,Math.floor((free-railW)/2));
+    var top=box.top+(window.scrollY||window.pageYOffset);
+    var h=content.offsetHeight;
+    ['left','right'].forEach(function(side){
+      var w=rails[side].wrap;
+      w.style.display='block';
+      w.style.top=top+'px';
+      w.style.height=h+'px';
+      w.style.width=railW+'px';
+      w.style[side]=off+'px';
+    });
+    fill(rails.left);fill(rails.right);
+  }
+  var t=null;
+  function sched(){clearTimeout(t);t=setTimeout(layout,150);}
+  layout();sched();
+  window.addEventListener('resize',sched,{passive:true});
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(sched).observe(content);
+  var ct=document.getElementById('cleanModeToggle');
+  if(ct)ct.addEventListener('click',function(){setTimeout(layout,60);});
+})();
+<\/script>`;
+
 const PANEL_AD_SLOT = '6967580595';
 const PANEL_AD_FLUID = true;
 const PANEL_AD = `
@@ -2916,6 +2989,7 @@ export default {
           el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
+          el.append(RAIL_HTML, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
