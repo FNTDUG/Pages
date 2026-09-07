@@ -257,7 +257,7 @@ const NAV_CSS = `<style>
 .inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-in{padding:16px 0;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
 .inf-ad-sub{padding:14px 0 2px;border-top:1px solid rgba(255,164,91,.1);border-bottom:0}
-.inf-ad:empty{padding:0;border:0;min-height:0}
+.inf-ad:empty{padding:0;border:0;min-height:0;margin:0}
 .inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
 .inf-ad ins{display:block}
 /* ── Site footer (single-source: content + style come from the worker) ── */
@@ -501,7 +501,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="banners" onclick="infToggle(this)">User Banners <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
-    </div>${PANEL_AD}
+    </div>
   </div>
 </div>
 <script>
@@ -1964,28 +1964,39 @@ function _infAdWatch(ph){
   if(!ph)return;
   if(typeof IntersectionObserver==='undefined'){_infAdFill(ph);return;}
   if(!_infAdObs)_infAdObs=new IntersectionObserver(function(es){
-    for(var i=0;i<es.length;i++)if(es[i].isIntersecting){_infAdObs.unobserve(es[i].target);_infAdFill(es[i].target);}
+    for(var i=0;i<es.length;i++)if(es[i].isIntersecting){var t=es[i].target;_infAdObs.unobserve(t);if(t._adGo)t._adGo();else _infAdFill(t);}
   },{root:document.getElementById('ug-info-panel'),rootMargin:'250px 0px'});
   _infAdObs.observe(ph);
 }
 function _infAdPh(cls){var d=document.createElement('div');d.className='inf-ad ad-slot '+cls;d.setAttribute('data-ad-ph','');return d;}
+function _infAdSpot(parent,anchor,cls){
+  var probe=anchor||parent;
+  if(!probe||probe.getAttribute('data-adspot'))return;
+  probe.setAttribute('data-adspot','1');
+  probe._adGo=function(){
+    if(probe.getAttribute('data-adset'))return;
+    var t=document.getElementById('cleanModeToggle');
+    if(t&&t.classList.contains('on'))return;
+    probe.setAttribute('data-adset','1');
+    var d=_infAdPh(cls);
+    if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(d,anchor.nextSibling);
+    else parent.appendChild(d);
+    _infAdFill(d);
+  };
+  if(typeof IntersectionObserver==='undefined'){probe._adGo();return;}
+  _infAdWatch(probe);
+}
 function infTabAds(inner){
   if(!inner||inner.getAttribute('data-ads'))return;
   inner.setAttribute('data-ads','1');
   var kids=[],i,c;
   for(i=0;i<inner.children.length;i++){c=inner.children[i];if(String(c.className).indexOf('inf-ad')===-1)kids.push(c);}
-  for(i=INF_AD_EVERY-1;i<kids.length;i+=INF_AD_EVERY){
-    var ph=_infAdPh('inf-ad-in');
-    inner.insertBefore(ph,kids[i].nextSibling);
-    _infAdWatch(ph);
-  }
+  for(i=INF_AD_EVERY-1;i<kids.length;i+=INF_AD_EVERY)_infAdSpot(inner,kids[i],'inf-ad-in');
 }
 function infEntryAd(body){
   if(!body||body.getAttribute('data-ads'))return;
   body.setAttribute('data-ads','1');
-  var ph=_infAdPh('inf-ad-sub');
-  body.appendChild(ph);
-  _infAdWatch(ph);
+  _infAdSpot(body,null,'inf-ad-sub');
 }
 var _infIdx=null,_infFeedData={},_infUnitMap={},_infFeedsLoaded=false,_infQTimer=null;
 function _infNr(r){r=String(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
