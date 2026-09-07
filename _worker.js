@@ -215,7 +215,7 @@ const NAV_CSS = `<style>
 .inf-subdrop-btn:hover{background:rgba(255,164,91,.04)}
 .inf-subdrop.open>.inf-subdrop-btn{background:rgba(255,164,91,.05)}
 .inf-subdrop-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.inf-subdrop.open .inf-subdrop-body{max-height:1200px}
+.inf-subdrop.open .inf-subdrop-body{max-height:2400px}
 .inf-subdrop-inner{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
@@ -255,6 +255,9 @@ const NAV_CSS = `<style>
 .inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
 /* ── INFO panel ad slots ── */
 .inf-ad{padding:26px 14px;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
+.inf-ad-in{padding:16px 0;border-top:1px solid rgba(255,164,91,.1);border-bottom:1px solid rgba(255,164,91,.1)}
+.inf-ad-sub{padding:14px 0 2px;border-top:1px solid rgba(255,164,91,.1);border-bottom:0}
+.inf-ad:empty{padding:0;border:0;min-height:0}
 .inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
 .inf-ad ins{display:block}
 /* ── Site footer (single-source: content + style come from the worker) ── */
@@ -375,9 +378,7 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 const PANEL_AD_SLOT = '6967580595';
 const PANEL_AD_FLUID = true;
 const PANEL_AD = `
-    <div class="inf-ad ad-slot">${PANEL_AD_FLUID ? '' : '<div class="inf-ad-label">Advertisement</div>'}
-      <ins class="adsbygoogle" style="display:block;text-align:center" data-ad-client="ca-pub-7017245771068026" data-ad-slot="${PANEL_AD_SLOT}"${PANEL_AD_FLUID ? ' data-ad-layout="in-article" data-ad-format="fluid"' : ' data-ad-format="auto" data-full-width-responsive="true"'}></ins>
-    </div>`;
+    <div class="inf-ad ad-slot" data-ad-ph></div>`;
 
 const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label="Info panel">INFO</button>
 <div id="ug-info-overlay" onclick="ugInfoClose()"></div>
@@ -510,10 +511,10 @@ function ugPanelAds(){
   if(_ugPanelAdsPushed)return;
   var t=document.getElementById('cleanModeToggle');
   if(t&&t.classList.contains('on'))return;
-  var slots=document.querySelectorAll('#ug-info-panel ins.adsbygoogle');
-  if(!slots.length)return;
+  var ph=document.querySelectorAll('#ug-info-panel [data-ad-ph]');
+  if(!ph.length)return;
   _ugPanelAdsPushed=true;
-  for(var i=0;i<slots.length;i++){try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}}
+  for(var i=0;i<ph.length;i++)_infAdWatch(ph[i]);
 }
 function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';ugPanelAds();}
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_ugInfoSY);document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});document.querySelectorAll('.inf-exp-body').forEach(function(b){b.style.maxHeight='0';});_infExp=null;var _q=document.getElementById('inf-q');if(_q&&_q.value){_q.value='';_infRunSearch('');}}
@@ -530,17 +531,17 @@ function infToggle(btn){
   infOpen(body);
 }
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
-function infOpen(body){if(!body)return;_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
+function infOpen(body){if(!body)return;infTabAds(body.querySelector('.inf-drop-inner'));_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
 function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
-function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');}
+function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');if(s.classList.contains('open'))infEntryAd(s.querySelector('.inf-subdrop-inner'));}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
 function infToggleExp(row,body,arr){
   var wasThis=_infExp&&_infExp.body===body;
   if(_infExp){_infExp.body.style.maxHeight='0';_infExp.row.style.marginBottom='0';if(_infExp.arr)_infExp.arr.textContent='/';_infExp=null;}
   if(wasThis)return;
-  body.style.maxHeight='2000px';row.style.marginBottom='8px';if(arr)arr.textContent='-';_infExp={row:row,body:body,arr:arr};
+  infEntryAd(body);body.style.maxHeight='2000px';row.style.marginBottom='8px';if(arr)arr.textContent='-';_infExp={row:row,body:body,arr:arr};
   var pb=row.closest('.inf-drop-body');if(pb)pb.style.maxHeight='none';
 }
 function infLightbox(src){
@@ -1943,6 +1944,48 @@ function infPlayMinigame(url,opts){
     if(v.readyState>=1){try{v.webkitEnterFullscreen();}catch(e){}}
     else{v.addEventListener('loadedmetadata',function(){try{v.webkitEnterFullscreen();}catch(e){}},{once:true});}
   }
+}
+var INF_AD_EVERY=10,_infAdObs=null;
+function _infAdFill(ph){
+  if(!ph||ph.getAttribute('data-ad-on'))return;
+  var t=document.getElementById('cleanModeToggle');
+  if(t&&t.classList.contains('on'))return;
+  ph.setAttribute('data-ad-on','1');
+  var ins=document.createElement('ins');
+  ins.className='adsbygoogle';
+  ins.style.cssText='display:block;text-align:center';
+  ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+  ins.setAttribute('data-ad-slot','${PANEL_AD_SLOT}');
+  ${PANEL_AD_FLUID ? "ins.setAttribute('data-ad-layout','in-article');ins.setAttribute('data-ad-format','fluid');" : "ins.setAttribute('data-ad-format','auto');ins.setAttribute('data-full-width-responsive','true');"}
+  ph.appendChild(ins);
+  try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+}
+function _infAdWatch(ph){
+  if(!ph)return;
+  if(typeof IntersectionObserver==='undefined'){_infAdFill(ph);return;}
+  if(!_infAdObs)_infAdObs=new IntersectionObserver(function(es){
+    for(var i=0;i<es.length;i++)if(es[i].isIntersecting){_infAdObs.unobserve(es[i].target);_infAdFill(es[i].target);}
+  },{root:document.getElementById('ug-info-panel'),rootMargin:'250px 0px'});
+  _infAdObs.observe(ph);
+}
+function _infAdPh(cls){var d=document.createElement('div');d.className='inf-ad ad-slot '+cls;d.setAttribute('data-ad-ph','');return d;}
+function infTabAds(inner){
+  if(!inner||inner.getAttribute('data-ads'))return;
+  inner.setAttribute('data-ads','1');
+  var kids=[],i,c;
+  for(i=0;i<inner.children.length;i++){c=inner.children[i];if(String(c.className).indexOf('inf-ad')===-1)kids.push(c);}
+  for(i=INF_AD_EVERY-1;i<kids.length;i+=INF_AD_EVERY){
+    var ph=_infAdPh('inf-ad-in');
+    inner.insertBefore(ph,kids[i].nextSibling);
+    _infAdWatch(ph);
+  }
+}
+function infEntryAd(body){
+  if(!body||body.getAttribute('data-ads'))return;
+  body.setAttribute('data-ads','1');
+  var ph=_infAdPh('inf-ad-sub');
+  body.appendChild(ph);
+  _infAdWatch(ph);
 }
 var _infIdx=null,_infFeedData={},_infUnitMap={},_infFeedsLoaded=false,_infQTimer=null;
 function _infNr(r){r=String(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
