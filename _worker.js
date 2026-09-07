@@ -413,6 +413,7 @@ const XDISMISS_HTML = `<script>
 (function(){
   function close(box){
     var t=(box.className||'').indexOf('ug-rail-in')!==-1&&box.parentNode?box.parentNode:box;
+    t.setAttribute('data-dismissed','1');
     t.style.display='none';
   }
   function bar(box){
@@ -561,7 +562,7 @@ const RAIL_HTML = `<script>
     r.inner.appendChild(ins);
     try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
     [1600,4000].forEach(function(ms){setTimeout(function(){
-      if(ins.getAttribute('data-ad-status')==='unfilled')r.wrap.style.display='none';
+      if(ins.getAttribute('data-ad-status')==='unfilled'){r.wrap.setAttribute('data-dismissed','1');r.wrap.style.display='none';}
     },ms);});
   }
   function hide(){if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}}
@@ -578,6 +579,7 @@ const RAIL_HTML = `<script>
     var h=content.offsetHeight;
     ['left','right'].forEach(function(side){
       var w=rails[side].wrap;
+      if(w.getAttribute('data-dismissed'))return;
       w.style.display='block';
       w.style.top=top+'px';
       w.style.height=h+'px';
