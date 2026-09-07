@@ -1267,9 +1267,10 @@ function infLoadShopQuests(){
     var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
   }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
 }
-function buildShopQuests(pEl,uMap,pMap){
+function buildShopQuests(pEl,uMap,pMap){buildShopStyle(pEl,SHOP_QUESTS,uMap,pMap);}
+function buildShopStyle(pEl,list,uMap,pMap){
   if(!pEl)return;
-  SHOP_QUESTS.forEach(function(h){
+  list.forEach(function(h){
     var u=uMap[h.unit.toLowerCase()]||{};
     var p=pMap[h.present.toLowerCase()]||{};
     var card=document.createElement('div');card.className='inf-card';
@@ -2234,6 +2235,8 @@ function infRotTick(){
   el.className='inf-rt'+(left<300?' soon':'');
 }
 var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',material:'materials',present:'presents',banner:'banners'};
+var ROT_POOL_LABEL={Lobby:'Coins'};
+function _rotPMap(){var d=_infFeedData['presents']||{},m={},n;for(n in d){var o=d[n]||{};m[n.toLowerCase()]={img:o.image||'',rarity:_infNr(o.rarity)};}return m;}
 function _rotLook(name,type){
   var k=String(name||'').toLowerCase();
   var fk=ROT_TYPE_FEED[String(type||'').toLowerCase()];
@@ -2261,29 +2264,43 @@ function infRotRender(){
   el=document.getElementById('inf-rot-banners-inner');
   if(el){
     if(b){var h='';Object.keys(b).forEach(function(cur){
-      h+='<div class="rot-group">'+_infEsc(cur)+'</div>';
+      h+='<div class="rot-group">'+_infEsc(ROT_POOL_LABEL[cur]||cur)+'</div>';
       (b[cur]||[]).forEach(function(u){h+=_rotCard(u.name,u.rarity,'');});
     });el.innerHTML=h;}
     else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+    el.removeAttribute('data-ads');
   }
   var m=(_rotDig(_rotData.merchant)||{}).items;
   el=document.getElementById('inf-rot-merchant-inner');
   if(el){
-    if(m){var h2='';m.slice().sort(function(a,z){return (a.slot||0)-(z.slot||0);}).forEach(function(i){
-      var amt=(i.amounts&&i.amounts[0]>1)?(' x'+i.amounts[0]):'';
-      h2+=_rotCard(i.name,'',i.type+' - '+_rotNum(i.price)+' '+i.currency+amt,i.type);
-    });el.innerHTML=h2;}
+    if(m){
+      var sorted=m.slice().sort(function(a,z){return (a.slot||0)-(z.slot||0);}),h2='',groups=[],by={};
+      sorted.forEach(function(i){var g=i.category||'Other';if(!by[g]){by[g]=[];groups.push(g);}by[g].push(i);});
+      groups.sort(function(a,z){return (a==='Units'?0:1)-(z==='Units'?0:1);});
+      groups.forEach(function(g){
+        h2+='<div class="rot-group">'+_infEsc(g)+'</div>';
+        by[g].forEach(function(i){
+          var amt=(i.amounts&&i.amounts[0]>1)?(' x'+i.amounts[0]):'';
+          h2+=_rotCard(i.name,'',i.type+' - '+_rotNum(i.price)+' '+i.currency+amt,i.type);
+        });
+      });
+      el.innerHTML=h2;
+    }
     else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+    el.removeAttribute('data-ads');
   }
   var q=(_rotDig(_rotData.questShop)||{}).quests;
   el=document.getElementById('inf-rot-quests-inner');
   if(el){
-    if(q){var h3='';q.forEach(function(x){
-      var rw=(x.rewards||[]).map(function(r){return r.type+' - '+r.name+(r.amount>1?(' x'+r.amount):'');}).join(', ');
-      h3+='<div class="inf-card"><h4>'+_infEsc(x.name)+'</h4><div class="rot-meta">'+_infEsc(_rotNum(x.price)+' Tokens'+(rw?'  |  '+rw:''))+'</div>'+
-          (x.objectives||[]).map(function(o){return '<div class="rot-obj">&#9679; '+_infEsc(o)+'</div>';}).join('')+'</div>';
-    });el.innerHTML=h3;}
+    el.innerHTML='';
+    if(q&&q.length)buildShopStyle(el,q.map(function(x){
+      var rw=(x.rewards||[])[0]||{};
+      var pres=rw.name||'';
+      var unit=pres.replace(' Present','').replace(' Bundle','').replace(' Skin','');
+      return {unit:unit||x.name,present:pres,cost:x.price,quests:x.objectives||[]};
+    }),_infUnitMap,_rotPMap());
     else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+    el.removeAttribute('data-ads');
   }
 }
 function infMode(m){
@@ -2304,7 +2321,8 @@ function _infRotRows(){
   var S=[],d=_rotData;if(!d)return S;
   var b=(_rotDig(d.banners)||{}).banners;
   if(b)Object.keys(b).forEach(function(cur){
-    (b[cur]||[]).forEach(function(u){S.push({n:u.name,c:'rot-banners',cl:'Banners - '+cur,rar:_infNr(u.rarity),m:'In the '+cur+' banner right now'});});
+    var lab=ROT_POOL_LABEL[cur]||cur;
+    (b[cur]||[]).forEach(function(u){S.push({n:u.name,c:'rot-banners',cl:'Banners - '+lab,rar:_infNr(u.rarity),m:'In the '+lab+' banner right now'});});
   });
   var m=(_rotDig(d.merchant)||{}).items;
   if(m)m.forEach(function(i){S.push({n:i.name,c:'rot-merchant',cl:'Merchant',t:i.type,m:i.type+' - '+_rotNum(i.price)+' '+i.currency});});
@@ -2359,9 +2377,16 @@ function _infAdSpot(parent,anchor,cls){
 }
 function infTabAds(inner){
   if(!inner||inner.getAttribute('data-ads'))return;
+  // Rotation lists are one continuous pool, so an ad dropped every 10 rows lands
+  // mid-list and buries the rest of the summons. They take a single ad after the
+  // last row instead; the reference tabs keep the interleaved placement.
+  var isRot=String(inner.id||'').indexOf('inf-rot-')===0;
+  if(isRot&&inner.querySelector('.rot-wait'))return;
   inner.setAttribute('data-ads','1');
   var kids=[],i,c;
   for(i=0;i<inner.children.length;i++){c=inner.children[i];if(String(c.className).indexOf('inf-ad')===-1)kids.push(c);}
+  if(!kids.length)return;
+  if(isRot){_infAdSpot(inner,kids[kids.length-1],'inf-ad-in');return;}
   for(i=INF_AD_EVERY-1;i<kids.length;i+=INF_AD_EVERY)_infAdSpot(inner,kids[i],'inf-ad-in');
 }
 function infEntryAd(body){
