@@ -220,6 +220,25 @@ const NAV_CSS = `<style>
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
+/* ── INFO panel mode switch + rotations ── */
+.inf-modes{display:flex;gap:6px;padding:10px 14px 0;background:rgba(4,1,12,.96)}
+.inf-mode{flex:1;padding:8px 6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,164,91,.18);border-radius:7px;color:rgba(255,255,255,.55);font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;line-height:1.35;transition:background .13s,border-color .13s,color .13s}
+.inf-mode.on{background:rgba(255,164,91,.13);border-color:rgba(255,164,91,.5);color:#ffa45b}
+.inf-rt{display:block;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;margin-top:5px;color:rgba(255,255,255,.38)}
+.inf-mode.on .inf-rt{color:rgba(255,164,91,.85)}
+.inf-rt.soon{color:#ff8f6b}
+#inf-rot{display:none}
+#ug-info-panel[data-mode="rot"] #inf-rot{display:block}
+#ug-info-panel[data-mode="rot"] #ug-info-body{display:none}
+#ug-info-panel.searching #inf-rot{display:none!important}
+.rot-row{display:flex;align-items:center;gap:10px}
+.rot-row h4{margin:0}
+.rot-main{flex:1;min-width:0}
+.rot-meta{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:2px}
+.rot-group{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:12px 0 2px}
+.rot-group:first-child{padding-top:2px}
+.rot-obj{font-size:12px;color:#ccc;line-height:1.7}
+.rot-wait{padding:24px 16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px}
 /* ── INFO panel search ── */
 .inf-topstick{position:sticky;top:0;z-index:3}
 .inf-topstick .ug-mn-header{position:static}
@@ -614,6 +633,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
     </div>
     <button class="ug-mn-close" onclick="ugInfoClose()" aria-label="Close">&#x2715;</button>
   </div>
+  <div class="inf-modes">
+    <button class="inf-mode on" data-mode="info" onclick="infMode('info')">Information</button>
+    <button class="inf-mode" data-mode="rot" onclick="infMode('rot')">Rotations<span class="inf-rt" id="inf-rot-t"></span></button>
+  </div>
   <div class="inf-search">
     <div class="inf-sfield">
       <svg class="inf-sicon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"></circle><line x1="10.8" y1="10.8" x2="15" y2="15"></line></svg>
@@ -726,6 +749,20 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
     </div>
   </div>
+  <div id="inf-rot">
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Banners <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-rot-banners-inner"><div class="rot-wait">Loading rotations...</div></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Merchant <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-rot-merchant-inner"><div class="rot-wait">Loading rotations...</div></div></div>
+    </div>
+    <div class="inf-drop">
+      <button class="inf-drop-btn" onclick="infToggle(this)">Quest Shop <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-rot-quests-inner"><div class="rot-wait">Loading rotations...</div></div></div>
+    </div>
+  </div>
 </div>
 <script>
 var _ugInfoSY=0;
@@ -739,7 +776,7 @@ function ugPanelAds(){
   _ugPanelAdsPushed=true;
   for(var i=0;i<ph.length;i++)_infAdWatch(ph[i]);
 }
-function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';ugPanelAds();}
+function ugInfoOpen(){var p=document.getElementById('ug-info-panel');var o=document.getElementById('ug-info-overlay');_ugInfoSY=window.scrollY||window.pageYOffset;p.classList.add('open');o.classList.add('open');document.body.style.position='fixed';document.body.style.top='-'+_ugInfoSY+'px';document.body.style.left='0';document.body.style.right='0';ugPanelAds();infRotBoot();}
 function ugInfoClose(){document.getElementById('ug-info-panel').classList.remove('open');document.getElementById('ug-info-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_ugInfoSY);document.querySelectorAll('.inf-drop.open').forEach(function(d){d.classList.remove('open');var b=d.querySelector('.inf-drop-btn');if(b)_infStop(b);var db=d.querySelector('.inf-drop-body');if(db)db.style.maxHeight='';});document.querySelectorAll('.inf-subdrop.open').forEach(function(d){d.classList.remove('open');});document.querySelectorAll('.inf-exp-body').forEach(function(b){b.style.maxHeight='0';});_infExp=null;var _q=document.getElementById('inf-q');if(_q&&_q.value){_q.value='';_infRunSearch('');}}
 var _infTimers=new Map();var _IF=['/','-','\\\\','|'];
 function _infSpin(btn){if(_infTimers.has(btn))clearInterval(_infTimers.get(btn));var a=btn.querySelector('.inf-drop-arrow');if(!a)return;var i=0;a.textContent=_IF[0];_infTimers.set(btn,setInterval(function(){i=(i+1)%_IF.length;a.textContent=_IF[i];},135));}
@@ -2168,6 +2205,114 @@ function infPlayMinigame(url,opts){
     else{v.addEventListener('loadedmetadata',function(){try{v.webkitEnterFullscreen();}catch(e){}},{once:true});}
   }
 }
+var _rotData=null,_rotAt=0,_rotDrawn=false,_rotBooted=false,_rotReloading=false;
+function _rotDig(o){return (o&&o.data&&o.data.data)||null;}
+function infRotFetch(){
+  if(_rotData)return Promise.resolve(_rotData);
+  return fetch('/rotations').then(function(r){return r.json();}).then(function(j){
+    if(j&&j.banners){_rotData=j;_rotAt=(j.banners.data&&j.banners.data.refreshAt)||0;_infIdx=null;infRotTick();}
+    return _rotData;
+  }).catch(function(){return null;});
+}
+function infRotTick(){
+  var el=document.getElementById('inf-rot-t');if(!el)return;
+  if(!_rotAt){el.textContent='';return;}
+  var left=_rotAt-Math.floor(Date.now()/1000);
+  if(left<=0){
+    el.textContent='refreshing';el.className='inf-rt soon';
+    if(!_rotReloading){_rotReloading=true;setTimeout(function(){
+      _rotData=null;_rotDrawn=false;_rotReloading=false;
+      infRotFetch().then(function(){
+        var p=document.getElementById('ug-info-panel');
+        if(p&&p.getAttribute('data-mode')==='rot')infRotRender();
+      });
+    },25000);}
+    return;
+  }
+  var m=Math.floor(left/60);
+  el.textContent=(m>=60?(Math.floor(m/60)+'h '+(m%60)+'m'):(m>0?m+'m':left+'s'));
+  el.className='inf-rt'+(left<300?' soon':'');
+}
+var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',material:'materials',present:'presents',banner:'banners'};
+function _rotLook(name,type){
+  var k=String(name||'').toLowerCase();
+  var fk=ROT_TYPE_FEED[String(type||'').toLowerCase()];
+  if(fk){
+    var d=_infFeedData[fk];
+    if(d)for(var n in d)if(n.toLowerCase()===k){var it=d[n]||{};return {img:it.image||'',rarity:_infNr(it.rarity)};}
+  }
+  var u=_infUnitMap[k];
+  if(u&&u.img)return u;
+  var a=_infAnyLookup(name);
+  return (a&&a.img)?a:(u||a||{});
+}
+function _rotCard(name,rarity,meta,type){
+  var look=_rotLook(name,type);
+  var rar=_infNr(rarity)||_infNr(look.rarity)||'';
+  var g=INF_RG[rar];
+  var badge='<span class="inf-img'+(g?' inf-rarity-'+_infEsc(rar):'')+'"'+(g?'':' style="background:rgba(25,24,40,.9)"')+'>'+(look.img?'<img src="'+_infEsc(look.img)+'" alt="" loading="lazy">':'')+'</span>';
+  return '<div class="inf-card"><div class="rot-row">'+badge+'<div class="rot-main"><h4>'+_infEsc(name)+'</h4>'+(meta?'<div class="rot-meta">'+_infEsc(meta)+'</div>':'')+'</div></div></div>';
+}
+function _rotNum(n){var v=Number(n);return isFinite(v)?v.toLocaleString('en-US'):String(n);}
+function infRotRender(){
+  if(_rotDrawn||!_rotData)return;
+  _rotDrawn=true;
+  var el,b=(_rotDig(_rotData.banners)||{}).banners;
+  el=document.getElementById('inf-rot-banners-inner');
+  if(el){
+    if(b){var h='';Object.keys(b).forEach(function(cur){
+      h+='<div class="rot-group">'+_infEsc(cur)+'</div>';
+      (b[cur]||[]).forEach(function(u){h+=_rotCard(u.name,u.rarity,'');});
+    });el.innerHTML=h;}
+    else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+  }
+  var m=(_rotDig(_rotData.merchant)||{}).items;
+  el=document.getElementById('inf-rot-merchant-inner');
+  if(el){
+    if(m){var h2='';m.slice().sort(function(a,z){return (a.slot||0)-(z.slot||0);}).forEach(function(i){
+      var amt=(i.amounts&&i.amounts[0]>1)?(' x'+i.amounts[0]):'';
+      h2+=_rotCard(i.name,'',i.type+' - '+_rotNum(i.price)+' '+i.currency+amt,i.type);
+    });el.innerHTML=h2;}
+    else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+  }
+  var q=(_rotDig(_rotData.questShop)||{}).quests;
+  el=document.getElementById('inf-rot-quests-inner');
+  if(el){
+    if(q){var h3='';q.forEach(function(x){
+      var rw=(x.rewards||[]).map(function(r){return r.type+' - '+r.name+(r.amount>1?(' x'+r.amount):'');}).join(', ');
+      h3+='<div class="inf-card"><h4>'+_infEsc(x.name)+'</h4><div class="rot-meta">'+_infEsc(_rotNum(x.price)+' Tokens'+(rw?'  |  '+rw:''))+'</div>'+
+          (x.objectives||[]).map(function(o){return '<div class="rot-obj">&#9679; '+_infEsc(o)+'</div>';}).join('')+'</div>';
+    });el.innerHTML=h3;}
+    else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
+  }
+}
+function infMode(m){
+  var p=document.getElementById('ug-info-panel');if(!p)return;
+  p.setAttribute('data-mode',m);
+  var bs=p.querySelectorAll('.inf-mode');
+  for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',bs[i].getAttribute('data-mode')===m);
+  if(m==='rot')Promise.all([infRotFetch(),_infLoadFeeds()]).then(function(){infRotRender();});
+}
+function infRotBoot(){
+  if(_rotBooted)return;_rotBooted=true;
+  var p=document.getElementById('ug-info-panel');
+  if(p&&!p.getAttribute('data-mode'))p.setAttribute('data-mode','info');
+  infRotFetch();
+  setInterval(infRotTick,15000);
+}
+function _infRotRows(){
+  var S=[],d=_rotData;if(!d)return S;
+  var b=(_rotDig(d.banners)||{}).banners;
+  if(b)Object.keys(b).forEach(function(cur){
+    (b[cur]||[]).forEach(function(u){S.push({n:u.name,c:'rot-banners',cl:'Banners - '+cur,rar:_infNr(u.rarity),m:'In the '+cur+' banner right now'});});
+  });
+  var m=(_rotDig(d.merchant)||{}).items;
+  if(m)m.forEach(function(i){S.push({n:i.name,c:'rot-merchant',cl:'Merchant',t:i.type,m:i.type+' - '+_rotNum(i.price)+' '+i.currency});});
+  var q=(_rotDig(d.questShop)||{}).quests;
+  if(q)q.forEach(function(x){S.push({n:x.name,c:'rot-quests',cl:'Quest Shop',m:_rotNum(x.price)+' Tokens'});});
+  S.forEach(function(r){var u=_rotLook(r.n,r.t);if(u){if(!r.img)r.img=u.img;if(!r.rar)r.rar=_infNr(u.rarity);}});
+  return S;
+}
 var INF_AD_EVERY=10,_infAdObs=null;
 function _infAdFill(ph){
   if(!ph||ph.getAttribute('data-ad-on'))return;
@@ -2293,12 +2438,13 @@ function _infLoadFeeds(){
   var jobs=INF_FEED_CATS.map(function(p){
     return fetch('/inf-data/'+p[0]).then(function(r){return r.json();}).then(function(d){_infFeedData[p[0]]=d;}).catch(function(){});
   });
+  jobs.push(infRotFetch());
   jobs.push(fetch('/inf-data/units').then(function(r){return r.json();}).then(function(d){
     (Array.isArray(d)?d:[]).forEach(function(u){if(u.name)_infUnitMap[u.name.toLowerCase()]={img:u.imgNormal||'',rarity:_infNr(u.rarity)};});
   }).catch(function(){}));
   return Promise.all(jobs).then(function(){_infFeedsLoaded=true;_infIdx=null;});
 }
-function _infIndex(){if(!_infIdx)_infIdx=_infStaticRows().concat(_infFeedRows());return _infIdx;}
+function _infIndex(){if(!_infIdx)_infIdx=_infStaticRows().concat(_infFeedRows()).concat(_infRotRows());return _infIdx;}
 function _infMark(name,q){
   var i=name.toLowerCase().indexOf(q);
   if(i===-1)return _infEsc(name);
@@ -2310,8 +2456,9 @@ function _infCard(r,q){
   var badge='<span class="inf-img'+(!r.grad&&rar?' inf-rarity-'+_infEsc(rar):'')+'"'+(bg?' style="background:'+_infEsc(bg)+'"':'')+'>'+(r.img?'<img src="'+_infEsc(r.img)+'" alt="" loading="lazy">':(r.txt?'<span class="inf-btxt">'+_infEsc(r.txt)+'</span>':''))+'</span>';
   return '<div class="inf-card"><div class="inf-hit" data-cat="'+_infEsc(r.c)+'">'+badge+'<div class="inf-hmain"><h4>'+_infMark(r.n,q)+'</h4><div class="inf-hcat">'+_infEsc(r.cl)+'</div></div><span class="inf-hgo">&#8250;</span></div></div>';
 }
-var INF_CAT_INNER={'stat-chips':'endo-chips'};
+var INF_CAT_INNER={'stat-chips':'endo-chips','rot-banners':'rot-banners','rot-merchant':'rot-merchant','rot-quests':'rot-quests'};
 function infGo(cat){
+  infMode(String(cat).indexOf('rot-')===0?'rot':'info');
   var inner=document.getElementById('inf-'+(INF_CAT_INNER[cat]||cat)+'-inner');
   var drop=inner&&inner.closest('.inf-drop');
   var btn=drop&&drop.querySelector('.inf-drop-btn');
@@ -2942,6 +3089,14 @@ const INF_PROXY = {
 // from a Cloudflare datacenter. That vantage point is what separates "GitHub is
 // down for everyone" from "this one visitor cannot reach GitHub" (ISP block,
 // browser extension, school wifi).
+// Live rotations. The upstream is the fntd2.com rotations worker; its owner gave
+// FNTD User Guide permission to read it directly (2026-09-07) but could not issue a
+// token, because the same worker fronts other parts of their site. It gates on
+// Origin/Referer, so we present fntd2.com's and identify ourselves in the UA so the
+// traffic is attributable to us rather than anonymous.
+const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
+const ROT_UA = 'fntduserguide.com rotations proxy (+https://www.fntduserguide.com)';
+
 const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
 async function ghRawOk() {
   try {
@@ -2997,6 +3152,38 @@ export default {
           'content-type': 'application/json; charset=utf-8',
           'access-control-allow-origin': '*',
           'cache-control': 'public, max-age=45'
+        }
+      });
+    }
+
+    // Rotations roll hourly, so the response is held only until the pool actually
+    // flips — a fixed TTL would either hammer the upstream or serve a stale pool.
+    if (url.pathname === '/rotations') {
+      let body = null;
+      try {
+        const up = await fetch(ROT_UPSTREAM, {
+          headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA },
+          cf: { cacheTtl: 60, cacheEverything: true }
+        });
+        if (up.ok) body = await up.text();
+      } catch (e) { /* fall through to 502 */ }
+      if (!body) {
+        return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
+          status: 502,
+          headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'no-store' }
+        });
+      }
+      let ttl = 60;
+      try {
+        const j = JSON.parse(body);
+        const ra = j && j.banners && j.banners.data && j.banners.data.refreshAt;
+        if (ra) ttl = Math.max(30, Math.min(3600, ra - Math.floor(Date.now() / 1000)));
+      } catch (e) { /* keep the floor */ }
+      return new Response(body, {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'access-control-allow-origin': '*',
+          'cache-control': 'public, max-age=' + ttl
         }
       });
     }
