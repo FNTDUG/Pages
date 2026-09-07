@@ -258,7 +258,11 @@ const NAV_CSS = `<style>
 .hp-arrow{font-family:monospace,Arial;font-size:15px;line-height:1;color:rgba(255,164,91,.65);flex-shrink:0;display:inline-block;transition:transform .2s ease,color .14s}
 .inf-subdrop.open .hp-arrow{transform:rotate(90deg);color:#ffa45b}
 .hp-tier{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.hp-tier:last-child{border-bottom:none}
+/* An ad is appended at the foot of an opened sub-drop, which makes it the last
+   child — so the final tier needs its rule dropped when one follows, and the ad's
+   own top border would double up with it. */
+.hp-tier:last-child,.hp-tier:has(+ .inf-ad){border-bottom:none}
+.hp-wrap .inf-ad-sub{border-top:none;padding-top:10px}
 .hp-img{width:42px;height:42px;flex-shrink:0;object-fit:contain;display:block}
 .hp-main{flex:1;min-width:0}
 .hp-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
