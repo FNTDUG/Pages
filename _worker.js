@@ -2736,6 +2736,10 @@ const WIP_PAGES = {
 };
 // Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
 // so the flag still applies if a page is reached that way.
+function infoPanelActive(pathname) {
+  const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+  return p === '/fntd2' || p.indexOf('/fntd2/') === 0;
+}
 function wipActive(pathname) {
   let p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');
   if (p === '') p = '/';
@@ -3363,6 +3367,10 @@ export default {
     const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
     // The INFO panel is game content — skip it on the standalone Privacy Policy page.
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
+    // The panel is FNTD2 reference data end to end — units, presents, elements,
+    // rotations — so it only belongs on FNTD2 pages. FNTD1 and BBN can get their
+    // own panels later rather than inheriting this one.
+    const hasInfo = !noInfoPanel && infoPanelActive(url.pathname);
     return new HTMLRewriter()
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
@@ -3396,7 +3404,7 @@ export default {
       .on('body', {
         element(el) {
           // With no INFO button above it, the sound toggle moves up into its slot.
-          if (noInfoPanel) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
+          if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           // Every page, including the ones without the INFO panel: the notice
           // costs nothing until a GitHub request on that page actually fails.
@@ -3405,11 +3413,15 @@ export default {
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
-          if (noInfoPanel) { if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true }); return; }
-          el.append(INFO_HTML, { html: true });
-          el.append(ACTIVE_SCRIPT, { html: true });
+          // ACTIVE_SCRIPT highlights the current page in the nav and WIP_HTML is
+          // page furniture — both belong everywhere the chrome does, so neither
+          // rides along with the panel.
+          if (hasInfo) el.append(INFO_HTML, { html: true });
+          if (!noInfoPanel) {
+            el.append(ACTIVE_SCRIPT, { html: true });
+            if (wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
+          }
           if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
-          if (wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
         }
       })
       .transform(response);
