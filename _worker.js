@@ -256,6 +256,11 @@ const NAV_CSS = `<style>
 /* ── INFO panel ad slots ── */
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
+/* Clean-Mode retired in favour of the per-ad close button. Hidden rather than
+   cut from 30 files: the pill's wrapper exists only to hold it, and the page's
+   own toggle script no-ops against an element nobody can click. */
+div:has(> #cleanModeToggle:only-child){display:none!important}
+#cleanModeToggle,.clean-text{display:none!important}
 .ug-xd{display:flex;justify-content:flex-end;margin:0 0 18px}
 .ug-xd-btn{position:relative;width:23px;height:23px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,164,91,.28);color:rgba(255,255,255,.5);font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .13s,color .13s}
 .ug-xd-btn::after{content:'';position:absolute;inset:-8px}
@@ -387,16 +392,20 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 // true. Until then it runs on the site-wide display slot so the placement is
 // visible end to end.
 // ─────────────────────────────────────────────────────────────────────────────
-// ─── PER-AD DISMISS (TRIAL) ───────────────────────────────────────────────────
-// A close button above each ad, on the listed pages only. The button sits in our
-// own bar with clear separation — never over the ad iframe, which would both
-// obscure the unit and invite the mis-taps that trigger Google's Confirm Click
-// penalty. Add paths to XDISMISS_PAGES to widen the trial.
+// ─── PER-AD DISMISS ───────────────────────────────────────────────────────────
+// A close button above every ad. It sits in our own bar with clear separation —
+// never over the ad iframe, which would both obscure the unit and invite the
+// mis-taps that trigger Google's Confirm Click penalty.
+//
+// This replaced Clean-Mode as the way readers turn ads off. Set XDISMISS_ALL to
+// false to fall back to running it only on the paths listed below.
 // ─────────────────────────────────────────────────────────────────────────────
+const XDISMISS_ALL = true;
 const XDISMISS_PAGES = {
   '/fntd2/tierlists-1': true
 };
 function xdActive(pathname) {
+  if (XDISMISS_ALL) return true;
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
   return XDISMISS_PAGES[p] === true;
 }
