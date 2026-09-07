@@ -135,7 +135,7 @@ const NAV_CSS = `<style>
    instead. --ug-anchor is 0 until one is actually detected, so no dead space when
    anchors are off or on desktop. */
 :root{--ug-anchor:0px}
-@media(max-width:768px){#ug-info-panel{padding-bottom:calc(var(--ug-anchor) + 14px)}}
+@media(max-width:768px){#ug-info-panel{padding-bottom:calc(var(--ug-anchor) + 34px)}}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
 #ug-info-panel::-webkit-scrollbar{width:3px}
 #ug-info-panel::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}
