@@ -762,7 +762,7 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-banners-inner"></div></div>
     </div>
   </div>
-  <div id="inf-rot">
+  <div id="inf-rot">${PANEL_AD}
     <div class="inf-drop">
       <button class="inf-drop-btn" onclick="infToggle(this)">Banners <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-rot-banners-inner"><div class="rot-wait">Loading rotations...</div></div></div>
@@ -2321,7 +2321,14 @@ function infMode(m){
   p.setAttribute('data-mode',m);
   var bs=p.querySelectorAll('.inf-mode');
   for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',bs[i].getAttribute('data-mode')===m);
-  if(m==='rot')Promise.all([infRotFetch(),_infLoadFeeds()]).then(function(){infRotRender();});
+  // The rotations slot ships inside a display:none container, so it had no box for
+  // the observer to see when ugPanelAds() swept the panel. Re-watch it now that the
+  // view is showing; _infAdFill's own guard keeps it to one impression.
+  if(m==='rot'){
+    var ph=p.querySelectorAll('#inf-rot [data-ad-ph]');
+    for(var j=0;j<ph.length;j++)if(!ph[j].getAttribute('data-ad-on'))_infAdWatch(ph[j]);
+    Promise.all([infRotFetch(),_infLoadFeeds()]).then(function(){infRotRender();});
+  }
 }
 var UG_OURS={'ug-info-panel':1,'ug-info-overlay':1,'ug-mobile-nav':1,'ug-overlay':1,'ug-hamburger':1,'ug-info-btn':1,'ug-sound-btn':1};
 function ugAnchorPad(){
