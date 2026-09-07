@@ -426,8 +426,12 @@ const XDISMISS_HTML = `<script>
     var n=document.querySelectorAll(sel);
     for(var i=0;i<n.length;i++)bar(n[i]);
   }
-  var t=null;
-  function sched(){clearTimeout(t);t=setTimeout(scan,250);}
+  var t=null,last=0;
+  function run(){last=Date.now();t=null;scan();}
+  function sched(){
+    if(Date.now()-last>600){run();return;}
+    if(!t)t=setTimeout(run,300);
+  }
   scan();sched();
   window.addEventListener('load',sched);
   if(typeof MutationObserver!=='undefined'){
