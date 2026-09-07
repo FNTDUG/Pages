@@ -221,7 +221,12 @@ const NAV_CSS = `<style>
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
 /* ── INFO panel mode switch + rotations ── */
-.inf-modes{display:flex;gap:6px;padding:10px 14px 0;background:rgba(4,1,12,.96)}
+/* #ug-info-btn is fixed at z-index 1099, above the panel's 1050, so it hangs over
+   the top-right of the panel and lands on the Rotations button. The top padding
+   clears its lower edge: it sits at top:47px on a phone and top:63px from 769px up,
+   and is taller on desktop. */
+.inf-modes{display:flex;gap:6px;padding:32px 14px 0;background:rgba(4,1,12,.96)}
+@media(min-width:769px){.inf-modes{padding:46px 14px 0}}
 .inf-mode{flex:1;padding:8px 6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,164,91,.18);border-radius:7px;color:rgba(255,255,255,.55);font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;line-height:1.35;transition:background .13s,border-color .13s,color .13s}
 .inf-mode.on{background:rgba(255,164,91,.13);border-color:rgba(255,164,91,.5);color:#ffa45b}
 .inf-rt{display:block;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;margin-top:5px;color:rgba(255,255,255,.38)}
@@ -235,6 +240,7 @@ const NAV_CSS = `<style>
 .rot-row h4{margin:0}
 .rot-main{flex:1;min-width:0}
 .rot-meta{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:2px}
+.rot-price{font-size:13.5px;font-weight:700;color:#e8e8e8;margin-top:3px}
 .rot-group{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:12px 0 2px}
 .rot-group:first-child{padding-top:2px}
 .rot-obj{font-size:12px;color:#ccc;line-height:1.7}
@@ -2249,12 +2255,12 @@ function _rotLook(name,type){
   var a=_infAnyLookup(name);
   return (a&&a.img)?a:(u||a||{});
 }
-function _rotCard(name,rarity,meta,type){
+function _rotCard(name,rarity,meta,type,metaCls,disp){
   var look=_rotLook(name,type);
   var rar=_infNr(rarity)||_infNr(look.rarity)||'';
   var g=INF_RG[rar];
   var badge='<span class="inf-img'+(g?' inf-rarity-'+_infEsc(rar):'')+'"'+(g?'':' style="background:rgba(25,24,40,.9)"')+'>'+(look.img?'<img src="'+_infEsc(look.img)+'" alt="" loading="lazy">':'')+'</span>';
-  return '<div class="inf-card"><div class="rot-row">'+badge+'<div class="rot-main"><h4>'+_infEsc(name)+'</h4>'+(meta?'<div class="rot-meta">'+_infEsc(meta)+'</div>':'')+'</div></div></div>';
+  return '<div class="inf-card"><div class="rot-row">'+badge+'<div class="rot-main"><h4>'+_infEsc(disp||name)+'</h4>'+(meta?'<div class="rot-meta'+(metaCls?' '+metaCls:'')+'">'+_infEsc(meta)+'</div>':'')+'</div></div></div>';
 }
 function _rotNum(n){var v=Number(n);return isFinite(v)?v.toLocaleString('en-US'):String(n);}
 function infRotRender(){
@@ -2281,7 +2287,7 @@ function infRotRender(){
         h2+='<div class="rot-group">'+_infEsc(g)+'</div>';
         by[g].forEach(function(i){
           var amt=(i.amounts&&i.amounts[0]>1)?(' x'+i.amounts[0]):'';
-          h2+=_rotCard(i.name,'',i.type+' - '+_rotNum(i.price)+' '+i.currency+amt,i.type);
+          h2+=_rotCard(i.name,'',_rotNum(i.price)+' '+i.currency+amt,i.type,'rot-price',i.name+(i.type?' ('+i.type+')':''));
         });
       });
       el.innerHTML=h2;
