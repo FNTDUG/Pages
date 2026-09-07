@@ -254,6 +254,9 @@ const NAV_CSS = `<style>
 .inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
 .inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
 /* ── INFO panel ad slots ── */
+.ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
+.ug-cad:empty{display:none}
+@media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
 .ug-rail-in{position:sticky;top:180px;text-align:center}
 @media(max-width:1199px){.ug-rail{display:none!important}}
@@ -378,6 +381,71 @@ const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria
 // true. Until then it runs on the site-wide display slot so the placement is
 // visible end to end.
 // ─────────────────────────────────────────────────────────────────────────────
+// ─── MOBILE IN-CONTENT ADS ────────────────────────────────────────────────────
+// One ad per CONTENT_AD_EVERY px of rendered content, below CONTENT_AD_MAXW only
+// (wider viewports get the side rails instead). Swap CONTENT_AD_SLOT for its own
+// unit to separate it from the panel in reporting.
+// ─────────────────────────────────────────────────────────────────────────────
+const CONTENT_AD_SLOT = '6967580595';
+const CONTENT_AD_EVERY = 1400;
+const CONTENT_AD_MAXW = 1200;
+const CONTENT_AD_HTML = `<script>
+(function(){
+  if(!document.querySelector('#ug-main ins.adsbygoogle'))return;
+  var content=document.getElementById('ug-content');
+  if(!content)return;
+  var obs=null;
+  function clean(){var t=document.getElementById('cleanModeToggle');return !!(t&&t.classList.contains('on'));}
+  function fill(d){
+    if(d.getAttribute('data-on')||clean())return;
+    d.setAttribute('data-on','1');
+    var ins=document.createElement('ins');
+    ins.className='adsbygoogle';
+    ins.style.cssText='display:block;text-align:center';
+    ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+    ins.setAttribute('data-ad-slot','${CONTENT_AD_SLOT}');
+    ins.setAttribute('data-ad-layout','in-article');
+    ins.setAttribute('data-ad-format','fluid');
+    d.appendChild(ins);
+    try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  }
+  function watch(anchor){
+    if(anchor.getAttribute('data-adspot'))return;
+    anchor.setAttribute('data-adspot','1');
+    anchor._go=function(){
+      if(anchor.getAttribute('data-adset')||clean())return;
+      anchor.setAttribute('data-adset','1');
+      var d=document.createElement('div');
+      d.className='ug-cad ad-slot';
+      if(anchor.parentNode)anchor.parentNode.insertBefore(d,anchor.nextSibling);
+      fill(d);
+    };
+    if(typeof IntersectionObserver==='undefined'){anchor._go();return;}
+    if(!obs)obs=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++)if(es[i].isIntersecting){var t=es[i].target;obs.unobserve(t);if(t._go)t._go();}
+    },{rootMargin:'300px 0px'});
+    obs.observe(anchor);
+  }
+  function place(){
+    if(window.innerWidth>=${CONTENT_AD_MAXW}||clean())return;
+    var kids=Array.prototype.slice.call(content.children),acc=0,i,el,cn;
+    for(i=0;i<kids.length;i++){
+      el=kids[i];cn=String(el.className||'');
+      if(cn.indexOf('ug-cad')!==-1||cn.indexOf('ad-slot')!==-1){acc=0;continue;}
+      acc+=el.offsetHeight;
+      if(acc>=${CONTENT_AD_EVERY}){acc=0;watch(el);}
+    }
+  }
+  var t=null;function sched(){clearTimeout(t);t=setTimeout(place,400);}
+  sched();
+  window.addEventListener('load',sched);
+  window.addEventListener('resize',sched,{passive:true});
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(sched).observe(content);
+  var ct=document.getElementById('cleanModeToggle');
+  if(ct)ct.addEventListener('click',function(){setTimeout(place,60);});
+})();
+<\/script>`;
+
 // ─── DESKTOP SIDE RAILS ───────────────────────────────────────────────────────
 // Swap RAIL_AD_SLOT for a dedicated vertical display unit. Until then it runs on
 // the site-wide display slot so the placement is visible end to end.
@@ -2989,6 +3057,7 @@ export default {
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
+          el.append(CONTENT_AD_HTML, { html: true });
           if (noInfoPanel) return;
           el.append(INFO_HTML, { html: true });
           el.append(ACTIVE_SCRIPT, { html: true });
