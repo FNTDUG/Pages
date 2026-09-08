@@ -586,11 +586,6 @@ const CONTENT_AD_HTML = `<script>
 const RAIL_AD_SLOT = '9010982209';
 const RAIL_MIN = 180;
 const RAIL_WIDE = 330;
-// A rail is 600px tall. If #ug-content is shorter than this the rails tower over
-// the page instead of running beside it — which is what a visitor sees when a
-// runtime-loaded page (the Unit Engine, the Trade Calculator) fails to fetch its
-// content from githack and the column is left near-empty.
-const RAIL_MIN_H = 720;
 const RAIL_HTML = `<script>
 (function(){
   if(!document.querySelector('#ug-main ins.adsbygoogle'))return;
@@ -630,12 +625,12 @@ const RAIL_HTML = `<script>
     var box=content.getBoundingClientRect();
     var free=Math.floor((window.innerWidth-box.width)/2);
     var need=railW||${RAIL_MIN};
-    var h=content.offsetHeight;
-    if(free<need||window.innerWidth<1200||h<${RAIL_MIN_H}){hide();return;}
+    if(free<need||window.innerWidth<1200){hide();return;}
     if(!rails)build();
     if(!railW)railW=free>=${RAIL_WIDE}?300:160;
     var off=Math.max(8,Math.floor((free-railW)/2));
     var top=box.top+(window.scrollY||window.pageYOffset);
+    var h=content.offsetHeight;
     ['left','right'].forEach(function(side){
       var w=rails[side].wrap;
       if(w.getAttribute('data-dismissed'))return;
