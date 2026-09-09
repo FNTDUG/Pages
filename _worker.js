@@ -776,6 +776,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-status-effects-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="titles" onclick="infToggle(this)">Titles <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-titles-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="skins" onclick="infToggle(this)">Unit Skins <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-skins-inner"></div></div>
     </div>
@@ -828,7 +832,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;infTabAds(body.querySelector('.inf-drop-inner'));_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='titles')return infLoadTitles();if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');if(s.classList.contains('open'))infEntryAd(s.querySelector('.inf-subdrop-inner'));}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -1601,6 +1605,31 @@ function buildQuestSet(pEl,list,uMap,pMap,sMap,petMap){
 var PRESTIGE_SHOP=[
   {name:'Radiant Astral Bonnie', type:'skin', cost:10}
 ];
+function infLoadTitles(){
+  if(_catLoaded['titles'])return;_catLoaded['titles']=true;
+  var pEl=document.getElementById('inf-titles-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  fetch('/inf-data/titles').then(function(r){return r.json();}).then(function(data){
+    pEl.innerHTML='';buildTitles(pEl,data);
+    var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);});
+}
+function buildTitles(pEl,data){
+  if(!pEl||!data)return;
+  var names=Object.keys(data).sort(function(a,b){return a.localeCompare(b,'en',{sensitivity:'base'});});
+  names.forEach(function(n){
+    var t=data[n]||{};
+    var card=document.createElement('div');card.className='inf-card';
+    var h4=document.createElement('h4');
+    h4.style.cssText='margin:0;font-size:15px;line-height:1.6;word-break:break-word';
+    if(t.css){h4.style.background=t.css;h4.style.webkitBackgroundClip='text';h4.style.backgroundClip='text';h4.style.webkitTextFillColor='transparent';}
+    h4.textContent=n;
+    card.appendChild(h4);
+    pEl.appendChild(card);
+  });
+  if(!names.length){var e=document.createElement('p');e.style.cssText='color:#888;font-size:11px;padding:12px 14px';e.textContent='No titles yet.';pEl.appendChild(e);}
+}
 function infLoadPrestige(){
   if(_catLoaded['prestige'])return;_catLoaded['prestige']=true;
   var pEl=document.getElementById('inf-prestige-inner');
@@ -2517,7 +2546,7 @@ function infEntryAd(body){
 }
 var _infIdx=null,_infFeedData={},_infUnitMap={},_infFeedsLoaded=false,_infQTimer=null;
 function _infNr(r){r=String(r||'').toLowerCase().trim();return r==='mythical'?'mythic':(r==='legendary'?'exclusive':r);}
-var INF_FEED_CATS=[['presents','Presents'],['pets','Pets'],['skins','Unit Skins'],['banners','User Banners'],['loading-screens','Loading Screens'],['materials','Materials'],['foods','Food'],['potions','Potions']];
+var INF_FEED_CATS=[['presents','Presents'],['pets','Pets'],['skins','Unit Skins'],['banners','User Banners'],['loading-screens','Loading Screens'],['materials','Materials'],['foods','Food'],['potions','Potions'],['titles','Titles']];
 var INF_SHARED_CATS=[['bytes','Bytes'],['chips','Chips'],['enchants','Enchants']];
 function _infSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function _infEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -2558,6 +2587,7 @@ function _infStaticRows(){
   return S;
 }
 function _infFeedMeta(k,it){
+  if(k==='titles'){var c=(it.stops&&it.stops.length)||0;return c?c+' colour'+(c===1?'':'s'):'';}
   if(k==='pets')return it.speed!=null?'Speed '+it.speed:'';
   if(k==='skins')return it.unit?'Unit · '+it.unit:'';
   if(k==='foods')return it.exp!=null?'EXP '+it.exp:'';
@@ -2573,6 +2603,7 @@ function _infFeedRows(){
     for(var n in data){
       if(hide.indexOf(n)!==-1)continue;
       var it=data[n]||{},o=ov[n]||{};
+      if(k==='titles'){S.push({n:o.name||n,c:k,cl:p[1],grad:it.css,rar:'',m:_infFeedMeta(k,it)});continue;}
       S.push({n:o.name||n,c:k,cl:p[1],img:o.image||it.image,rar:_infNr(o.rarity||it.rarity),m:_infFeedMeta(k,it)});
     }
     for(var a in addl)S.push({n:a,c:k,cl:p[1],img:addl[a].image,rar:addl[a].rarity,m:_infFeedMeta(k,addl[a])});
@@ -3232,6 +3263,7 @@ const INF_PROXY = {
   'banners':         'https://cosmetics.fntduserguide.com/banners.json',
   'loading-screens': 'https://cosmetics.fntduserguide.com/loading-screens.json',
   'materials':       'https://items.fntduserguide.com/materials.json',
+  'titles':          'https://cosmetics.fntduserguide.com/titles.json',
   'foods':           'https://items.fntduserguide.com/foods.json',
   'potions':         'https://items.fntduserguide.com/potions.json'
 };
