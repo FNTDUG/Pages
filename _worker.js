@@ -5,6 +5,7 @@
 
 const MOBILE_NAV_BODY = `
 <a href="/" class="ug-mn-link" data-nav-href="/">Home</a>
+<a href="/news" class="ug-mn-link" data-nav-href="/news">News</a>
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
@@ -57,6 +58,7 @@ const MOBILE_NAV_BODY = `
 
 const DESKTOP_NAV_INNER = `
 <a href="/" class="ug-tn-link" data-nav-href="/">Home</a>
+<a href="/news" class="ug-tn-link" data-nav-href="/news">News</a>
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
@@ -2836,7 +2838,8 @@ const WIP_PAGES = {
   '/fntd2/endless-index':       true,
   '/fntd2/boss-raids-index':    true,
   '/fntd2/event-story-endless': true,
-  '/fntd2/unit-engine':         true
+  '/fntd2/unit-engine':         true,
+  '/news':                      true
 };
 // Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
 // so the flag still applies if a page is reached that way.
@@ -3280,6 +3283,96 @@ const INF_PROXY = {
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
 const ROT_UA = 'fntduserguide.com rotations proxy (+https://www.fntduserguide.com)';
 
+const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
+const X_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
+function xEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function xUser(u) {
+  if (!u) return null;
+  return {
+    name: u.name || '',
+    handle: u.screen_name || '',
+    avatar: (u.profile_image_url_https || '').replace('_normal.', '_200x200.'),
+    banner: u.profile_banner_url ? u.profile_banner_url + '/1500x500' : '',
+    followers: typeof u.followers_count === 'number' ? u.followers_count : null
+  };
+}
+function xText(t) {
+  let text = (t.full_text || t.text || '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  const ent = t.entities || {};
+  const media = ent.media || [];
+  const urls = ent.urls || [];
+  const range = t.display_text_range;
+  if (Array.isArray(range) && range.length === 2) text = Array.from(text).slice(range[0], range[1]).join('');
+  media.forEach(m => { if (m.url) text = text.replace(m.url, ''); });
+  let html = xEsc(text.trim());
+  urls.forEach(u => {
+    if (!u.url) return;
+    html = html.split(xEsc(u.url)).join('<a href="' + xEsc(u.expanded_url || u.url) + '" target="_blank" rel="noopener noreferrer">' + xEsc(u.display_url || u.expanded_url || u.url) + '</a>');
+  });
+  html = html
+    .replace(/(^|[^\w/])@([A-Za-z0-9_]{1,15})\b/g, '$1<a href="https://x.com/$2" target="_blank" rel="noopener noreferrer">@$2</a>')
+    .replace(/(^|\s)#([\p{L}\p{N}_]+)/gu, '$1<a href="https://x.com/hashtag/$2" target="_blank" rel="noopener noreferrer">#$2</a>')
+    .replace(/\n/g, '<br>');
+  return { text: text.trim(), html };
+}
+function xMedia(t) {
+  const list = ((t.extended_entities && t.extended_entities.media) || (t.entities && t.entities.media) || []);
+  return list.map(m => {
+    const out = { type: m.type === 'animated_gif' ? 'video' : (m.type || 'photo'), thumb: m.media_url_https ? m.media_url_https + '?name=small' : '' };
+    if (m.type === 'video' || m.type === 'animated_gif') {
+      const vs = ((m.video_info && m.video_info.variants) || []).filter(v => v.content_type === 'video/mp4' && v.url);
+      vs.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+      const pick = vs.find(v => (v.bitrate || 0) <= 1500000) || vs[0];
+      out.src = pick ? pick.url : '';
+    } else {
+      out.src = m.media_url_https || '';
+    }
+    return out;
+  });
+}
+function xPost(t) {
+  const base = t.retweeted_status || t;
+  const user = xUser(base.user);
+  const txt = xText(base);
+  const post = {
+    id: base.id_str || '',
+    url: 'https://x.com/' + (user ? user.handle : '') + '/status/' + (base.id_str || ''),
+    date: new Date(base.created_at).toISOString(),
+    text: txt.text,
+    html: txt.html,
+    media: xMedia(base),
+    replies: base.reply_count || 0,
+    reposts: base.retweet_count || 0,
+    likes: base.favorite_count || 0
+  };
+  if (t.retweeted_status && user) { post.user = user; post.repostOf = user.handle; }
+  if (base.quoted_status) {
+    const q = base.quoted_status, qu = q.user || {};
+    post.quote = { name: qu.name || '', handle: qu.screen_name || '', text: xText(q).text, url: 'https://x.com/' + (qu.screen_name || '') + '/status/' + (q.id_str || '') };
+  }
+  return post;
+}
+function xParse(html) {
+  const m = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
+  if (!m) return null;
+  const data = JSON.parse(m[1]);
+  const props = (data && data.props && data.props.pageProps) || {};
+  const entries = (props.timeline && props.timeline.entries) || [];
+  const tweets = entries.filter(e => e && e.type === 'tweet' && e.content && e.content.tweet).map(e => e.content.tweet);
+  const posts = tweets.map(xPost).filter(p => p.id);
+  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const first = tweets.find(t => t.user && !t.retweeted_status) || tweets[0];
+  return { user: first ? xUser(first.user) : null, posts, hasResults: props.contextProvider ? props.contextProvider.hasResults !== false : posts.length > 0 };
+}
+async function xTimeline(handle) {
+  const up = await fetch(X_SYNDICATION + handle, {
+    headers: { 'user-agent': X_UA, 'accept': 'text/html,application/xhtml+xml' },
+    cf: { cacheTtl: 600, cacheEverything: true }
+  });
+  if (!up.ok) return null;
+  return xParse(await up.text());
+}
+
 const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
 async function ghRawOk() {
   try {
@@ -3367,6 +3460,26 @@ export default {
           'content-type': 'application/json; charset=utf-8',
           'access-control-allow-origin': '*',
           'cache-control': 'public, max-age=' + ttl
+        }
+      });
+    }
+
+    if (url.pathname.startsWith('/news-x/')) {
+      const handle = url.pathname.slice('/news-x/'.length);
+      if (!/^[A-Za-z0-9_]{1,15}$/.test(handle)) return new Response('Not found', { status: 404 });
+      let feed = null;
+      try { feed = await xTimeline(handle); } catch (e) { feed = null; }
+      if (!feed) {
+        return new Response(JSON.stringify({ error: 'x unavailable' }), {
+          status: 502,
+          headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'no-store' }
+        });
+      }
+      return new Response(JSON.stringify(feed), {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'access-control-allow-origin': '*',
+          'cache-control': 'public, max-age=600, stale-while-revalidate=3600'
         }
       });
     }
