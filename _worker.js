@@ -2839,7 +2839,7 @@ const WIP_PAGES = {
   '/fntd2/boss-raids-index':    true,
   '/fntd2/event-story-endless': true,
   '/fntd2/unit-engine':         true,
-  '/news':                      true
+  '/news':                      false
 };
 // Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
 // so the flag still applies if a page is reached that way.
