@@ -3301,12 +3301,13 @@ function xUser(u) {
   };
 }
 function xText(t) {
-  let text = (t.full_text || t.text || '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  let text = t.full_text || t.text || '';
   const ent = t.entities || {};
   const media = ent.media || [];
   const urls = ent.urls || [];
   const range = t.display_text_range;
   if (Array.isArray(range) && range.length === 2) text = Array.from(text).slice(range[0], range[1]).join('');
+  text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
   media.forEach(m => { if (m.url) text = text.replace(m.url, ''); });
   const cardUrl = t.card && t.card.url;
   if (cardUrl && text.trim().endsWith(cardUrl)) text = text.trim().slice(0, -cardUrl.length);
