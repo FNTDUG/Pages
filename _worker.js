@@ -3371,10 +3371,24 @@ function xParse(html) {
 async function xTimeline(handle) {
   const up = await fetch(X_SYNDICATION + handle, {
     headers: { 'user-agent': X_UA, 'accept': 'text/html,application/xhtml+xml' },
-    cf: { cacheTtl: 600, cacheEverything: true }
+    cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 600, '400-599': 0 } }
   });
   if (!up.ok) return null;
-  return xParse(await up.text());
+  const feed = xParse(await up.text());
+  return feed && feed.posts.length ? feed : null;
+}
+const X_SNAPSHOT = 'https://images.fntduserguide.com/news/x/';
+async function xSnapshot(handle) {
+  try {
+    const r = await fetch(X_SNAPSHOT + handle + '.json', {
+      cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 60, '400-599': 0 } }
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j && Array.isArray(j.posts) && j.posts.length ? j : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
@@ -3471,20 +3485,35 @@ export default {
     if (url.pathname.startsWith('/news-x/')) {
       const handle = url.pathname.slice('/news-x/'.length);
       if (!/^[A-Za-z0-9_]{1,15}$/.test(handle)) return new Response('Not found', { status: 404 });
-      let feed = null;
-      try { feed = await xTimeline(handle); } catch (e) { feed = null; }
+      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
+      const cacheKey = new Request('https://www.fntduserguide.com/_news-x-cache/' + handle.toLowerCase());
+      let feed = await xSnapshot(handle);
+      if (feed) {
+        feed.source = 'snapshot';
+      } else {
+        try { feed = await xTimeline(handle); } catch (e) { feed = null; }
+        if (feed) {
+          feed.fetchedAt = new Date().toISOString();
+          feed.source = 'live';
+          try {
+            await caches.default.put(cacheKey, new Response(JSON.stringify(feed), {
+              headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' }
+            }));
+          } catch (e) {}
+        } else {
+          try {
+            const hit = await caches.default.match(cacheKey);
+            if (hit) { feed = await hit.json(); feed.source = 'cache'; feed.stale = true; }
+          } catch (e) { feed = null; }
+        }
+      }
       if (!feed) {
-        return new Response(JSON.stringify({ error: 'x unavailable' }), {
-          status: 502,
-          headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'no-store' }
+        return new Response(JSON.stringify({ user: null, posts: [], unavailable: true }), {
+          headers: Object.assign({ 'cache-control': 'no-store' }, jsonHeaders)
         });
       }
       return new Response(JSON.stringify(feed), {
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'access-control-allow-origin': '*',
-          'cache-control': 'public, max-age=600, stale-while-revalidate=3600'
-        }
+        headers: Object.assign({ 'cache-control': feed.stale ? 'public, max-age=60' : 'public, max-age=300, stale-while-revalidate=3600' }, jsonHeaders)
       });
     }
 
