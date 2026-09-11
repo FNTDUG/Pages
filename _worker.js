@@ -5,7 +5,9 @@
 
 const MOBILE_NAV_BODY = `
 <a href="/" class="ug-mn-link" data-nav-href="/">Home</a>
+<!-- HIDDEN-NEWS
 <a href="/news" class="ug-mn-link" data-nav-href="/news">News</a>
+-->
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
@@ -58,7 +60,9 @@ const MOBILE_NAV_BODY = `
 
 const DESKTOP_NAV_INNER = `
 <a href="/" class="ug-tn-link" data-nav-href="/">Home</a>
+<!-- HIDDEN-NEWS
 <a href="/news" class="ug-tn-link" data-nav-href="/news">News</a>
+-->
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
