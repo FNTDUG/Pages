@@ -3308,6 +3308,8 @@ function xText(t) {
   const range = t.display_text_range;
   if (Array.isArray(range) && range.length === 2) text = Array.from(text).slice(range[0], range[1]).join('');
   media.forEach(m => { if (m.url) text = text.replace(m.url, ''); });
+  const cardUrl = t.card && t.card.url;
+  if (cardUrl && text.trim().endsWith(cardUrl)) text = text.trim().slice(0, -cardUrl.length);
   let html = xEsc(text.trim());
   urls.forEach(u => {
     if (!u.url) return;
@@ -3320,19 +3322,55 @@ function xText(t) {
   return { text: text.trim(), html };
 }
 function xMedia(t) {
-  const list = ((t.extended_entities && t.extended_entities.media) || (t.entities && t.entities.media) || []);
+  const list = (t.extended_entities && t.extended_entities.media) || (t.entities && t.entities.media) || [];
   return list.map(m => {
-    const out = { type: m.type === 'animated_gif' ? 'video' : (m.type || 'photo'), thumb: m.media_url_https ? m.media_url_https + '?name=small' : '' };
-    if (m.type === 'video' || m.type === 'animated_gif') {
-      const vs = ((m.video_info && m.video_info.variants) || []).filter(v => v.content_type === 'video/mp4' && v.url);
-      vs.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
-      const pick = vs.find(v => (v.bitrate || 0) <= 1500000) || vs[0];
+    const info = m.original_info || {};
+    const vi = m.video_info || {};
+    const ar = Array.isArray(vi.aspect_ratio) && vi.aspect_ratio.length === 2 ? vi.aspect_ratio : null;
+    const isVideo = m.type === 'video' || m.type === 'animated_gif';
+    const out = {
+      type: m.type === 'animated_gif' ? 'gif' : (isVideo ? 'video' : 'photo'),
+      w: info.width || (ar ? ar[0] : 0),
+      h: info.height || (ar ? ar[1] : 0),
+      thumb: m.media_url_https ? m.media_url_https + '?name=medium' : '',
+      alt: m.ext_alt_text || ''
+    };
+    if (isVideo) {
+      const vs = (vi.variants || []).filter(v => v.content_type === 'video/mp4' && v.url).sort((x, y) => (y.bitrate || 0) - (x.bitrate || 0));
+      const pick = vs.find(v => (v.bitrate || 0) <= 2200000) || vs[vs.length - 1];
       out.src = pick ? pick.url : '';
+      out.duration = vi.duration_millis || 0;
     } else {
-      out.src = m.media_url_https || '';
+      out.src = m.media_url_https ? m.media_url_https + '?name=large' : '';
     }
     return out;
   });
+}
+function xCard(t) {
+  const c = t.card;
+  if (!c || !c.binding_values) return null;
+  const b = c.binding_values;
+  const str = k => (b[k] && b[k].string_value) || '';
+  const img = keys => { for (const k of keys) if (b[k] && b[k].image_value && b[k].image_value.url) return b[k].image_value; return null; };
+  const name = c.name || '';
+  const large = /summary_large_image|player/.test(name);
+  const image = large
+    ? img(['photo_image_full_size_large', 'summary_photo_image_large', 'player_image_large', 'thumbnail_image_large'])
+    : img(['thumbnail_image_large', 'thumbnail_image', 'photo_image_full_size_large', 'player_image_large']);
+  const title = str('title');
+  if (!title && !image) return null;
+  const u = ((t.entities && t.entities.urls) || []).find(x => x.url === c.url);
+  return {
+    kind: large ? 'large' : 'small',
+    player: /player/.test(name),
+    url: (u && u.expanded_url) || str('card_url') || c.url || '',
+    title,
+    description: str('description'),
+    domain: str('vanity_url') || str('domain'),
+    image: image ? image.url : '',
+    w: image ? image.width || 0 : 0,
+    h: image ? image.height || 0 : 0
+  };
 }
 function xPost(t) {
   const base = t.retweeted_status || t;
@@ -3349,6 +3387,7 @@ function xPost(t) {
     reposts: base.retweet_count || 0,
     likes: base.favorite_count || 0
   };
+  if (!post.media.length) { const card = xCard(base); if (card) post.card = card; }
   if (t.retweeted_status && user) { post.user = user; post.repostOf = user.handle; }
   if (base.quoted_status) {
     const q = base.quoted_status, qu = q.user || {};
@@ -3376,6 +3415,30 @@ async function xTimeline(handle) {
   if (!up.ok) return null;
   const feed = xParse(await up.text());
   return feed && feed.posts.length ? feed : null;
+}
+const X_RESULT = 'https://cdn.syndication.twimg.com/tweet-result?lang=en&id=';
+function xToken(id) { return ((Number(id) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, ''); }
+function xFromResult(d) {
+  if (!d || d.__typename !== 'Tweet' || !d.id_str) return null;
+  const q = d.quoted_tweet;
+  const t = {
+    id_str: d.id_str,
+    created_at: d.created_at,
+    full_text: d.text || '',
+    display_text_range: d.display_text_range,
+    entities: d.entities || {},
+    extended_entities: { media: d.mediaDetails || [] },
+    user: d.user,
+    card: d.card,
+    reply_count: d.conversation_count || 0,
+    retweet_count: 0,
+    favorite_count: d.favorite_count || 0
+  };
+  if (q && q.id_str) t.quoted_status = { id_str: q.id_str, full_text: q.text || '', entities: q.entities || {}, user: q.user };
+  const post = xPost(t);
+  const user = xUser(d.user);
+  if (user) post.user = user;
+  return post;
 }
 const X_SNAPSHOT = 'https://images.fntduserguide.com/news/x/';
 async function xSnapshot(handle) {
@@ -3480,6 +3543,43 @@ export default {
           'cache-control': 'public, max-age=' + ttl
         }
       });
+    }
+
+    if (url.pathname === '/news-posts') {
+      const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
+      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
+      const results = await Promise.all(ids.map(async id => {
+        try {
+          const r = await fetch(X_RESULT + id + '&token=' + xToken(id), {
+            headers: { 'user-agent': X_UA },
+            cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 3600, '400-599': -1 } }
+          });
+          if (!r.ok) return null;
+          return xFromResult(await r.json());
+        } catch (e) {
+          return null;
+        }
+      }));
+      const posts = results.filter(Boolean).sort((a, b) => new Date(b.date) - new Date(a.date));
+      return new Response(JSON.stringify({ posts }), {
+        headers: Object.assign({ 'cache-control': posts.length ? 'public, max-age=600' : 'no-store' }, jsonHeaders)
+      });
+    }
+
+    if (url.pathname === '/news-media') {
+      let target;
+      try { target = new URL(url.searchParams.get('u') || ''); } catch (e) { return new Response('Bad request', { status: 400 }); }
+      if (target.protocol !== 'https:' || target.hostname !== 'video.twimg.com') return new Response('Not found', { status: 404 });
+      const upHeaders = { 'user-agent': X_UA };
+      const range = request.headers.get('range');
+      if (range) upHeaders.range = range;
+      const up = await fetch(target.toString(), { headers: upHeaders, cf: { cacheTtlByStatus: { '100-599': -1 } } });
+      const out = new Headers();
+      ['content-type', 'content-length', 'content-range', 'accept-ranges', 'last-modified', 'etag'].forEach(h => { const v = up.headers.get(h); if (v) out.set(h, v); });
+      if (!out.has('accept-ranges')) out.set('accept-ranges', 'bytes');
+      out.set('cache-control', 'public, max-age=86400');
+      out.set('access-control-allow-origin', '*');
+      return new Response(up.body, { status: up.status, headers: out });
     }
 
     if (url.pathname.startsWith('/news-x/')) {
