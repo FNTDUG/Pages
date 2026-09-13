@@ -2497,8 +2497,17 @@ function _infAdFill(ph){
   ins.className='adsbygoogle';
   ins.style.cssText='display:block;text-align:center';
   ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
-  ins.setAttribute('data-ad-slot','${PANEL_AD_SLOT}');
-  ${PANEL_AD_FLUID ? "ins.setAttribute('data-ad-layout','in-article');ins.setAttribute('data-ad-format','fluid');" : "ins.setAttribute('data-ad-format','auto');ins.setAttribute('data-full-width-responsive','true');"}
+  var phW=ph.getBoundingClientRect().width;
+  if(${PANEL_AD_FLUID ? 'true' : 'false'}&&phW>=250){
+    ins.setAttribute('data-ad-slot','${PANEL_AD_SLOT}');
+    ins.setAttribute('data-ad-layout','in-article');ins.setAttribute('data-ad-format','fluid');
+  }else if(phW<250){
+    ins.setAttribute('data-ad-slot','${RAIL_AD_SLOT}');
+    ins.setAttribute('data-ad-format','auto');ins.setAttribute('data-full-width-responsive','false');
+  }else{
+    ins.setAttribute('data-ad-slot','${PANEL_AD_SLOT}');
+    ins.setAttribute('data-ad-format','auto');ins.setAttribute('data-full-width-responsive','true');
+  }
   ph.appendChild(ins);
   try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
   [1600,4000].forEach(function(ms){setTimeout(function(){
