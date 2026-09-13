@@ -3282,10 +3282,10 @@ const INF_PROXY = {
 // Live rotations. The upstream is the fntd2.com rotations worker; its owner gave
 // FNTD User Guide permission to read it directly (2026-09-07) but could not issue a
 // token, because the same worker fronts other parts of their site. It gates on
-// Origin/Referer, so we present fntd2.com's and identify ourselves in the UA so the
-// traffic is attributable to us rather than anonymous.
+// Origin/Referer, so we present fntd2.com's. Since 2026-09-13 it also rejects any
+// non-browser User-Agent, so the request has to look like a browser.
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
-const ROT_UA = 'fntduserguide.com rotations proxy (+https://www.fntduserguide.com)';
+const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
 const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
 const X_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
