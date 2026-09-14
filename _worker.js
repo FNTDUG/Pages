@@ -208,16 +208,28 @@ const NAV_CSS = `<style>
 /* Status Effects icons are pixel art — keep the edges crisp instead of letting
    the browser smooth them. Scoped to that tab so no other badge is affected. */
 #inf-status-effects-inner .inf-img img{image-rendering:pixelated;image-rendering:crisp-edges}
-.inf-rarity-nightmare{background:linear-gradient(135deg,#492590,#2A1E42)}
-.inf-rarity-secret{background:linear-gradient(135deg,#FF8800,#FF0C0C)}
-.inf-rarity-mythic{background:linear-gradient(135deg,#FFB81F,#FFFF00)}
-.inf-rarity-exclusive{background:linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))}
-.inf-rarity-epic{background:linear-gradient(135deg,#FF35FF,#87009F)}
-.inf-rarity-rare{background:linear-gradient(135deg,#58A6FF,#1C3AA0)}
-.inf-rarity-uncommon{background:linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))}
-.inf-rarity-apex{background:linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))}
-.inf-rarity-hero{background:linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))}
-.inf-rarity-radiant{background:linear-gradient(135deg,#FF6600,#FFCC33)}
+.inf-rarity-nightmare{background:linear-gradient(180deg,#492590,#2A1E42)}
+.inf-rarity-secret{background:linear-gradient(180deg,#FF8700,#FF0F0C)}
+.inf-rarity-mythic{background:linear-gradient(180deg,#FFF006,#FFD114)}
+.inf-rarity-exclusive{background:linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)}
+.inf-rarity-epic{background:linear-gradient(180deg,#8A01A1,#FD34FE)}
+.inf-rarity-rare{background:linear-gradient(180deg,#2244B0,#57A4FE)}
+.inf-rarity-uncommon{background:linear-gradient(180deg,#3FFF8E,#5CFF4E)}
+.inf-rarity-apex{background:linear-gradient(180deg,#9D0078,#0063F8)}
+.inf-rarity-hero{background:linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)}
+.inf-rarity-radiant{background:linear-gradient(180deg,#FF6600,#FFCC33)}
+.inf-rarity-uncommon img{background:#103316}
+.inf-rarity-rare img{background:#0C172B}
+.inf-rarity-epic img{background:#27052A}
+.inf-rarity-mythic img{background:#332D03}
+.inf-rarity-exclusive img{background:#0A2E33}
+.inf-rarity-secret img{background:#330F01}
+.inf-rarity-nightmare img{background:#0C0715}
+.inf-rarity-apex img{background:#100A25}
+.inf-rarity-hero img{background:#0B0B04}
+.inf-rarity-radiant img{background:#331F05}
+.inf-img[class*="inf-rarity-"]{position:relative}
+.inf-img[class*="inf-rarity-"]::after{content:'';position:absolute;inset:2px;border-radius:8px;background:url(data:image/png;base64,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) 0 0/100% 100% no-repeat;pointer-events:none}
 @keyframes infShiny{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 .inf-rarity-shiny{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red);background-size:200% auto;animation:infShiny 6s linear infinite}
 .inf-shiny-text{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:600;animation:infShiny 6s linear infinite}
@@ -939,7 +951,7 @@ function buildPresents(pEl,data,rewMap){
   Object.keys(rewMap).forEach(function(k){var n=k.slice(k.indexOf('|')+1);if(!byName[n])byName[n]=rewMap[k];});
   var _RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function _rr(r){var i=_RO.indexOf((r||'').toLowerCase());return i===-1?_RO.length:i;}
-  var _RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
+  var _RG={radiant:'linear-gradient(180deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   var allData={};
   Object.keys(data).forEach(function(k){allData[k]=data[k];});
   Object.keys(PRESENTS_CFG.add||{}).forEach(function(k){allData[k]=PRESENTS_CFG.add[k];});
@@ -1075,7 +1087,7 @@ function infLoadEvolutions(){
 var EVO_PLACEHOLDER='https://images.fntduserguide.com/placeholder-freddy.png';
 function buildEvolutions(pEl,lut){
   if(!pEl)return;
-  var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+  var RG={radiant:'linear-gradient(180deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)'};
   var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function cap(p){return p?p.charAt(0).toUpperCase()+p.slice(1):'';}
@@ -1694,7 +1706,7 @@ var COS_BASE='https://cosmetics.fntduserguide.com';
 var ITM_BASE='https://items.fntduserguide.com';
 var INF_RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
 function infRr(r){var i=INF_RO.indexOf((r||'').toLowerCase());return i===-1?INF_RO.length:i;}
-var INF_RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+var INF_RG={radiant:'linear-gradient(180deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)'};
 function infHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=INF_RG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
 function infDur(s){s=Number(s);if(!isFinite(s))return String(s);if(s>=60){var m=Math.round(s/60*10)/10;return s+'s ('+m+'m)';}return s+'s';}
 var INFO_SOURCES={
@@ -2085,7 +2097,7 @@ var ENDO_CHIPS=[
 (function(){
   var el=document.getElementById('inf-endo-chips-inner');
   if(!el)return;
-  var _ecRG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))'};
+  var _ecRG={nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)'};
   function _ecHl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=_ecRG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
   if(ENDO_CHIPS_TOP){var _tc=document.createElement('div');_tc.className='inf-card';var _tp=document.createElement('p');_tp.innerHTML=_ecHl(ENDO_CHIPS_TOP);_tc.appendChild(_tp);el.appendChild(_tc);}
   ENDO_CHIPS.forEach(function(ch){
@@ -2157,7 +2169,7 @@ var EST_PACKS=[
   var el=document.getElementById('inf-establishments-inner');
   if(!el)return;
   var RO=['radiant','hero','shiny','apex','exclusive','nightmare','secret','mythic','epic','rare','uncommon'];
-  var RG={radiant:'linear-gradient(135deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
+  var RG={radiant:'linear-gradient(180deg,#FF6600,#FFCC33)',nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   function rank(r){var i=RO.indexOf((r||'').toLowerCase());return i===-1?RO.length:i;}
   function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
   var estBy={};ESTABLISHMENTS.forEach(function(e){estBy[e.name]=e;});
@@ -2213,7 +2225,7 @@ var MINIGAMES=[
 (function(){
   var el=document.getElementById('inf-minigames-inner');
   if(!el)return;
-  var RG={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
+  var RG={nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
   function hl(t){return String(t).replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=RG[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
   MINIGAMES.forEach(function(it){
     if(!it)return;
@@ -2783,7 +2795,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Thespian': '[OBTAINMENT]<br>● Exclusive<br>[BOOSTS]<br>● {+100%} Damage<br>● {+20%} True Damage<br>● {+10%} Range<br>● {-12%} Cooldown'
         }
       };
-      var RAR_GRAD={nightmare:'linear-gradient(135deg,#492590,#2A1E42)',secret:'linear-gradient(135deg,#FF8800,#FF0C0C)',mythic:'linear-gradient(135deg,#FFB81F,#FFFF00)',exclusive:'linear-gradient(135deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',epic:'linear-gradient(135deg,#FF35FF,#87009F)',rare:'linear-gradient(135deg,#58A6FF,#1C3AA0)',uncommon:'linear-gradient(135deg,rgb(29,107,19),rgb(32,219,144))',apex:'linear-gradient(135deg,rgb(109,47,138),rgb(156,20,27))',hero:'linear-gradient(135deg,rgb(126,138,86),rgb(156,130,35))',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
+      var RAR_GRAD={nightmare:'linear-gradient(180deg,#492590,#2A1E42)',secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',shiny:'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'};
       function hl(t){return t.replace(/\\[([^\\]]*)\\]/g,'<span style="color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif">$1</span>').replace(/\\{([^\\}]*)\\}/g,'<strong style="color:#e8e8e8">$1</strong>').replace(/~([a-z]+):([^~]*)~/g,function(_,rar,txt){var g=RAR_GRAD[rar];return g?'<span style="background:'+g+';-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">'+txt+'</span>':txt;});}
       function textCard(desc){var c=document.createElement('div');c.className='inf-card';var p=document.createElement('p');p.innerHTML=hl(desc);c.appendChild(p);return c;}
       function card(name,imgUrl,rarCls,borderBg,desc,imgUrl2){
@@ -3094,12 +3106,13 @@ const REWARD_TIP = `<script>
   // lets a page tell whether the worker is in the loop, so a file opened
   // directly can install its own copy without doubling up when deployed
   window.__ugRewardTip=1;
-  var RG={uncommon:'linear-gradient(90deg,#5CFF4D,#3FFF8F)',rare:'linear-gradient(90deg,#58A6FF,#1C3AA0)',
-    epic:'linear-gradient(90deg,#FF35FF,#87009F)',mythic:'linear-gradient(90deg,#FFB81F,#FFFF00)',
-    secret:'linear-gradient(90deg,#FF8800,#FF0C0C)',nightmare:'linear-gradient(90deg,#492590,#2A1E42)',
-    apex:'linear-gradient(90deg,#9D0078,#0063F8)',hero:'linear-gradient(90deg,#FFCD19,#353815,#FFFB85)',
-    exclusive:'linear-gradient(90deg,rgb(140,255,203),rgb(51,231,255),rgb(79,164,255))',
-    radiant:'linear-gradient(90deg,#FF6600,#FFCC33)'};
+  var RG={uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)',rare:'linear-gradient(180deg,#2244B0,#57A4FE)',
+    epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',mythic:'linear-gradient(180deg,#FFF006,#FFD114)',
+    secret:'linear-gradient(180deg,#FF8700,#FF0F0C)',nightmare:'linear-gradient(180deg,#492590,#2A1E42)',
+    apex:'linear-gradient(180deg,#9D0078,#0063F8)',hero:'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',
+    exclusive:'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',
+    radiant:'linear-gradient(180deg,#FF6600,#FFCC33)'};
+  var RGF={ uncommon:'#103316', rare:'#0C172B', epic:'#27052A', mythic:'#332D03', exclusive:'#0A2E33', secret:'#330F01', nightmare:'#0C0715', apex:'#100A25', hero:'#0B0B04', radiant:'#331F05' };
   function els(){var t=document.getElementById('metaTip'),i=document.getElementById('metaTipInner');return t&&i?[t,i]:null;}
   function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'';}
   function row(){var d=document.createElement('div');d.className='mt-row';return d;}
@@ -3114,7 +3127,7 @@ const REWARD_TIP = `<script>
     var r1=row();
     if(cfg.icon){
       var ic=document.createElement('div');ic.className='mt-icon';ic.style.background=bg;
-      var inn=document.createElement('div');inn.className='mt-icon-in';
+      var inn=document.createElement('div');inn.className='mt-icon-in';inn.style.background=RGF[rar]||'';
       var im=document.createElement('img');im.src=cfg.icon;im.alt='';
       im.style.cssText='width:100%;height:100%;object-fit:contain;display:block;margin:0;max-width:none';
       inn.appendChild(im);ic.appendChild(inn);r1.appendChild(ic);

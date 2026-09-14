@@ -146,6 +146,8 @@
       '.meta-card.meta-shiny{background-size:200% 200%;animation:metaShiny 6s linear infinite}',
       '.meta-card-inner{position:relative;width:100%;height:100%;' +
         'border-radius:9px;overflow:hidden;background:rgba(34,34,34,0.85)}',
+      '.meta-byte-inner,.meta-chip-inner,.meta-path-inner,.meta-replacement-inner,.mt-icon-in{position:relative}',
+      '.meta-card-inner::after,.meta-byte-inner::after,.meta-chip-inner::after,.meta-path-inner::after,.meta-replacement-inner::after,.mt-icon-in::after{content:"";position:absolute;inset:0;border-radius:inherit;background:url(data:image/png;base64,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) 0 0/100% 100% no-repeat;pointer-events:none;z-index:1}',
       '.meta-card-img{width:100%;height:100%;object-fit:cover;object-position:center top;' +
         'display:block;pointer-events:none}',
       '.meta-byte{position:absolute;top:2px;right:2px;z-index:2;aspect-ratio:1/1;' +
@@ -306,16 +308,16 @@
   }
 
   var RARITY = {
-    uncommon:  'linear-gradient(90deg,#5CFF4D,#3FFF8F)',
-    rare:      'linear-gradient(90deg,#58A6FF,#1C3AA0)',
-    epic:      'linear-gradient(90deg,#FF35FF,#87009F)',
-    mythic:    'linear-gradient(90deg,#FFB81F,#FFFF00)',
-    exclusive: 'linear-gradient(180deg,rgb(140,255,203) 0%,rgb(20,115,91) 25.1%,rgb(51,231,255) 50%,rgb(20,68,112) 68%,rgb(21,74,118) 74.6%,rgb(79,164,255) 100%)',
-    secret:    'linear-gradient(90deg,#FF8800,#FF0C0C)',
-    nightmare: 'linear-gradient(90deg,#492590,#2A1E42)',
-    apex:      'linear-gradient(90deg,#9D0078,#0063F8)',
-    hero:      'linear-gradient(90deg,#FFCD19,#353815,#FFFB85)',
-    radiant:   'linear-gradient(90deg,#FF6600,#FFCC33)'
+    uncommon:  'linear-gradient(180deg,#3FFF8E,#5CFF4E)',
+    rare:      'linear-gradient(180deg,#2244B0,#57A4FE)',
+    epic:      'linear-gradient(180deg,#8A01A1,#FD34FE)',
+    mythic:    'linear-gradient(180deg,#FFF006,#FFD114)',
+    exclusive: 'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',
+    secret:    'linear-gradient(180deg,#FF8700,#FF0F0C)',
+    nightmare: 'linear-gradient(180deg,#492590,#2A1E42)',
+    apex:      'linear-gradient(180deg,#9D0078,#0063F8)',
+    hero:      'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',
+    radiant:   'linear-gradient(180deg,#FF6600,#FFCC33)'
   };
   var SHINY = {
     'Astral Bonnie':           'linear-gradient(90deg,#ffeb3b,#ff9800,#f44336,#9c27b0,#2196f3,#4caf50,#ffeb3b)',
@@ -329,6 +331,21 @@
     'Plushtrap':               'linear-gradient(90deg,#000,#555,#aaa,#555,#000)'
   };
   var SHINY_DEF = 'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)';
+
+  var RARITY_FILL = {
+    uncommon:'#103316',
+    rare:'#0C172B',
+    epic:'#27052A',
+    mythic:'#332D03',
+    exclusive:'#0A2E33',
+    secret:'#330F01',
+    nightmare:'#0C0715',
+    apex:'#100A25',
+    hero:'#0B0B04',
+    radiant:'#331F05'
+};
+  function getRarityFill(rar) { return RARITY_FILL[rar] || ''; }
+  function metaFillForBg(bg) { for (var k in RARITY) { if (RARITY[k] === bg) return RARITY_FILL[k] || ''; } return ''; }
 
   function getRarityBg(name, rar) {
     if (rar === 'shiny') return SHINY[name] || SHINY_DEF;
@@ -357,7 +374,7 @@
       ic.className = 'mt-icon' + (iconSh ? ' meta-shiny' : '');
       ic.style.background = iconBg;
       if (iconSh) ic.style.backgroundSize = '200% 200%';
-      var inn = document.createElement('div'); inn.className = 'mt-icon-in';
+      var inn = document.createElement('div'); inn.className = 'mt-icon-in'; inn.style.background = metaFillForBg(iconBg);
       var im  = document.createElement('img'); im.src = iconSrc; im.alt = '';
       inn.appendChild(im); ic.appendChild(inn);
       var tx = document.createElement('div'); tx.className = 'mt-text'; tx.textContent = label;
@@ -701,7 +718,7 @@
         card.className = 'meta-card' + (isShiny ? ' meta-shiny' : '');
         card.style.background = bg;
 
-        var inner = document.createElement('div'); inner.className = 'meta-card-inner';
+        var inner = document.createElement('div'); inner.className = 'meta-card-inner'; inner.style.background = getRarityFill(rar);
 
         var img = document.createElement('img');
         img.className = 'meta-card-img'; img.alt = unitCfg.name;
@@ -741,7 +758,7 @@
           var bW = document.createElement('div');
           bW.className = 'meta-byte' + (bSh ? ' meta-shiny' : ''); bW.style.background = getRarityBg(unitCfg.byte, bR);
           if (bSh) bW.style.backgroundSize = '200% 200%';
-          var bI = document.createElement('div'); bI.className = 'meta-byte-inner';
+          var bI = document.createElement('div'); bI.className = 'meta-byte-inner'; bI.style.background = getRarityFill(bR);
           var bM = document.createElement('img'); _metaImgSrc(bM, byteData.url); bM.alt = unitCfg.byte;
           bI.appendChild(bM); bW.appendChild(bI); inner.appendChild(bW);
         }
@@ -751,7 +768,7 @@
           var rW = document.createElement('div');
           rW.className = 'meta-replacement' + (rSh ? ' meta-shiny' : ''); rW.style.background = getRarityBg(unitCfg.replacement, rR);
           if (rSh) rW.style.backgroundSize = '200% 200%';
-          var rI = document.createElement('div'); rI.className = 'meta-replacement-inner';
+          var rI = document.createElement('div'); rI.className = 'meta-replacement-inner'; rI.style.background = getRarityFill(rR);
           var rM = document.createElement('img'); _metaImgSrc(rM, rU.img || ''); rM.alt = unitCfg.replacement; rM.draggable = false; rM.loading = 'lazy';
           rI.appendChild(rM); rW.appendChild(rI); inner.appendChild(rW);
         }
@@ -776,7 +793,7 @@
             cW.className = 'meta-chip' + (chSh ? ' meta-shiny' : '') + chipPosClass;
             cW.style.background = getRarityBg(unitCfg.chip, chR);
             if (chSh) cW.style.backgroundSize = '200% 200%';
-            var cI = document.createElement('div'); cI.className = 'meta-chip-inner';
+            var cI = document.createElement('div'); cI.className = 'meta-chip-inner'; cI.style.background = getRarityFill(chR);
             var cM = document.createElement('img'); _metaImgSrc(cM, chipD.url); cM.alt = unitCfg.chip;
             cI.appendChild(cM); cW.appendChild(cI); inner.appendChild(cW);
           }
