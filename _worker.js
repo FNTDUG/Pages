@@ -1927,7 +1927,7 @@ function buildOneSub(catKey,name,base,ov,unitData,extraRow){
 var ATTACK_TYPES=[
   {name:'Cone AOE',   desc:'Damages enemies in a forward-facing spread that widens with distance.'},
   {name:'Continuous', desc:'Continuously attacks enemies while they stay in range. Can combine with other attack types.'},
-  {name:'Explosion',  desc:'Damages enemies within a circular radius around a target point.'},
+  {name:'Explosion/Circle',  desc:'Damages enemies within a circular radius around a target point.'},
   {name:'Full',       desc:'Damages every enemy on the map.'},
   {name:'Full AOE',   desc:'Damages every enemy currently in this unit’s range.'},
   {name:'Line',       desc:'Damages all enemies in a straight path extending from the unit.'},
