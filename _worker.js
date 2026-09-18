@@ -3539,7 +3539,7 @@ export default {
 
     // Rotations roll hourly, so the response is held only until the pool actually
     // flips — a fixed TTL would either hammer the upstream or serve a stale pool.
-    if (url.pathname === '/rotations') {
+    if (url.pathname === '/rotations' || url.pathname === '/rot-feed') {
       let body = null;
       try {
         const up = await fetch(ROT_UPSTREAM, {
