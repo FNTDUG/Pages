@@ -3569,6 +3569,29 @@ export default {
       });
     }
 
+    if (url.pathname === '/rot-debug') {
+      const variants = [
+        ['bare', {}],
+        ['headers', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA } }],
+        ['headers+cacheTtl', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtl: 60, cacheEverything: true } }],
+        ['headers+cacheTtlByStatus', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtlByStatus: { '200-299': 60, '400-599': 0 } } }]
+      ];
+      const out = [];
+      for (const [label, init] of variants) {
+        const t0 = Date.now();
+        try {
+          const r = await fetch(ROT_UPSTREAM, init);
+          const txt = await r.text();
+          out.push({ label, status: r.status, ms: Date.now() - t0, len: txt.length, head: txt.slice(0, 60), cf: r.headers.get('cf-cache-status'), vary: r.headers.get('vary') });
+        } catch (e) {
+          out.push({ label, ms: Date.now() - t0, error: String(e && e.message || e), name: String(e && e.name) });
+        }
+      }
+      return new Response(JSON.stringify({ upstream: ROT_UPSTREAM, out }, null, 1), {
+        headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'no-store' }
+      });
+    }
+
     if (url.pathname === '/news-posts') {
       const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
       const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
