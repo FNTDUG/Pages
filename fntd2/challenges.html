@@ -36,17 +36,13 @@
     </div></div>
     <div id="ug-content">
 <style>
-/* Class names are ch-prefixed so they cannot collide with the shared site CSS
-   or with the meta-* classes metas.html emits into this page. */
 .chWrap{position:relative;margin-top:8px}
 
-/* arcade scanlines, same treatment as #unitEngine */
 .chScan{position:relative}
 .chScan::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:900;border-radius:inherit;
   background:repeating-linear-gradient(to bottom,
     transparent 0px,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px)}
 
-/* ── reset countdown ─────────────────────────────────────────────────── */
 .chTimer{border:1px solid rgba(255,164,91,.35);border-radius:10px;background:rgba(10,7,22,.72);
   padding:14px 16px 16px;margin-bottom:20px;text-align:center}
 .chTimer h2{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--ug-accent);
@@ -57,7 +53,6 @@
   text-shadow:0 0 12px rgba(255,164,91,.35)}
 .chUnit .chLbl{font-family:'Press Start 2P',monospace;font-size:11px;color:#b6afc7;margin-top:9px;letter-spacing:.5px}
 
-/* ── challenge card ──────────────────────────────────────────────────── */
 .ch-card{position:relative;display:block;width:100%;border:2px solid rgba(255,255,255,.75);
   border-radius:2px;overflow:hidden;cursor:pointer;margin-bottom:14px;
   background:#1a1030 center/cover no-repeat;aspect-ratio:6/1;min-height:118px;
@@ -78,36 +73,20 @@
   display:flex;align-items:center;justify-content:center}
 .chRw-in{position:relative}
 .chRw-in::after{content:"";position:absolute;inset:0;border-radius:inherit;background:url(data:image/png;base64,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) 0 0/100% 100% no-repeat;pointer-events:none}
-/* icons are 420x420; scale them smoothly and beat #ug-content img's margin */
 .chRw img{width:100%!important;height:100%!important;object-fit:contain;display:block;margin:0!important;max-width:none!important}
 .chRw .chQty{position:absolute;left:2px;bottom:1px;font-family:'Press Start 2P',monospace;font-size:6px;
   color:#fff;text-shadow:1px 1px 0 #000}
 
-/* ── popup ───────────────────────────────────────────────────────────── */
 .chOv{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;
   padding:20px;background:rgba(4,3,10,.86);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .chOv[hidden]{display:none}
-/* the site pins the hamburger at max z-index, so hide it while the modal is up */
 body.ch-modal #ug-hamburger{display:none!important}
-/* The frame itself no longer scrolls — .chPop-in does. That is what lets Close
-   stay absolute (costing no layout space) while still being unscrollable: it is
-   pinned to a container that never moves. It also stops .chVeil, which is
-   absolute against this box, from sliding off the top on a long challenge. */
-/* vh on a phone is the LARGE viewport — the height the page would have with the
-   browser's address bar retracted — so while that bar is on screen 88vh is taller
-   than what you can actually see and the popup runs off the bottom. dvh tracks the
-   real height. The vh line stays first as the fallback for anything without dvh. */
 .chPop{position:relative;width:min(860px,100%);max-height:88vh;max-height:88dvh;overflow:hidden;
   display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.8);
   border-radius:2px;background:#150c28 center/cover no-repeat;animation:chPopIn .18s ease-out}
 @keyframes chPopIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
 .chPop .chVeil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,4,14,.55) 0%,rgba(6,4,14,.35) 40%,rgba(6,4,14,.8) 100%)}
-/* min-height:0 so this flex child may shrink below its content and actually
-   scroll, instead of stretching .chPop past its max-height. */
 .chPop-in{position:relative;z-index:1;flex:1;min-height:0;overflow:auto;padding:14px 16px 18px}
-/* Reserve the corner the Close button sits in, so a long name ("Overcoming the
-   Odds") wraps beside it instead of running underneath. Close reaches ~75px in
-   from the frame edge and .chPop-in's padding already covers 16 of those. */
 .chPop-name{font-family:'Press Start 2P',monospace;font-size:22px;line-height:1.2;padding-right:68px;
   text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
 .chPop-diff{font-family:'Press Start 2P',monospace;font-size:10px;margin-top:7px;color:#c07bf0;text-shadow:1px 1px 0 #000}
@@ -118,45 +97,26 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRline{margin-bottom:3px}
 .chPop .chRw{width:58px;height:58px}
 .chPop .chRw .chQty{font-size:7px}
-/* Absolute against .chPop, which no longer scrolls, so it holds its corner for
-   the whole scroll without occupying a line of its own. */
 .chPop-close{position:absolute;top:8px;right:10px;z-index:2;font-family:'Audiowide',sans-serif;font-size:12px;
   padding:7px 13px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,164,91,.5);
   background:rgba(10,8,20,.92);color:var(--ug-accent)}
 .chPop-close:hover{background:rgba(255,164,91,.16)}
 
-/* The engine appends #metaTip to <body> at z-index:10000, which lands under the
-   popup overlay. Lift it above so unit tooltips stay readable inside the modal. */
 #metaTip{z-index:2147483010!important}
 
-/* metas.html renders the team; it is parked off-screen and moved in on open */
 #teamStore{position:absolute;left:-99999px;top:0;width:900px}
 #teamStore .metaTitle,#teamStore .metaControls,#teamStore .metaFooter{display:none}
 .chPop .metaRow{--mg:6px}
-/* metas.html sizes captions clamp(5px,0.85vw,10px), which bottoms out on its 5px
-   floor on a phone — 0.85vw is only ~3px at 360px wide, and unreadable. Raising
-   the floor to 8px and steepening the slope keeps the same 10px ceiling the
-   original intends, so desktop is unchanged while phones roughly double. Left
-   outside the 640px block deliberately: scoping it there would leave a cliff at
-   the breakpoint (10px at 640px, 5.4px at 641px) and tablets are nearly as bad
-   as phones — 0.85vw is still under 6px at 700px. */
 .chPop .meta-caption{font-size:clamp(8px,2.3vw,10px)}
 
 .chNote{font-size:12px;color:#7d7790;text-align:center;margin-top:22px;line-height:1.7}
 @media(max-width:640px){
-  /* Card height comes from its content on a phone. .ch-inner's height:100%
-     against an auto-height button resolves to a box shorter than the content
-     it holds, which let the reward tiles spill onto the card below. */
   .ch-card{aspect-ratio:auto;min-height:0}
   .ch-inner{height:auto;gap:10px}
   .ch-name{font-size:12px}.chRw{width:38px;height:38px}
   .chPop-name{font-size:16px}.chSec{font-size:12px}.chRestr{font-size:9px}
-  /* reclaim the overlay gutter — 40px is a lot of a 360px screen */
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
-  /* The engine packs six slots into one nowrap row, which collapses each unit
-     to ~42px on a phone. Wrap to three-per-row so the art stays legible; the
-     desktop single row is untouched because this only applies under 640px. */
   .chPop .metaRow{flex-wrap:wrap;--mg:6px}
   .chPop .meta-slot{flex:0 0 calc((100% - 2 * var(--mg)) / 3)}
 }
@@ -177,9 +137,6 @@ body.ch-modal #ug-hamburger{display:none!important}
   </div>
 </div>
 
-<!-- metas.html renders real meta blocks here; the team rows get moved into the
-     popup on open, which keeps the byte/chip/enchant badges and the hover
-     tooltip identical to Meta Teams instead of a second copy that can drift. -->
 <div id="teamStore">
   <div class="metaMount" data-meta="Downpour"></div>
   <div class="metaMount" data-meta="Fend Off the Dark"></div>
@@ -191,11 +148,8 @@ body.ch-modal #ug-hamburger{display:none!important}
 
 <script>
 (function(){
-/* Every challenge is Very Hard and pays the same, so those are shared rather
-   than repeated per entry. Only the map and restrictions differ. */
 var MATS = 'https://items.fntduserguide.com/materials/';
 var DIFFICULTY = 'Very Hard';
-// Rarity plates match the rest of the site; values come from the materials feed.
 var RARITY = {
   uncommon:'linear-gradient(180deg,#3FFF8E,#5CFF4E)', rare:'linear-gradient(180deg,#2244B0,#57A4FE)',
   epic:'linear-gradient(180deg,#8A01A1,#FD34FE)',     mythic:'linear-gradient(180deg,#FFF006,#FFD114)',
@@ -265,9 +219,6 @@ function rewardTiles(withQty){
   REWARDS.forEach(function(r){
     var t = el('div','chRw');
     t.style.background = RARITY[r.rarity] || '#555';
-    // Same hover card the meta engine shows for units, driven by the worker.
-    // Tap-to-open only in the popup: on the card grid the tile sits inside the
-    // challenge button, and swallowing the tap there would stop it opening.
     t.setAttribute('aria-label', r.name + ' ' + r.qty);
     t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:r.qty, rarity:r.rarity, icon:r.icon}));
     if (withQty) t.setAttribute('data-rwtip-tap','');
@@ -295,8 +246,6 @@ function buildCard(c){
   return card;
 }
 
-/* Take the live team row metas.html built for this challenge. It is moved, not
-   cloned, so the tooltip listeners it bound come with it; close() puts it back. */
 var borrowed = null;
 function borrowTeam(name){
   var mount = document.querySelector('#teamStore .metaMount[data-meta="' + name.replace(/"/g,'\\"') + '"]');
@@ -352,15 +301,7 @@ document.getElementById('chPopClose').addEventListener('click', closePop);
 document.getElementById('chOv').addEventListener('click', function(e){ if(e.target===this) closePop(); });
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePop(); });
 
-/* Special Challenges reset once a week, on the Sunday evening players see:
-   7pm EST / 8pm EDT, which is the single instant 00:00 UTC Monday.
-
-   Note the weekday is expressed in UTC and so reads as MONDAY, one day later
-   than the Sunday reset it describes — Sunday 7pm in Eastern has already rolled
-   past midnight in UTC. Anchoring to UTC is the point: the reset is a fixed
-   instant that does not move when the US changes its clocks, and only its
-   Eastern reading shifts by an hour across DST. */
-var RESET_WEEKDAY_UTC = 1;   // 0-6, Sun-Sat, in UTC
+var RESET_WEEKDAY_UTC = 1;  
 var RESET_HOUR_UTC = 0;
 
 function nextReset(now){
@@ -413,5 +354,5 @@ document.getElementById('chNote').textContent = missing
   
   <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');document.querySelectorAll('#ug-mobile-nav .ug-mn-section.open').forEach(function(s){if(s!==section){s.classList.remove('open');var b=s.querySelector('.ug-mn-section-btn');if(b)ugMnSpinStop(b)}});section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
   <script src="https://raw.githack.com/FNTDUG/characters.json/refs/heads/main/metas.html"></script>
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>

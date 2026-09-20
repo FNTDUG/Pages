@@ -7,7 +7,6 @@
   <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
   <style>
-  /* global rule — webkit/moz font-smoothing applied site-wide; keep on all pages */
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
   :root{--ug-accent:#ffa45b;--ug-purple:#681f62}
   html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
@@ -82,27 +81,18 @@
   .ug-cards-grid{--ug-card-w:min(320px,calc(100vw - 36px));display:flex;flex-wrap:wrap;justify-content:center;gap:24px}
   .ug-cards-grid>div{display:flex;flex-direction:column;align-items:center;max-width:100%}
 
-  /* Game cards */
   .game-info-btn{display:block;width:var(--ug-card-w,320px);height:var(--ug-card-w,320px);border-radius:12px;text-decoration:none;flex-shrink:0}
   .glow-card{position:relative;width:100%;height:100%;border:3px solid #f69b55;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 0 15px rgba(64,18,83,0.4);transition:box-shadow 0.3s ease,transform 0.3s ease}
   .game-info-btn:hover .glow-card{box-shadow:0 0 25px 8px #401253;transform:scale(1.05)}
-  /* Icon comes live from Roblox via the worker's /game-thumb/ route. It is
-     512x512 and the card is square, so object-fit:contain shows the whole icon
-     with nothing cropped - hence no scaling here and no zoom on hover, either
-     of which would clip the edges. The card itself still lifts on hover. */
   .glow-card img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;background:#0b0a16}
   .gc-shade{position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
-  /* Centred in the space above the stat boxes (hence bottom:63px), then nudged
-     down 20px. These numbers were set in the tuner, not guessed. */
   .gc-title{position:absolute;left:0;right:0;top:0;bottom:63px;display:flex;align-items:center;justify-content:center;padding:0 14px;text-align:center;font-family:'Press Start 2P',cursive;color:#fff;line-height:1.5;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6);transform:translateY(20px);pointer-events:none}
   .gc-title span{font-size:38px}
-  .gc-title--sm span{font-size:30px}   /* titles that wrap to two lines */
+  .gc-title--sm span{font-size:30px}  
   .stats-wrapper{position:absolute;bottom:15px;left:50%;transform:translateX(-50%);width:90%;display:flex;justify-content:space-between;gap:10px}
   .stat-box{flex:1;background:rgba(0,0,0,0.85);border:2px solid #f69b55;border-radius:8px;padding:8px 6px;text-align:center;box-shadow:0 0 10px rgba(64,18,83,0.7)}
   .stat-label{font-family:'Audiowide',sans-serif;font-size:12px;color:#f69b55;margin-bottom:4px;letter-spacing:1px}
   .stat-value{font-family:'Press Start 2P',cursive;font-size:12px;color:#ffffff}
-  /* A card with nowhere to go yet: no pointer, no hover lift, and with no stat boxes
-     beneath it the overlay centres against the whole card rather than above them. */
   .game-info-btn.is-soon{cursor:default}
   .game-info-btn.is-soon:hover .glow-card{box-shadow:0 0 15px rgba(64,18,83,0.4);transform:none}
   .game-info-btn.is-soon .gc-title{bottom:0;transform:none}
@@ -155,7 +145,6 @@
 
     <div id="ug-content">
       <div style="font-family:'Audiowide',sans-serif;font-size:42px;color:#fff;text-align:center;margin-bottom:28px;letter-spacing:.5px">Games Directory</div>
-      <!-- Row 1: FNTD1 + FNTD2 side by side -->
       <div class="ug-cards-grid" style="margin-bottom:24px">
 
         <div>
@@ -206,7 +195,6 @@
 
       </div>
 
-      <!-- Row 2: Bite By Night + Grimworks -->
       <div class="ug-cards-grid">
 
         <div>
@@ -272,7 +260,6 @@
   window.addEventListener('resize',ugCloseAll,{passive:true});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
 
-  /* Stats fetcher */
   (function(){
     var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624";
     function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1).replace('.0','')+'b';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'m';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'k';return n.toString()}
@@ -290,5 +277,5 @@
     setInterval(fetchStats,60000);
   })();
   </script>
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>

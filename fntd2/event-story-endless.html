@@ -93,7 +93,6 @@
       '.metaSiteUrl{font-family:"Press Start 2P",monospace;font-size:clamp(11px,1.5vw,18px);' +
         'color:#fff;text-align:center;text-shadow:0 1px 6px rgba(0,0,0,0.95)}',
 
-      /* seamless — ~30% smaller than the original values */
       '.seamlessRoot{width:100vw;position:relative;left:50%;transform:translateX(-50%);' +
         'background-size:cover;background-position:center;background-repeat:no-repeat;' +
         'color:#fff;font-family:"Press Start 2P",monospace;box-sizing:border-box;' +
@@ -130,7 +129,6 @@
       '.seamlessControls .meta-clutter-btn{font-size:clamp(5px,0.7vw,8px);' +
         'padding:clamp(3px,0.42vw,6px) clamp(6px,0.84vw,11px)}',
 
-      /* page switcher tabs — only rendered when pages.length > 1 */
       '.seamlessPageTabBar{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;' +
         'padding:clamp(3px,0.5vw,6px) clamp(6px,1.05vw,11px) clamp(5px,0.8vw,9px)}',
       '.seamlessPageTab{font-family:"Press Start 2P",monospace;font-size:clamp(5px,0.8vw,9px);' +
@@ -188,7 +186,6 @@
         'border-radius:4px;cursor:pointer;user-select:none;transition:opacity .15s,border-color .15s,color .15s}',
       '.meta-clutter-btn:hover{background:rgba(246,155,85,0.12)}',
       '.meta-clutter-btn.cltr-off{border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.3)}',
-      /* camera button — shares the clutter button's frame so the controls row stays even */
       '.meta-cam-btn{display:inline-flex;align-items:center;justify-content:center;' +
         'padding:4px 8px;background:rgba(0,0,0,0.65);' +
         'border:1px solid rgba(246,155,85,0.75);color:#ffa45b;' +
@@ -419,13 +416,7 @@
 
   function hideTip() { tip.style.opacity = '0'; tip.style.display = 'none'; }
 
-  /* ── Capture ──────────────────────────────────────────────────────────────
-     Same behaviour as the trade calculator's screenshot button. html2canvas is
-     pulled in on first click rather than up front, so a page that never uses
-     the button never pays for the library.
-     Unit renders come from the fntd2-units R2 bucket, which must send CORS
-     headers or html2canvas cannot read them and the cards render blank.        */
-  var _h2cState = 0;   // 0 = untouched, 1 = loading, 2 = ready, 3 = failed
+  var _h2cState = 0;  
   var _h2cWaiting = [];
   function withHtml2Canvas(cb) {
     if (typeof window.html2canvas === 'function') { cb(true); return; }
@@ -448,17 +439,10 @@
     (document.head || document.documentElement).appendChild(s);
   }
 
-  /* Point an <img> at a url in CORS mode. html2canvas re-requests every image
-     with crossOrigin set; if the first load was plain, the browser reuses that
-     cached non-CORS copy, the check fails, and the image is dropped from the
-     capture — instantly, with no network round trip. Setting crossOrigin on the
-     original load is what makes the cached copy usable. Must precede .src.     */
   function _metaImgSrc(im, url) {
     im.crossOrigin = 'anonymous';
     im.src = url || '';
     im.addEventListener('error', function () {
-      // CORS unavailable for this one — retry plain so the page still shows it
-      // (it just will not make it into a capture).
       if (im.getAttribute('crossorigin')) {
         var s = im.getAttribute('src');
         im.removeAttribute('crossorigin');
@@ -467,21 +451,16 @@
     });
   }
 
-  /* Same problem for CSS background-image, which has no crossOrigin attribute:
-     warm the cache with a CORS fetch first, then apply it. */
   function _metaSetBg(el, url) {
     if (!url) return;
     var pre = new Image();
     pre.crossOrigin = 'anonymous';
     var apply = function () { el.style.backgroundImage = 'url(' + url + ')'; };
     pre.onload = apply;
-    pre.onerror = apply;   // show it regardless; only the capture suffers
+    pre.onerror = apply;  
     pre.src = url;
   }
 
-  /* Every URL the capture needs: <img> sources plus CSS background-image urls
-     (the root's artwork, rarity plates, and so on, which have no crossOrigin
-     attribute to set). */
   function _metaImageUrls(rootEl) {
     var urls = {};
     Array.prototype.forEach.call(rootEl.querySelectorAll('img'), function (im) {
@@ -501,16 +480,6 @@
     return Object.keys(urls);
   }
 
-  /* html2canvas re-requests every image with crossOrigin set (useCORS). If the
-     browser cache only holds a plain non-CORS copy it reuses that, the CORS
-     check fails, and the image is dropped from the render — the page still
-     looks right, so the loss is invisible until you look at the screenshot.
-     Fetching each URL once in CORS mode first puts a CORS-valid copy in the
-     cache, so html2canvas's own loads all hit. Also clears loading="lazy",
-     which would otherwise leave below-the-fold cards unfetched. */
-  /* Can html2canvas read this image? It re-requests with crossOrigin, so an
-     image the browser only holds a plain non-CORS copy of will fail — drawing
-     it to a throwaway canvas and reading a pixel back is the same test. */
   function _metaReadable(im) {
     if (!im || !im.naturalWidth) return false;
     try {
@@ -523,10 +492,6 @@
     } catch (e) { return false; }
   }
 
-  /* Anything not readable gets re-fetched in CORS mode with the cache bypassed
-     and handed to the clone as a blob: url, which is same-origin and needs no
-     CORS at all. That also replaces the poisoned cache entry, so later captures
-     are cheap. Returns a { url -> blobUrl } map for onclone to apply. */
   function _metaPreloadImages(rootEl, cb) {
     Array.prototype.forEach.call(rootEl.querySelectorAll('img[loading]'), function (im) {
       im.removeAttribute('loading');
@@ -539,7 +504,7 @@
     });
 
     var need = _metaImageUrls(rootEl).filter(function (u) {
-      return !_metaReadable(byUrl[u]);   // background urls have no <img>, so always re-fetched
+      return !_metaReadable(byUrl[u]);  
     });
 
     var map = {}, pending = need.length, finished = false;
@@ -555,9 +520,9 @@
           if (b) { try { map[u] = URL.createObjectURL(b); } catch (e) {} }
           settle();
         })
-        .catch(settle);   // best effort: a failure just means that one drops
+        .catch(settle);  
     });
-    setTimeout(finish, 20000);   // never leave the button stuck on a stalled image
+    setTimeout(finish, 20000);  
   }
 
   function _metaDlBlob(blob, filename) {
@@ -567,9 +532,6 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
-  /* Preview + Save. Saving from that button is a FRESH user gesture, which is
-     what iOS needs for navigator.share -> Save to Photos (sharing straight
-     after the async capture loses the original tap's activation). */
   function _metaShowShot(blob, filename) {
     if (!blob) return;
     var canShareFiles = false;
@@ -596,8 +558,8 @@
       navigator.share({ files: [new File([blob], filename, { type: 'image/png' })] })
         .then(close)
         .catch(function (err) {
-          if (err && err.name === 'AbortError') return;   // user cancelled the sheet
-          _metaDlBlob(blob, filename); close();           // genuine failure -> download
+          if (err && err.name === 'AbortError') return;  
+          _metaDlBlob(blob, filename); close();          
         });
     });
     var closeB = document.createElement('button'); closeB.type = 'button';
@@ -619,12 +581,9 @@
       if (!ok) { if (btn) { btn.disabled = false; btn.title = 'Screenshot unavailable'; } _revoke(); return; }
       window.html2canvas(rootEl, {
         backgroundColor: '#07060f', useCORS: true, scale: 2, logging: false,
-        imageTimeout: 30000,   // default is 15s, which slow connections overrun -> blank tiles
+        imageTimeout: 30000,  
         windowWidth: 1400, windowHeight: Math.max(2000, window.innerHeight || 900),
         onclone: function (doc) {
-          // The live roots are full-bleed via width:100vw + left:50% + translateX(-50%).
-          // In the clone that offset would push the render half a viewport sideways,
-          // so pin them to a plain fixed-width block instead.
           ['.metaRoot', '.seamlessRoot'].forEach(function (sel) {
             Array.prototype.forEach.call(doc.querySelectorAll(sel), function (el) {
               el.style.width = '1400px'; el.style.left = '0';
@@ -633,14 +592,9 @@
           });
           if (doc.documentElement) doc.documentElement.style.width = '1400px';
           if (doc.body) { doc.body.style.width = '1400px'; doc.body.style.margin = '0'; }
-          // html2canvas renders the clone in an off-screen iframe, so images still
-          // marked loading="lazy" are never in its viewport and the browser never
-          // fetches them — they paint blank. Strip it in the clone.
           Array.prototype.forEach.call(doc.querySelectorAll('img[loading]'), function (im) {
             im.removeAttribute('loading');
           });
-          // Swap in the same-origin blob copies fetched above, so html2canvas
-          // never has to make a cross-origin request of its own.
           Array.prototype.forEach.call(doc.querySelectorAll('img'), function (im) {
             var s = im.getAttribute('src');
             if (s && blobMap[s]) { im.removeAttribute('crossorigin'); im.src = blobMap[s]; }
@@ -655,7 +609,6 @@
               if (bg.indexOf(u) !== -1) el.style.backgroundImage = 'url("' + blobMap[u] + '")';
             });
           });
-          // Controls are UI, not content — keep them out of the shot.
           Array.prototype.forEach.call(
             doc.querySelectorAll('.metaControls,.seamlessControls'),
             function (el) { el.style.display = 'none'; }
@@ -722,17 +675,10 @@
 
         var img = document.createElement('img');
         img.className = 'meta-card-img'; img.alt = unitCfg.name;
-        // Load in CORS mode so the browser caches a CORS-valid copy. html2canvas
-        // re-requests these with crossOrigin set; if the cache only holds a plain
-        // non-CORS response the browser reuses it, the CORS check fails, and the
-        // render is silently dropped from the screenshot while the page looks fine.
-        // Must be set before .src — assigning it afterwards has no effect.
         img.crossOrigin = 'anonymous';
         img.src = u.img || '';
         img.draggable = false; img.loading = 'lazy';
         img.onerror = function () {
-          // If CORS is unavailable, retry as a plain load so the page still shows
-          // the render (it just will not appear in a capture).
           if (this.getAttribute('crossorigin') && this.getAttribute('src')) {
             var s = this.getAttribute('src');
             this.removeAttribute('crossorigin');
@@ -857,7 +803,6 @@
     var seamCfg = metasData.seamless || {};
     if (seamCfg === true) seamCfg = {};
 
-    /* support old format (single pageTitle+order) and new format (pages array) */
     var pages = seamCfg.pages;
     if (!pages || !pages.length) {
       pages = [{ pageTitle: seamCfg.pageTitle, pageNote: seamCfg.pageNote, order: seamCfg.order }];
@@ -867,7 +812,6 @@
     root.className = 'seamlessRoot';
     _metaSetBg(root, shared.background || '');
 
-    /* ── fixed header ── */
     var header = document.createElement('div'); header.className = 'seamlessHeader';
     if (shared.logoUrl) {
       var logo = document.createElement('img'); logo.className = 'seamlessLogo'; _metaImgSrc(logo, shared.logoUrl); logo.alt = '';
@@ -895,7 +839,6 @@
     controls.appendChild(makeClutterBtn(root));
     root.appendChild(controls);
 
-    /* ── page-switcher tab bar (only when multiple pages) ── */
     var tabBar = null;
     var pageWrappers = [];
     var reRenders = [];
@@ -907,7 +850,6 @@
     }
 
     pages.forEach(function (page, pageIdx) {
-      /* wrapper holds the pageTitle + all sections for this page */
       var wrap = document.createElement('div');
       if (pageIdx > 0) wrap.style.display = 'none';
       pageWrappers.push(wrap);
@@ -948,7 +890,6 @@
 
       root.appendChild(wrap);
 
-      /* build the tab button for this page */
       if (tabBar) {
         var tab = document.createElement('button');
         tab.className = 'seamlessPageTab' + (pageIdx === 0 ? ' seamlessPageTabActive' : '');
@@ -1034,5 +975,5 @@
   xC.send();
 }());
 </script>
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>

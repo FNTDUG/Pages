@@ -7,7 +7,6 @@
   <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
   <style>
-  /* global rule — webkit/moz font-smoothing applied site-wide; keep on all pages */
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
   :root{--ug-accent:#ffa45b;--ug-purple:#681f62}
 
@@ -24,16 +23,8 @@
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
   }
-  /* Jouwweb sets :root{font-size:10px} so 1rem=10px sitewide.
-     Engine rem units must resolve identically on our page. */
   html{ font-size:10px; }
 
-  /* ── Jouwweb environment replication ──────────────────────────────
-     Engine was designed on Jouwweb which provides these globals.
-     1. font: block page font; engine's own !important class rules win
-     2. :root font-size: Jouwweb sets 10px (handled above)
-     3. form elements: Jouwweb normalises font/size to inherit/100%
-     4. table: Jouwweb collapses borders globally                   ── */
   #unitEngine, #unitEngine * { font-family: 'Press Start 2P', cursive !important; }
   #unitEngine h2, #unitEngine h3 { font-family: 'Audiowide', sans-serif !important; }
 
@@ -53,8 +44,6 @@
   body::-webkit-scrollbar{width:6px}
   body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}
 
-  /* ===== PAGE WRAPPER ===== */
-  /* Blue/dark bg image for the content area — header covers itself with stars */
   #ug-main{
     min-height:100vh;display:flex;flex-direction:column;
     background-image:url('https://images.fntduserguide.com/952b91dc-d51b-434a-bee1-591d5d60126a.jpg');
@@ -62,7 +51,6 @@
     background-color:#0a0c1e;
   }
 
-  /* ===== HEADER — purple gradient ===== */
   #ug-header{
     position:relative;
     background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);
@@ -88,7 +76,6 @@
     letter-spacing:2px;
   }
 
-  /* ===== TOP NAV BAR (inside header, below title) ===== */
   #ug-topnav{
     position:sticky;
     top:0;
@@ -162,7 +149,6 @@
   .ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}
   .ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}
 
-  /* ===== MOBILE NAV ===== */
   #ug-hamburger{
     display:none;
     position:fixed;top:11px;right:12px;z-index:1200;
@@ -297,7 +283,6 @@
   .ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}
   .ug-mn-discord-icon{font-size:15px;flex-shrink:0}
 
-  /* ===== HERO — stars section (Unit Engine title through Clean Mode) ===== */
   #ug-hero{
     position:relative;
     background-image:url('https://images.fntduserguide.com/starry1.webp');
@@ -312,7 +297,6 @@
     padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto;
   }
 
-  /* ===== CONTENT AREA — sits on blue #ug-main background ===== */
   #ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}
 
   .ug-page-title-area{text-align:center;margin-bottom:18px}
@@ -349,8 +333,6 @@
   .ug-thumb-item:hover{border-color:var(--ug-accent);transform:translateY(-3px);box-shadow:0 4px 14px rgba(104,31,98,.45)}
   .ug-thumb-item img{width:100%;height:100%;object-fit:cover;display:block}
 
-  /* ===== FOOTER ===== */
-/* ===== MOBILE ===== */
   @media(max-width:768px){
     #ug-hamburger{display:flex}
     #ug-topnav{display:none}
@@ -383,9 +365,6 @@
   100% { background-position: 200% 50%; }
 }
 
-/* ------------------------------------------------
-   MAIN CONTAINER
------------------------------------------------- */
 .updated-panel {
   max-width: 650px;
   width: 95%;
@@ -413,7 +392,6 @@
   position: relative;
 }
 
-/* scanline overlay */
 .updated-panel::before {
   content: '';
   position: absolute;
@@ -430,9 +408,6 @@
   border-radius: inherit;
 }
 
-/* ------------------------------------------------
-   HEADER
------------------------------------------------- */
 .updated-header {
   background: linear-gradient(180deg,
     #120326 0%,
@@ -449,7 +424,6 @@
   border-radius: 16px 16px 0 0;
 }
 
-/* corner diamonds */
 .updated-header::before,
 .updated-header::after {
   content: '◆';
@@ -476,9 +450,6 @@
     0 0 36px rgba(255, 164, 91, 0.18);
 }
 
-/* ------------------------------------------------
-   BODY
------------------------------------------------- */
 .updated-body {
   padding: 16px 14px;
   position: relative;
@@ -502,9 +473,6 @@
   max-width: calc(84px * 7 + 6px * 6);
 }
 
-/* ------------------------------------------------
-   UNIT CARDS
------------------------------------------------- */
 .updated-card {
   width: 84px;
   height: 84px;
@@ -538,7 +506,6 @@
   box-shadow: 0 0 14px rgba(255, 164, 91, 0.55);
 }
 
-/* gradient border via ::before mask trick */
 .updated-card::before {
   content: "";
   position: absolute;
@@ -562,9 +529,6 @@
   pointer-events: none;
 }
 
-/* ------------------------------------------------
-   RARITY BACKGROUNDS + BORDERS
------------------------------------------------- */
 .rarity-uncommon {
   background: #103316;
 }
@@ -646,9 +610,6 @@
   background: linear-gradient(180deg,#FF6600,#FFCC33);
 }
 
-/* ------------------------------------------------
-   MOBILE
------------------------------------------------- */
 @media (max-width: 600px) {
   .updated-grid {
     width: 100% !important;
@@ -756,13 +717,11 @@
 </head>
 <body>
 
-  <!-- Mobile hamburger -->
   <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu">
     <span class="hmb-icon">&#9776;</span> Menu
   </button>
   <div id="ug-overlay" onclick="ugMobileClose()"></div>
 
-  <!-- Mobile nav drawer -->
   <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
     <div class="ug-mn-header">
       <div class="ug-mn-brand">
@@ -776,10 +735,8 @@
     <div class="ug-mn-body"></div>
   </div>
 
-  <!-- ===== MAIN PAGE ===== -->
   <div id="ug-main">
 
-    <!-- Header: stars bg + logo + title + topnav -->
     <header id="ug-header">
       <div class="ug-header-inner">
         <img class="ug-header-logo"
@@ -788,13 +745,11 @@
         <div class="ug-header-title">FNTD User Guide</div>
       </div>
 
-      <!-- Horizontal nav bar (desktop) -->
       <nav id="ug-topnav" role="navigation" aria-label="Site navigation">
         <div class="ug-tn-inner"></div>
       </nav>
     </header>
 
-    <!-- Stars zone: Unit Engine title through Clean-Mode button -->
     <div id="ug-hero">
       <div id="ug-hero-inner">
 
@@ -851,7 +806,6 @@
 
         <div class="ad-slot" style="margin-top:14px;">
           
-          <!-- ad -->
           <ins class="adsbygoogle"
                style="display:block"
                data-ad-client="ca-pub-7017245771068026"
@@ -866,9 +820,7 @@
       </div>
     </div>
 
-    <!-- Blue zone: widget -->
 
-    <!-- Unit Engine widget -->
     <div id="ug-content">
 
       <style>
@@ -1896,10 +1848,6 @@
         margin-bottom: 4px;
       }
 
-      /* The passive panel sets max-height via JS before applying top+bottom padding.
-         With border-box, max-height clips the total box (including padding), hiding the
-         bottom padding entirely. Switching to content-box makes max-height limit only
-         the content area, so the 10px top and 12px bottom padding render correctly. */
       .passive-container > div > div > div:last-child {
         box-sizing: content-box !important;
       }
@@ -2047,11 +1995,9 @@
    <div style="height:60px"></div>
     
   <footer id="ug-footer"></footer>
-  </div><!-- /ug-main -->
+  </div>
 
-  <!-- ===== SITE SCRIPTS ===== -->
   <script>
-  /* --- Mobile nav --- */
   function ugMobileOpen() {
     document.getElementById('ug-mobile-nav').classList.add('open');
     document.getElementById('ug-overlay').classList.add('open');
@@ -2096,7 +2042,6 @@
     if (!isOpen) { ugMnSpinStart(btn); } else { ugMnSpinStop(btn); }
   }
 
-  /* --- Desktop topnav dropdowns + slash spinner --- */
   var _SPIN_FRAMES = ['/', '-', '\\', '|'];
   var _spinTimers = new Map();
 
@@ -2158,7 +2103,6 @@
     }
   }
 
-  /* hover opens dropdown; leaving item OR dropdown closes it after grace period */
   function _ugOpenItem(item) {
     var btn = item.querySelector('.ug-tn-btn');
     if (!btn || item.classList.contains('open')) return;
@@ -2198,7 +2142,6 @@
   </script>
 
   <script>
-  /* --- Clean-Mode toggle --- */
   (function() {
     var toggle = document.getElementById('cleanModeToggle');
     if (!toggle) return;
@@ -2214,5 +2157,5 @@
   })();
   </script>
 
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>

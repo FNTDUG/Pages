@@ -118,7 +118,6 @@
       '.metaSiteUrl{font-family:"Press Start 2P",monospace;font-size:clamp(11px,1.5vw,18px);' +
         'color:#fff;text-align:center;text-shadow:0 1px 6px rgba(0,0,0,0.95)}',
 
-      /* seamless — ~30% smaller than the original values */
       '.seamlessRoot{width:100vw;position:relative;left:50%;transform:translateX(-50%);' +
         'background-size:cover;background-position:center;background-repeat:no-repeat;' +
         'color:#fff;font-family:"Press Start 2P",monospace;box-sizing:border-box;' +
@@ -155,7 +154,6 @@
       '.seamlessControls .meta-clutter-btn{font-size:clamp(5px,0.7vw,8px);' +
         'padding:clamp(3px,0.42vw,6px) clamp(6px,0.84vw,11px)}',
 
-      /* page switcher tabs — only rendered when pages.length > 1 */
       '.seamlessPageTabBar{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;' +
         'padding:clamp(3px,0.5vw,6px) clamp(6px,1.05vw,11px) clamp(5px,0.8vw,9px)}',
       '.seamlessPageTab{font-family:"Press Start 2P",monospace;font-size:clamp(5px,0.8vw,9px);' +
@@ -561,7 +559,6 @@
     var seamCfg = metasData.seamless || {};
     if (seamCfg === true) seamCfg = {};
 
-    /* support old format (single pageTitle+order) and new format (pages array) */
     var pages = seamCfg.pages;
     if (!pages || !pages.length) {
       pages = [{ pageTitle: seamCfg.pageTitle, pageNote: seamCfg.pageNote, order: seamCfg.order }];
@@ -571,7 +568,6 @@
     root.className = 'seamlessRoot';
     root.style.backgroundImage = 'url(' + (shared.background || '') + ')';
 
-    /* ── fixed header ── */
     var header = document.createElement('div'); header.className = 'seamlessHeader';
     if (shared.logoUrl) {
       var logo = document.createElement('img'); logo.className = 'seamlessLogo'; logo.src = shared.logoUrl; logo.alt = '';
@@ -591,7 +587,6 @@
     controls.appendChild(makeClutterBtn(root));
     root.appendChild(controls);
 
-    /* ── page-switcher tab bar (only when multiple pages) ── */
     var tabBar = null;
     var pageWrappers = [];
     var reRenders = [];
@@ -603,7 +598,6 @@
     }
 
     pages.forEach(function (page, pageIdx) {
-      /* wrapper holds the pageTitle + all sections for this page */
       var wrap = document.createElement('div');
       if (pageIdx > 0) wrap.style.display = 'none';
       pageWrappers.push(wrap);
@@ -644,7 +638,6 @@
 
       root.appendChild(wrap);
 
-      /* build the tab button for this page */
       if (tabBar) {
         var tab = document.createElement('button');
         tab.className = 'seamlessPageTab' + (pageIdx === 0 ? ' seamlessPageTabActive' : '');
@@ -730,5 +723,5 @@
   xC.send();
 }());
 </script>
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>

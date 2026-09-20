@@ -1,7 +1,3 @@
-// ─── SHARED NAV ───────────────────────────────────────────────────────────────
-// Edit the two templates below to add/remove tabs or change nav style.
-// Changes here instantly apply to every page — no per-page edits needed.
-// ─────────────────────────────────────────────────────────────────────────────
 
 const MOBILE_NAV_BODY = `
 <a href="/" class="ug-mn-link" data-nav-href="/">Home</a>
@@ -119,15 +115,6 @@ const NAV_CSS = `<style>
 #ug-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;z-index:1040!important}
 #ug-info-btn{display:flex;align-items:center;position:fixed;top:47px;right:12px;z-index:1099;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:9px 13px 9px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-info-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
-/* Sound toggle — same shell as the Menu/INFO buttons, round because it is
-   icon-only. Two states: speaker with waves (on), speaker with a cross and a
-   red pill (off).
-   z-index sits just under the INFO overlay (1048) and panel (1050), unlike the
-   INFO button itself at 1099 which stays on top so it can be tapped to close.
-   The sound button has no job while a panel is open, so it slides underneath
-   instead of floating over the panel's content. The nav drawer and the INFO
-   panel are both anchored right and wider than this button, so either one
-   covers it completely. */
 #ug-sound-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:86px;right:12px;z-index:1047;width:32px;height:32px;padding:0;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:50%;cursor:pointer;color:rgba(255,255,255,.92);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3)}
 #ug-sound-btn:hover{background:linear-gradient(135deg,rgba(104,31,98,.95),rgba(58,10,56,.95));border-color:rgba(255,164,91,.7);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,164,91,.2)}
 #ug-sound-btn svg{width:16px;height:16px;display:block}
@@ -135,11 +122,6 @@ const NAV_CSS = `<style>
 #ug-sound-btn.muted{color:#ff9090;border-color:rgba(255,120,120,.55);background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95))}
 #ug-sound-btn.muted .ug-snd-on{display:none}
 #ug-sound-btn.muted .ug-snd-off{display:block}
-/* A mobile anchor ad is fixed to the bottom of the viewport above everything, so
-   it covers the last row of the panel. Raising the panel over it is not an option —
-   that obscures a served ad — so the panel reserves the anchor's measured height
-   instead. --ug-anchor is 0 until one is actually detected, so no dead space when
-   anchors are off or on desktop. */
 :root{--ug-anchor:0px}
 @media(max-width:768px){#ug-info-panel{padding-bottom:calc(var(--ug-anchor) + 34px)}}
 #ug-info-panel{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1050;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}
@@ -205,8 +187,6 @@ const NAV_CSS = `<style>
 .inf-card p+p{margin-top:6px}
 .inf-img{display:inline-flex;vertical-align:middle;width:38px;height:38px;border-radius:10px;padding:2px;margin:0 3px;flex-shrink:0;overflow:hidden}
 .inf-img img{width:100%;height:100%;object-fit:contain;border-radius:8px;display:block;background:rgba(10,8,22,.9)}
-/* Status Effects icons are pixel art — keep the edges crisp instead of letting
-   the browser smooth them. Scoped to that tab so no other badge is affected. */
 #inf-status-effects-inner .inf-img img{image-rendering:pixelated;image-rendering:crisp-edges}
 .inf-rarity-nightmare{background:linear-gradient(180deg,#492590,#2A1E42)}
 .inf-rarity-secret{background:linear-gradient(180deg,#FF8700,#FF0F0C)}
@@ -245,11 +225,6 @@ const NAV_CSS = `<style>
 .inf-reward-row{display:flex;align-items:center;gap:8px}
 .inf-reward-name{font-size:13px;color:#ccc;flex:1;min-width:0;word-break:break-word}
 .inf-reward-chance{font-size:13px;color:#ffa45b;font-family:Audiowide,sans-serif;white-space:nowrap;flex-shrink:0}
-/* ── INFO panel mode switch + rotations ── */
-/* #ug-info-btn is fixed at z-index 1099, above the panel's 1050, so it hangs over
-   the top-right of the panel and lands on the Rotations button. The top padding
-   clears its lower edge: it sits at top:47px on a phone and top:63px from 769px up,
-   and is taller on desktop. */
 .inf-modes{display:flex;gap:6px;padding:32px 14px 0;background:rgba(4,1,12,.96)}
 @media(min-width:769px){.inf-modes{padding:46px 14px 0}}
 .inf-mode{flex:1;padding:8px 6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,164,91,.18);border-radius:7px;color:rgba(255,255,255,.55);font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;line-height:1.35;transition:background .13s,border-color .13s,color .13s}
@@ -266,7 +241,6 @@ const NAV_CSS = `<style>
 .rot-main{flex:1;min-width:0}
 .rot-meta{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;margin-top:2px}
 .rot-price{font-size:13.5px;font-weight:700;color:#e8e8e8;margin-top:3px}
-/* ── Hero upgrade paths ── */
 .hp-wrap{margin-top:8px}
 .hp-wrap .inf-subdrop{margin-top:6px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.035);border:1px solid rgba(255,164,91,.16);transition:background .14s,border-color .14s}
 .hp-wrap .inf-subdrop.open{background:rgba(255,164,91,.08);border-color:rgba(255,164,91,.45)}
@@ -276,9 +250,6 @@ const NAV_CSS = `<style>
 .hp-arrow{font-family:monospace,Arial;font-size:15px;line-height:1;color:rgba(255,164,91,.65);flex-shrink:0;display:inline-block;transition:transform .2s ease,color .14s}
 .inf-subdrop.open .hp-arrow{transform:rotate(90deg);color:#ffa45b}
 .hp-tier{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-/* An ad is appended at the foot of an opened sub-drop, which makes it the last
-   child — so the final tier needs its rule dropped when one follows, and the ad's
-   own top border would double up with it. */
 .hp-tier:last-child,.hp-tier:has(+ .inf-ad){border-bottom:none}
 .hp-wrap .inf-ad-sub{border-top:none;padding-top:10px}
 .hp-img{width:42px;height:42px;flex-shrink:0;object-fit:contain;display:block}
@@ -292,7 +263,6 @@ const NAV_CSS = `<style>
 .rot-group:first-child{padding-top:2px}
 .rot-obj{font-size:12px;color:#ccc;line-height:1.7}
 .rot-wait{padding:24px 16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px}
-/* ── INFO panel search ── */
 .inf-topstick{position:sticky;top:0;z-index:3}
 .inf-topstick .ug-mn-header{position:static}
 .inf-search{padding:11px 14px;background:rgba(4,1,12,.96);border-bottom:1px solid rgba(255,164,91,.14)}
@@ -325,12 +295,8 @@ const NAV_CSS = `<style>
 .inf-drop.inf-flash{background:rgba(255,164,91,.09)}
 .inf-rempty{padding:26px 18px;text-align:center;color:rgba(255,255,255,.4);font-size:13px;line-height:1.7}
 .inf-rmore{padding:16px 14px;text-align:center;font-family:'Press Start 2P',cursive;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.3);line-height:1.8}
-/* ── INFO panel ad slots ── */
 .ug-cad{margin:20px 0;padding:16px 0;border-top:1px solid rgba(255,164,91,.14);border-bottom:1px solid rgba(255,164,91,.14)}
 .ug-cad:empty{display:none}
-/* Clean-Mode retired in favour of the per-ad close button. Hidden rather than
-   cut from 30 files: the pill's wrapper exists only to hold it, and the page's
-   own toggle script no-ops against an element nobody can click. */
 div:has(> #cleanModeToggle:only-child){display:none!important}
 #cleanModeToggle,.clean-text{display:none!important}
 .ug-xd{display:flex;justify-content:flex-end;margin:0 0 18px}
@@ -349,35 +315,18 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 .inf-ad:empty{padding:0;border:0;min-height:0;margin:0}
 .inf-ad-label{font-family:monospace,Arial;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:9px}
 .inf-ad ins{display:block}
-/* ── Site footer (single-source: content + style come from the worker) ── */
 #ug-footer{position:relative;overflow:hidden;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);box-shadow:0 -4px 28px rgba(104,31,98,.45);padding:22px 20px;text-align:center;font-size:13px;color:#fff;line-height:2.2;margin-top:24px}
 #ug-footer::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
 #ug-footer p{position:relative;z-index:1}
 #ug-footer a{color:#ffa45b;text-decoration:none;position:relative;z-index:1}
 #ug-footer a:hover{text-decoration:underline}
 </style>`;
-// Single-source site footer — injected into every page's <footer id="ug-footer">.
-// Change links/text here once instead of in each page.
 const FOOTER_HTML = `
       <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
       <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
       <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a></p>
       <p>&copy; 2025 www.fntduserguide.com</p>`;
 
-// ─── SOUND GOVERNOR ───────────────────────────────────────────────────────────
-// Injected into <head> so it is in place before any page script can create a
-// sound. Every noise on the site funnels through HTMLMediaElement.play(): the
-// BBN terminals' new Audio() voice lines, the <audio> tags inside the Unit
-// Engine and Trade Calculator (which arrive long after load, fetched from the
-// characters.json repo and inlined with createContextualFragment), and the INFO
-// panel's videos. Patching the prototype once covers all of them, whenever they
-// appear, without touching a single page.
-//
-// Muting STOPS audio rather than turning it down. A media element left playing
-// at volume 0 still holds the device's audio focus, and on phones that pauses
-// or ducks whatever the visitor already had going — so turning our sound "off"
-// would kill their music. Video is treated differently: it is muted but left
-// running, so a video someone is watching is silenced, not interrupted.
 const SOUND_GOVERNOR = `<script>
 (function(){
   var KEY='ug:sound';
@@ -452,26 +401,9 @@ const SOUND_GOVERNOR = `<script>
 })();
 <\/script>`;
 
-// The button itself. Appended to <body> on every page, including the Privacy
-// Policy (it is site chrome, not game content). The speaker cone is always
-// drawn; the waves and the cross swap on the .muted class, so the two states
-// read differently at a glance rather than relying on colour alone.
 const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" title="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke-linejoin="round"></path><g class="ug-snd-on"><path d="M15.8 9.3a4 4 0 0 1 0 5.4"></path><path d="M18.4 6.8a7.5 7.5 0 0 1 0 10.4"></path></g><g class="ug-snd-off"><path d="M16.5 9.5l5 5"></path><path d="M21.5 9.5l-5 5"></path></g></svg></button>
 <script>ugSoundPaint();<\/script>`;
 
-// ─── INFO PANEL ADS ───────────────────────────────────────────────────────────
-// Swap PANEL_AD_SLOT for a dedicated in-article unit, then set PANEL_AD_FLUID to
-// true. Until then it runs on the site-wide display slot so the placement is
-// visible end to end.
-// ─────────────────────────────────────────────────────────────────────────────
-// ─── PER-AD DISMISS ───────────────────────────────────────────────────────────
-// A close button above every ad. It sits in our own bar with clear separation —
-// never over the ad iframe, which would both obscure the unit and invite the
-// mis-taps that trigger Google's Confirm Click penalty.
-//
-// This replaced Clean-Mode as the way readers turn ads off. Set XDISMISS_ALL to
-// false to fall back to running it only on the paths listed below.
-// ─────────────────────────────────────────────────────────────────────────────
 const XDISMISS_ALL = true;
 const XDISMISS_PAGES = {
   '/fntd2/tierlists-1': true
@@ -526,11 +458,6 @@ const XDISMISS_HTML = `<script>
 })();
 <\/script>`;
 
-// ─── MOBILE IN-CONTENT ADS ────────────────────────────────────────────────────
-// One ad per CONTENT_AD_EVERY px of rendered content, below CONTENT_AD_MAXW only
-// (wider viewports get the side rails instead). Swap CONTENT_AD_SLOT for its own
-// unit to separate it from the panel in reporting.
-// ─────────────────────────────────────────────────────────────────────────────
 const CONTENT_AD_SLOT = '6967580595';
 const CONTENT_AD_EVERY = 1400;
 const CONTENT_AD_MAXW = 1200;
@@ -597,10 +524,6 @@ const CONTENT_AD_HTML = `<script>
 })();
 <\/script>`;
 
-// ─── DESKTOP SIDE RAILS ───────────────────────────────────────────────────────
-// Swap RAIL_AD_SLOT for a dedicated vertical display unit. Until then it runs on
-// the site-wide display slot so the placement is visible end to end.
-// ─────────────────────────────────────────────────────────────────────────────
 const RAIL_AD_SLOT = '9010982209';
 const RAIL_MIN = 180;
 const RAIL_WIDE = 330;
@@ -2854,9 +2777,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
 <\/script>`;
 
 
-// ── Work In Progress notice ─────────────────────────────────────────────
-// Flip a page to true to show the notice on it. That is the only edit needed;
-// the overlay is injected by the worker, so the page files stay untouched.
 const WIP_PAGES = {
   '/fntd2/tierlists-1':         false,
   '/fntd2/meta-teams':          false,
@@ -2867,8 +2787,6 @@ const WIP_PAGES = {
   '/fntd2/unit-engine':         true,
   '/news':                      false
 };
-// Requests arrive as clean URLs, but tolerate a .html suffix or trailing slash
-// so the flag still applies if a page is reached that way.
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
   return p === '/fntd2' || p.indexOf('/fntd2/') === 0;
@@ -2877,8 +2795,6 @@ function wipActive(pathname) {
   let p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');
   if (p === '') p = '/';
   if (WIP_PAGES[p] === true) return true;
-  // Deep links (/fntd2/tierlists-1/Golden-Freddy) are served the base page, so
-  // they need the notice too when that page is flagged.
   for (const base in WIP_PAGES) {
     if (WIP_PAGES[base] === true && p.indexOf(base + '/') === 0) return true;
   }
@@ -2889,10 +2805,6 @@ const WIP_HTML = `
 .wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .wip-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:wipIn .22s ease-out}
 @keyframes wipIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
-/* A horizontal shift advances a diagonal gradient by dx*sin(angle), so the travel
-   distance and the stop period must agree or the loop jumps. At 45deg a 40px shift
-   advances the pattern by 40*sin(45)=28.284px. No background-size: scaling a
-   repeating gradient changes its period and breaks that again. */
 .wip-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:wipSlide 1.1s linear infinite}
 @keyframes wipSlide{from{background-position:0 0}to{background-position:40px 0}}
 @media (prefers-reduced-motion:reduce){.wip-stripe{animation:none}}
@@ -2946,30 +2858,12 @@ const WIP_HTML = `
 })();
 <\/script>`;
 
-// ── GitHub outage notice ────────────────────────────────────────────────
-// Every content page pulls its data at runtime from GitHub: raw.githubusercontent
-// for units/metas/patch notes, githack for the Unit Engine and Trade Calculator
-// fragments. When GitHub breaks those requests fail and the page renders empty,
-// so this explains why instead of leaving a bare "Failed to load" line.
-//
-// Deliberately hard to trigger — three things must ALL hold:
-//   1. a real request to a GitHub host failed on this page,
-//   2. this site's own origin is still reachable (so it is not the visitor's
-//      connection), and
-//   3. /gh-health, checked from the edge, agrees GitHub is unhealthy.
-// A visitor whose page loaded fine can never see it. A visitor who is simply
-// offline fails step 2, so it stays silent rather than blaming GitHub.
-//
-// Same panel as the WIP notice; only the wording and buttons differ.
 const OUTAGE_HTML = `
 <style>
 .gho-veil{position:fixed;inset:0;z-index:9001;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .gho-veil[hidden]{display:none}
 .gho-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:ghoIn .22s ease-out}
 @keyframes ghoIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
-/* Same 45deg stripe geometry as the WIP notice: a 40px shift advances the
-   pattern by 40*sin(45)=28.284px, so the travel and the stop period must agree
-   or the loop visibly jumps. */
 .gho-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:ghoSlide 1.1s linear infinite}
 @keyframes ghoSlide{from{background-position:0 0}to{background-position:40px 0}}
 @media (prefers-reduced-motion:reduce){.gho-stripe{animation:none}}
@@ -3082,26 +2976,6 @@ const OUTAGE_SCRIPT = `<script>
 })();
 <\/script>`;
 
-// Reward tooltip, shared by any page with reward tiles (Challenges today, the
-// nights rewards UI next). It reuses the #metaTip element and .mt-* styling the
-// metas engine already puts on the page, so a reward hover and a unit hover are
-// the same object rather than two that drift apart. On a page where metas has
-// not loaded there is no #metaTip, and this quietly does nothing.
-//
-// Mark a tile with the reward as JSON and it gets the hover:
-//   el.setAttribute('data-rwtip', JSON.stringify({name, qty, rarity, icon, label, note}))
-//   label titles the amount row ("Amount" unless given); note adds a second line
-//   under it, for a drop that has odds as well as an amount. Both optional.
-//   el.setAttribute('data-rwtip-tap', '')   // optional, see below
-//
-// Delegated from document rather than bound per tile, because this script is
-// appended to the end of <body> and pages build their tiles during parse — a
-// bound helper would not exist yet for anything rendered up front.
-//
-// tap is opt-in. It listens in the capture phase so it can swallow the event
-// before a card's own handler sees it, which is right for a tile sitting loose
-// in a popup but wrong for one inside a clickable card, where it would stop the
-// card opening. Hover needs no such care and is always on.
 const REWARD_TIP = `<script>
 (function(){
   // lets a page tell whether the worker is in the loop, so a file opened
@@ -3230,25 +3104,12 @@ const ACTIVE_SCRIPT = `<script>
 })();
 <\/script>`;
 
-// Injected into <head> on EVERY HTML page. This single tag is what delivers the
-// Google consent message (CMP) — pages without it are counted as uncovered page
-// views in AdSense "Privacy & messaging", which is what tanks the coverage stat.
-// It only LOADS AdSense; ads render where a page has an <ins class="adsbygoogle">
-// slot (or via Auto ads). Do not re-add this tag per-page — a second copy on the
-// same page can make the consent message misfire.
-// Home-screen icons. iOS reads the apple-touch-icon tag and nothing else; Android
-// reads the manifest. Injected here rather than per page so all 30 stay in step, and
-// apple-mobile-web-app-title is what stops iOS labelling the icon with a page title
-// like "Unit Engine / FNTD2 | FNTD Userguide".
 const HOME_ICONS =
   '<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">' +
   '<link rel="manifest" href="/site.webmanifest">' +
   '<meta name="apple-mobile-web-app-title" content="FNTD Guide">' +
   '<meta name="theme-color" content="#681f62">';
 
-// GA4. Injected here rather than per page so every page is counted, including any
-// added later — and so the property can be swapped in one place when the time comes
-// to hand traffic figures to an ad network.
 const ANALYTICS =
   '<script async src="https://www.googletagmanager.com/gtag/js?id=G-VSK54B7T1G"><\/script>' +
   '<script>' +
@@ -3261,23 +3122,8 @@ const ANALYTICS =
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
-// Universe ids allowed through /game-thumb/, so the route cannot be used as an
-// open proxy for arbitrary Roblox assets. Same ids the home page stats use.
 const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624'];
 
-// Items the game has but the wiki feed does not carry. Merged into their feed on
-// the way through the proxy, so every consumer sees them from one definition:
-// the INFO panel's own tab, present rewards, evolution ingredients, prestige and
-// anything added later. Kept here rather than hand-edited into the R2 bucket so
-// they are version controlled and the pipeline worker cannot overwrite them.
-//
-// A real feed entry always wins, so each of these retires itself automatically
-// the day the wiki starts carrying it.
-//
-// These two are currencies rather than true materials, and the presents feed
-// types them "Currency". They live in materials so they stay browsable in that
-// tab; the Presents tab still labels them Currency, because that label comes
-// from the reward's own type and not from this lookup.
 const EXTRA_ITEMS = {
   materials: {
     'Tokens': { rarity: 'mythic',    image: 'https://images.fntduserguide.com/coins.webp' },
@@ -3298,15 +3144,6 @@ const INF_PROXY = {
   'potions':         'https://items.fntduserguide.com/potions.json'
 };
 
-// Ground truth for the outage notice: the file the site actually needs, read
-// from a Cloudflare datacenter. That vantage point is what separates "GitHub is
-// down for everyone" from "this one visitor cannot reach GitHub" (ISP block,
-// browser extension, school wifi).
-// Live rotations. The upstream is the fntd2.com rotations worker; its owner gave
-// FNTD User Guide permission to read it directly (2026-09-07) but could not issue a
-// token, because the same worker fronts other parts of their site. It gates on
-// Origin/Referer, so we present fntd2.com's. Since 2026-09-13 it also rejects any
-// non-browser User-Agent, so the request has to look like a browser.
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
@@ -3482,8 +3319,6 @@ const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/
 async function ghRawOk() {
   try {
     const r = await fetch(GH_PROBE, { method: 'HEAD', cf: { cacheTtl: 0 } });
-    // 429 is this worker being rate limited, not GitHub being down. Reporting an
-    // outage on it would show the notice to everyone behind a busy edge IP.
     if (r.status === 429) return true;
     return r.status < 500;
   } catch (e) {
@@ -3491,20 +3326,13 @@ async function ghRawOk() {
   }
 }
 async function ghHealth() {
-  // githubstatus.com is Atlassian Statuspage on CloudFront — separate infra from
-  // GitHub, so it stays up precisely when GitHub does not.
   let indicator = 'unknown';
   try {
     const s = await fetch('https://www.githubstatus.com/api/v2/status.json', { cf: { cacheTtl: 30 } });
     const j = await s.json();
     indicator = (j && j.status && j.status.indicator) || 'unknown';
-  } catch (e) { /* status page unreachable proves nothing on its own */ }
-  // 'minor' covers things like a slow Actions queue, which does not break this
-  // site — only escalate on the levels that actually take content down.
+  } catch (e) { }
   if (indicator === 'major' || indicator === 'critical') return { ok: false, reason: 'status' };
-  // A single failed probe can be a transient hiccup between this datacenter and
-  // GitHub, so it only counts when it fails twice. This also catches the 5-15
-  // minute window before GitHub posts an incident, which the status page misses.
   if (!(await ghRawOk()) && !(await ghRawOk())) return { ok: false, reason: 'unreachable' };
   return { ok: true };
 }
@@ -3513,10 +3341,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Same-origin liveness probe for the outage notice. Deliberately touches
-    // nothing external, so a failure here means the visitor is offline (or we are
-    // down) rather than GitHub being broken. Not named /ads.txt or similar —
-    // content blockers filter those names and would fake an offline reading.
     if (url.pathname === '/_up') {
       return new Response(null, {
         status: 204,
@@ -3524,8 +3348,6 @@ export default {
       });
     }
 
-    // Edge verdict on GitHub, cached so it costs one upstream check per 45s per
-    // PoP however many visitors ask.
     if (url.pathname === '/gh-health') {
       const verdict = await ghHealth();
       return new Response(JSON.stringify(verdict), {
@@ -3537,8 +3359,6 @@ export default {
       });
     }
 
-    // Rotations roll hourly, so the response is held only until the pool actually
-    // flips — a fixed TTL would either hammer the upstream or serve a stale pool.
     if (url.pathname === '/rotations') {
       let body = null;
       try {
@@ -3547,7 +3367,7 @@ export default {
           cf: { cacheTtl: 60, cacheEverything: true }
         });
         if (up.ok) body = await up.text();
-      } catch (e) { /* fall through to 502 */ }
+      } catch (e) { }
       if (!body) {
         return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
           status: 502,
@@ -3559,7 +3379,7 @@ export default {
         const j = JSON.parse(body);
         const ra = j && j.banners && j.banners.data && j.banners.data.refreshAt;
         if (ra) ttl = Math.max(30, Math.min(3600, ra - Math.floor(Date.now() / 1000)));
-      } catch (e) { /* keep the floor */ }
+      } catch (e) { }
       return new Response(body, {
         headers: {
           'content-type': 'application/json; charset=utf-8',
@@ -3641,22 +3461,17 @@ export default {
       });
     }
 
-    // Same-origin JSON proxy so the browser never needs CORS on the r2.dev buckets
     if (url.pathname.startsWith('/inf-data/')) {
       const feed = url.pathname.slice('/inf-data/'.length);
       const target = INF_PROXY[feed];
       if (!target) return new Response('Not found', { status: 404 });
       const up = await fetch(target, { cf: { cacheTtl: 300, cacheEverything: true } });
-      // Rewrite any r2.dev image URLs stored inside the JSON to the custom domains, so
-      // renders resolve on the custom domain (CORS) and we can retire the r2.dev dev URLs.
       let body = await up.text();
       body = body
         .replace(/pub-ded986176f754f5fb54de94d2fb15509\.r2\.dev/g, 'cosmetics.fntduserguide.com')
         .replace(/pub-bd8c71834de64b078aa68df269b7d92e\.r2\.dev/g, 'items.fntduserguide.com')
         .replace(/pub-71c3b160626949ae8220d0daad5a9fc8\.r2\.dev/g, 'presents.fntduserguide.com')
         .replace(/pub-147ea4ffd88444cba282e819b9168c94\.r2\.dev/g, 'images.fntduserguide.com');
-      // Fold in anything the wiki does not carry. Only the name-keyed feeds take
-      // extras — the units feed is an array — and an existing entry always wins.
       const extra = EXTRA_ITEMS[feed];
       if (extra) {
         try {
@@ -3666,7 +3481,7 @@ export default {
             for (const name in extra) if (!(name in data)) { data[name] = extra[name]; added = true; }
             if (added) body = JSON.stringify(data);
           }
-        } catch (e) { /* unparseable upstream: pass it through untouched */ }
+        } catch (e) { }
       }
       return new Response(body, {
         status: up.status,
@@ -3678,52 +3493,27 @@ export default {
       });
     }
 
-    // Live game icons for the home page cards. The thumbnails API hands back a
-    // time-limited CDN url (they carry a 180DAY- prefix and rotate), so it is
-    // looked up per request and cached at the edge instead of being pasted into
-    // index.html, where it would quietly break a few months later.
     if (url.pathname.startsWith('/game-thumb/')) {
       const id = url.pathname.slice('/game-thumb/'.length);
       if (!GAME_UNIVERSES.includes(id)) return new Response('Not found', { status: 404 });
-      // Two different things are cached here and they want opposite lifetimes.
-      //
-      // This call resolves the CURRENT artwork, so it is the only thing that
-      // notices a new thumbnail. At the old 6h it could serve art the game had
-      // already replaced; 1h keeps the icon close to live for a call that costs
-      // almost nothing. The image fetch below is the opposite case — its URL is
-      // content-addressed by Roblox, so a given URL never changes and it can be
-      // held for a week.
-      //
-      // THUMB_CACHE_V is part of the cache key: changing an entry's TTL does not
-      // evict the copy already stored under that URL, so bump this to force a
-      // refresh the moment a deploy goes out. Roblox ignores the parameter.
       const THUMB_CACHE_V = 2;
       const api = 'https://thumbnails.roblox.com/v1/games/icons?universeIds=' + id +
                   '&size=512x512&format=Png&isCircular=false&r=' + THUMB_CACHE_V;
       const meta = await fetch(api, { cf: { cacheTtl: 3600, cacheEverything: true } });
       const j = await meta.json().catch(() => null);
       const src = j && j.data && j.data[0] && j.data[0].imageUrl;
-      // On failure return 502 rather than a placeholder: the <img> has an
-      // onerror fallback to the previous artwork, so the card still fills.
       if (!src) return new Response('Upstream unavailable', { status: 502 });
       const img = await fetch(src, { cf: { cacheTtl: 604800, cacheEverything: true } });
       return new Response(img.body, {
         status: img.status,
         headers: {
           'content-type': img.headers.get('content-type') || 'image/png',
-          // max-age was a day, so a browser that had loaded the home page kept
-          // showing the old icon for a day after the worker had the new one.
-          // An hour to revalidate, and stale-while-revalidate so the card still
-          // paints instantly from cache while the check happens in the
-          // background — the reader never waits on Roblox.
           'cache-control': 'public, max-age=3600, stale-while-revalidate=86400',
           'access-control-allow-origin': '*'
         }
       });
     }
 
-    // Deep links like /base/<segment> serve the base page; the page's JS reads the
-    // segment to open the right unit (unit-engine) / mode (tierlists) / tab (metas).
     let assetReq = request;
     const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
@@ -3737,23 +3527,13 @@ export default {
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
-    // Canonical always points at the www host so www stays the ranked/indexed URL
-    // (keeps the *.pages.dev preview and the apex from being indexed as duplicates).
     const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
-    // The INFO panel is game content — skip it on the standalone Privacy Policy page.
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
-    // The panel is FNTD2 reference data end to end — units, presents, elements,
-    // rotations — so it only belongs on FNTD2 pages. FNTD1 and BBN can get their
-    // own panels later rather than inheriting this one.
     const hasInfo = !noInfoPanel && infoPanelActive(url.pathname);
     return new HTMLRewriter()
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
-      // Every page ships a <link rel="icon"> pointing at a 70px jwwb image. Chrome will
-      // reach past something that small and use a manifest icon instead, which is how the
-      // purple home-screen icon ended up in the tab. Point it at a full-size transparent
-      // one so there is nothing better for Chrome to go looking for.
       .on('link[rel="icon"]', {
         element(el) {
           el.setAttribute('href', '/favicon-192.png');
@@ -3778,19 +3558,13 @@ export default {
       })
       .on('body', {
         element(el) {
-          // With no INFO button above it, the sound toggle moves up into its slot.
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
-          // Every page, including the ones without the INFO panel: the notice
-          // costs nothing until a GitHub request on that page actually fails.
           el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
-          // ACTIVE_SCRIPT highlights the current page in the nav and WIP_HTML is
-          // page furniture — both belong everywhere the chrome does, so neither
-          // rides along with the panel.
           if (hasInfo) el.append(INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append(ACTIVE_SCRIPT, { html: true });

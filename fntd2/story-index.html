@@ -35,39 +35,20 @@
     </div></div>
     <div id="ug-content">
 <style>
-/* Reuses the Challenges UI wholesale: .ch-card, .chOv/.chPop, .chRw and friends
-   are the same classes that page defines, so the two stay in step. Only what
-   Challenges has no equivalent for is added here, nr- prefixed. */
 .chWrap{position:relative;margin-top:8px}
 
-/* This page only: the shared sheet pins #ug-main and #ug-hero with
-   background-attachment:fixed. That is what makes the backdrop appear to hold
-   still while the page scrolls, and it costs a full repaint of the backdrop on
-   every scroll frame — expensive here, where the page is long and already
-   carrying a lot of image. Scrolling them with the content is free and looks
-   identical when the page is at rest. Overridden here rather than in the shared
-   block above, so the other pages keep the effect. */
 #ug-main,#ug-hero{background-attachment:scroll}
 
-/* arcade scanlines, same treatment as Challenges: anchored to the panel and to
-   each popup, not to the page. The site header carries its own pass of this in
-   the shared CSS, so a page-wide layer would run over it twice. */
 .chScan{position:relative}
 .chScan::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:900;border-radius:inherit;
   background:repeating-linear-gradient(to bottom,
     transparent 0px,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px)}
 
-/* ── selectable card (games, then nights) ────────────────────────────── */
 .ch-card{position:relative;display:block;width:100%;border:2px solid rgba(255,255,255,.75);
   border-radius:2px;overflow:hidden;cursor:pointer;margin-bottom:14px;
   background:#1a1030 center/cover no-repeat;aspect-ratio:6/1;min-height:118px;
   text-align:left;font:inherit;color:inherit;transition:border-color .14s,transform .1s}
 .ch-card:hover{border-color:var(--ug-accent)}
-/* best:true — a warm border and a soft outer glow. Deliberately restrained: the
-   cards already carry map art and a white border, so the tell is the colour
-   shift plus a little light around the edge, not a badge or a flashing outline.
-   Amber rather than pure yellow, so it reads as a highlight next to the site's
-   orange rather than as a warning. */
 .ch-card.ch-best{border-color:#ffd75e;
   box-shadow:0 0 0 1px rgba(255,215,94,.35),0 0 14px rgba(255,215,94,.22)}
 .ch-card.ch-best:hover{border-color:#ffe89a;
@@ -75,17 +56,10 @@
 @media(prefers-reduced-motion:reduce){.ch-card.ch-best{transition:none}}
 .ch-card:active{transform:translateY(1px)}
 .ch-card:focus-visible{outline:2px solid var(--ug-accent);outline-offset:3px}
-/* A game card shows its six night maps across, rather than one picture. Equal
-   flex cells so the split holds at any width, with min-width:0 because a flex
-   item will not shrink below its content otherwise. A hairline between them
-   keeps six dark maps from reading as one smear. */
 .nrMapStrip{position:absolute;inset:0;display:flex}
 .nrMapCell{flex:1 1 0;min-width:0;position:relative;overflow:hidden;background:#1a1030;
   box-shadow:inset -1px 0 0 rgba(0,0,0,.55)}
 .nrMapCell:last-child{box-shadow:none}
-/* An <img> rather than a background so loading="lazy" applies: the strips add up
-   to 42 maps at a couple of megabytes each, and a CSS background would fetch
-   every one on load. !important beats #ug-content img from the shared sheet. */
 .nrMapCell img{width:100%!important;height:100%!important;object-fit:cover;display:block;
   margin:0!important;max-width:none!important}
 .ch-card .chVeil{position:absolute;inset:0;
@@ -95,24 +69,12 @@
   text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
 .ch-diff{font-family:'Press Start 2P',monospace;font-size:8px;margin-top:5px;color:#c07bf0;text-shadow:1px 1px 0 #000}
 
-/* ── popup shell (identical to Challenges) ───────────────────────────── */
 .chOv{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;
   padding:20px;background:rgba(4,3,10,.86);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .chOv[hidden]{display:none}
-/* the rewards popup opens over the night list, which stays behind it so closing
-   one step reveals the other rather than dumping you back to the games */
 #rwOv{z-index:2147483005}
-/* The meta engine appends #metaTip to <body> at z-index:10000, which lands under
-   these overlays — the tooltip still computes as displayed, it is just painted
-   behind the popup, so it looks like the hover does nothing. Lift it clear of
-   both overlays. The page scanlines sit at 900 inside #ug-main and the popups
-   carry their own, so nothing here competes with them. */
 #metaTip{z-index:2147483010!important}
 body.ch-modal #ug-hamburger{display:none!important}
-/* vh on a phone is the LARGE viewport — the height the page would have with the
-   browser's address bar retracted — so while that bar is on screen 88vh is taller
-   than what you can actually see and the popup runs off the bottom. dvh tracks the
-   real height. The vh line stays first as the fallback for anything without dvh. */
 .chPop{position:relative;width:min(860px,100%);max-height:88vh;max-height:88dvh;overflow:hidden;
   display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.8);
   border-radius:2px;background:#150c28 center/cover no-repeat;animation:chPopIn .18s ease-out}
@@ -125,12 +87,8 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chPop-diff a,.chPop-diff button.vid{color:#ffa45b;text-decoration:underline;text-underline-offset:3px}
 .chPop-diff a:hover,.chPop-diff button.vid:hover{color:#fff}
 .chPop-diff button.vid{background:none;border:0;padding:0;font:inherit;cursor:pointer}
-/* The INFO panel's player sits at z-index 20000, which is under these popups —
-   it would open behind the very popup you launched it from. */
 .inf-mg-fs{z-index:2147483040!important}
 .inf-mg-fs-close{z-index:2147483041!important}
-/* Matches the INFO panel's .inf-mg-fs player, and is only reached when that
-   player is not on the page (a YouTube link, or a local file with no worker). */
 .nrVid{position:fixed;inset:0;z-index:2147483040;display:flex;align-items:center;justify-content:center;background:#000}
 .nrVid video{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;background:#000}
 .nrVid iframe{width:100%;height:100%;max-width:100%;max-height:100%;border:0;display:block;background:#000}
@@ -143,29 +101,15 @@ body.ch-modal #ug-hamburger{display:none!important}
   padding:7px 13px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,164,91,.5);
   background:rgba(10,8,20,.92);color:var(--ug-accent)}
 .chPop-close:hover{background:rgba(255,164,91,.16)}
-/* per-night notes, same treatment as the Challenges restrictions list */
 .chRestr{font-family:'Press Start 2P',monospace;font-size:9.5px;line-height:1.95;color:#b9c2ff;
   text-shadow:1px 1px 0 #000;max-width:70ch}
 .chRline{margin-bottom:3px}
 
-/* ── reward tiles: the Challenges treatment, hover card and all ──────── */
 .ch-rewards{display:flex;gap:5px;flex-wrap:wrap}
 .chRw{position:relative;width:46px;height:46px;flex:none;padding:2px;border-radius:6px;
   background:#555;display:flex;align-items:center;justify-content:center}
-/* Challenges shows tiles bigger inside a popup than on a card; every tile here
-   is in a popup, but keeping both sizes means they match if one ever is not. */
 .chPop .chRw{width:58px;height:58px}
-/* 8px rather than the 7px Challenges uses: an amount and a chance are the only
-   numbers on the tile and they were hard to read against the render. Mobile
-   stays at 7px, where the tile is 46px and a wide amount would not fit. */
 .chPop .chRw .chQty{font-size:8px}
-/* A chip drops as Part A or Part B at random, so it is one drop, not two. Both
-   renders share a single plate the same size as every other tile, offset from
-   each other so the pair reads as one item with two faces rather than as two
-   separate drops. B sits behind and dimmed, A in front. */
-/* !important because .chRw img above pins every tile render to 100% — without
-   matching it here both parts fill the plate and the offset collapses to a
-   couple of pixels. At 68% the two sit a clear third of the plate apart. */
 .chRw-pair .chRw-in{position:relative;overflow:visible}
 .chRw-pair .chRw-in img{position:absolute;width:68%!important;height:68%!important;object-fit:contain}
 .chRw-pair .chRw-in img.chip-b{right:0;bottom:0;opacity:.7}
@@ -177,27 +121,16 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRw img{width:100%!important;height:100%!important;object-fit:contain;display:block;margin:0!important;max-width:none!important}
 .chRw .chQty{position:absolute;left:2px;bottom:1px;font-family:'Press Start 2P',monospace;font-size:6px;
   color:#fff;text-shadow:1px 1px 0 #000}
-/* Drop odds, opposite the amount. Top rather than bottom-right because a wide
-   amount like x12~15 and a chance together are wider than the tile, so putting
-   them on the same line would collide. */
 .chRw .chOdds{position:absolute;right:2px;top:1px;font-family:'Press Start 2P',monospace;font-size:6px;
   color:#ffd9a8;text-shadow:1px 1px 0 #000}
 .chPop .chRw .chOdds{font-size:8px}
 
-/* metas.html renders the team; parked off-screen and moved in on open */
 #teamStore{position:absolute;left:-99999px;top:0;width:900px}
 #teamStore .metaTitle,#teamStore .metaControls,#teamStore .metaFooter{display:none}
 .chPop .metaRow{--mg:6px}
-/* metas.html sizes captions clamp(5px,0.85vw,10px), which bottoms out on its 5px
-   floor on a phone. Raising the floor keeps the same 10px ceiling. */
 .chPop .meta-caption{font-size:clamp(8px,2.3vw,10px)}
 
-/* ── segmented tier switch + difficulty picker ───────────────────────── */
 .nrSeg{display:flex;gap:8px;flex-wrap:wrap}
-/* Same shell as Back/Close — Audiowide 12px, 7px 13px, 8px radius, amber border
-   on a near-black fill. The selected tier wears that exactly; the unselected one
-   is the same button faded back, so the pair still reads as a choice rather than
-   as two identical buttons. */
 .nrSeg button{font-family:'Audiowide',sans-serif;font-size:12px;padding:7px 13px;border-radius:8px;cursor:pointer;
   border:1px solid rgba(255,164,91,.5);background:rgba(10,8,20,.92);color:var(--ug-accent);
   transition:background .14s,border-color .14s,color .14s}
@@ -206,11 +139,6 @@ body.ch-modal #ug-hamburger{display:none!important}
 .nrSeg button[aria-pressed="false"]{border-color:rgba(255,164,91,.22);color:rgba(255,164,91,.5)}
 .nrSeg button[aria-pressed="false"]:hover{border-color:rgba(255,164,91,.45);color:var(--ug-accent)}
 .nrSeg button:focus-visible{outline:2px solid var(--ug-accent);outline-offset:2px}
-/* Difficulty slider. A native range input underneath, so dragging, arrow keys
-   and screen readers all work without reimplementing any of it; only the track
-   and thumb are restyled. Both vendor prefixes are needed — WebKit and Gecko
-   expose different pseudo-elements and neither tolerates the other in a shared
-   rule, so the blocks stay separate. */
 .nrSlide{border:1px solid rgba(255,164,91,.5);border-radius:4px;background:#0b0710;
   padding:7px 11px 8px;max-width:320px}
 .nrSlideLbl{font-family:'Press Start 2P',monospace;font-size:9px;color:#f6e7cd;text-align:center;
@@ -233,35 +161,19 @@ body.ch-modal #ug-hamburger{display:none!important}
   background:linear-gradient(180deg,#ffeecb 0%,#f0d097 45%,#cfa057 100%);
   box-shadow:0 1px 3px rgba(0,0,0,.8)}
 .nrMuted{font-size:12px;color:#7d7790;line-height:1.7}
-/* On night 7 the chips are appended as a second row under the chance drops.
-   Only the row that follows another gets the gap, so nights 1-6 are unaffected. */
 #rwRng .ch-rewards + .ch-rewards{margin-top:10px}
 
 @media(max-width:640px){
-  /* Height comes from the content on a phone rather than the 6/1 ratio, which
-     at this width would leave a 65px sliver. Content alone gave 47px, too
-     squat to be a comfortable tap target or to show much of the map strip, so
-     a floor is set instead. */
-  /* .ch-card is a <button>, and a button centres its content box vertically no
-     matter what display it is given. Once the card got a min-height taller than
-     its text that quirk showed up as the label floating in the middle. display:flex
-     replaces button layout with flex layout, and the stretched .ch-inner then
-     honours its own flex-start. */
   .ch-card{aspect-ratio:auto;min-height:78px;display:flex}
   .ch-inner{height:auto;flex:1;gap:10px;justify-content:flex-start}
   .ch-name{font-size:13px}
   .chPop-name{font-size:16px}.chSec{font-size:12px}
   .chOv{padding:10px}
   .chPop-in{padding:12px 12px 16px}
-  /* The slider keeps its desktop size. max-width:100% used to stretch it the
-     full width of the popup, which is the old full-size look; min() holds it at
-     320px and only shrinks it on a phone narrower than that. */
   .nrSlide{max-width:min(320px,100%)}
   .chRestr{font-size:9px}
   .chRw{width:46px;height:46px}
   .chPop .chRw .chQty,.chPop .chRw .chOdds{font-size:7px}
-  /* the engine packs six slots into one nowrap row; wrap to three so the art
-     stays legible. Desktop keeps its single row. */
   .chPop .metaRow{flex-wrap:wrap;--mg:6px}
   .chPop .meta-slot{flex:0 0 calc((100% - 2 * var(--mg)) / 3)}
 }
@@ -271,7 +183,6 @@ body.ch-modal #ug-hamburger{display:none!important}
   <div id="nrGames"></div>
 </div>
 
-<!-- step 2: pick a night -->
 <div class="chOv" id="nsOv" hidden role="dialog" aria-modal="true" aria-labelledby="nsName">
   <div class="chPop chScan" id="nsPop">
     <div class="chVeil"></div>
@@ -280,8 +191,6 @@ body.ch-modal #ug-hamburger{display:none!important}
   </div>
 </div>
 
-<!-- step 3: rewards. Opens over the night list, which stays put underneath so
-     Close steps back one level instead of closing everything. -->
 <div class="chOv" id="rwOv" hidden role="dialog" aria-modal="true" aria-labelledby="rwName">
   <div class="chPop chScan" id="rwPop">
     <div class="chVeil"></div>
@@ -290,51 +199,26 @@ body.ch-modal #ug-hamburger{display:none!important}
   </div>
 </div>
 
-<!-- metas.html renders real meta blocks here; the team row is moved into the
-     popup on open, which keeps the byte/chip/enchant badges and the hover
-     tooltip identical to Meta Teams instead of a second copy that can drift.
-     Filled from GAME_TEAM / NIGHT_TEAM below, before metas.html loads, so
-     adding a game's team needs no edit here. -->
 <div id="teamStore"></div>
 
 <script>
 (function(){
 
-/* ─── reward model ───────────────────────────────────────────────────────
-   Measured for Games 1-4; Games 5-7 share Game 4's table. Confirmed rules,
-   each verified against at least two games:
-     nights 1-6   coins = base + 10*(n-1)      candy = base (flat)
-     Nightmare    every value x1.5, rounded half up
-     night 7      take the night-6 value, x(1 + d/40) for difficulty d 1-20
-   The night-7 scale reaches exactly x1.5 at d20, so Easy night 7 at d20 equals
-   Nightmare night 6 — a self-check that holds in every game.
-
-   Per-game bases are authored, not computed: the coin step runs +60,+60,+50
-   then flat, and candy goes 6,8,8,8, so neither fits a formula.             */
 var COIN_BASE  = {1:100, 2:160, 3:220, 4:270, 5:270, 6:270, 7:270};
 var CANDY_BASE = {1:6,   2:8,   3:8,   4:8,   5:8,   6:8,   7:8};
 var EXP_BASE   = {1:20,  2:23,  3:26,  4:26,  5:26,  6:26,  7:26};
 
-/* Exp is the one value with two different per-night shapes:
-     'A'  +1 every 2 nights   (Games 1-2, measured)
-     'B'  +1 then +2 a night  (Game 3, measured)
-   !! Game 4's shape is NOT confirmed. Set to 'B' because Game 4 shares Game 3's
-   !! night-1 exp (26) and candy (8), but night 1 alone cannot tell them apart.
-   !! Game 4 night 2 decides it: exp 26 means 'A', 27 means 'B'. If it is 26,
-   !! change the four entries below and nothing else. */
 var EXP_CURVE  = {1:'A', 2:'A', 3:'B', 4:'B', 5:'B', 6:'B', 7:'B'};
 
 var TIERS = [{key:'easy',label:'Easy'},{key:'nightmare',label:'Nightmare'}];
 var MAX_DIFF = 20;
 
-function rh(x){ return Math.round(x); }          // halves round up, as the game does
+function rh(x){ return Math.round(x); }         
 function expFor(g,n){
   var b = EXP_BASE[g];
   if (EXP_CURVE[g] === 'A') return b + Math.floor((n-1)/2);
   return n === 1 ? b : b + 1 + 2*(n-2);
 }
-/* Scaling by (40+d)/40 rather than 1+0.025*d keeps the arithmetic on exact
-   halves, so the rounding never drifts on a float. */
 function rewardsFor(g,n,tierKey,d){
   var m = n < 7 ? n : 6;
   var c = COIN_BASE[g] + 10*(m-1), y = CANDY_BASE[g], e = expFor(g,m);
@@ -344,46 +228,25 @@ function rewardsFor(g,n,tierKey,d){
   return {coins:c, candy:y, exp:e};
 }
 
-/* ─── art ────────────────────────────────────────────────────────────────
-   Card art and popup art are kept apart so either can be swapped without
-   disturbing the other. */
 var MAP_BASE = 'https://images.fntduserguide.com/';
 var MAPS_PER_GAME = 6;
-/* Maps are named <game>-<night>.png in the bucket, so the URL is derived rather
-   than listed — 42 entries would need re-editing every time one is replaced.
-   NIGHT_MAPS overrides a single night if one ever needs a file off that scheme;
-   keyed "<game>-<night>". */
 var NIGHT_MAPS = {};
-/* Only the night list has art of its own. The rewards popup takes the art of
-   the night card you opened it from, the way Challenges puts a challenge's map
-   behind its popup. */
 var POPUP_BG = {
   nights: 'https://images.fntduserguide.com/carbon-fiber-background.jpg'
 };
-/* Night 7 shares night 6's map, so anything past 6 clamps to it. */
 function nightArt(g, n){
-  var i = Math.min(n, MAPS_PER_GAME);          // night 7 runs night 6's map
+  var i = Math.min(n, MAPS_PER_GAME);         
   return NIGHT_MAPS[g + '-' + i] || (MAP_BASE + g + '-' + i + '.png');
 }
-/* The six maps behind a game card, in night order. */
 function gameMaps(g){
   var out = [];
   for (var i = 1; i <= MAPS_PER_GAME; i++) out.push(nightArt(g, i));
   return out;
 }
 
-/* ─── rewards, resolved by name ──────────────────────────────────────────
-   Icons and rarities come from the item feeds through the worker's /inf-data
-   proxy, so adding a reward later means adding a name here and nothing else.
-   Only what no feed carries needs a manual icon — XP has no item entry. */
 var REWARD_DEFS = [
   {key:'coins', name:'Tokens'},
   {key:'candy', name:'Candy Bar'},
-  // width=96 because the source is a 50 KB full-size render shown at 42px;
-  // that host resizes on request, which brings it to 6 KB.
-  // XP is the one reward no feed carries — the potions feed has XP Potion 1 and
-  // 2, which are different items — so it keeps a stated icon. The other two
-  // resolve by name, and drop their entry here the day a feed carries XP.
   {key:'exp',   name:'XP',
    icon:'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-thu-jan-22-2026-10-26-48-gmt-0600-central-standard-time-high.png?enable-io=true&width=96'}
 ];
@@ -409,11 +272,6 @@ var RARITY_FILL = {
 };
 var ITEM = {}, itemsReady = false, onItems = [];
 (function loadItems(){
-  /* /inf-data is a worker route, so it only exists on the deployed site. Opening
-     this file directly 404s it and every icon comes back empty, so a miss
-     retries against the live origin — the proxy sends access-control-allow-
-     origin:*, so that works from anywhere. Deployed, the relative path hits
-     first and nothing crosses the network twice. */
   var LIVE = 'https://www.fntduserguide.com';
   function J(u){
     return fetch(u)
@@ -433,14 +291,7 @@ var ITEM = {}, itemsReady = false, onItems = [];
   });
 })();
 
-/* ─── per-night notes ────────────────────────────────────────────────────
-   Keyed "<game>-<night>". time is a clear time, video an optional link — the
-   line reads "Clear time: 2:30 - Video" and drops the link when there is none.
-   Teams are per tier; a night with no entry falls back to the placeholders. */
 var NIGHT_INFO = {
-  /* Map layout per night, from the game. Night 7 has no entry of its own — it
-     runs night 6's map, so it inherits night 6's line. Add time / video /
-     title / notes to any of these; every field is optional. */
   '1-1':{notes:['One entrance and one exit'], cash:500},
   '1-2':{notes:['Two entrances and one exit'], cash:500},
   '1-3':{notes:['Three entrances and one exit'], cash:500},
@@ -484,20 +335,6 @@ var NIGHT_INFO = {
   '7-5':{notes:['One entrance and one exit'], cash:7000},
   '7-6':{notes:['Two entrances and one exit'], cash:8000}
 };
-/* Chance drops, keyed "<game>-<night>". name resolves its icon and rarity from
-   the item feeds like everything else, so only the name, how many and the odds
-   are authored here. Empty until we work through the nights; a night with no
-   entry shows "Not recorded yet" rather than an empty row.
-   Currently one list per night — if the drops turn out to differ by tier or by
-   night-7 difficulty, this becomes a lookup on those too. */
-/* ─── chance drops ───────────────────────────────────────────────────────
-   Amounts are the Easy values. Nightmare is x1.5 rounded half up — the same
-   multiplier and rounding the fixed rewards use, and it reproduces all 18
-   measured ranges exactly, specials included (1 x 1.5 = 1.5 -> 2).
-   Every amount takes that x1.5, the Luck Potion included. Chances hold across
-   tiers; only the Luck Potion's moves, 1% to 2% — so it is the one drop where
-   both halves change.
-   Every name here resolves its icon and rarity from the item feeds. */
 var RNG_BASE = {
   1: [{name:'Souls',min:4,max:6,chance:33},{name:'Battery',min:1,max:3,chance:50},
       {name:'Soda',min:1,max:3,chance:40},{name:'Spring',min:1,max:3,chance:30},
@@ -523,32 +360,18 @@ var RNG_BASE = {
       {name:'Luck Potion 1',min:1,max:1,chance:1,nmChance:2},{name:'Golden Fazbear Trophy',min:1,max:3,chance:30},
       {name:'Television',min:1,max:3,chance:30}]
 };
-/* Tied to particular nights. 1 on Easy and 2 on Nightmare, and — unlike the
-   common drops — the count does not move with difficulty: a Hazard Sign or a
-   Cloak is still 2 at difficulty 20, not 3. Hence qtyScale:'tier'.
-   "all" covers every night. */
 var RNG_SPECIAL = {
   1: {6:[{name:'Hazard Sign',min:1,max:1,chance:7,qtyScale:'tier'}]},
   2: {1:[{name:'Colonel Hat',min:1,max:1,chance:10,qtyScale:'tier'}],
       2:[{name:'Water Balloons',min:1,max:1,chance:10,qtyScale:'tier'}],
       4:[{name:'Welding Gear',min:1,max:1,chance:5,qtyScale:'tier'}],
-      6:[{name:'Cloak',min:1,max:1,chance:5,qtyScale:'tier'}]},   // night 7 inherits this
+      6:[{name:'Cloak',min:1,max:1,chance:5,qtyScale:'tier'}]},  
   3: {2:[{name:'Glitched TV',min:1,max:1,chance:12,qtyScale:'tier'}]},
   4: {all:[{name:'Nightmare Balloons',min:1,max:1,chance:5,qtyScale:'tier'}]}
 };
-/* Specials tied to a night rather than to a game: these drop on that night in
-   every game. Night 7 inherits night 6's, the same as the per-game table above.
-   1~2 on Easy and 2~3 on Nightmare is what qtyScale:'tier' already produces —
-   the x1.5 takes 1 to 2 and 2 to 3 — and leaving nmChance off holds the odds at
-   1% across both tiers. */
 var RNG_NIGHT = {
   6: [{name:"Monty's Mystery Mix",min:1,max:2,chance:1,qtyScale:'tier'}]
 };
-/* Drops that only start once the difficulty is high enough — the same gate the
-   chips sit behind.
-   The Soldering Iron stays at 1 on Nightmare where every other special goes to
-   2, so its count is held flat against both axes. The chance still scales:
-   10% base, 10.5% at difficulty 2, 15% at 20. */
 var DIFF_DROPS = [{name:'Soldering Iron', min:1, max:1, chance:10, qtyScale:'none'}];
 
 function rngDropsFor(g,n,d){
@@ -561,18 +384,11 @@ function rngDropsFor(g,n,d){
   add(sp.all);
   add(sp[n]);
   add(RNG_NIGHT[n]);
-  // a night-6 special drops on night 7 as well
   if (n === 7) { add(sp[6]); add(RNG_NIGHT[6]); }
   if (n === 7 && d >= CHIP_MIN_DIFF) add(DIFF_DROPS);
   return out;
 }
 
-/* ─── chip drops ─────────────────────────────────────────────────────────
-   Night 7 only, at difficulty 2 or higher: one chip, in one of five rarities.
-   Which chip depends on the game. Both figures come from the INFO panel's own
-   chips section in _worker.js, so change them there and here together.
-   A chip drops as Part A or Part B at random — that is one drop with two
-   possible renders, so it is shown as a single entry carrying both. */
 var CHIP_BY_GAME = {
   1:'Overwhelming Power', 2:'Weak Point', 3:'Rapid Strikes', 4:'Eye Augmentation',
   5:'Crowd Culler',       6:'Blazing Fire', 7:'Serrated Edge'
@@ -585,8 +401,6 @@ var CHIP_RARITIES = [
   {rarity:'nightmare', chance:'15%'}
 ];
 var CHIP_MIN_DIFF = 2;
-/* Part A art comes from the shared feed; the B renders are not in any feed, so
-   they are listed here exactly as _worker.js lists them. */
 var CHIP_PART_B = {
   'Blazing Fire':      'https://images.fntduserguide.com/blazing%20fire%20B.png',
   'Crowd Culler':      'https://images.fntduserguide.com/crowd%20culler%20B.png',
@@ -596,7 +410,7 @@ var CHIP_PART_B = {
   'Serrated Edge':     'https://images.fntduserguide.com/serrated%20edge%20B.png',
   'Weak Point':        'https://images.fntduserguide.com/weak%20point%20B.png'
 };
-var CHIP_ART = {};   // chip name -> Part A render, filled from metas.json
+var CHIP_ART = {};  
 (function loadChips(){
   fetch('https://raw.githubusercontent.com/FNTDUG/characters.json/main/metas.json')
     .then(function(r){ return r.json(); })
@@ -607,17 +421,11 @@ var CHIP_ART = {};   // chip name -> Part A render, filled from metas.json
     })
     .catch(function(){});
 })();
-/* Which meta each game's Recommended Team comes from. A plain string is used for
-   both tiers; {easy,nightmare} splits them where a game needs different teams.
-   '*' catches every game without an entry of its own.
-   Game 1 runs its own team across all seven nights and does not change by tier.
-   NIGHT_TEAM overrides a single night, same two shapes. */
 var GAME_TEAM = {
   1:   'Game 1',
   '*': {easy:'Story Grind', nightmare:'Story Nightmare'}
 };
 var NIGHT_TEAM = {
-  // '2-7': 'Some Meta'   or   '2-7': {easy:'A', nightmare:'B'}
 };
 
 var GAMES = [1,2,3,4,5,6,7];
@@ -625,11 +433,9 @@ var NIGHTS = [1,2,3,4,5,6,7];
 
 function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
 
-/* ─── step 1: games ───────────────────────────────────────────────────── */
 function gameCard(g){
   var card = el('button','ch-card'); card.type='button';
   if (gameHasBest(g)) card.classList.add('ch-best');
-  // the game's six night maps across the card, in order, instead of one image
   var strip = el('div','nrMapStrip');
   gameMaps(g).forEach(function(src, i){
     var cell = el('div','nrMapCell');
@@ -649,7 +455,6 @@ function gameCard(g){
   return card;
 }
 
-/* ─── step 2: nights ──────────────────────────────────────────────────── */
 var curG=null, curN=null, curTier='easy', curD=1;
 
 function openNights(g){
@@ -668,8 +473,6 @@ function openNights(g){
     card.appendChild(el('div','chVeil'));
     var inner = el('div','ch-inner'), top = el('div');
     top.appendChild(el('div','ch-name','Night '+n));
-    // the cash you start the night with, which varies per night, rather than
-    // "Fixed rewards" — which said the same thing on all six cards
     top.appendChild(el('div','ch-diff',
       cashText(g,n) + (n===7 ? '   •   Difficulty 1-'+MAX_DIFF : '')));
     inner.appendChild(top); card.appendChild(inner);
@@ -689,7 +492,6 @@ function closeNights(){
   }
 }
 
-/* ─── the team, borrowed from the meta engine ─────────────────────────── */
 var borrowed = null;
 function borrowTeam(name){
   var mount = document.querySelector('#teamStore .metaMount[data-meta="' + String(name).replace(/"/g,'\\"') + '"]');
@@ -707,9 +509,6 @@ function teamNameFor(g,n,tier){
   var src = NIGHT_TEAM[g+'-'+n] || GAME_TEAM[g] || GAME_TEAM['*'];
   return (typeof src === 'string') ? src : (src && src[tier]) || null;
 }
-/* Every meta any game might ask for, so the engine has rendered them before a
-   popup goes looking. Kept in step with GAME_TEAM / NIGHT_TEAM by hand — a name
-   missing here renders "not recorded yet" rather than failing. */
 function teamMetasUsed(){
   var seen = {}, out = [];
   function add(v){
@@ -722,11 +521,6 @@ function teamMetasUsed(){
   return out;
 }
 
-/* ─── step 3: rewards ─────────────────────────────────────────────────── */
-/* One tile, whatever it is for. Icon and rarity resolve by name from the item
-   feeds; fallback carries a manual icon for the few things no feed has. chance
-   is folded into the hover card's amount line, since a drop is worth showing
-   next to how much of it you get. */
 function makeTile(name, qty, chance, fallback){
   var meta = ITEM[String(name).toLowerCase()] || {};
   var icon = meta.image || (fallback && fallback.icon) || '';
@@ -735,7 +529,6 @@ function makeTile(name, qty, chance, fallback){
   var t = el('div','chRw');
   t.style.background = RARITY[rar] || '#555';
   t.setAttribute('aria-label', name + (amount ? ' ' + amount : ''));
-  // the worker's shared hover card, same one the meta engine shows for units
   t.setAttribute('data-rwtip', JSON.stringify({name:name, qty:amount, rarity:rar, icon:icon}));
   t.setAttribute('data-rwtip-tap','');
   var inn = el('div','chRw-in'); inn.style.background = RARITY_FILL[rar] || '';
@@ -744,44 +537,29 @@ function makeTile(name, qty, chance, fallback){
   if (qty) t.appendChild(el('span','chQty', qty));
   return t;
 }
-/* Paid on every clear, straight off the reward model. */
 function fixedTiles(r){
   var wrap = el('div','ch-rewards');
   REWARD_DEFS.forEach(function(d){ wrap.appendChild(makeTile(d.name, 'x'+r[d.key], null, d)); });
   return wrap;
 }
-/* Chances carry a decimal once difficulty scales them, so trim rather than pad:
-   10.5, 1.5, 75 — not 10.50 or 75.0. */
 function pct(v){ return String(Math.round(v*10)/10) + '%'; }
 
-/* One chance drop, scaled for tier then difficulty — the same order and the
-   same x(1 + d/40) the fixed rewards use, applied to the amount AND the odds.
-   Confirmed by two independent readings: the Luck Potion reaching 1.5% at d20
-   (1 x 1.5) and the Soldering Iron reading 10.5% at d2 (10 x 1.025... = 10.5). */
 function rngTiles(list, tier, d){
   var wrap = el('div','ch-rewards');
   var nm = tier === 'nightmare';
-  var k = (curN === 7) ? (40 + d) / 40 : 1;    // difficulty exists on night 7 only
+  var k = (curN === 7) ? (40 + d) / 40 : 1;   
   list.forEach(function(e){
     var chance = (nm && e.nmChance != null) ? e.nmChance : e.chance;
     chance = chance * k;
     var amount = '';
     if (e.min != null){
-      // round after the tier, then again after the difficulty, as rewardsFor does
-      /* qtyScale says which axes move the count:
-           'both' (default) commons — tier x1.5 then difficulty x(1 + d/40)
-           'tier'            specials — 1 on Easy, 2 on Nightmare, flat across d
-           'none'            Soldering Iron — always 1
-         Chances scale with difficulty in every case. */
       var sc = e.qtyScale || 'both';
       var tm = (nm && sc !== 'none') ? 1.5 : 1;
       var dm = (sc === 'both') ? k : 1;
       var lo = rh(rh(e.min*tm) * dm), hi = rh(rh(e.max*tm) * dm);
-      // "x" prefix so a chance drop reads the same as a fixed reward
       amount = 'x' + ((lo === hi) ? lo : (lo + '~' + hi));
     }
     var t = makeTile(e.name, amount, null, null);
-    // rebuild the hover so it carries the odds as well as the amount
     var meta = ITEM[e.name.toLowerCase()] || {};
     t.setAttribute('data-rwtip', JSON.stringify({
       name: e.name,
@@ -798,7 +576,6 @@ function rngTiles(list, tier, d){
   return wrap;
 }
 
-/* One chip, both of its renders, offset on a single plate. */
 function chipTile(name, rarity, chance){
   var t = el('div','chRw chRw-pair');
   t.style.background = RARITY[rarity] || '#555';
@@ -809,7 +586,6 @@ function chipTile(name, rarity, chance){
   }));
   t.setAttribute('data-rwtip-tap','');
   var inn = el('div','chRw-in'); inn.style.background = RARITY_FILL[rarity] || '';
-  // B first so it paints behind A
   [['chip-b', CHIP_PART_B[name] || '', ' Part B'],
    ['chip-a', CHIP_ART[name]    || '', ' Part A']].forEach(function(p){
     var im = document.createElement('img');
@@ -817,8 +593,6 @@ function chipTile(name, rarity, chance){
     inn.appendChild(im);
   });
   t.appendChild(inn);
-  // odds on the right, same place every other drop shows them; a chip has no
-  // amount, so nothing sits bottom-left
   t.appendChild(el('span','chOdds', chance));
   return t;
 }
@@ -830,18 +604,11 @@ function chipTiles(g){
   return wrap;
 }
 
-/* Night 7 has no entry of its own — it runs night 6's map, so it reads night
-   6's line, matching how its art and its specials already carry over. */
-/* Placeholder until the real per-night figures land. Any night without its own
-   cash reads this; setting cash on a night in NIGHT_INFO takes over. */
 var CASH_PLACEHOLDER = 500;
 function cashFor(g,n){
   var c = nightInfo(g,n).cash;
   return c != null ? c : CASH_PLACEHOLDER;
 }
-/* best:true marks the night worth farming. The night card is highlighted, and
-   so is its game on the selection screen — so you can see which game holds one
-   before opening it. Not inherited by night 7: mark '<game>-7' itself. */
 function isBestNight(g,n){ return !!nightInfo(g,n).best; }
 function gameHasBest(g){
   for (var n = 1; n <= NIGHTS.length; n++) if (isBestNight(g,n)) return true;
@@ -851,11 +618,6 @@ function cashText(g,n){ return 'Starting Cash: ' + Number(cashFor(g,n)).toLocale
 function nightInfo(g,n){
   var own = NIGHT_INFO[g+'-'+n] || {};
   if (n !== 7) return own;
-  /* Night 7 runs night 6's map, so it borrows the layout line and the starting
-     cash — the cash figures are given as covering nights 1-7, and only six are
-     listed per game. Its clear time and video stay its own: a night 7 is a
-     different run, which is why it reads "No records for night 7s" rather than
-     showing night 6's time. Give a '<game>-7' entry its own cash to override. */
   var six = NIGHT_INFO[g+'-6'] || {};
   return {title: own.title || six.title, notes: own.notes || six.notes,
           cash: own.cash != null ? own.cash : six.cash,
@@ -864,10 +626,7 @@ function nightInfo(g,n){
 function clearLine(g,n){
   var info = nightInfo(g,n);
   var d = el('div','chPop-diff');
-  // a night 7 with nothing of its own says so, rather than showing night 6's run
   if (n === 7 && !info.time && !info.video){ d.textContent = 'No records for night 7s'; return d; }
-  // one fallback, so a night with a video but no time still reads properly
-  // rather than falling through to a bare dash
   d.appendChild(document.createTextNode('Clear time: ' + (info.time || 'not recorded yet')));
   if (info.video){
     d.appendChild(document.createTextNode(' - '));
@@ -879,11 +638,6 @@ function clearLine(g,n){
   return d;
 }
 
-/* Opens the clip over the page rather than sending you to YouTube. A self-hosted
-   file goes to the INFO panel's own player, so the two are literally the same
-   thing and cannot drift apart. That player is injected by the worker and only
-   makes a <video>, so the local copy below still covers a YouTube link and a
-   page opened straight off disk; it is styled to match. */
 function videoEmbed(url){
   var m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{6,})/);
   return m ? 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&rel=0' : null;
@@ -911,7 +665,7 @@ function playVideo(url){
     if (exited) return;
     exited = true;
     try { media.pause && media.pause(); } catch(e){}
-    media.src = '';                       // stops an embed playing on after close
+    media.src = '';                      
     document.removeEventListener('keydown', onKey);
     document.removeEventListener('fullscreenchange', onFsChange);
     document.removeEventListener('webkitfullscreenchange', onFsChange);
@@ -930,7 +684,6 @@ function playVideo(url){
   document.addEventListener('keydown', onKey);
   fs.appendChild(media); fs.appendChild(close); document.body.appendChild(fs);
   if (media.play) media.play().catch(function(){});
-  // Try real fullscreen; the fixed overlay already covers the screen as a fallback.
   var rq = fs.requestFullscreen || fs.webkitRequestFullscreen || fs.msRequestFullscreen;
   if (rq){
     document.addEventListener('fullscreenchange', onFsChange);
@@ -969,8 +722,6 @@ function renderRewards(){
     rng.type='range'; rng.min='1'; rng.max=String(MAX_DIFF); rng.step='1';
     rng.value=String(curD); rng.className='nrRange';
     rng.setAttribute('aria-label','Night 7 difficulty');
-    // Redraw the tiles as it moves, not the whole popup — a full rebuild would
-    // replace the input mid-drag and drop the pointer.
     rng.addEventListener('input', function(){
       curD = parseInt(rng.value,10) || 1;
       lbl.textContent = 'DIFFICULTY ' + curD + '/' + MAX_DIFF;
@@ -980,16 +731,11 @@ function renderRewards(){
     box.appendChild(slide);
   }
 
-  // Optional per-night notes, laid out like the Challenges Restrictions block.
-  // The heading is per entry so a night can call it something other than
-  // Restrictions; the whole section is skipped when a night has no notes.
   var info = nightInfo(g,n);
   if ((info.notes && info.notes.length) || cashFor(g,n) != null){
     box.appendChild(el('div','chSec', info.title || 'Info'));
     var rl = el('div','chRestr');
     (info.notes || []).forEach(function(line){ rl.appendChild(el('div','chRline','● ' + line)); });
-    // Starting cash is per night, so it reads as another line of the night's
-    // own detail rather than as something the night pays out.
     rl.appendChild(el('div','chRline','● ' + cashText(g,n)));
     box.appendChild(rl);
   }
@@ -1005,17 +751,13 @@ function renderRewards(){
   box.appendChild(rngHost);
   paintRng();
 
-  // team last, so the numbers read before the six unit cards push them down
   var team = borrowTeam(teamNameFor(g,n,curTier));
   box.appendChild(el('div','chSec','Recommended Team'));
   if (team) box.appendChild(team);
   else box.appendChild(el('div','nrMuted','Team not recorded for this night yet.'));
-  // icons arrive with the feeds; repaint once if they were not ready in time
   if (!itemsReady) onItems.push(function(){ if (!document.getElementById('rwOv').hidden) paintRewards(); });
 }
 
-/* Just the tiles, so the slider can repaint on every step without rebuilding
-   the popup around it. */
 function paintRewards(){
   var host = document.getElementById('rwTiles');
   if (!host) return;
@@ -1024,24 +766,16 @@ function paintRewards(){
   paintRng();
 }
 
-/* Repainted alongside the fixed rewards because the chip drop depends on the
-   night-7 difficulty, so it has to follow the slider. */
 function paintRng(){
   var host = document.getElementById('rwRng');
   if (!host) return;
   host.innerHTML = '';
-  // not "rng": that is the slider input in renderRewards, and var is
-  // function-scoped, so reusing the name would rebind it in its own listener
   var drops = rngDropsFor(curG, curN, curD);
   var chips = curN === 7 && curD >= CHIP_MIN_DIFF;
-  // The heading carries the chip requirement while it is unmet, so the row does
-  // not need a line of its own saying so — and drops back to plain "RNG Rewards"
-  // once the difficulty qualifies.
   var head = document.getElementById('rwRngHead');
   if (head) head.textContent = (curN === 7 && !chips)
     ? 'RNG Rewards - Chips on Diff ' + CHIP_MIN_DIFF + '+'
     : 'RNG Rewards';
-  // night 7 pays its chance drops and, from difficulty 2, a chip on top
   if (drops.length) host.appendChild(rngTiles(drops, curTier, curD));
   if (chips) host.appendChild(chipTiles(curG));
   if (!drops.length && !chips) host.appendChild(el('div','nrMuted','Not recorded yet.'));
@@ -1049,8 +783,6 @@ function paintRng(){
 
 function openRewards(g,n){
   curG=g; curN=n; curD=1;
-  // Same art as the night card you came from, the way Challenges puts a
-  // challenge's map behind its popup.
   document.getElementById('rwPop').style.backgroundImage = 'url("'+nightArt(g,n)+'")';
   document.getElementById('rwOv').hidden = false;
   renderRewards();
@@ -1070,14 +802,10 @@ function closeRewards(){
   }
 }
 
-/* ─── wiring ──────────────────────────────────────────────────────────── */
 document.getElementById('nsClose').addEventListener('click', closeNights);
 document.getElementById('rwClose').addEventListener('click', closeRewards);
 document.getElementById('nsOv').addEventListener('click', function(e){ if(e.target===this) closeNights(); });
 document.getElementById('rwOv').addEventListener('click', function(e){ if(e.target===this) closeRewards(); });
-/* Escape peels one layer at a time, matching what the buttons do. The video sits
-   above both popups; the INFO panel's player has no key handler of its own, so
-   press its close button rather than reaching past it to a popup underneath. */
 document.addEventListener('keydown', function(e){
   if (e.key !== 'Escape') return;
   var vidClose = document.querySelector('.inf-mg-fs-close, .nrVid-close');
@@ -1086,10 +814,6 @@ document.addEventListener('keydown', function(e){
   else if (!document.getElementById('nsOv').hidden) closeNights();
 });
 
-/* The reward hover is injected by the worker, so it is missing when this file is
-   opened directly. Install a stand-in only in that case — deployed, the worker's
-   copy sets the flag first and this stays out of the way. Preview only; the real
-   implementation lives in _worker.js as REWARD_TIP. */
 window.addEventListener('load', function(){
   if (window.__ugRewardTip) return;
   var cur=null;
@@ -1140,9 +864,6 @@ window.addEventListener('load', function(){
   window.addEventListener('scroll',function(){cur=null;hide();},{passive:true});
 });
 
-/* Mount every meta the config asks for. This runs while the page is still
-   parsing, so it lands before metas.html's own <script src> further down —
-   which is when the engine reads these and renders into them. */
 (function(){
   var store = document.getElementById('teamStore');
   if (!store) return;
@@ -1165,5 +886,5 @@ GAMES.forEach(function(g){ list.appendChild(gameCard(g)); });
   
   <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');document.querySelectorAll('#ug-mobile-nav .ug-mn-section.open').forEach(function(s){if(s!==section){s.classList.remove('open');var b=s.querySelector('.ug-mn-section-btn');if(b)ugMnSpinStop(b)}});section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
   <script src="https://raw.githack.com/FNTDUG/characters.json/refs/heads/main/metas.html"></script>
-<script>/*ug-vis-fix*/(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
 </html>
