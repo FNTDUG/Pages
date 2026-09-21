@@ -1648,8 +1648,8 @@ var INFO_SOURCES={
 //   hide:      [ 'Exact Item Name', ... ]   ← removes those entries from the tab
 var INFO_CFG={
   banners:          {overrides:{}, add:{}, hide:[]},
-  pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael','Shiny Signed Ballad of the Streets Ballora','Shiny Signed Island Vacation Dragon Endo 01']},
-  skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael','Shiny Signed Ballad of the Streets Ballora','Shiny Signed Island Vacation Dragon Endo 01']},
+  pets:             {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael','Shiny Signed Ballad of the Streets Ballora','Shiny Signed Island Vacation Dragon Endo 01','Shiny Signed Dreamer Michael Afton','Shiny Signed Eternal Hellfire Bones Of The Past Nightmare Freddy']},
+  skins:            {overrides:{}, add:{}, hide:['Shiny Signed Glacier Springtrap','Shiny Signed Scooped Ice Cream Michael','Shiny Signed Ballad of the Streets Ballora','Shiny Signed Island Vacation Dragon Endo 01','Shiny Signed Dreamer Michael Afton','Shiny Signed Eternal Hellfire Bones Of The Past Nightmare Freddy']},
   'loading-screens':{overrides:{}, add:{}, hide:[]},
   materials:        {overrides:{
     // Obtainment text lives here rather than in materials.json so it can be
