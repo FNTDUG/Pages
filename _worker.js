@@ -3389,31 +3389,6 @@ export default {
       });
     }
 
-    if (url.pathname === '/rot-debug') {
-      const H = { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA };
-      const variants = [
-        ['bare', {}],
-        ['referer+ua', { headers: H }],
-        ['origin+ua', { headers: { 'origin': 'https://fntd2.com', 'user-agent': ROT_UA } }],
-        ['referer+origin+ua', { headers: Object.assign({ 'origin': 'https://fntd2.com' }, H) }],
-        ['referer+ua+cache', { headers: H, cf: { cacheTtl: 60, cacheEverything: true } }]
-      ];
-      const out = [];
-      for (const [label, init] of variants) {
-        const t0 = Date.now();
-        try {
-          const r = await fetch(ROT_UPSTREAM + '?_=' + t0, init);
-          const txt = await r.text();
-          out.push({ label, status: r.status, ms: Date.now() - t0, len: txt.length, head: txt.slice(0, 80) });
-        } catch (e) {
-          out.push({ label, ms: Date.now() - t0, error: String(e && e.message || e) });
-        }
-      }
-      return new Response(JSON.stringify({ out }, null, 1), {
-        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
-      });
-    }
-
     if (url.pathname === '/news-posts') {
       const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
       const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
