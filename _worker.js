@@ -2293,7 +2293,7 @@ var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',materia
 var ROT_POOL_LABEL={Lobby:'Coins'};
 var ROT_POOL_ORDER=['Souls','Lobby','Selection'];
 var ROT_POOL_HIDE={Event:1};
-var ROT_POOL_EXTRA={Selection:[{name:'Mangle',type:'Pet'}]};
+var ROT_POOL_EXTRA={Souls:[{name:'Mangle',type:'Pet'}],Selection:[{name:'Mangle',type:'Pet'}]};
 function _rotPools(b){
   var keys=Object.keys(b||{}).filter(function(k){return !ROT_POOL_HIDE[k];});
   keys.sort(function(a,z){var i=ROT_POOL_ORDER.indexOf(a),j=ROT_POOL_ORDER.indexOf(z);return (i===-1?99:i)-(j===-1?99:j);});
