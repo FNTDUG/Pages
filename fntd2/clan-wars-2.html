@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clan Wars Builder | FNTD User Guide</title>
+  <link rel="icon" type="image/png" href="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/circle_done-high-hapj13.png?enable-io=true&enable=upscale&height=70">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+  <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}:root{--ug-accent:#ffa45b;--ug-purple:#681f62}html,body{min-height:100vh;background-color:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html{font-size:10px}body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-thumb{background:rgba(255,164,91,.4);border-radius:3px}#ug-main{min-height:100vh;display:flex;flex-direction:column;background-image:url('https://images.fntduserguide.com/952b91dc-d51b-434a-bee1-591d5d60126a.jpg');background-size:cover;background-attachment:fixed;background-position:center;background-color:#0a0c1e}#ug-header{position:relative;background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);flex-shrink:0;box-shadow:0 4px 28px rgba(104,31,98,.45)}#ug-header::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}.ug-header-inner{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px 22px}.ug-header-logo{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,164,91,.6))}.ug-header-title{font-family:'Audiowide',sans-serif;font-size:28px;color:#fff;text-shadow:0 0 12px rgba(255,164,91,.55),0 0 30px rgba(104,31,98,.4);letter-spacing:2px}#ug-topnav{position:sticky;top:0;z-index:1000}.ug-tn-inner{max-width:1100px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}.ug-tn-inner::-webkit-scrollbar{display:none}.ug-tn-link{display:flex;align-items:center;padding:14px 17px;color:rgba(255,255,255,.65);font-size:13px;font-family:'Audiowide',sans-serif;text-decoration:none;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-link:hover{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-link.active{color:var(--ug-accent)}.ug-tn-drop a.active::after,.ug-tn-link.active::after,.ug-mn-child.active::after,.ug-mn-link.active::after{content:"|";margin-left:4px;color:var(--ug-accent);font-weight:400}body.ug-cursor-off .ug-tn-drop a.active::after,body.ug-cursor-off .ug-tn-link.active::after,body.ug-cursor-off .ug-mn-child.active::after,body.ug-cursor-off .ug-mn-link.active::after{opacity:0}.ug-tn-item{position:relative;display:flex;align-items:stretch}.ug-tn-btn{display:flex;align-items:center;gap:5px;padding:14px 17px;color:rgba(255,255,255,.65);font-size:13px;background:none;border:none;font-family:'Audiowide',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}.ug-tn-btn:hover,.ug-tn-item.open>.ug-tn-btn{color:var(--ug-accent);background:rgba(255,164,91,.07)}.ug-tn-arrow{display:inline-block;font-size:13px;font-family:monospace,Arial;font-style:normal;opacity:.55;transition:opacity .12s,color .12s;min-width:.8em;text-align:center}.ug-tn-item.open .ug-tn-arrow{opacity:1;color:var(--ug-accent)}.ug-tn-drop{display:none;position:fixed;width:max-content;min-width:185px;background:rgba(7,4,18,.97);border:1px solid rgba(255,164,91,.2);border-top:2px solid var(--ug-accent);border-radius:0 0 8px 8px;box-shadow:0 10px 30px rgba(0,0,0,.8);z-index:9999}.ug-tn-drop a{display:block;padding:11px 18px;color:rgba(255,255,255,.6);font-size:12px;text-decoration:none;border-bottom:1px solid rgba(255,164,91,.07);font-family:'Audiowide',sans-serif;transition:background .11s,color .11s}.ug-tn-drop a:last-child{border-bottom:none}.ug-tn-drop a:hover{background:rgba(255,255,255,.06);color:#fff}.ug-tn-drop a.active{background:rgba(255,164,91,.08);color:var(--ug-accent)}#ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(18,3,38,.95));border:1px solid rgba(255,164,91,.45);border-radius:22px;padding:7px 13px 7px 10px;cursor:pointer;color:rgba(255,255,255,.9);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;align-items:center;gap:6px;transition:background .15s,border-color .15s,box-shadow .15s;box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}#ug-hamburger .hmb-icon{font-size:16px;line-height:1}#ug-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1099;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}#ug-overlay.open{display:block}#ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;background:linear-gradient(180deg,#0d0120 0%,#070110 100%);border-left:1px solid rgba(255,164,91,.12);z-index:1100;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.9);scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.2) transparent}#ug-mobile-nav::-webkit-scrollbar{width:3px}#ug-mobile-nav::-webkit-scrollbar-thumb{background:rgba(255,164,91,.25);border-radius:2px}#ug-mobile-nav.open{transform:translateX(0)}.ug-mn-header{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px;background:linear-gradient(180deg,#120326 0%,#3a0a38 65%,#1c0430 100%);border-bottom:1px solid rgba(255,164,91,.22);flex-shrink:0}.ug-mn-brand{display:flex;align-items:center;gap:10px}.ug-mn-brand-logo{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}.ug-mn-brand-name{font-family:'Audiowide',sans-serif;font-size:12px;color:#fff;line-height:1.2}.ug-mn-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .13s,color .13s,border-color .13s}.ug-mn-close:hover{background:rgba(255,164,91,.12);color:var(--ug-accent);border-color:rgba(255,164,91,.35)}.ug-mn-body{flex:1;padding:6px 0 12px}.ug-mn-link{display:flex;align-items:center;padding:12px 18px;color:rgba(255,255,255,.7);font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s,color .12s}.ug-mn-link:hover{background:rgba(255,164,91,.06);color:var(--ug-accent)}.ug-mn-link.active{color:var(--ug-accent)}.ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}.ug-mn-section-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 18px;background:none;border:none;color:rgba(255,164,91,.85);font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;text-align:left;transition:background .12s,color .12s}.ug-mn-section-arrow{opacity:.55;font-size:13px;flex-shrink:0;font-family:monospace,Arial;font-style:normal;min-width:.8em;text-align:center;transition:opacity .12s,color .12s}.ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{opacity:1;color:var(--ug-accent)}.ug-mn-section-items{max-height:0;overflow:hidden;transition:max-height .28s ease;background:rgba(0,0,0,.22)}.ug-mn-section.open .ug-mn-section-items{max-height:600px}.ug-mn-child{display:block;padding:9px 18px 9px 28px;color:rgba(255,255,255,.5);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.2px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.03);transition:background .11s,color .11s}.ug-mn-child:last-child{border-bottom:none}.ug-mn-child:hover{background:rgba(255,164,91,.05);color:#fff}.ug-mn-child.active{color:var(--ug-accent);background:rgba(255,164,91,.07);border-left:2px solid var(--ug-accent);padding-left:26px}.ug-mn-discord-wrap{padding:14px 14px 4px}.ug-mn-discord{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(88,101,242,.11);border:1px solid rgba(88,101,242,.28);border-radius:9px;color:#a5aaff;font-family:'Audiowide',sans-serif;font-size:10.5px;text-decoration:none;letter-spacing:.3px;transition:background .13s,border-color .13s,color .13s}.ug-mn-discord:hover{background:rgba(88,101,242,.22);border-color:rgba(88,101,242,.55);color:#bdc1ff}#ug-hero{position:relative;background-image:url('https://images.fntduserguide.com/starry1.webp');background-size:cover;background-attachment:fixed;background-position:center top}#ug-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.48)}#ug-hero-inner{position:relative;z-index:1;padding:24px 18px 22px;max-width:860px;width:100%;margin:0 auto}#ug-content{flex:1;padding:22px 18px 50px;max-width:860px;width:100%;margin:0 auto}.ug-page-title-area{text-align:center;margin-bottom:18px}.ug-page-title{font-family:'Audiowide',sans-serif;font-size:32px;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);margin-bottom:10px;text-decoration:underline;text-underline-offset:6px}.ug-status-badge{display:inline-block;padding:6px 18px;border-radius:20px;background:rgba(35,105,35,.85);border:1px solid rgba(80,190,80,.45);color:#86f786;font-size:10px;font-family:'Press Start 2P',cursive;margin-bottom:12px}.ug-page-desc{font-size:17px;color:#fff;line-height:1.75;margin-bottom:6px;text-align:center}.ug-note{font-size:16px;color:#fff;line-height:1.75;margin-bottom:16px}#ug-content img{max-width:100%;height:auto;display:block;margin:0 auto 16px}.clean-pill{display:inline-block;padding:14px;text-shadow:0 0 6px rgba(255,107,107,0.6);border-radius:20px;background:rgba(34,34,34,0.85);position:relative;overflow:hidden;border:2px solid #5a1a1a;color:#ff6b6b;font-size:14px;font-family:'Audiowide',sans-serif;cursor:pointer;user-select:none;text-align:center;box-shadow:inset 0 2px 4px rgba(255,255,255,0.08),inset 0 -4px 8px rgba(0,0,0,0.6),0 8px 0 #000,0 10px 20px rgba(0,0,0,0.5);transition:all 0.15s ease;animation:flicker 2s infinite}.clean-pill.on{border-color:#4dff88;color:#8cffb0}.clean-pill:hover{transform:translateY(2px)}.clean-pill::after{content:'';position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(to bottom,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 2px,transparent 4px);pointer-events:none;opacity:0.3}.clean-text{margin-top:14px;font-family:'Press Start 2P',cursive;font-size:10px;color:#fff;text-align:center;line-height:1.6;opacity:0.85}@keyframes flicker{0%{opacity:1}50%{opacity:0.95}100%{opacity:1}}.ad-slot{text-align:center}@media(max-width:768px){#ug-hamburger{display:flex}#ug-topnav{display:none}.ug-header-title{font-size:20px}.ug-header-logo{width:52px;height:52px}}@media(max-width:480px){.ug-page-title{font-size:22px}.ug-header-title{font-size:17px;letter-spacing:1px}}</style>
+</head>
+<body>
+  <button id="ug-hamburger" onclick="ugMobileToggle()" aria-label="Toggle menu"><span class="hmb-icon">&#9776;</span> Menu</button>
+  <div id="ug-overlay" onclick="ugMobileClose()"></div>
+  <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
+    <div class="ug-mn-header"><div class="ug-mn-brand"><img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD"><span class="ug-mn-brand-name">FNTD User Guide</span></div><button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button></div>
+    <div class="ug-mn-body"></div>
+  </div>
+  <div id="ug-main">
+    <header id="ug-header">
+      <div class="ug-header-inner"><img class="ug-header-logo" src="https://images.fntduserguide.com/circle_done.png" alt="FNTD Userguide"><div class="ug-header-title">FNTD User Guide</div></div>
+      <nav id="ug-topnav"><div class="ug-tn-inner"></div></nav>
+    </header>
+    <div id="ug-hero"><div id="ug-hero-inner">
+      <div class="ug-page-title-area"><div class="ug-page-title">Clan Wars Builder</div><p class="ug-page-desc">Set the round's win condition and it filters every unit down to the ones that still work.</p></div>
+      
+    </div></div>
+    <div id="ug-content">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+
+<div id="cw2">
+<style>
+#cw2, #cw2 * { font-family: 'Press Start 2P', cursive; box-sizing: border-box; }
+#cw2 {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 26px 18px 46px;
+  color: #e8e8e8;
+  background-image: url('https://images.fntduserguide.com/game-ui-background.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  border: 3px solid #1c1c1c;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.05), 0 10px 40px rgba(0,0,0,.6);
+}
+#cw2 .cw-inner { max-width: 980px; margin: 0 auto; }
+#cw2 h2.cw-title { font-size: 22px; text-align: center; color: #ffd98a; margin: 0 0 6px; text-shadow: 3px 3px 0 #000; letter-spacing: 1px; }
+#cw2 .cw-sub { font-size: 9px; text-align: center; color: rgba(255,255,255,.55); line-height: 1.9; margin-bottom: 22px; }
+
+#cw2 .cw-form { background: rgba(10,10,12,.88); border: 3px solid #2e2e34; border-radius: 10px; padding: 16px 16px 18px; margin-bottom: 20px; }
+#cw2 .cw-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+#cw2 .cw-row.cw-els { grid-template-columns: repeat(3, 1fr); margin-bottom: 0; }
+#cw2 .cw-field label { display: block; font-size: 8px; letter-spacing: 1px; color: #ffb14a; margin-bottom: 7px; text-transform: uppercase; }
+#cw2 .cw-reset { margin-top: 14px; padding: 9px 16px; font-size: 8px; letter-spacing: 1px; color: #ff8f8f; background: rgba(60,12,12,.85); border: 2px solid #6d1f1f; border-radius: 6px; cursor: pointer; }
+#cw2 .cw-reset:hover { background: rgba(90,18,18,.9); }
+
+#cw2 .ue-csel-wrap { position: relative; width: 100%; box-sizing: border-box; }
+#cw2 .ue-csel-btn {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 164, 91, 0.4);
+  background-color: rgba(8, 6, 18, 0.9);
+  color: #fff;
+  font-size: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.4;
+  transition: border-color 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#cw2 .ue-csel-btn:hover, #cw2 .ue-csel-btn.ue-csel-open { border-color: #ffb14a; }
+#cw2 .ue-csel-btn-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+#cw2 .ue-csel-btn-label.ue-csel-placeholder { opacity: 0.42; }
+#cw2 .ue-csel-arrow { flex-shrink: 0; font-size: 7px; opacity: 0.55; font-family: Arial, sans-serif !important; transition: transform 0.18s; }
+#cw2 .ue-csel-btn.ue-csel-open .ue-csel-arrow { transform: rotate(180deg); }
+#cw2 .ue-csel-btn.ue-csel-disabled { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
+#cw2 .ue-csel-popup {
+  position: absolute;
+  z-index: 9600;
+  background: rgba(10, 7, 22, 0.97);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 164, 91, 0.55);
+  box-shadow: 0 10px 36px rgba(0,0,0,0.82), 0 0 16px rgba(255,164,91,0.07);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#cw2 .ue-csel-search-wrap { border-bottom: 1px solid rgba(255,164,91,0.28); background: rgba(0,0,0,0.18); }
+#cw2 .ue-csel-search { display: block; width: 100%; padding: 7px 10px; border: none; background: transparent; color: #fff; font-size: 10px; outline: none; box-sizing: border-box; }
+#cw2 .ue-csel-search::placeholder { color: rgba(255,255,255,0.3); }
+#cw2 .ue-csel-list { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255,164,91,0.4) transparent; }
+#cw2 .ue-csel-list::-webkit-scrollbar { width: 4px; }
+#cw2 .ue-csel-list::-webkit-scrollbar-thumb { background: rgba(255,164,91,0.4); border-radius: 2px; }
+#cw2 .ue-csel-item { padding: 8px 12px; font-size: 10px; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(255,164,91,0.09); transition: background 0.11s; white-space: normal; word-break: break-word; line-height: 1.5; }
+#cw2 .ue-csel-item:last-child { border-bottom: none; }
+#cw2 .ue-csel-item:hover:not(.ue-csel-item-off) { background: rgba(104,31,98,0.38); }
+#cw2 .ue-csel-item.ue-csel-item-cur { color: #ffa45b; }
+#cw2 .ue-csel-item.ue-csel-item-ph { color: rgba(255,255,255,0.38); }
+#cw2 .ue-csel-item.ue-csel-item-off { opacity: 0.3; cursor: not-allowed; }
+#cw2 .ue-csel-noresult { padding: 10px; font-size: 9px; color: rgba(255,255,255,0.33); text-align: center; }
+
+#cw2 .cw-card { background: rgba(20,20,22,.93); border: 3px solid #2e2e34; border-radius: 10px; padding: 20px 18px 22px; margin-bottom: 20px; text-align: center; }
+#cw2 .cw-card h3 { font-size: 17px; color: #ffc861; margin: 0 0 14px; text-shadow: 3px 3px 0 #000; letter-spacing: 1px; }
+#cw2 .cw-obj { font-size: 11px; color: #fff; line-height: 2; margin-bottom: 16px; }
+#cw2 .cw-obj span { color: #ffd98a; }
+#cw2 .cw-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 18px; }
+#cw2 .cw-chip {
+  min-width: 158px;
+  padding: 9px 10px;
+  border-radius: 3px;
+  border: 3px solid;
+  font-size: 11px;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-shadow: 2px 2px 0 rgba(255,255,255,.35);
+}
+#cw2 .cw-chip b { display: block; font-weight: normal; font-size: 11px; }
+#cw2 .cw-chip.ban  { background: #f4a79b; border-color: #e0776a; color: #8c1c14; }
+#cw2 .cw-chip.buff { background: #a9edc3; border-color: #74c793; color: #10502a; }
+#cw2 .cw-chip.deb  { background: #f3d789; border-color: #d0af5d; color: #6a4c0a; }
+#cw2 .cw-chip.off  { background: #24242a; border-color: #3a3a42; color: rgba(255,255,255,.3); text-shadow: none; }
+#cw2 .cw-restr-h { font-size: 15px; color: #ff5b5b; margin: 6px 0 12px; text-shadow: 3px 3px 0 #000; letter-spacing: 1px; }
+#cw2 .cw-restr { border: 2px solid #7a2020; background: rgba(60,10,10,.55); border-radius: 4px; padding: 14px 12px; font-size: 10px; line-height: 1.9; color: #ff9c9c; }
+
+#cw2 .cw-team {
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background: linear-gradient(180deg, #14141a, #0b0b10);
+  border: 3px solid #8fb7ff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 3px #e9f0ff, 0 0 0 2px #05050a;
+  padding: 14px 12px;
+  margin-bottom: 10px;
+}
+#cw2 .cw-slots { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+#cw2 .cw-slot {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--cw-slot, 120px);
+  height: var(--cw-slot, 120px);
+  min-width: 0;
+  background: #000;
+  border: 3px solid #fff;
+  border-radius: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#cw2 .cw-slot:hover { border-color: #ffd98a; }
+#cw2 .cw-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#cw2 .cw-slot .cw-slot-tag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.78);
+  color: #ffd98a;
+  font-size: 6px;
+  line-height: 1.8;
+  padding: 2px 3px;
+  text-align: center;
+  word-break: break-word;
+}
+#cw2 .cw-slot.starter { border-color: #ffd15c; }
+#cw2 .cw-slot .cw-plus { font-size: 16px; color: rgba(255,255,255,.28); }
+#cw2 .cw-team-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+#cw2 .cw-btn { padding: 9px 16px; font-size: 8px; letter-spacing: 1px; border-radius: 6px; cursor: pointer; }
+#cw2 .cw-btn-go { color: #8ce0a6; background: rgba(12,58,26,.85); border: 2px solid #1f6d3a; }
+#cw2 .cw-btn-go:hover { background: rgba(18,86,38,.9); }
+#cw2 .cw-btn-no { color: #ff8f8f; background: rgba(60,12,12,.85); border: 2px solid #6d1f1f; }
+#cw2 .cw-btn-no:hover { background: rgba(90,18,18,.9); }
+#cw2 .cw-slot-cost { position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.3); border-radius: 3px; color: #ffd98a; font-size: 6px; line-height: 1.6; padding: 1px 3px; }
+
+#cw2 .cw-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; font-size: 8px; color: rgba(255,255,255,.5); line-height: 1.9; margin-bottom: 12px; }
+#cw2 .cw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 12px; }
+#cw2 .cw-unit { position: relative; background: rgba(16,16,19,.92); border: 2px solid #33333b; border-radius: 8px; padding: 12px 12px 13px; display: flex; gap: 11px; align-items: flex-start; cursor: pointer; }
+#cw2 .cw-unit:hover { border-color: #ffb14a; }
+#cw2 .cw-unit.top { border-color: #ffb14a; }
+#cw2 .cw-rank { position: absolute; top: -9px; left: -9px; width: 24px; height: 24px; border-radius: 50%; background: #17171c; border: 2px solid #55555f; font-size: 8px; color: #ffd98a; display: flex; align-items: center; justify-content: center; }
+#cw2 .cw-unit.top .cw-rank { border-color: #ffb14a; }
+#cw2 .cw-por { width: 54px; height: 54px; border-radius: 8px; padding: 2px; flex-shrink: 0; }
+#cw2 .cw-por img { width: 100%; height: 100%; border-radius: 6px; background: #0d0d10; display: block; object-fit: cover; }
+#cw2 .cw-main { flex: 1; min-width: 0; }
+#cw2 .cw-name { font-size: 9px; line-height: 1.7; color: #fff; word-break: break-word; }
+#cw2 .cw-meta { font-size: 7px; color: rgba(255,255,255,.45); line-height: 1.9; margin-top: 5px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+#cw2 .cw-meta img { width: 13px; height: 13px; }
+#cw2 .cw-score { font-size: 7px; color: #ffb14a; margin-top: 6px; line-height: 1.8; }
+#cw2 .cw-why { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+#cw2 .cw-tag { font-size: 6px; padding: 3px 5px; border-radius: 3px; line-height: 1.7; background: rgba(255,255,255,.07); color: rgba(255,255,255,.6); }
+#cw2 .cw-tag.good { background: rgba(80,200,120,.16); color: #8ce0a6; }
+#cw2 .cw-tag.bad  { background: rgba(220,80,80,.16); color: #f09a9a; }
+#cw2 .cw-empty { grid-column: 1 / -1; padding: 34px 16px; text-align: center; font-size: 10px; line-height: 2; color: rgba(255,255,255,.45); }
+#cw2 .cw-more { display: block; margin: 16px auto 0; padding: 10px 18px; font-size: 8px; letter-spacing: 1px; color: #ffd98a; background: rgba(30,30,36,.9); border: 2px solid #4a4a54; border-radius: 6px; cursor: pointer; }
+#cw2 .cw-more:hover { border-color: #ffb14a; }
+
+#cw2 .cw-pick { position: fixed; inset: 0; z-index: 9700; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; padding: 18px; }
+#cw2 .cw-pick.open { display: flex; }
+#cw2 .cw-pick-box { width: 100%; max-width: 660px; max-height: 80vh; background: rgba(12,10,20,.98); border: 3px solid #4a4a54; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+#cw2 .cw-pick-head { padding: 12px 14px; border-bottom: 2px solid #2e2e34; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 9px; color: #ffd98a; }
+#cw2 .cw-pick-close { background: none; border: none; color: #ff8f8f; font-size: 12px; cursor: pointer; }
+#cw2 .cw-pick-list { overflow-y: auto; padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+
+@media (max-width: 720px) {
+  #cw2 { padding: 18px 12px 34px; background-attachment: scroll; }
+  #cw2 h2.cw-title { font-size: 15px; }
+  #cw2 .cw-row, #cw2 .cw-row.cw-els { grid-template-columns: 1fr; }
+  #cw2 .cw-card h3 { font-size: 13px; }
+  #cw2 .cw-obj { font-size: 9px; }
+  #cw2 .cw-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="cw-inner">
+  <h2 class="cw-title">Clan Wars Builder</h2>
+  <div class="cw-sub">Set win condition/Restrictions and it filters every unit down to the ones that are available.</div>
+
+  <div class="cw-form">
+    <div class="cw-row">
+      <div class="cw-field"><label>Objective</label><div id="cw2Obj"></div></div>
+      <div class="cw-field"><label>Restriction</label><div id="cw2Res"></div></div>
+    </div>
+    <div class="cw-row cw-els">
+      <div class="cw-field"><label>Banned element</label><div id="cw2Ban"></div></div>
+      <div class="cw-field"><label>Buffed element</label><div id="cw2Buf"></div></div>
+      <div class="cw-field"><label>Debuffed element</label><div id="cw2Deb"></div></div>
+    </div>
+    <button class="cw-reset" id="cw2Reset" type="button">Clear all</button>
+  </div>
+
+  <div class="cw-card">
+    <h3>WIN CONDITION</h3>
+    <div class="cw-obj" id="cw2ObjText"></div>
+    <div class="cw-chips" id="cw2Chips"></div>
+    <div class="cw-restr-h">RESTRICTIONS</div>
+    <div class="cw-restr" id="cw2ResText"></div>
+  </div>
+
+  <div class="cw-team" id="cw2Team"><div class="cw-slots" id="cw2Slots"></div></div>
+  <div class="cw-team-bar" id="cw2TeamBar">
+    <button class="cw-btn cw-btn-go" id="cw2Auto" type="button">Auto fill</button>
+    <button class="cw-btn cw-btn-no" id="cw2Clear" type="button">Clear team</button>
+  </div>
+
+  <div class="cw-bar">
+    <span id="cw2Count"></span>
+    <span id="cw2Note"></span>
+  </div>
+  <div class="cw-grid" id="cw2Grid"></div>
+  <button class="cw-more" id="cw2More" type="button" style="display:none">Show more</button>
+</div>
+
+<div class="cw-pick" id="cw2Pick">
+  <div class="cw-pick-box">
+    <div class="cw-pick-head"><span id="cw2PickTitle"></span><button class="cw-pick-close" id="cw2PickClose" type="button">X</button></div>
+    <div class="cw-pick-list" id="cw2PickList"></div>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var BUFF_POTENCY_MAX = 63;
+  var CD_BOOST_FLOOR = 0.5;
+  var FIRE_BURN_PCT_PER_SEC = 0.03;
+  var scarecrowMode = "raiser";
+  var MIN_UNIT_LEVEL = 1;
+  var MAX_UNIT_LEVEL = 100;
+  var DISPLAY_BOOST = 1.02017;
+  var currentUnitLevel = 1;
+  var currentPermaBoostType = "none";
+  var BOOST_META = {};
+  var SHINY_DAMAGE_MULT = 1.10;
+  var isShinyMode = false;
+  var isGlitchedMode = false;
+  var GLITCH_DMG_MULT = 1.25;
+  var GLITCH_RNG_MULT = 1.125;
+  var GLITCH_CD_MULT  = 0.875;
+  var ueHeroPathSel = {};
+  var UE_PRIMARY_TIER = 3;
+  var _LM25 = 1.531560;
+  var _LM50 = 1.898535;
+  var _LM75 = 2.157367;
+  var CRIT_DMG = 2.0;
+  var byteState = { mainByte: "none", subByte: "none", stats: {}, subStats: {} };
+  var buffState = {
+            perma: {
+              cupcakeStacks: 0,
+              barbStacks: 0,
+              balloonStacks: 0,
+              ppcStacks: 0,
+              sweetheartToyFoxyCd: 0
+            },
+            temp: {
+               popcornStacks: 0
+            },
+            enchant: "none"
+          };
+  const ELEMENT_BASE = ["Dark","Electricity","Fire","Light","Nature","Neutral","Rust","Water"];
+  const ELEMENT_PARTS = {
+    "Universal": ELEMENT_BASE.slice()
+  };
+      
+
+      
+        function _applyBoostMeta(meta, unit, cdMult_ref) {
+          if (!meta) return null;
+          if (meta.element) {
+            var _el = String(unit.element || "").toLowerCase();
+            if (_el !== meta.element.toLowerCase()) return null;
+          }
+          if (meta.elements) {
+            var _elOk = meta.elements.some(function (me) { return unitHasElement(unit, me); });
+            if (!_elOk) return null;
+          }
+          if (meta.unitNames) {
+            if (meta.unitNames.indexOf(unit.name) === -1) return null;
+          }
+        
+          if (meta.uptime === false) {
+            var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+            return stacks;
+          }
+          var needsCalc = meta.uptime === true || (meta.duration > 0 && (meta.cd > 0 || meta.everynthattack > 0));
+          var uptimeFactor;
+          if (!needsCalc) {
+            uptimeFactor = 1;
+          } else {
+            if (!(meta.duration > 0)) return 0;
+            uptimeFactor = 0;
+            if (meta.cd > 0) {
+              var _metaCd = (meta.cdboostable === true) ? meta.cd * cdMult_ref : meta.cd;
+              uptimeFactor = Math.min(1, meta.duration / _metaCd);
+            } else if (meta.everynthattack > 0) {
+              var effCD = getBuffEffects.__lastEffCd || 1;
+              uptimeFactor = Math.min(1, meta.duration / (meta.everynthattack * effCD));
+            }
+          }
+          var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+          return uptimeFactor * stacks;
+        }
+
+          function _applyByteBoosts(bm, bs) {
+            if (!bm || bm === "none") return;
+            if (bm === "The Box") {
+              var _bCd = parseFloat(bs.cd||0)||0, _bRng = parseFloat(bs.rng||0)||0, _bDmg = parseFloat(bs.dmg||0)||0;
+              if (_bCd  !== 0) cdMult  *= (1 + _bCd  / 100);
+              if (_bRng !== 0) rngMult *= (1 + _bRng / 100);
+              if (_bDmg !== 0) dmgMult *= (1 + _bDmg / 100);
+            } else if (bm === "Boss Drain") {
+              var _bdD = parseFloat(bs.dmg||0)||0, _bdB = parseFloat(bs.bossdmg||0)||0;
+              if (_bdD !== 0) dmgMult *= (1 + _bdD / 100);
+              if (_bdB !== 0) dmgMult *= (1 + _bdB / 100);
+            } else if (bm === "Reaper") {
+              var _rC = parseFloat(bs.critd||0)||0;
+              if (_rC !== 0) critDmgAdd += _rC / 100;
+            } else if (bm === "UFO") {
+              var _uEl = String(bs.element||"none").toLowerCase(), _uDmg = parseFloat(bs.dmg||0)||0;
+              switch (_uEl) {
+                case "neutral":     dmgMult *= 1.03; rngMult *= 1.03; cdMult *= 0.97; break;
+                case "dark":        dmgMult *= 1.03; break;
+                case "light":       cdMult  *= 0.97; break;
+                case "water":       rngMult *= 1.03; break;
+                case "electricity": cdMult  *= 0.99; break;
+                case "rust":        dmgMult *= 1.06; cdMult  *= 1.03; break;
+                case "fire":        burnPctPerSec += FIRE_BURN_PCT_PER_SEC; break;
+              }
+              if (_uDmg !== 0 && _uEl !== "none" && unit && unit.element) {
+                var _uUnit = String(unit.element||"").toLowerCase();
+                if (_uUnit === _uEl || _uUnit.indexOf(_uEl) !== -1) dmgMult *= (1 + _uDmg / 100);
+              }
+            } else if (bm === "KABOOM!") {
+              var _kR = parseFloat(bs.rng||0)||0;
+              if (_kR !== 0) rngMult *= (1 + _kR / 100);
+            }
+          }
+
+        function _applyMetaMults(meta, factor, dmgM, rngM, cdM, costM, critRM, critDM, critRADD, critDADD, pot) {
+          pot = pot || 0;
+        
+        
+        
+        
+        
+        
+          function _m(base, mult, f) {
+            var v = mult < 1 ? Math.pow(mult, f) : 1 + (mult - 1) * f;
+            return base * Math.max(0.01, v);
+          }
+          if (typeof meta.dmgMult      === "number") dmgM    = _m(dmgM,  _potMult(meta.dmgMult, pot),  factor);
+          if (typeof meta.rngMult      === "number") rngM    = _m(rngM,  _potMult(meta.rngMult, pot),  factor);
+          if (typeof meta.cdMult       === "number") cdM     = _m(cdM,   _potMult(meta.cdMult, pot),   factor);
+          if (typeof meta.costMult     === "number") costM   = _m(costM, _potMult(meta.costMult, pot), factor);
+          if (typeof meta.critRateMult === "number") critRM  += (meta.critRateMult - 1) * (1 + pot) * factor;
+          if (typeof meta.critDmgMult  === "number") critDM  += (meta.critDmgMult  - 1) * (1 + pot) * factor;
+          if (typeof meta.critRateAdd  === "number") critRADD += meta.critRateAdd  * (1 + pot) * factor;
+          if (typeof meta.critDmgAdd   === "number") critDADD += meta.critDmgAdd   * (1 + pot) * factor;
+          return { dmgMult: dmgM, rngMult: rngM, cdMult: cdM, costMult: costM, critRateMult: critRM, critDmgMult: critDM, critRateAdd: critRADD, critDmgAdd: critDADD };
+        }
+        function _potMult(mult, pot) { return pot ? 1 + (mult - 1) * (1 + pot) : mult; }
+
+        function boostPotency(key) {
+          if (typeof buffState === "undefined" || !buffState || !buffState.perma) return 0;
+          var v = Number(buffState.perma["pot:" + key]);
+          if (!isFinite(v) || v <= 0) return 0;
+          return Math.min(v, BUFF_POTENCY_MAX) / 100;
+        }
+
+      
+      
+      
+        function computePassiveDps(unit, modeKey, D, effAttackCd, selfMult, D_noCrit) {
+        
+          var _cm = getCritMult(unit);
+          var _dotBase = (D_noCrit !== undefined)
+            ? D_noCrit
+            : ((_cm > 0 && isFinite(_cm)) ? D / _cm : D);
+          if (D_noCrit === undefined) D_noCrit = D;
+          var result = {
+            dot: 0, summonLocal: 0, summonGlobal: 0, periodicLocal: 0, periodicGlobal: 0, nth: 0,
+            stunFraction: 0,
+            items: []
+          };
+
+          var pd = resolvePd(unit, modeKey);
+          if (!pd) return result;
+
+          (pd.dots || []).forEach(function(src) {
+            var divisor;
+            if (src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0) {
+              divisor = src.everynthattack * effAttackCd;
+            } else if (src.cd > 0) {
+              divisor = src.cdboostable
+                ? src.cd * getCooldownMultiplier(unit, src.cd) * selfMult.cdMult
+                : src.cd;
+            } else if (src.durationsec > 0) {
+              divisor = src.durationsec;
+            }
+            if (!isFinite(divisor) || divisor <= 0) return;
+            var dps = (src.pctofdamage * _dotBase / divisor) * (src.stacks != null ? src.stacks : getPlc(unit));
+            var stunFrac_d = (src.stun > 0) ? src.stun / divisor : 0;
+            result.dot += dps;
+            result.stunFraction += stunFrac_d;
+            var dLabel = src.label || "DoT";
+            if ((src.everynthattack || 0) > 1) dLabel += " (every " + src.everynthattack + ")";
+            result.items.push({ label: dLabel, valuePerPlc: dps, isGlobal: false, stunFrac: stunFrac_d });
+          });
+
+          (pd.summons || []).forEach(function(src) {
+            var dps = 0;
+            var maxAct = (src.maxactive != null ? src.maxactive : getPlc(unit));
+
+          
+            if ((src.healthpctofdamage > 0 || src.healthflat > 0) && src.spawncd > 0) {
+              var effSpawnCd = src.spawncdboostable
+                ? src.spawncd * getCooldownMultiplier(unit, src.spawncd) * selfMult.cdMult
+                : src.spawncd;
+              if (isFinite(effSpawnCd) && effSpawnCd > 0) {
+                if (src.healthpctofdamage > 0) dps += src.healthpctofdamage * D / effSpawnCd * maxAct;
+                if (src.healthflat > 0)        dps += src.healthflat / effSpawnCd * maxAct;
+              }
+            }
+
+          
+            if (src.attackpctofdamage > 0 && src.attackcd > 0) {
+              var aCd = src.attackcdboostable
+                ? src.attackcd * getCooldownMultiplier(unit, src.attackcd) * selfMult.cdMult
+                : src.attackcd;
+              if (isFinite(aCd) && aCd > 0) {
+                var _sEff = getBuffEffects(unit);
+                var _sCRM = _sEff.critRateMult || 1; var _sCDM = _sEff.critDmgMult || 1;
+                var _sCRA = _sEff.critRateAdd  || 0; var _sCDA = _sEff.critDmgAdd  || 0;
+                var _sumCritR = typeof src.critc === "number" ? Math.min(1, src.critc * _sCRM + _sCRA) : getCritRate(unit);
+                var _sumCritD = ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _sCDA) * _sCDM;
+                var _sumD = (typeof src.critc === "number" || typeof src.critd === "number")
+                  ? D_noCrit * (1 + _sumCritR * (_sumCritD - 1))
+                  : D;
+                dps += (src.attackpctofdamage * _sumD / aCd) * maxAct;
+              }
+            }
+
+            if (dps <= 0) return;
+            var glob = src.cdscope === "global";
+            if (glob) result.summonGlobal += dps; else result.summonLocal += dps;
+            var _sEff2 = getBuffEffects(unit);
+            var _sCRM2 = _sEff2.critRateMult || 1; var _sCDM2 = _sEff2.critDmgMult || 1;
+            var _sCRA2 = _sEff2.critRateAdd  || 0; var _sCDA2 = _sEff2.critDmgAdd  || 0;
+            var _sumCritRate = typeof src.critc === "number" ? Math.min(1, src.critc * _sCRM2 + _sCRA2) : (typeof src.critd === "number" ? getCritRate(unit) : null);
+            var _sumCritDmg  = _sumCritRate != null ? ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _sCDA2) * _sCDM2 : null;
+            result.items.push({ label: src.label || "Summon", valuePerPlc: dps, isGlobal: glob, isSummon: true, critRate: _sumCritRate, critDmg: _sumCritDmg });
+          });
+
+          (pd.periodic || []).forEach(function(src) {
+            var pCd;
+            if (src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0) {
+              pCd = src.everynthattack * effAttackCd;
+            } else if (src.cd > 0) {
+              pCd = src.cdboostable
+                ? src.cd * getCooldownMultiplier(unit, src.cd) * selfMult.cdMult
+                : src.cd;
+            }
+            if (!isFinite(pCd) || pCd <= 0) return;
+            var _pEff = getBuffEffects(unit);
+            var _pCRM = _pEff.critRateMult || 1; var _pCDM = _pEff.critDmgMult || 1;
+            var _pCRA = _pEff.critRateAdd  || 0; var _pCDA = _pEff.critDmgAdd  || 0;
+            var _pCritRateCalc = typeof src.critc === "number" ? Math.min(1, src.critc * _pCRM + _pCRA) : getCritRate(unit);
+            var _pCritDmgCalc  = ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _pCDA) * _pCDM;
+            var _pD = (typeof src.critc === "number" || typeof src.critd === "number")
+              ? D_noCrit * (1 + _pCritRateCalc * (_pCritDmgCalc - 1))
+              : D;
+            var dps = (src.pctofdamage * _pD * (src.hits || 1)) / pCd;
+            var stunFrac_p = (src.stun > 0) ? src.stun / pCd : 0;
+            var glob = src.cdscope === "global";
+            if (glob) result.periodicGlobal += dps; else result.periodicLocal += dps;
+            result.stunFraction += stunFrac_p;
+            var pLabel = src.label || "Periodic";
+            if ((src.everynthattack || 0) > 1) pLabel += " (every " + src.everynthattack + ")";
+            var _pCritRate = typeof src.critc === "number" ? Math.min(1, src.critc * _pCRM + _pCRA) : (typeof src.critd === "number" ? getCritRate(unit) : null);
+            var _pCritDmg  = _pCritRate != null ? ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _pCDA) * _pCDM : null;
+            result.items.push({ label: pLabel, valuePerPlc: dps, isGlobal: glob, stunFrac: stunFrac_p, critRate: _pCritRate, critDmg: _pCritDmg });
+          });
+
+          (pd.onnthattack || []).forEach(function(src) {
+            if (!isFinite(effAttackCd) || effAttackCd <= 0) return;
+            if (!(src.everynthattack > 0)) return;
+            var interval = effAttackCd * src.everynthattack;
+            if (!isFinite(interval) || interval <= 0) return;
+            var _nEff = getBuffEffects(unit);
+            var _nCRM = _nEff.critRateMult || 1; var _nCDM = _nEff.critDmgMult || 1;
+            var _nCRA = _nEff.critRateAdd  || 0; var _nCDA = _nEff.critDmgAdd  || 0;
+            var _nCritRateCalc = typeof src.critc === "number" ? Math.min(1, src.critc * _nCRM + _nCRA) : getCritRate(unit);
+            var _nCritDmgCalc  = ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _nCDA) * _nCDM;
+            var _nD = (typeof src.critc === "number" || typeof src.critd === "number")
+              ? D_noCrit * (1 + _nCritRateCalc * (_nCritDmgCalc - 1))
+              : D;
+            var dps = (src.pctofdamage * _nD) / interval;
+            var stunFrac_n = (src.stun > 0) ? src.stun / interval : 0;
+            result.nth += dps;
+            result.stunFraction += stunFrac_n;
+            var nLabel = src.label || "Follow-up";
+            if (src.everynthattack > 1) nLabel += " (every " + src.everynthattack + ")";
+            var _nCritRate = typeof src.critc === "number" ? Math.min(1, src.critc * _nCRM + _nCRA) : (typeof src.critd === "number" ? getCritRate(unit) : null);
+            var _nCritDmg  = _nCritRate != null ? ((typeof src.critd === "number" ? src.critd : CRIT_DMG) + _nCDA) * _nCDM : null;
+            result.items.push({ label: nLabel, valuePerPlc: dps, isGlobal: false, stunFrac: stunFrac_n, critRate: _nCritRate, critDmg: _nCritDmg });
+          });
+
+        
+          (pd.stuns || []).forEach(function(src) {
+          
+            var alwaysOn = src.uptime === false;
+          
+            var rawInterval = 0;
+            if (!alwaysOn) {
+              if (src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0) {
+                rawInterval = src.everynthattack * effAttackCd;
+              } else if (src.cd > 0) {
+                rawInterval = src.cdboostable
+                  ? src.cd * getCooldownMultiplier(unit, src.cd) * selfMult.cdMult
+                  : src.cd;
+              }
+            }
+          
+            var interval = (rawInterval > 0 && src.externalcd !== false)
+              ? Math.max(rawInterval, 7) : rawInterval;
+            var uptime = alwaysOn ? 1
+              : (src.uptime === true || (src.duration > 0 && interval > 0))
+                ? (interval > 0 ? Math.min(1, src.duration / interval) : (src.duration > 0 ? 1 : 0))
+                : null;
+          
+            var ccText;
+            if (src.duration > 0) {
+              var _effStun = uptime !== null ? src.duration * uptime : src.duration;
+              ccText = "Stun: " + _effStun.toFixed(2) + "s";
+            } else {
+              var _stunPct = uptime !== null ? Math.round(uptime * 100) : null;
+              ccText = "Stun: " + (_stunPct !== null ? _stunPct + "%" : "—");
+            }
+            var lbl = src.label || "Stun";
+            if (src.everynthattack > 0) lbl += " (every " + src.everynthattack + ")";
+          
+            var _ssStunFrac = (src.stun > 0 && rawInterval > 0) ? Math.min(1, src.stun / rawInterval) : 0;
+            result.stunFraction += _ssStunFrac;
+            result.items.push({ label: lbl, valuePerPlc: 0, isGlobal: src.cdscope === "global", isCC: true, ccText: ccText, stunFrac: _ssStunFrac });
+          });
+
+        
+          (pd.slows || []).forEach(function(src) {
+            var alwaysOn = src.uptime === false;
+            var interval = 0;
+            if (!alwaysOn) {
+              if (src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0) {
+                interval = src.everynthattack * effAttackCd;
+              } else if (src.cd > 0) {
+                interval = src.cdboostable
+                  ? src.cd * getCooldownMultiplier(unit, src.cd) * selfMult.cdMult
+                  : src.cd;
+              }
+            }
+            var uptime = alwaysOn ? 1
+              : (src.uptime === true || (src.duration > 0 && interval > 0))
+                ? (interval > 0 ? Math.min(1, src.duration / interval) : (src.duration > 0 ? 1 : 0))
+                : null;
+          
+            var _ut = uptime !== null ? uptime : 1;
+            var _slowPct = typeof src.pct === "number"
+              ? Math.round(src.pct * 100 * _ut)
+              : (uptime !== null ? Math.round(uptime * 100) : null);
+            var ccText = "Slow: " + (_slowPct !== null ? _slowPct + "%" : "—");
+            var lbl = src.label || "Slow";
+            if (src.everynthattack > 0) lbl += " (every " + src.everynthattack + ")";
+            result.items.push({ label: lbl, valuePerPlc: 0, isGlobal: src.cdscope === "global", isCC: true, ccText: ccText });
+          });
+
+        
+          (pd.knockback || []).forEach(function(src) {
+            var alwaysOn = src.uptime === false;
+          
+            var rawInterval = 0;
+            if (!alwaysOn) {
+              if (src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0) {
+                rawInterval = src.everynthattack * effAttackCd;
+              } else if (src.cd > 0) {
+                rawInterval = src.cdboostable
+                  ? src.cd * getCooldownMultiplier(unit, src.cd) * selfMult.cdMult
+                  : src.cd;
+              }
+            }
+          
+            var interval = (rawInterval > 0 && src.externalcd !== false)
+              ? Math.max(rawInterval, 7) : rawInterval;
+            var ccText;
+            if (src.tiles > 0) {
+              var _dur = (src.duration > 0) ? src.duration : 1;
+              var _effT = (!alwaysOn && interval > 0)
+                ? (src.tiles * _dur / interval)
+                : (src.tiles * _dur);
+              var _tileWord = (src.tiles === 1) ? "Tile" : "Tiles";
+              var _tileStr = (_effT % 1 === 0) ? String(_effT) : _effT.toFixed(2);
+              ccText = "KB: " + _tileStr + " " + _tileWord;
+            } else if (alwaysOn) {
+              ccText = "KB: always";
+            } else if (interval > 0) {
+              ccText = "KB: every " + interval.toFixed(2) + "s";
+            } else {
+              ccText = "KB: —";
+            }
+            var lbl = src.label || "Knockback";
+            if (src.everynthattack > 0) lbl += " (every " + src.everynthattack + ")";
+          
+            var _kbStunFrac = (src.stun > 0 && rawInterval > 0) ? Math.min(1, src.stun / rawInterval) : 0;
+            result.stunFraction += _kbStunFrac;
+            result.items.push({ label: lbl, valuePerPlc: 0, isGlobal: src.cdscope === "global", isCC: true, ccText: ccText, stunFrac: _kbStunFrac });
+          });
+
+        
+          (pd.selfboost || []).forEach(function(src) {
+            if (!(src.stun > 0) || src.uptime === false) return;
+            var _hasNth = src.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0;
+            var _hasTiming = src.duration > 0 && (src.cd > 0 || _hasNth);
+            if (src.uptime !== true && !_hasTiming) return;
+            var interval = 0;
+            if (_hasNth) {
+              interval = src.everynthattack * effAttackCd;
+            } else if (src.cd > 0) {
+              interval = src.cd;
+            }
+            if (interval > 0) result.stunFraction += src.stun / interval;
+          });
+
+          result.stunFraction = Math.min(1, result.stunFraction);
+          return result;
+        }
+
+      
+        function computeUnitDps(unit, modeKey) {
+          var active = getActiveLevels(unit, modeKey);
+          var levels = active.levels || [];
+          var role   = detectRole(unit, levels, active.modeMeta, modeKey);
+
+          if (!levels.length || (role !== "damage" && role !== "damage_slow")) {
+            return { placement: null, maxed: null };
+          }
+
+        
+          if (unit.basenodps) {
+            var _bndMaxed = levels[levels.length - 1];
+            var _bndD     = Number(_bndMaxed.damage);
+            var _bndCd    = Number(_bndMaxed.cd || _bndMaxed.cooldown);
+            if (isFinite(_bndD) && isFinite(_bndCd) && _bndCd > 0) {
+              var _bndEffCd     = _bndCd * getCooldownMultiplier(unit, _bndCd);
+              var _bndExtCdMult = _bndCd > 0 ? _bndEffCd / _bndCd : 1;
+              var _bndSelf      = getSelfPassiveMultipliers(unit, modeKey, _bndEffCd, _bndExtCdMult);
+              var _bndBase      = currentUnitLevel > 1 ? extrapolateDamage(_bndD, 1, currentUnitLevel) : _bndD;
+              var _bndScaledDmg = scaleDamageValue(unit, _bndBase);
+              var _bndNoCrit    = _bndScaledDmg * _bndSelf.dmgMult;
+              var _bndFull      = _bndNoCrit * getCritMult(unit);
+              var _bndEffCdWith = _bndEffCd * _bndSelf.cdMult;
+            
+            
+              var _bndP         = computePassiveDps(unit, modeKey, _bndFull, _bndEffCdWith, _bndSelf,
+                                    _bndScaledDmg * (_bndSelf.noCritDmgMult || 1));
+              var _bndPlc       = getPlc(unit);
+              var _bndTotal     = (_bndP.dot + _bndP.periodicLocal + _bndP.nth) * _bndPlc
+                                + _bndP.summonLocal + _bndP.summonGlobal + _bndP.periodicGlobal;
+
+            
+              var _bndRawPd   = resolvePd(unit, modeKey);
+              var _sbEntries  = _bndRawPd ? (_bndRawPd.selfboost || []) : [];
+              var _sbBaseNoCrit = scaleDamageValue(unit, _bndBase);
+              var _sbBaseFull   = _sbBaseNoCrit * getCritMult(unit);
+            
+              var _sbBaseP = _sbEntries.length
+                ? computePassiveDps(unit, modeKey, _sbBaseFull, _bndEffCd, { dmgMult: 1, rngMult: 1, cdMult: 1 }, _sbBaseNoCrit)
+                : _bndP;
+
+              var _bndItems = [];
+              _sbBaseP.items.forEach(function(item) {
+                var val = item.isSummon ? item.valuePerPlc
+                        : (item.isGlobal ? item.valuePerPlc : item.valuePerPlc * _bndPlc);
+                if (val > 0.05) _bndItems.push({ label: item.label, value: val, critRate: item.critRate, critDmg: item.critDmg });
+              });
+
+              if (_sbEntries.length) {
+                var _sbPrevTot = (_sbBaseP.dot + _sbBaseP.periodicLocal + _sbBaseP.nth) * _bndPlc
+                               + _sbBaseP.summonLocal + _sbBaseP.summonGlobal + _sbBaseP.periodicGlobal;
+                var _sbCumDmg = 1, _sbCumCd = 1, _sbCumRng = 1;
+                _sbEntries.forEach(function(bp) {
+                  if (!bp) return;
+                  _sbCumDmg *= (typeof bp.dmgmult === "number" ? bp.dmgmult : 1);
+                  _sbCumCd  *= (typeof bp.cdmult  === "number" ? bp.cdmult  : 1);
+                  _sbCumRng *= (typeof bp.rngmult === "number" ? bp.rngmult : 1);
+                  var _sbNoCrit = scaleDamageValue(unit, _bndBase) * _sbCumDmg;
+                  var _sbFull   = _sbNoCrit * getCritMult(unit);
+                  var _sbEffCd  = _bndEffCd * _sbCumCd;
+                  var _sbCumP   = computePassiveDps(unit, modeKey, _sbFull, _sbEffCd,
+                                    { dmgMult: _sbCumDmg, rngMult: _sbCumRng, cdMult: _sbCumCd }, _sbNoCrit);
+                  var _sbCumTot = (_sbCumP.dot + _sbCumP.periodicLocal + _sbCumP.nth) * _bndPlc
+                                + _sbCumP.summonLocal + _sbCumP.summonGlobal + _sbCumP.periodicGlobal;
+                  var _sbDelta  = _sbCumTot - _sbPrevTot;
+                  _sbPrevTot    = _sbCumTot;
+                
+                  var _sbTxt = [];
+                  if (typeof bp.dmgmult === "number" && bp.dmgmult !== 1)
+                    _sbTxt.push((bp.dmgmult >= 1 ? "+" : "") + Math.round((bp.dmgmult - 1) * 1000) / 10 + "% DMG");
+                  if (typeof bp.rngmult === "number" && bp.rngmult !== 1)
+                    _sbTxt.push((bp.rngmult >= 1 ? "+" : "") + Math.round((bp.rngmult - 1) * 1000) / 10 + "% RNG");
+                  if (typeof bp.cdmult === "number" && bp.cdmult !== 1)
+                    _sbTxt.push((bp.cdmult <= 1 ? "" : "+") + Math.round((bp.cdmult - 1) * 1000) / 10 + "% CD");
+                  _bndItems.push({
+                    label:     bp.label || "Self Buff",
+                    value:     _sbDelta > 0.05 ? _sbDelta : 0,
+                    boostText: _sbTxt.length ? _sbTxt.join(", ") : null
+                  });
+                });
+              }
+
+              return {
+                placement: null,
+                maxed: _bndTotal > 0.01 ? _bndTotal : null,
+                maxedBreakdown: _bndItems,
+                placementBreakdown: null
+              };
+            }
+            return { placement: null, maxed: null };
+          }
+
+          var identMult  = { dmgMult: 1, rngMult: 1, cdMult: 1 };
+          var plc        = getPlc(unit);
+          var _critMult  = getCritMult(unit);
+
+          function calcTier(baseD, baseCd, applyLevelScale, mult) {
+            if (!isFinite(baseD) || !isFinite(baseCd) || baseCd <= 0) return null;
+            var _base = applyLevelScale && currentUnitLevel > 1
+              ? extrapolateDamage(baseD, 1, currentUnitLevel)
+              : baseD;
+            var D_noCrit = scaleDamageValue(unit, _base) * mult.dmgMult;
+            var D        = D_noCrit * _critMult;
+            var effCd    = baseCd * getCooldownMultiplier(unit, baseCd) * mult.cdMult;
+            if (!isFinite(effCd) || effCd <= 0) return null;
+            return { attackDps: D / effCd, D: D, D_noCrit: D_noCrit, effCd: effCd };
+          }
+
+          function totFromParts(attackDps, p) {
+            return attackDps * plc
+              + (p.dot + p.periodicLocal + p.nth) * plc
+              + p.summonLocal + p.summonGlobal + p.periodicGlobal;
+          }
+
+        
+          var _pdSelf = resolvePd(unit, modeKey);
+          var _selfBoosts = _pdSelf ? (_pdSelf.selfboost || []) : [];
+
+        
+        
+        
+          function multForFirstN(n, effAcd, extCdMult) {
+            var m = { dmgMult: 1, rngMult: 1, cdMult: 1, noCritDmgMult: 1 };
+            for (var bi = 0; bi < n && bi < _selfBoosts.length; bi++) {
+              var bp = _selfBoosts[bi];
+              if (!bp) continue;
+              var ut = selfBoostUptime(bp, effAcd, extCdMult);
+              var rawDmgMult = typeof bp.dmgmult === "number" ? bp.dmgmult : null;
+              var effectiveDmgMult = rawDmgMult;
+              if ((typeof bp.critc === "number" || typeof bp.critd === "number") && _critMult > 0) {
+                var _mfnEff = getBuffEffects(unit);
+                var _crm = _mfnEff.critRateMult || 1;
+                var _cdm = _mfnEff.critDmgMult  || 1;
+                var _cra = _mfnEff.critRateAdd  || 0;
+                var _cda = _mfnEff.critDmgAdd   || 0;
+                var ec = typeof bp.critc === "number" ? Math.min(1, bp.critc * _crm + _cra) : getCritRate(unit);
+                var ed = ((typeof bp.critd === "number" ? bp.critd : CRIT_DMG) + _cda) * _cdm;
+                var scm = 1 + ec * (ed - 1);
+                effectiveDmgMult = (effectiveDmgMult !== null ? effectiveDmgMult : 1) * scm / _critMult;
+              }
+              if (effectiveDmgMult !== null) m.dmgMult     *= 1 + (effectiveDmgMult - 1) * ut;
+              if (rawDmgMult      !== null) m.noCritDmgMult *= 1 + (rawDmgMult      - 1) * ut;
+              if (typeof bp.rngmult === "number") m.rngMult *= 1 + (bp.rngmult - 1) * ut;
+              if (typeof bp.cdmult  === "number") m.cdMult  *= 1 + (bp.cdmult  - 1) * ut;
+            }
+            return m;
+          }
+
+        
+          function computeTier(lvl, applyLevelScale) {
+            if (!lvl) return null;
+            var baseD  = Number(lvl.damage);
+            var baseCd = Number(lvl.cd || lvl.cooldown);
+
+            var rBase = calcTier(baseD, baseCd, applyLevelScale, identMult);
+            if (!rBase) return null;
+
+          
+            var _effAcd = rBase.effCd;
+            var _extCdMult = baseCd > 0 ? _effAcd / baseCd : 1;
+            var selfMult = getSelfPassiveMultipliers(unit, modeKey, _effAcd, _extCdMult);
+
+            var rWith = calcTier(baseD, baseCd, applyLevelScale, selfMult);
+            if (!rWith) return null;
+
+          
+          
+          
+          
+            var _baseScaledDmg = rBase.D_noCrit;
+            var pBase = computePassiveDps(unit, modeKey, rBase.D, rBase.effCd, identMult, _baseScaledDmg);
+            var pWith = computePassiveDps(unit, modeKey, rWith.D, rWith.effCd, selfMult,
+                          _baseScaledDmg * (selfMult.noCritDmgMult || 1));
+            var stunFrac  = pWith.stunFraction;
+            var totalWith = totFromParts(rWith.attackDps * (1 - stunFrac), pWith);
+
+          
+            var baseStunFrac = pBase.stunFraction;
+            var bItems = [{ label: "Base", value: rBase.attackDps * plc }];
+
+          
+            if (_selfBoosts.length) {
+              var prevTotal = totFromParts(rBase.attackDps, pBase);
+              for (var bi = 0; bi < _selfBoosts.length; bi++) {
+                var bp = _selfBoosts[bi];
+                if (!bp) continue;
+                var cumMult = multForFirstN(bi + 1, _effAcd, _extCdMult);
+                var rCum = calcTier(baseD, baseCd, applyLevelScale, cumMult);
+                if (!rCum) continue;
+                var pCum = computePassiveDps(unit, modeKey, rCum.D, rCum.effCd, cumMult,
+                             _baseScaledDmg * (cumMult.noCritDmgMult || 1));
+                var cumTotal = totFromParts(rCum.attackDps, pCum);
+                var delta    = cumTotal - prevTotal;
+                var hasRngOnly = delta <= 0.05 && typeof bp.rngmult === "number" && bp.rngmult !== 1;
+                if (delta > 0.05 || hasRngOnly) {
+                  var lbl = bp.label || "Self Buff";
+                  var ut = selfBoostUptime(bp, _effAcd, _extCdMult);
+                  if (ut < 0.999) lbl += " (" + Math.round(ut * 100) + "%)";
+                  var _bpEff = getBuffEffects(unit);
+                  var _bpCRM = _bpEff.critRateMult || 1; var _bpCDM = _bpEff.critDmgMult || 1;
+                  var _bpCRA = _bpEff.critRateAdd  || 0; var _bpCDA = _bpEff.critDmgAdd  || 0;
+                  var _bpCritRate = (typeof bp.critc === "number") ? Math.min(1, bp.critc * _bpCRM + _bpCRA) : ((typeof bp.critd === "number") ? getCritRate(unit) : null);
+                  var _bpCritDmg  = _bpCritRate != null ? ((typeof bp.critd === "number" ? bp.critd : CRIT_DMG) + _bpCDA) * _bpCDM : null;
+                  bItems.push({ label: lbl, value: delta > 0.05 ? delta : 0, critRate: _bpCritRate, critDmg: _bpCritDmg });
+                
+                  var _sbHasNth = bp.everynthattack > 0 && isFinite(_effAcd) && _effAcd > 0;
+                  var _sbHasTiming = bp.duration > 0 && (bp.cd > 0 || _sbHasNth);
+                  if (bp.stun > 0 && bp.uptime !== false && _sbHasTiming) {
+                    var sbInterval = 0;
+                    if (_sbHasNth) sbInterval = bp.everynthattack * _effAcd;
+                    else if (bp.cd > 0) sbInterval = bp.cd;
+                    if (sbInterval > 0) {
+                      var sbStunFrac = Math.min(1, bp.stun / sbInterval);
+                      var sbStunLoss = rWith.attackDps * sbStunFrac * plc;
+                      if (sbStunLoss > 0.05) bItems.push({ label: "Stun (" + Math.round(sbStunFrac * 100) + "% downtime)", value: -sbStunLoss, isStun: true });
+                    }
+                  }
+                }
+                prevTotal = cumTotal;
+              }
+            }
+
+          
+            pBase.items.forEach(function(item) {
+            
+              if (item.isCC) {
+                bItems.push({ label: item.label, value: 0, ccText: item.ccText });
+                if (item.stunFrac > 0.005) {
+                  var stunLoss = rBase.attackDps * item.stunFrac * plc;
+                  if (stunLoss > 0.05) bItems.push({ label: "Unit Downtime (" + Math.round(item.stunFrac * 100) + "%)", value: -stunLoss, isStun: true });
+                }
+                return;
+              }
+              var val = item.isSummon ? item.valuePerPlc : (item.isGlobal ? item.valuePerPlc : item.valuePerPlc * plc);
+              if (val > 0.05) bItems.push({ label: item.label, value: val, critRate: item.critRate });
+            
+              if (item.stunFrac > 0.005) {
+                var stunLoss = rBase.attackDps * item.stunFrac * plc;
+                if (stunLoss > 0.05) bItems.push({ label: "Stun (" + Math.round(item.stunFrac * 100) + "% downtime)", value: -stunLoss, isStun: true });
+              }
+            });
+
+            var _burnPct = 0;
+            try { _burnPct = (getBuffEffects(unit) || {}).burnPctPerSec || 0; } catch (e) { _burnPct = 0; }
+            if (_burnPct > 0 && isFinite(rWith.effCd) && rWith.effCd > 0) {
+              var _burnDps = _burnPct * rWith.D_noCrit / rWith.effCd * plc;
+              totalWith += _burnDps;
+              if (_burnDps > 0.05) bItems.push({ label: "Fire Element (Burn)", value: _burnDps });
+            }
+
+            return { total: totalWith, breakdown: bItems };
+          }
+
+        
+          var firstLvl = null;
+          for (var i = 0; i < levels.length; i++) {
+            if (isFinite(Number(levels[i].damage)) && isFinite(Number(levels[i].cd || levels[i].cooldown))) {
+              firstLvl = levels[i]; break;
+            }
+          }
+          var lastLvl = null;
+          for (var j = levels.length - 1; j >= 0; j--) {
+            if (isFinite(Number(levels[j].damage)) && isFinite(Number(levels[j].cd || levels[j].cooldown))) {
+              lastLvl = levels[j]; break;
+            }
+          }
+
+          var plcTier = computeTier(firstLvl, false);
+          var maxTier = computeTier(lastLvl,  true);
+
+          return {
+            placement: plcTier ? plcTier.total : null,
+            maxed:     maxTier ? maxTier.total : null,
+            placementBreakdown: plcTier ? plcTier.breakdown : null,
+            maxedBreakdown:     maxTier ? maxTier.breakdown : null
+          };
+        }
+
+        
+        function detectRole(unit, levels, modeMeta, modeKey) {
+        
+        
+          if (modeMeta && modeMeta.role) {
+            return modeMeta.role;
+          }
+
+        
+          if (unit.role) {
+            return unit.role;
+          }
+
+        
+          var lvl0 = levels[0] || {};
+
+          var hasDamage     = ("damage" in lvl0);
+          var hasCD         = ("cd" in lvl0) || ("cooldown" in lvl0);
+          var hasIncome     = ("income" in lvl0);
+
+          var hasDmgBoost   = ("dmgBoost" in lvl0) || ("dmg_boost_pct" in lvl0);
+          var hasRangeBoost = ("rangeBoost" in lvl0) || ("range_boost_pct" in lvl0) || ("boost_range_pct" in lvl0);
+          var hasCdBoost    = ("cdBoost" in lvl0) || ("cooldown_boost_pct" in lvl0);
+          var hasEnemySpeed = ("enemySpeed" in lvl0) || ("enemySpeedPct" in lvl0);
+
+        
+          if (hasIncome) return "farm";
+
+        
+        if (!hasDamage && (hasDmgBoost || hasRangeBoost || hasCdBoost || hasEnemySpeed)) {
+          return "support";
+        }
+
+        
+          if (hasDamage && ("slow" in lvl0 || "slowPct" in lvl0)) {
+            return "damage_slow";
+          }
+
+        
+          if (hasDamage) return "damage";
+
+        
+          return "support";
+        }
+        function elementParts(el) {
+          var e = String(el == null ? "" : el).trim();
+          if (!e) return [];
+          if (ELEMENT_PARTS[e]) return ELEMENT_PARTS[e];
+          return e.split("/").map(function (p) { return p.trim(); }).filter(Boolean);
+        }
+
+        function extrapolateDamage(baseDamage, fromLevel, toLevel) {
+        
+        
+        
+        
+        
+          if (toLevel <= 1) return baseDamage;
+          var m;
+          if      (toLevel === 25)  m = _LM25;
+          else if (toLevel === 50)  m = _LM50;
+          else if (toLevel === 75)  m = _LM75;
+          else if (toLevel < 25)    m = Math.pow(1.0179206, toLevel - 1);
+          else if (toLevel < 50)    m = _LM25 * Math.pow(1.0086288, toLevel - 25);
+          else if (toLevel < 75)    m = _LM50 * Math.pow(1.0051243, toLevel - 50);
+          else                      m = _LM75 * Math.pow(1.0051243, toLevel - 75);
+          return baseDamage * m;
+        }
+
+        
+          function getActiveLevels(unit, modeKey) {
+        
+          if (unit.modes) {
+            var mk = modeKey || scarecrowMode || Object.keys(unit.modes)[0];
+            var mode = unit.modes[mk] || unit.modes[Object.keys(unit.modes)[0]];
+            return {
+              levels: ueApplyPathLevels(unit, mode.levels || []),
+              modeMeta: mode
+            };
+          }
+
+        
+          return {
+            levels: ueApplyPathLevels(unit, unit.levels || []),
+            modeMeta: null
+          };
+        }
+
+        
+        function getBuffEffects(unit) {
+          var dmgMult      = 1;
+          var rngMult      = 1;
+          var cdMult       = 1;
+          var costMult     = 1;
+          var incomeMult   = 1;
+          var critRateMult = 1;
+          var critDmgMult  = 1;
+          var critRateAdd  = 0;
+          var critDmgAdd   = 0;
+
+        
+          if (typeof buffState === "undefined" || !buffState) buffState = {};
+          if (!buffState.perma) buffState.perma = {};
+          if (typeof buffState.temp !== "string") buffState.temp = "none";
+          if (typeof buffState.enchant !== "string") buffState.enchant = "none";
+          if (typeof buffState.chip !== "string") buffState.chip = "none";
+          if (!buffState.chipStats || typeof buffState.chipStats !== "object") buffState.chipStats = {};
+
+        if (!Array.isArray(buffState.permaSelected)) buffState.permaSelected = [];
+        if (!Array.isArray(buffState.tempSelected)) buffState.tempSelected = [];
+        
+          if (typeof currentPermaBoostType !== "string" || !currentPermaBoostType) {
+            currentPermaBoostType = "none";
+          }
+
+      
+
+        var permaList = buffState.permaSelected || [];
+
+        permaList.forEach(function(type) {
+        
+        
+        });
+
+      
+
+        var tempList = buffState.tempSelected || [];
+
+        tempList.forEach(function(type) {
+        
+      
+        });
+
+        
+
+          switch (buffState.enchant) {
+            case "dmg1": dmgMult *= 1.05; break;
+            case "dmg2": dmgMult *= 1.10; break;
+            case "dmg3": dmgMult *= 1.15; break;
+
+            case "rng1": rngMult *= 1.05; break;
+            case "rng2": rngMult *= 1.10; break;
+            case "rng3": rngMult *= 1.15; break;
+
+            case "spd1": cdMult *= 0.95;  break;
+            case "spd2": cdMult *= 0.925; break;
+            case "spd3": cdMult *= 0.875; break;
+
+            case "puppet_nm": rngMult *= 1.25; break;
+            case "haywire":   cdMult  *= 0.75; break;
+
+            case "phantom":
+              dmgMult *= 1.10;
+              cdMult  *= 0.88;
+              rngMult *= 1.35;
+              break;
+
+            case "blighted":
+              dmgMult *= 1.25;
+              cdMult  *= 0.75;
+              rngMult *= 1.05;
+              break;
+            
+             case "scooped":
+              critRateMult *= 1.5;
+              critDmgMult  *= 1.5;
+              break;
+
+            case "springlocked":
+              dmgMult *= 2.10;
+              rngMult *= 1.10;
+              cdMult  *= 1.10;
+              break;
+
+            case "shadow":
+              dmgMult *= 1.50;
+              cdMult  *= 0.875;
+              break;
+
+            case "vengeance":
+              dmgMult *= 1.90;
+              rngMult *= 1.15;
+              cdMult  *= 0.95;
+              break;
+
+            case "hijacked": {
+              var _hBasePlc = getPlcRaw(unit);
+              var _hLost    = Math.max(0, _hBasePlc - 1);
+              dmgMult *= (2.20 + 1.80 * _hLost);
+              rngMult *= 1.05;
+              cdMult  *= 0.925;
+              break;
+            }
+
+            case "investor":
+              costMult   *= 0.90;
+              incomeMult *= 1.25;
+              break;
+          }
+
+          switch (buffState.chip) {
+            case "overwhelming_power": break;
+            case "weak_point":         critRateAdd += 0.15; critDmgAdd += 0.30; break;
+            case "rapid_strikes":      cdMult  *= 0.95; break;
+            case "eye_augmentation":   rngMult *= 1.15; dmgMult *= 1.10; break;
+            case "crowd_culler":       break;
+            case "blazing_fire":       break;
+          }
+
+          if (buffState.chipStats && typeof buffState.chipStats === "object") {
+            var _cs = buffState.chipStats;
+            if (_cs.dmg)   dmgMult    *= (1 + Number(_cs.dmg)   / 100);
+            if (_cs.rng)   rngMult    *= (1 + Number(_cs.rng)   / 100);
+            if (_cs.cd)    cdMult     *= (1 + Number(_cs.cd)    / 100);
+            if (_cs.critc) critRateAdd += Number(_cs.critc) / 100;
+            if (_cs.critd) critDmgAdd  += Number(_cs.critd) / 100;
+          }
+          if (buffState.chip === "overwhelming_power") {
+            dmgMult *= (1 + (15 + (Number(buffState.chipStacks) || 0) * 0.5) / 100);
+          } else if (buffState.chip === "crowd_culler") {
+            dmgMult *= (1 + ((Number(buffState.chipStacks) || 0) * 5) / 100);
+          }
+
+      
+        function _applyBoostMeta(meta, unit, cdMult_ref) {
+          if (!meta) return null;
+          if (meta.element) {
+            var _el = String(unit.element || "").toLowerCase();
+            if (_el !== meta.element.toLowerCase()) return null;
+          }
+          if (meta.elements) {
+            var _elOk = meta.elements.some(function (me) { return unitHasElement(unit, me); });
+            if (!_elOk) return null;
+          }
+          if (meta.unitNames) {
+            if (meta.unitNames.indexOf(unit.name) === -1) return null;
+          }
+        
+          if (meta.uptime === false) {
+            var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+            return stacks;
+          }
+          var needsCalc = meta.uptime === true || (meta.duration > 0 && (meta.cd > 0 || meta.everynthattack > 0));
+          var uptimeFactor;
+          if (!needsCalc) {
+            uptimeFactor = 1;
+          } else {
+            if (!(meta.duration > 0)) return 0;
+            uptimeFactor = 0;
+            if (meta.cd > 0) {
+              var _metaCd = (meta.cdboostable === true) ? meta.cd * cdMult_ref : meta.cd;
+              uptimeFactor = Math.min(1, meta.duration / _metaCd);
+            } else if (meta.everynthattack > 0) {
+              var effCD = getBuffEffects.__lastEffCd || 1;
+              uptimeFactor = Math.min(1, meta.duration / (meta.everynthattack * effCD));
+            }
+          }
+          var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+          return uptimeFactor * stacks;
+        }
+
+        function _applyMetaMults(meta, factor, dmgM, rngM, cdM, costM, critRM, critDM, critRADD, critDADD, pot) {
+          pot = pot || 0;
+        
+        
+        
+        
+        
+        
+          function _m(base, mult, f) {
+            var v = mult < 1 ? Math.pow(mult, f) : 1 + (mult - 1) * f;
+            return base * Math.max(0.01, v);
+          }
+          if (typeof meta.dmgMult      === "number") dmgM    = _m(dmgM,  _potMult(meta.dmgMult, pot),  factor);
+          if (typeof meta.rngMult      === "number") rngM    = _m(rngM,  _potMult(meta.rngMult, pot),  factor);
+          if (typeof meta.cdMult       === "number") cdM     = _m(cdM,   _potMult(meta.cdMult, pot),   factor);
+          if (typeof meta.costMult     === "number") costM   = _m(costM, _potMult(meta.costMult, pot), factor);
+          if (typeof meta.critRateMult === "number") critRM  += (meta.critRateMult - 1) * (1 + pot) * factor;
+          if (typeof meta.critDmgMult  === "number") critDM  += (meta.critDmgMult  - 1) * (1 + pot) * factor;
+          if (typeof meta.critRateAdd  === "number") critRADD += meta.critRateAdd  * (1 + pot) * factor;
+          if (typeof meta.critDmgAdd   === "number") critDADD += meta.critDmgAdd   * (1 + pot) * factor;
+          return { dmgMult: dmgM, rngMult: rngM, cdMult: cdM, costMult: costM, critRateMult: critRM, critDmgMult: critDM, critRateAdd: critRADD, critDmgAdd: critDADD };
+        }
+
+        var burnPctPerSec = 0;
+
+        var _cdBeforePerma = cdMult;
+
+        permaList.forEach(function(type) {
+          var meta = BOOST_META[type];
+          var factor = _applyBoostMeta(meta, unit, cdMult);
+          if (factor === null || factor === undefined) return;
+          if (meta && meta.singlePlacement) { var _spDiv = getPlc(unit) || 1; factor = factor / _spDiv; }
+          var _pot = boostPotency(type);
+          if (typeof meta.burnPctPerSec === "number") burnPctPerSec += meta.burnPctPerSec * (1 + _pot) * factor;
+          var r = _applyMetaMults(meta, factor, dmgMult, rngMult, cdMult, costMult, critRateMult, critDmgMult, critRateAdd, critDmgAdd, _pot);
+          dmgMult = r.dmgMult; rngMult = r.rngMult; cdMult = r.cdMult;
+          costMult = r.costMult; critRateMult = r.critRateMult; critDmgMult = r.critDmgMult; critRateAdd = r.critRateAdd; critDmgAdd = r.critDmgAdd;
+        });
+
+        var _cdPermaOnly = (_cdBeforePerma > 0) ? (cdMult / _cdBeforePerma) : 1;
+        var _cdBeforeTemp = cdMult;
+
+        tempList.forEach(function(type) {
+          var meta = BOOST_META[type];
+          var factor = _applyBoostMeta(meta, unit, cdMult);
+          if (factor === null || factor === undefined) return;
+          if (meta && meta.singlePlacement) { var _spDiv = getPlc(unit) || 1; factor = factor / _spDiv; }
+          if (typeof meta.burnPctPerSec === "number") burnPctPerSec += meta.burnPctPerSec * factor;
+          var r = _applyMetaMults(meta, factor, dmgMult, rngMult, cdMult, costMult, critRateMult, critDmgMult, critRateAdd, critDmgAdd);
+          dmgMult = r.dmgMult; rngMult = r.rngMult; cdMult = r.cdMult;
+          costMult = r.costMult; critRateMult = r.critRateMult; critDmgMult = r.critDmgMult; critRateAdd = r.critRateAdd; critDmgAdd = r.critDmgAdd;
+        });
+
+          var _cdTempOnly = (_cdBeforeTemp > 0) ? (cdMult / _cdBeforeTemp) : 1;
+          var _cdBeforeByte = cdMult;
+
+          function _applyByteBoosts(bm, bs) {
+            if (!bm || bm === "none") return;
+            if (bm === "The Box") {
+              var _bCd = parseFloat(bs.cd||0)||0, _bRng = parseFloat(bs.rng||0)||0, _bDmg = parseFloat(bs.dmg||0)||0;
+              if (_bCd  !== 0) cdMult  *= (1 + _bCd  / 100);
+              if (_bRng !== 0) rngMult *= (1 + _bRng / 100);
+              if (_bDmg !== 0) dmgMult *= (1 + _bDmg / 100);
+            } else if (bm === "Boss Drain") {
+              var _bdD = parseFloat(bs.dmg||0)||0, _bdB = parseFloat(bs.bossdmg||0)||0;
+              if (_bdD !== 0) dmgMult *= (1 + _bdD / 100);
+              if (_bdB !== 0) dmgMult *= (1 + _bdB / 100);
+            } else if (bm === "Reaper") {
+              var _rC = parseFloat(bs.critd||0)||0;
+              if (_rC !== 0) critDmgAdd += _rC / 100;
+            } else if (bm === "UFO") {
+              var _uEl = String(bs.element||"none").toLowerCase(), _uDmg = parseFloat(bs.dmg||0)||0;
+              switch (_uEl) {
+                case "neutral":     dmgMult *= 1.03; rngMult *= 1.03; cdMult *= 0.97; break;
+                case "dark":        dmgMult *= 1.03; break;
+                case "light":       cdMult  *= 0.97; break;
+                case "water":       rngMult *= 1.03; break;
+                case "electricity": cdMult  *= 0.99; break;
+                case "rust":        dmgMult *= 1.06; cdMult  *= 1.03; break;
+                case "fire":        burnPctPerSec += FIRE_BURN_PCT_PER_SEC; break;
+              }
+              if (_uDmg !== 0 && _uEl !== "none" && unit && unit.element) {
+                var _uUnit = String(unit.element||"").toLowerCase();
+                if (_uUnit === _uEl || _uUnit.indexOf(_uEl) !== -1) dmgMult *= (1 + _uDmg / 100);
+              }
+            } else if (bm === "KABOOM!") {
+              var _kR = parseFloat(bs.rng||0)||0;
+              if (_kR !== 0) rngMult *= (1 + _kR / 100);
+            }
+          }
+          if (typeof byteState !== "undefined") {
+            _applyByteBoosts(byteState.mainByte, byteState.stats    || {});
+            _applyByteBoosts(byteState.subByte,  byteState.subStats || {});
+          }
+          var _cdByteOnly = (_cdBeforeByte > 0) ? (cdMult / _cdBeforeByte) : 1;
+
+          if (!isFinite(dmgMult) || dmgMult <= 0) dmgMult = 1;
+          if (!isFinite(rngMult)      || rngMult      <= 0) rngMult      = 1;
+          if (!isFinite(cdMult)       || cdMult       <= 0) cdMult       = 1;
+          if (!isFinite(critRateMult) || critRateMult <= 0) critRateMult = 1;
+          if (!isFinite(critDmgMult)  || critDmgMult  <= 0) critDmgMult  = 1;
+          if (!isFinite(critRateAdd))                        critRateAdd  = 0;
+          if (!isFinite(critDmgAdd))                         critDmgAdd   = 0;
+
+          return {
+            damageMult:   dmgMult,
+            rangeMult:    rngMult,
+            cdMult:       cdMult,
+            costMult:     costMult,
+            incomeMult:   incomeMult,
+            critRateMult: critRateMult,
+            critDmgMult:  critDmgMult,
+            critRateAdd:  critRateAdd,
+            critDmgAdd:   critDmgAdd,
+            burnPctPerSec: burnPctPerSec,
+            cdMultPerma: (isFinite(_cdPermaOnly) && _cdPermaOnly > 0) ? _cdPermaOnly : 1,
+            cdMultTemp:  (isFinite(_cdTempOnly)  && _cdTempOnly  > 0) ? _cdTempOnly  : 1,
+            cdMultByte:  (isFinite(_cdByteOnly)  && _cdByteOnly  > 0) ? _cdByteOnly  : 1
+          };
+        }
+        
+        function getCooldownMultiplier(unit, baseCd) {
+
+        
+          var _cdEff = getBuffEffects(unit);
+          var mult = _cdEff.cdMult;
+
+        
+          var buffedCd = baseCd * mult;
+
+      
+        var _lsRatio = 1;
+        if (buffState.permaSelected?.includes("sweetheart_toy_foxy")) {
+
+          var selectedCd = buffState.perma.sweetheartToyFoxyCd;
+
+        
+          if (typeof selectedCd === "number" && selectedCd > 0) {
+
+            var buffedCd = baseCd * mult;
+            var averagedCd = (buffedCd + selectedCd) / 2;
+            var _avgMult = averagedCd / baseCd;
+            var _swPlc = (typeof getPlc === "function") ? (getPlc(unit) || 1) : 1;
+            var _lsMult = mult + (_avgMult - mult) / _swPlc;
+            if (mult > 0) _lsRatio = _lsMult / mult;
+            mult = _lsMult;
+          }
+        }
+
+        (function () {
+          var pm = (_cdEff.cdMultPerma || 1) * _lsRatio;
+          var by = _cdEff.cdMultByte || 1;
+          var tp = _cdEff.cdMultTemp || 1;
+          var grouped = pm * by * tp;
+          if (!isFinite(grouped) || grouped <= 0) return;
+          var uncapped = mult / grouped;
+          if (!isFinite(uncapped) || uncapped <= 0) return;
+          var g1 = pm * by; if (g1 < CD_BOOST_FLOOR) g1 = CD_BOOST_FLOOR;
+          var g2 = tp;      if (g2 < CD_BOOST_FLOOR) g2 = CD_BOOST_FLOOR;
+          mult = g1 * g2 * uncapped;
+        })();
+
+          if (isGlitchedMode) mult *= GLITCH_CD_MULT;
+
+          return mult;
+        }
+
+      
+        function getCritMult(unit) {
+          var eff = getBuffEffects(unit);
+          var effCritDmg = (CRIT_DMG + (eff.critDmgAdd || 0)) * (eff.critDmgMult || 1);
+          return 1 + getCritRate(unit) * (effCritDmg - 1);
+        }
+
+      
+      
+      
+        function getCritRate(unit) {
+          var base = (typeof unit.critC === "number") ? unit.critC : 0.05;
+          var eff  = getBuffEffects(unit);
+          var mult = eff.critRateMult || 1;
+          var add  = eff.critRateAdd  || 0;
+          return Math.min(1, base * mult + add);
+        }
+
+        function getPlc(unit) {
+          if (typeof buffState !== "undefined" && buffState.enchant === "hijacked") return 1;
+          return getPlcRaw(unit);
+        }
+
+        function getPlcRaw(unit) {
+          var base = unit.placements || 1;
+          if (isHeroRarity(unit)) return Math.max(1, base);
+          if (typeof BOOST_META !== "undefined" && buffState) {
+            if (Array.isArray(buffState.permaSelected)) {
+              buffState.permaSelected.forEach(function(type) {
+                var meta = BOOST_META[type];
+                if (meta && meta.placements) {
+                  var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+                  base += meta.placements * stacks;
+                }
+              });
+            }
+            if (Array.isArray(buffState.tempSelected)) {
+              buffState.tempSelected.forEach(function(type) {
+                var meta = BOOST_META[type];
+                if (meta && meta.placements) {
+                  var stacks = meta.stackKey ? Number(buffState.perma[meta.stackKey] || 1) : 1;
+                  base += meta.placements * stacks;
+                }
+              });
+            }
+            if (typeof buffState.enchant === "string" && buffState.enchant !== "none") {
+              var _eMeta = BOOST_META[buffState.enchant];
+              if (_eMeta && _eMeta.placements) base += _eMeta.placements;
+            }
+          }
+          return Math.max(1, base);
+        }
+
+      
+      
+        function getSelfPassiveMultipliers(unit, modeKey, effAttackCd, extCdMult) {
+        
+        
+          var result = { dmgMult: 1, rngMult: 1, cdMult: 1, noCritDmgMult: 1 };
+
+          var pd = resolvePd(unit, modeKey);
+          var selfBoosts = pd ? (pd.selfboost || []) : [];
+          if (!selfBoosts.length) return result;
+
+          var _gcm = getCritMult(unit);
+          var _spmEff       = getBuffEffects(unit);
+          var _critRateMult = _spmEff.critRateMult || 1;
+          var _critDmgMult  = _spmEff.critDmgMult  || 1;
+          var _critRateAdd  = _spmEff.critRateAdd   || 0;
+          var _critDmgAdd   = _spmEff.critDmgAdd    || 0;
+
+          selfBoosts.forEach(function(bp) {
+            if (!bp) return;
+            var uptime = selfBoostUptime(bp, effAttackCd, extCdMult);
+            var rawDmgMult    = typeof bp.dmgmult === "number" ? bp.dmgmult : null;
+            var effectiveDmgMult = rawDmgMult;
+            if ((typeof bp.critc === "number" || typeof bp.critd === "number") && _gcm > 0) {
+              var ec = typeof bp.critc === "number" ? Math.min(1, bp.critc * _critRateMult + _critRateAdd) : getCritRate(unit);
+              var ed = ((typeof bp.critd === "number" ? bp.critd : CRIT_DMG) + _critDmgAdd) * _critDmgMult;
+              var selfCritMult = 1 + ec * (ed - 1);
+              if (effectiveDmgMult !== null) {
+                effectiveDmgMult = effectiveDmgMult * selfCritMult / _gcm;
+              } else {
+                effectiveDmgMult = selfCritMult / _gcm;
+              }
+            }
+            if (effectiveDmgMult !== null) result.dmgMult     *= 1 + (effectiveDmgMult - 1) * uptime;
+            if (rawDmgMult      !== null) result.noCritDmgMult *= 1 + (rawDmgMult      - 1) * uptime;
+            if (typeof bp.rngmult === "number") result.rngMult *= 1 + (bp.rngmult - 1) * uptime;
+            if (typeof bp.cdmult  === "number") result.cdMult  *= 1 + (bp.cdmult  - 1) * uptime;
+          });
+
+          return result;
+        }
+
+      
+        function isHeroRarity(unit) {
+          return String((unit && unit.rarity) || "").toLowerCase() === "hero";
+        }
+
+      
+      
+      
+      
+      
+        function normalizePd(pd) {
+          if (!pd || typeof pd !== "object") return pd;
+          var out = {};
+          Object.keys(pd).forEach(function(k) {
+            var v = pd[k];
+            out[k.toLowerCase()] = Array.isArray(v)
+              ? v.map(function(src) {
+                  if (!src || typeof src !== "object") return src;
+                  var s = {};
+                  Object.keys(src).forEach(function(f) { s[f.toLowerCase()] = src[f]; });
+                  return s;
+                })
+              : v;
+          });
+          return out;
+        }
+
+        function resolvePd(unit, modeKey) {
+          var base = resolvePdBase(unit, modeKey);
+          if (!base || !ueHeroPathsFor(unit)) return base;
+          var out = {}, k;
+          for (k in base) out[k] = ueGateList(unit, base[k] || []);
+          return out;
+        }
+        function resolvePdBase(unit, modeKey) {
+          if (unit && unit.modes && typeof unit.modes === "object") {
+            var _mk = (modeKey && unit.modes[modeKey]) ? modeKey : Object.keys(unit.modes)[0];
+            if (_mk && unit.modes[_mk] && unit.modes[_mk].passiveDamage) {
+              return normalizePd(unit.modes[_mk].passiveDamage);
+            }
+            return (unit.passiveDamage) ? normalizePd(unit.passiveDamage) : null;
+          }
+          var raw = (unit && unit.passiveDamage) || null;
+          return raw ? normalizePd(raw) : null;
+        }
+
+        function scaleDamageValue(unit, baseValue) {
+            var n = Number(baseValue);
+            if (!isFinite(n)) return baseValue;
+
+          
+            var factor = DISPLAY_BOOST;
+
+          
+            if (isShinyMode) {
+                var isScarecrow = (unit.name === "Scarecrow Freddy");
+                var unitRole    = unit.role || "damage";
+                if (!isScarecrow && unitRole === "damage") {
+                    factor *= SHINY_DAMAGE_MULT;
+                }
+            }
+
+          
+            factor *= getBuffEffects(unit).damageMult;
+
+          
+            if (isGlitchedMode) factor *= GLITCH_DMG_MULT;
+
+            return n * factor;
+        }
+
+      
+      
+      
+      
+      
+      
+        function selfBoostUptime(bp, effAttackCd, extCdMult) {
+        
+          if (bp.uptime === false) return 1;
+
+          var hasEveryNth = bp.everynthattack > 0 && isFinite(effAttackCd) && effAttackCd > 0;
+        
+          var needsCalc = bp.uptime === true
+            || (bp.duration > 0 && (bp.cd > 0 || hasEveryNth));
+
+          if (needsCalc) {
+            if (!(bp.duration > 0)) return 0;
+            var abilityCd = bp.cd;
+            if (bp.cdboostable === true && typeof extCdMult === "number" && extCdMult > 0) {
+              abilityCd = abilityCd * extCdMult;
+            }
+          
+          
+            if (bp.stun > 0 && abilityCd > 0 && Math.abs(abilityCd - bp.duration - bp.stun) < 0.01) return 1;
+            if (hasEveryNth) {
+              return Math.min(1, bp.duration / (bp.everynthattack * effAttackCd));
+            }
+            if (abilityCd > 0) {
+              return Math.min(1, bp.duration / abilityCd);
+            }
+            return 0;
+          }
+          return 1;
+        }
+
+        function ueApplyPathLevels(unit, levels) {
+          var raw = unit && unit.paths;
+          if (!Array.isArray(raw)) return levels;
+          var pi = ueHeroPrimaryPath(unit);
+          if (pi < 0 || !raw[pi]) return levels;
+          var own = raw[pi].levels;
+          return (Array.isArray(own) && own.length) ? own : levels;
+        }
+        function ueGateList(unit, list) {
+          if (!Array.isArray(list)) return list;
+          return list.filter(function (e) { return ueTierUnlocked(unit, e); });
+        }
+        function ueHeroPathsFor(unit) {
+          var raw = unit && unit.paths;
+          if (!Array.isArray(raw) || !raw.length) return null;
+          var out = [];
+          for (var i = 0; i < raw.length; i++) {
+            var t = raw[i] && raw[i].tiers;
+            if (Array.isArray(t) && t.length) out.push(t);
+          }
+          return out.length ? out : null;
+        }
+        function ueHeroPrimaryPath(unit) {
+          if (!ueHeroPathsFor(unit)) return -1;
+          var sel = ueHeroPathSel[unit.name] || [0, 0, 0];
+          for (var i = 0; i < sel.length; i++) if ((sel[i] || 0) >= UE_PRIMARY_TIER) return i;
+          return -1;
+        }
+
+        function ueTierUnlocked(unit, entry) {
+          if (!entry || entry.path == null || entry.tier == null) return true;
+          if (!ueHeroPathsFor(unit)) return true;
+          var sel = ueHeroPathSel[unit.name] || [0, 0, 0];
+          var pi = Number(entry.path) - 1;
+          return pi >= 0 && pi < sel.length && (sel[pi] || 0) >= Number(entry.tier);
+        }
+        function unitHasElement(unit, base) {
+          var b = String(base == null ? "" : base).trim().toLowerCase();
+          if (!b) return false;
+          var el = String((unit && unit.element) || "").trim().toLowerCase();
+          if (el === b) return true;
+          return elementParts(unit && unit.element).some(function (p) {
+            return p.toLowerCase() === b;
+          });
+        }
+
+  var _cselOpen = null;
+
+        function _cselClose() {
+          if (!_cselOpen) return;
+          if (_cselOpen.popup.parentNode) _cselOpen.popup.parentNode.removeChild(_cselOpen.popup);
+          _cselOpen.btn.classList.remove("ue-csel-open");
+          _cselOpen = null;
+        }
+
+      
+        function makeUESelect(opts, val, onChange, cfg) {
+          cfg = cfg || {};
+          var searchable = cfg.searchable !== false && opts.length > 7;
+          var _opts = opts;
+          var _val  = val;
+
+          var wrap = document.createElement("div");
+          wrap.className = "ue-csel-wrap";
+
+          var btn = document.createElement("div");
+          btn.className = "ue-csel-btn" + (cfg.noMarginTop ? " ue-csel-no-top" : "");
+
+          var labelEl = document.createElement("span");
+          labelEl.className = "ue-csel-btn-label";
+          var arrowEl = document.createElement("span");
+          arrowEl.className = "ue-csel-arrow";
+          arrowEl.textContent = "\u25BC";
+          btn.appendChild(labelEl);
+          btn.appendChild(arrowEl);
+          wrap.appendChild(btn);
+
+          function _getLabel(v) {
+            for (var i = 0; i < _opts.length; i++)
+              if (String(_opts[i].value) === String(v)) return _opts[i].label;
+            return cfg.placeholder || "Select...";
+          }
+          function _refreshLabel() {
+            labelEl.textContent = _getLabel(_val);
+            var isPlaceholder = (_val == null || _val === "" || _val === "none");
+            isPlaceholder ? labelEl.classList.add("ue-csel-placeholder")
+                          : labelEl.classList.remove("ue-csel-placeholder");
+          }
+          _refreshLabel();
+
+          function _open() {
+            if (_cselOpen) _cselClose();
+
+            var popup = document.createElement("div");
+            popup.className = "ue-csel-popup";
+
+            var searchInput = null;
+            if (searchable) {
+              var sw = document.createElement("div");
+              sw.className = "ue-csel-search-wrap";
+              searchInput = document.createElement("input");
+              searchInput.className = "ue-csel-search";
+              searchInput.type = "text";
+              searchInput.placeholder = "Search...";
+              searchInput.autocomplete = "off";
+              sw.appendChild(searchInput);
+              popup.appendChild(sw);
+            }
+
+            var list = document.createElement("div");
+            list.className = "ue-csel-list";
+            popup.appendChild(list);
+
+            function _render(q) {
+              list.innerHTML = "";
+              q = (q || "").toLowerCase().trim();
+              var n = 0;
+              _opts.forEach(function(o) {
+                if (q && o.label.toLowerCase().indexOf(q) === -1) return;
+                var item = document.createElement("div");
+                item.className = "ue-csel-item";
+                item.textContent = o.label;
+                if (String(o.value) === String(_val)) item.classList.add("ue-csel-item-cur");
+                if (o.placeholder || o.value === "none" || o.value === "") item.classList.add("ue-csel-item-ph");
+                if (o.disabled) {
+                  item.classList.add("ue-csel-item-off");
+                } else {
+                  item.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    _val = o.value;
+                    _refreshLabel();
+                    _cselClose();
+                    onChange(o.value);
+                  });
+                }
+                list.appendChild(item);
+                n++;
+              });
+              if (!n) {
+                var nr = document.createElement("div");
+                nr.className = "ue-csel-noresult";
+                nr.textContent = "No results";
+                list.appendChild(nr);
+              }
+            }
+            _render("");
+
+          
+          
+            var _ueEl = document.getElementById("cw2");
+            function _repos() {
+              if (!popup.parentNode || !_ueEl) return;
+              var r   = btn.getBoundingClientRect();
+              var uer = _ueEl.getBoundingClientRect();
+              var vh  = window.innerHeight;
+              var pw  = Math.max(r.width, 200);
+            
+              var spB = vh - r.bottom - 6, spA = r.top - 6;
+              var maxH, top;
+              if (spB >= 80 || spB >= spA) {
+                maxH = Math.min(300, Math.max(spB, 60));
+                top  = r.bottom - uer.top + 3;
+              } else {
+                maxH = Math.min(300, Math.max(spA, 60));
+                top  = r.top - uer.top - maxH - 3;
+              }
+              var left = r.left - uer.left;
+              if (left + pw > uer.width - 6) left = Math.max(0, uer.width - pw - 6);
+              popup.style.top       = top  + "px";
+              popup.style.left      = left + "px";
+              popup.style.width     = pw   + "px";
+              popup.style.maxHeight = maxH + "px";
+            }
+
+            _cselOpen = { popup: popup, btn: btn };
+            (_ueEl || document.body).appendChild(popup);
+            btn.classList.add("ue-csel-open");
+            _repos();
+
+            if (searchInput) {
+              setTimeout(function() { searchInput.focus(); }, 20);
+              searchInput.addEventListener("input", function() { _render(searchInput.value); });
+            } else {
+              var cur = list.querySelector(".ue-csel-item-cur");
+              if (cur) setTimeout(function() { cur.scrollIntoView({ block: "nearest" }); }, 20);
+            }
+          }
+
+          btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            _cselOpen && _cselOpen.btn === btn ? _cselClose() : _open();
+          });
+
+          wrap._val     = function() { return _val; };
+          wrap._set     = function(v) { _val = v; _refreshLabel(); };
+          wrap._rebuild = function(o) { _opts = o; _refreshLabel(); };
+          wrap._disable = function(b) { b ? btn.classList.add("ue-csel-disabled") : btn.classList.remove("ue-csel-disabled"); };
+          wrap._show    = function(b) { wrap.style.display = b ? "" : "none"; };
+
+          return wrap;
+        }
+
+
+  var UNITS_URL = 'https://raw.githubusercontent.com/FNTDUG/characters.json/refs/heads/main/json';
+
+  var RAR_GRAD = {
+    hero: 'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',
+    apex: 'linear-gradient(180deg,#9D0078,#0063F8)',
+    exclusive: 'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',
+    nightmare: 'linear-gradient(180deg,#492590,#2A1E42)',
+    secret: 'linear-gradient(180deg,#FF8700,#FF0F0C)',
+    mythic: 'linear-gradient(180deg,#FFF006,#FFD114)',
+    epic: 'linear-gradient(180deg,#8A01A1,#FD34FE)',
+    rare: 'linear-gradient(180deg,#2244B0,#57A4FE)',
+    uncommon: 'linear-gradient(180deg,#3FFF8E,#5CFF4E)'
+  };
+
+  var ELEMENT_ICONS = {
+    Neutral: 'https://images.fntduserguide.com/neutralelement.webp',
+    Nature: 'https://images.fntduserguide.com/natureelement.webp',
+    Fire: 'https://images.fntduserguide.com/fireelement.webp',
+    Water: 'https://images.fntduserguide.com/waterelement.webp',
+    Light: 'https://images.fntduserguide.com/lightelement.webp',
+    Dark: 'https://images.fntduserguide.com/darkelement.webp',
+    Rust: 'https://images.fntduserguide.com/rustelement.webp',
+    Electricity: 'https://images.fntduserguide.com/electricityelement.webp',
+    'Dark/Light': 'https://images.fntduserguide.com/dark%3Alightelement.webp',
+    'Electricity/Light': 'https://images.fntduserguide.com/electricity%3Alightelement.webp',
+    'Fire/Rust': 'https://images.fntduserguide.com/fire%3Arustelement.webp',
+    'Nature/Rust': 'https://images.fntduserguide.com/nature%3Arustelement.webp',
+    'Nature/Dark': 'https://images.fntduserguide.com/nature%3Adarkelement.webp',
+    'Dark/Water': 'https://images.fntduserguide.com/dark%3Awaterelement.webp',
+    'Water/Electricity': 'https://images.fntduserguide.com/water%3Aelectricityelement.webp',
+    Universal: 'https://images.fntduserguide.com/universalelement.png'
+  };
+
+  var ELEMENT_LIST = ['Neutral', 'Nature', 'Fire', 'Water', 'Light', 'Dark', 'Rust', 'Electricity'];
+
+  var OBJECTIVES = [
+    { key: 'money', label: 'Spend the most money', text: 'Spend as much Money as possible, upgrades cost 25% more.' },
+    { key: 'boss', label: 'Kill the most bosses', text: 'Kill as many Bosses as possible, a boss spawns at the start of the round with 1k HP and another spawns as soon as the current one dies.' },
+    { key: 'kills', label: 'Get the most kills', text: 'Get as many Kills as possible.' },
+    { key: 'damage', label: 'Deal the most damage', text: 'Deal as much DMG as possible.' }
+  ];
+
+  var RESTRICTIONS = [
+    { key: 'heroes', label: 'No Heroes', text: 'Hero units cannot be used.' },
+    { key: 'secrets', label: 'No Secrets', text: 'Secret rarity units cannot be used.' },
+    { key: 'nightmare', label: 'No Nightmare+', text: 'Nightmare rarity and above cannot be used.' },
+    { key: 'slow', label: 'Enemies cannot be slowed', text: 'Enemies cannot be slowed.' },
+    { key: 'stun', label: 'Enemies cannot be stunned', text: 'Enemies cannot be stunned.' },
+    { key: 'dot', label: 'DOT deals 45% less', text: 'Enemies take 45% less DMG from DOT.' }
+  ];
+
+  var SLOT_COST = { 'Witch of the Sea Scrapbaby': 2 };
+
+  var NIGHTMARE_PLUS = { nightmare: 1, exclusive: 1, apex: 1, hero: 1 };
+  var DOT_TAGS = { Bleed: 1, Burn: 1, Poison: 1, Wither: 1 };
+  var STARTER_MAX_COST = 1000;
+  var TEAM_SIZE = 6;
+  var STARTER_SLOT = 0;
+
+  var state = { obj: '', res: '', ban: '', buf: '', deb: '' };
+  var units = [];
+  var ranked = [];
+  var team = [null, null, null, null, null, null];
+  var shown = 24;
+  var pickSlot = -1;
+
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function num(n) { return Math.round(n).toLocaleString('en-US'); }
+
+  function hasElement(u, name) {
+    return !!name && unitHasElement(u, name);
+  }
+  function tagsOf(u) { return Array.isArray(u.typeTags) ? u.typeTags : []; }
+  function hasTag(u, t) { return tagsOf(u).indexOf(t) !== -1; }
+
+  function levelsOf(u) {
+    if (u.levels && u.levels.length) return u.levels;
+    if (u.modes) {
+      var best = null;
+      for (var k in u.modes) {
+        var lv = u.modes[k] && u.modes[k].levels;
+        if (lv && lv.length && (!best || lv.length > best.length)) best = lv;
+      }
+      if (best) return best;
+    }
+    return [];
+  }
+
+  function soloBoostOf(u) {
+    var sb = (u.passiveDamage && u.passiveDamage.selfboost) || [];
+    for (var i = 0; i < sb.length; i++) {
+      if (/\bslots?\b/i.test(String(sb[i].label || ''))) return sb[i].label;
+    }
+    return null;
+  }
+
+  var _baseForms = {};
+  function baseFormOf(u) {
+    if (_baseForms[u.name]) return _baseForms[u.name];
+    var copy = {}, k;
+    for (k in u) copy[k] = u[k];
+    var pd = {}, pk;
+    for (pk in u.passiveDamage) if (pk !== 'selfboost') pd[pk] = u.passiveDamage[pk];
+    copy.passiveDamage = pd;
+    _baseForms[u.name] = copy;
+    return copy;
+  }
+
+  function statsOf(u) {
+    var out = { dps: 0, cost: 0, place: 0 };
+    var lv = levelsOf(u);
+    var plc = Number(u.placements) || 1;
+    var i, c;
+    for (i = 0; i < lv.length; i++) { c = Number(lv[i].cost); if (isFinite(c)) out.cost += c; }
+    out.cost *= plc;
+    out.place = lv.length ? Number(lv[0].cost) || 0 : 0;
+    var d = null;
+    try { d = computeUnitDps(soloBoostOf(u) ? baseFormOf(u) : u, null); } catch (e) { d = null; }
+    if (d) {
+      if (d.maxed != null && isFinite(d.maxed)) out.dps = d.maxed;
+      else if (d.placement != null && isFinite(d.placement)) out.dps = d.placement;
+    }
+    out.baseDps = out.dps;
+    out.dps *= elementMult(u);
+    return out;
+  }
+
+  function elementMult(u) {
+    var m = 1;
+    if (state.buf && hasElement(u, state.buf)) m *= 1.25;
+    if (state.deb && hasElement(u, state.deb)) m *= 0.75;
+    return m;
+  }
+
+  var SPREAD = { FullAOE: 1.3, Circle: 1.25, Cone: 1.1, Line: 1.08, Multi: 1, Single: 0.72, 'No Type': 0.9 };
+  function spread(u) {
+    var a = String(u.attackType || 'Multi');
+    if (SPREAD[a]) return SPREAD[a];
+    if (a.indexOf('Cone') === 0) return 1.1;
+    if (a.indexOf('Ricochet') === 0) return 1.15;
+    if (a.indexOf('Continuous') === 0) return 1.05;
+    return 1;
+  }
+
+  function scoreOf(u, s) {
+    var why = [];
+    var score;
+
+    if (state.obj === 'money') {
+      score = s.cost;
+      if (hasTag(u, 'Income')) { score *= 1.3; why.push(['good', 'Income']); }
+      if ((Number(u.placements) || 1) >= 3) why.push(['good', (Number(u.placements) || 1) + ' placements']);
+    } else if (state.obj === 'boss') {
+      score = s.dps * (2 - spread(u));
+      if (hasTag(u, 'Crit')) { score *= 1.12; why.push(['good', 'Crit']); }
+      if (String(u.attackType || '') === 'Single') why.push(['good', 'Single target']);
+    } else if (state.obj === 'kills') {
+      score = s.dps * spread(u);
+      if (hasTag(u, 'Summon')) { score *= 1.12; why.push(['good', 'Summon']); }
+      if (spread(u) >= 1.25) why.push(['good', 'Wide AOE']);
+    } else {
+      score = s.dps;
+    }
+
+    var solo = soloBoostOf(u);
+    if (solo) why.push(['bad', 'Base dps, ' + solo + ' needs empty slots']);
+
+    if (state.res === 'slow' && hasTag(u, 'Slow')) {
+      score *= tagsOf(u).length <= 2 ? 0.45 : 0.75;
+      why.push(['bad', 'Slow does nothing']);
+    }
+    if (state.res === 'stun' && hasTag(u, 'Stun')) {
+      score *= tagsOf(u).length <= 2 ? 0.45 : 0.75;
+      why.push(['bad', 'Stun does nothing']);
+    }
+    if (state.res === 'dot') {
+      var dots = tagsOf(u).filter(function (t) { return DOT_TAGS[t]; });
+      if (dots.length) { score *= 0.62; why.push(['bad', dots.join(' / ') + ' cut 45%']); }
+    }
+
+    if (state.buf && hasElement(u, state.buf)) why.push(['good', state.buf + ' buffed +25% dmg']);
+    if (state.deb && hasElement(u, state.deb)) why.push(['bad', state.deb + ' debuffed -25% dmg']);
+
+    return { score: score, why: why };
+  }
+
+  function excluded(u) {
+    if (state.ban && hasElement(u, state.ban)) return true;
+    var r = String(u.rarity || '').toLowerCase();
+    if (state.res === 'heroes' && r === 'hero') return true;
+    if (state.res === 'secrets' && r === 'secret') return true;
+    if (state.res === 'nightmare' && NIGHTMARE_PLUS[r]) return true;
+    return false;
+  }
+
+  function objOf(key) {
+    for (var i = 0; i < OBJECTIVES.length; i++) if (OBJECTIVES[i].key === key) return OBJECTIVES[i];
+    return null;
+  }
+  function resOf(key) {
+    for (var i = 0; i < RESTRICTIONS.length; i++) if (RESTRICTIONS[i].key === key) return RESTRICTIONS[i];
+    return null;
+  }
+
+  function ready() {
+    return !!(state.obj && state.res && state.ban && state.buf && state.deb);
+  }
+
+  function missing() {
+    var out = [];
+    if (!state.obj) out.push('objective');
+    if (!state.res) out.push('restriction');
+    if (!state.ban) out.push('banned element');
+    if (!state.buf) out.push('buffed element');
+    if (!state.deb) out.push('debuffed element');
+    return out;
+  }
+
+  function chips() {
+    var rows = [
+      ['ban', state.ban, 'BANNED'],
+      ['buff', state.buf, 'BUFFED'],
+      ['deb', state.deb, 'DEBUFFED']
+    ];
+    return rows.map(function (r) {
+      var on = !!r[1];
+      return '<div class="cw-chip ' + (on ? r[0] : 'off') + '"><b>' + esc(on ? r[1].toUpperCase() : 'NONE') + '</b>' + r[2] + '</div>';
+    }).join('');
+  }
+
+  function unitCard(entry, rank, cls) {
+    var u = entry.unit;
+    var grad = RAR_GRAD[String(u.rarity || '').toLowerCase()] || 'linear-gradient(180deg,#444,#222)';
+    var icon = ELEMENT_ICONS[u.element] || ELEMENT_ICONS.Neutral;
+    var stat = state.obj === 'money'
+      ? num(entry.stats.cost) + ' total cost'
+      : num(entry.stats.dps) + ' dps';
+    return '<div class="cw-unit' + (cls || '') + '" data-unit="' + esc(u.name) + '">' +
+      (rank ? '<div class="cw-rank">' + rank + '</div>' : '') +
+      '<div class="cw-por" style="background:' + grad + '"><img src="' + esc(u.imgNormal || '') + '" alt="" loading="lazy"></div>' +
+      '<div class="cw-main">' +
+        '<div class="cw-name">' + esc(u.name) + '</div>' +
+        '<div class="cw-meta"><img src="' + esc(icon) + '" alt="">' + esc(u.element || 'Neutral') + ' &middot; ' + esc(String(u.rarity || '').toUpperCase()) + '</div>' +
+        '<div class="cw-score">' + stat + '</div>' +
+        (entry.why.length ? '<div class="cw-why">' + entry.why.map(function (w) {
+          return '<span class="cw-tag ' + w[0] + '">' + esc(w[1]) + '</span>';
+        }).join('') + '</div>' : '') +
+      '</div></div>';
+  }
+
+  function entryFor(name) {
+    for (var i = 0; i < ranked.length; i++) if (ranked[i].unit.name === name) return ranked[i];
+    return null;
+  }
+
+  function slotCost(u) { return SLOT_COST[u.name] || 1; }
+
+  function isStarterLegal(entry) {
+    return entry.stats.place > 0 && entry.stats.place <= STARTER_MAX_COST;
+  }
+
+  function isHero(u) { return String(u.rarity || '').toLowerCase() === 'hero'; }
+
+  function heroOnTeam(exceptName) {
+    for (var i = 0; i < TEAM_SIZE; i++) {
+      if (!team[i] || team[i].name === exceptName) continue;
+      var e = entryFor(team[i].name);
+      if (e && isHero(e.unit)) return true;
+    }
+    return false;
+  }
+
+  function fitsAt(entry, slot) {
+    var c = slotCost(entry.unit), i;
+    if (slot + c > TEAM_SIZE) return false;
+    if (isHero(entry.unit) && heroOnTeam(entry.unit.name)) return false;
+    if (slot === STARTER_SLOT && !(entry.stats.dps > 0)) return false;
+    for (i = slot; i < slot + c; i++) {
+      if (team[i] && team[i].name !== entry.unit.name) return false;
+      if (i === STARTER_SLOT && !isStarterLegal(entry)) return false;
+    }
+    return true;
+  }
+
+  function placeAt(entry, slot) {
+    var c = slotCost(entry.unit), i;
+    removeUnit(entry.unit.name);
+    if (!fitsAt(entry, slot)) {
+      for (i = 0; i < TEAM_SIZE; i++) if (fitsAt(entry, i)) { slot = i; break; }
+      if (!fitsAt(entry, slot)) return false;
+    }
+    for (i = slot; i < slot + c; i++) team[i] = { name: entry.unit.name, head: i === slot, cost: c };
+    return true;
+  }
+
+  function removeUnit(name) {
+    for (var i = 0; i < TEAM_SIZE; i++) if (team[i] && team[i].name === name) team[i] = null;
+  }
+
+  function slotEligible(entry, slot) {
+    return fitsAt(entry, slot);
+  }
+
+  function renderTeam() {
+    var host = el('cw2Slots'), html = '', i;
+    for (i = 0; i < TEAM_SIZE; i++) {
+      var cell = team[i];
+      var entry = cell ? entryFor(cell.name) : null;
+      var starter = i === STARTER_SLOT;
+      if (cell && !cell.head) continue;
+      html += '<div class="cw-slot' + (starter ? ' starter' : '') + '" data-slot="' + i + '">';
+      if (entry) {
+        html += '<img src="' + esc(entry.unit.imgNormal || '') + '" alt="">' +
+                (cell.cost > 1 ? '<span class="cw-slot-cost">' + cell.cost + ' slots</span>' : '');
+      } else {
+        html += '<span class="cw-plus">+</span>' +
+                (starter ? '<span class="cw-slot-tag">STARTER</span>' : '');
+      }
+      html += '</div>';
+    }
+    host.innerHTML = html;
+    sizeSlots();
+  }
+
+  function sizeSlots() {
+    var grid = el('cw2Grid');
+    var box = el('cw2Team');
+    var avail = grid ? grid.getBoundingClientRect().width : 0;
+    if (!avail || !box) return;
+    var cs = window.getComputedStyle(box);
+    ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].forEach(function (k) {
+      avail -= parseFloat(cs[k]) || 0;
+    });
+    var perRow = window.innerWidth <= 720 ? 3 : TEAM_SIZE;
+    var size = Math.floor((avail - (perRow - 1) * 10) / perRow);
+    if (size > 0) el('cw2').style.setProperty('--cw-slot', size + 'px');
+  }
+
+  function openPick(slot) {
+    pickSlot = slot;
+    var list = ranked.filter(function (e) {
+      return fitsAt(e, slot) && !onTeam(e.unit.name);
+    });
+    el('cw2PickTitle').textContent = slot === STARTER_SLOT
+      ? 'Pick a starter (' + num(STARTER_MAX_COST) + ' or less)'
+      : 'Pick a unit for slot ' + (slot + 1);
+    el('cw2PickList').innerHTML = list.length
+      ? list.slice(0, 60).map(function (e, n) { return unitCard(e, n + 1, ''); }).join('')
+      : '<div class="cw-empty">Nothing fits this slot with the current rules.</div>';
+    el('cw2Pick').classList.add('open');
+  }
+  function closePick() { pickSlot = -1; el('cw2Pick').classList.remove('open'); }
+
+  function autoFill() {
+    var i, j;
+    team = [null, null, null, null, null, null];
+    for (i = 0; i < TEAM_SIZE; i++) {
+      if (team[i]) continue;
+      for (j = 0; j < ranked.length; j++) {
+        var e = ranked[j];
+        if (onTeam(e.unit.name) || !fitsAt(e, i)) continue;
+        placeAt(e, i);
+        break;
+      }
+    }
+    renderTeam();
+  }
+
+  function onTeam(name) {
+    for (var i = 0; i < TEAM_SIZE; i++) if (team[i] && team[i].name === name) return true;
+    return false;
+  }
+
+  function render() {
+    var o = objOf(state.obj);
+    el('cw2ObjText').innerHTML = o
+      ? 'Objective: <span>' + esc(o.text) + '</span>'
+      : 'Objective: <span>pick one above</span>';
+    var r = resOf(state.res);
+    el('cw2ResText').textContent = r ? r.text : 'No restriction picked.';
+    el('cw2Team').style.display = ready() ? '' : 'none';
+    el('cw2TeamBar').style.display = ready() ? '' : 'none';
+    el('cw2Chips').innerHTML = chips();
+
+    ranked = [];
+    var i, s, sc;
+    for (i = 0; i < units.length; i++) {
+      if (excluded(units[i])) continue;
+      s = statsOf(units[i]);
+      sc = scoreOf(units[i], s);
+      if (!(sc.score > 0)) continue;
+      ranked.push({ unit: units[i], score: sc.score, why: sc.why, stats: s });
+    }
+    ranked.sort(function (a, b) { return b.score - a.score || a.unit.name.localeCompare(b.unit.name); });
+
+    for (i = 0; i < TEAM_SIZE; i++) {
+      if (team[i] && !entryFor(team[i].name)) team[i] = null;
+    }
+
+    var grid = el('cw2Grid');
+    if (!ready()) {
+      grid.innerHTML = '<div class="cw-empty">Fill in all five Fields above to see which units are still available.<br><br>Still needed: ' + esc(missing().join(', ')) + '</div>';
+      el('cw2Count').textContent = '';
+      el('cw2Note').textContent = '';
+      el('cw2More').style.display = 'none';
+      renderTeam();
+      return;
+    }
+    if (!ranked.length) {
+      grid.innerHTML = '<div class="cw-empty">Nothing is left once those rules are applied. Try lifting the banned element or the restriction.</div>';
+      el('cw2Count').textContent = '';
+      el('cw2More').style.display = 'none';
+    } else {
+      var cut = ranked.slice(0, shown);
+      grid.innerHTML = cut.map(function (e, n) { return unitCard(e, n + 1, n < 3 ? ' top' : ''); }).join('');
+      el('cw2Count').textContent = 'Showing ' + cut.length + ' of ' + ranked.length + ' usable units';
+      el('cw2Note').textContent = state.obj ? 'Ranked for: ' + state.obj.toUpperCase() : 'Ranked by dps until you pick an objective';
+      el('cw2More').style.display = ranked.length > cut.length ? 'block' : 'none';
+    }
+    renderTeam();
+  }
+
+  function addToTeam(name) {
+    var entry = entryFor(name);
+    if (!entry || onTeam(name)) return;
+    for (var i = 0; i < TEAM_SIZE; i++) {
+      if (!team[i] && fitsAt(entry, i)) { placeAt(entry, i); renderTeam(); return; }
+    }
+  }
+
+  function withPlaceholder(opts, placeholder) {
+    var list = opts.map(function (o) { return { value: o.key, label: o.label, disabled: !!o.disabled }; });
+    list.unshift({ value: '', label: placeholder, placeholder: true });
+    return list;
+  }
+
+  function mkSelect(host, opts, placeholder, onPick) {
+    var list = withPlaceholder(opts, placeholder);
+
+    var w = makeUESelect(list, '', onPick, { placeholder: placeholder, searchable: false });
+    el(host).appendChild(w);
+    return w;
+  }
+
+  function elOptsFor(key) {
+    return ELEMENT_LIST.map(function (e) {
+      var taken = (key !== 'ban' && state.ban === e) || (key !== 'buf' && state.buf === e) || (key !== 'deb' && state.deb === e);
+      return { key: e, label: e, disabled: taken };
+    });
+  }
+
+  function refreshElements() {
+    selBan._rebuild(withPlaceholder(elOptsFor('ban'), 'Pick the banned element'));
+    selBuf._rebuild(withPlaceholder(elOptsFor('buf'), 'Pick the buffed element'));
+    selDeb._rebuild(withPlaceholder(elOptsFor('deb'), 'Pick the debuffed element'));
+  }
+
+  function onElement(key, prop) {
+    return function (v) {
+      state[prop] = v;
+      refreshElements();
+      shown = 24;
+      render();
+    };
+  }
+
+  var selObj = mkSelect('cw2Obj', OBJECTIVES, 'Pick an objective', function (v) { state.obj = v; shown = 24; render(); });
+  var selRes = mkSelect('cw2Res', RESTRICTIONS, 'Pick a restriction', function (v) { state.res = v; shown = 24; render(); });
+  var selBan = mkSelect('cw2Ban', elOptsFor('ban'), 'Pick the banned element', onElement('ban', 'ban'));
+  var selBuf = mkSelect('cw2Buf', elOptsFor('buf'), 'Pick the buffed element', onElement('buf', 'buf'));
+  var selDeb = mkSelect('cw2Deb', elOptsFor('deb'), 'Pick the debuffed element', onElement('deb', 'deb'));
+
+  el('cw2More').addEventListener('click', function () { shown += 24; render(); });
+  el('cw2Auto').addEventListener('click', autoFill);
+  el('cw2Clear').addEventListener('click', function () { team = [null, null, null, null, null, null]; renderTeam(); });
+  el('cw2PickClose').addEventListener('click', closePick);
+  el('cw2Pick').addEventListener('click', function (e) { if (e.target === this) closePick(); });
+
+  el('cw2Slots').addEventListener('click', function (e) {
+    var slot = e.target.closest ? e.target.closest('.cw-slot') : null;
+    if (!slot) return;
+    var i = Number(slot.getAttribute('data-slot'));
+    if (team[i]) {
+      removeUnit(team[i].name);
+      renderTeam();
+      return;
+    }
+    openPick(i);
+  });
+
+  el('cw2PickList').addEventListener('click', function (e) {
+    var card = e.target.closest ? e.target.closest('.cw-unit') : null;
+    if (!card || pickSlot < 0) return;
+    var entry = entryFor(card.getAttribute('data-unit'));
+    if (entry) placeAt(entry, pickSlot);
+    closePick();
+    renderTeam();
+  });
+
+  el('cw2Grid').addEventListener('click', function (e) {
+    var card = e.target.closest ? e.target.closest('.cw-unit') : null;
+    if (card) addToTeam(card.getAttribute('data-unit'));
+  });
+
+  el('cw2Reset').addEventListener('click', function () {
+    state = { obj: '', res: '', ban: '', buf: '', deb: '' };
+    [selObj, selRes, selBan, selBuf, selDeb].forEach(function (w) { w._set(''); });
+    refreshElements();
+    shown = 24;
+    render();
+  });
+
+  document.addEventListener('click', function () { if (typeof _cselClose === 'function') _cselClose(); });
+  window.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePick(); _cselClose(); } });
+  window.addEventListener('resize', sizeSlots, { passive: true });
+
+  el('cw2Grid').innerHTML = '<div class="cw-empty">Loading units...</div>';
+
+  fetch(UNITS_URL)
+    .then(function (r) { return r.json(); })
+    .then(function (json) {
+      units = (Array.isArray(json) ? json : []).filter(function (u) { return u && u.name; });
+      render();
+    })
+    .catch(function () {
+      el('cw2Grid').innerHTML = '<div class="cw-empty">Could not load the unit list. Refresh the page.</div>';
+    });
+
+})();
+</script>
+    </div>
+    
+    <footer id="ug-footer"></footer>
+  </div>
+  
+  <script>function ugMobileOpen(){document.getElementById('ug-mobile-nav').classList.add('open');document.getElementById('ug-overlay').classList.add('open');document.body.style.overflow='hidden'}function ugMobileClose(){document.getElementById('ug-mobile-nav').classList.remove('open');document.getElementById('ug-overlay').classList.remove('open');document.body.style.overflow=''}function ugMobileToggle(){var isOpen=document.getElementById('ug-mobile-nav').classList.contains('open');isOpen?ugMobileClose():ugMobileOpen()}var _SPIN_FRAMES=['/','-','\\','|'];var _mnSpinTimers=new Map();function ugMnSpinStart(btn){if(_mnSpinTimers.has(btn))clearInterval(_mnSpinTimers.get(btn));var arrow=btn.querySelector('.ug-mn-section-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_mnSpinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugMnSpinStop(btn){if(_mnSpinTimers.has(btn)){clearInterval(_mnSpinTimers.get(btn));_mnSpinTimers.delete(btn)}var arrow=btn.querySelector('.ug-mn-section-arrow');if(arrow)arrow.textContent='/'}function ugMnToggle(btn){var section=btn.closest('.ug-mn-section');var isOpen=section.classList.contains('open');document.querySelectorAll('#ug-mobile-nav .ug-mn-section.open').forEach(function(s){if(s!==section){s.classList.remove('open');var b=s.querySelector('.ug-mn-section-btn');if(b)ugMnSpinStop(b)}});section.classList.toggle('open');if(!isOpen){ugMnSpinStart(btn)}else{ugMnSpinStop(btn)}}var _spinTimers=new Map();function ugSpinStart(btn){var arrow=btn.querySelector('.ug-tn-arrow');if(!arrow)return;var i=0;arrow.textContent=_SPIN_FRAMES[0];_spinTimers.set(btn,setInterval(function(){i=(i+1)%_SPIN_FRAMES.length;arrow.textContent=_SPIN_FRAMES[i]},135))}function ugSpinStop(btn){if(_spinTimers.has(btn)){clearInterval(_spinTimers.get(btn));_spinTimers.delete(btn)}var arrow=btn.querySelector('.ug-tn-arrow');if(arrow)arrow.textContent='/'}var _ugLeaveTimer=null;function _ugScheduleClose(){clearTimeout(_ugLeaveTimer);_ugLeaveTimer=setTimeout(ugCloseAll,150)}function _ugCancelClose(){clearTimeout(_ugLeaveTimer)}function ugCloseAll(){clearTimeout(_ugLeaveTimer);document.querySelectorAll('.ug-tn-item.open').forEach(function(el){el.classList.remove('open');var b=el.querySelector('.ug-tn-btn');if(b)ugSpinStop(b);var d=el.querySelector('.ug-tn-drop');if(d){d.style.display='none';d.style.top='';d.style.left=''}})}function ugTnToggle(btn){var item=btn.closest('.ug-tn-item');if(!item)return;var isOpen=item.classList.contains('open');ugCloseAll();if(!isOpen){item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}}function _ugOpenItem(item){var btn=item.querySelector('.ug-tn-btn');if(!btn||item.classList.contains('open'))return;ugCloseAll();item.classList.add('open');ugSpinStart(btn);var drop=item.querySelector('.ug-tn-drop');if(drop){var r=item.getBoundingClientRect();drop.style.top=r.bottom+'px';drop.style.left=r.left+'px';drop.style.display='block'}}document.querySelectorAll('.ug-tn-item').forEach(function(item){item.addEventListener('mouseenter',function(){_ugCancelClose();_ugOpenItem(item)});item.addEventListener('mouseleave',_ugScheduleClose);var drop=item.querySelector('.ug-tn-drop');if(drop){drop.addEventListener('mouseenter',_ugCancelClose);drop.addEventListener('mouseleave',_ugScheduleClose)}});document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.ug-tn-item'))ugCloseAll()});window.addEventListener('resize',ugCloseAll,{passive:true});document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});(function(){var toggle=document.getElementById('cleanModeToggle');if(!toggle)return;var cleanMode=false;toggle.onclick=function(){cleanMode=!cleanMode;toggle.classList.toggle('on',cleanMode);toggle.textContent='Clean-Mode: '+(cleanMode?'On':'Off');document.querySelectorAll('.ad-slot').forEach(function(ad){ad.style.display=cleanMode?'none':''})};})();</script>
+<script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script></body>
+</html>
