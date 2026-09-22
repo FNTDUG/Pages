@@ -3145,6 +3145,7 @@ const INF_PROXY = {
 };
 
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
+const ROT_RELAY = 'https://fntd-rorations.fntdug.deno.net/';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
 const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
@@ -3360,32 +3361,37 @@ export default {
     }
 
     if (url.pathname === '/rotations') {
-      let body = null;
-      try {
-        const up = await fetch(ROT_UPSTREAM, {
-          headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA },
-          cf: { cacheTtl: 60, cacheEverything: true }
-        });
-        if (up.ok) body = await up.text();
-      } catch (e) { }
-      if (!body) {
-        return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
-          status: 502,
-          headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'no-store' }
-        });
+      const rotHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
+      const lastKey = new Request('https://www.fntduserguide.com/_rotations-last');
+      const sources = [
+        [ROT_RELAY, { cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }],
+        [ROT_UPSTREAM, { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }]
+      ];
+      let body = null, ra = 0;
+      for (let i = 0; i < sources.length && !body; i++) {
+        try {
+          const up = await fetch(sources[i][0], sources[i][1]);
+          if (!up.ok) continue;
+          const txt = await up.text();
+          const j = JSON.parse(txt);
+          const r = j && j.banners && j.banners.data && j.banners.data.refreshAt;
+          if (r) { body = txt; ra = r; }
+        } catch (e) { }
       }
-      let ttl = 60;
+      if (body) {
+        try {
+          await caches.default.put(lastKey, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=86400' } }));
+        } catch (e) { }
+        const ttl = Math.max(30, Math.min(3600, ra - Math.floor(Date.now() / 1000)));
+        return new Response(body, { headers: Object.assign({ 'cache-control': 'public, max-age=' + ttl }, rotHeaders) });
+      }
       try {
-        const j = JSON.parse(body);
-        const ra = j && j.banners && j.banners.data && j.banners.data.refreshAt;
-        if (ra) ttl = Math.max(30, Math.min(3600, ra - Math.floor(Date.now() / 1000)));
+        const hit = await caches.default.match(lastKey);
+        if (hit) return new Response(await hit.text(), { headers: Object.assign({ 'cache-control': 'public, max-age=30', 'x-rotations': 'stale' }, rotHeaders) });
       } catch (e) { }
-      return new Response(body, {
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'access-control-allow-origin': '*',
-          'cache-control': 'public, max-age=' + ttl
-        }
+      return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
+        status: 502,
+        headers: Object.assign({ 'cache-control': 'no-store' }, rotHeaders)
       });
     }
 
