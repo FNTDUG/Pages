@@ -21,7 +21,7 @@
       <nav id="ug-topnav"><div class="ug-tn-inner"></div></nav>
     </header>
     <div id="ug-hero"><div id="ug-hero-inner">
-      <div class="ug-page-title-area"><div class="ug-page-title">Clan Wars Builder</div><p class="ug-page-desc">Set the round's win condition and it filters every unit down to the ones that still work.</p></div>
+      <div class="ug-page-title-area"><div class="ug-page-title">Clan Wars Builder</div><p class="ug-page-desc">Set win condition and restrictions and it filters every unit down to the ones that are available.</p></div>
       
     </div></div>
     <div id="ug-content">
@@ -51,6 +51,8 @@
 #cw2 .cw-form { background: rgba(10,10,12,.88); border: 3px solid #2e2e34; border-radius: 10px; padding: 16px 16px 18px; margin-bottom: 20px; }
 #cw2 .cw-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 #cw2 .cw-row.cw-els { grid-template-columns: repeat(3, 1fr); margin-bottom: 0; }
+#cw2 .cw-field { min-width: 0; }
+#cw2 .ue-csel-wrap { min-width: 0; max-width: 100%; }
 #cw2 .cw-field label { display: block; font-size: 8px; letter-spacing: 1px; color: #ffb14a; margin-bottom: 7px; text-transform: uppercase; }
 #cw2 .cw-reset { margin-top: 14px; padding: 9px 16px; font-size: 8px; letter-spacing: 1px; color: #ff8f8f; background: rgba(60,12,12,.85); border: 2px solid #6d1f1f; border-radius: 6px; cursor: pointer; }
 #cw2 .cw-reset:hover { background: rgba(90,18,18,.9); }
@@ -223,9 +225,6 @@
 </style>
 
 <div class="cw-inner">
-  <h2 class="cw-title">Clan Wars Builder</h2>
-  <div class="cw-sub">Set win condition/Restrictions and it filters every unit down to the ones that are available.</div>
-
   <div class="cw-form">
     <div class="cw-row">
       <div class="cw-field"><label>Objective</label><div id="cw2Obj"></div></div>
@@ -2247,9 +2246,9 @@
   }
 
   function refreshElements() {
-    selBan._rebuild(withPlaceholder(elOptsFor('ban'), 'Pick the banned element'));
-    selBuf._rebuild(withPlaceholder(elOptsFor('buf'), 'Pick the buffed element'));
-    selDeb._rebuild(withPlaceholder(elOptsFor('deb'), 'Pick the debuffed element'));
+    selBan._rebuild(withPlaceholder(elOptsFor('ban'), 'Pick an element'));
+    selBuf._rebuild(withPlaceholder(elOptsFor('buf'), 'Pick an element'));
+    selDeb._rebuild(withPlaceholder(elOptsFor('deb'), 'Pick an element'));
   }
 
   function onElement(key, prop) {
@@ -2263,9 +2262,9 @@
 
   var selObj = mkSelect('cw2Obj', OBJECTIVES, 'Pick an objective', function (v) { state.obj = v; shown = 24; render(); });
   var selRes = mkSelect('cw2Res', RESTRICTIONS, 'Pick a restriction', function (v) { state.res = v; shown = 24; render(); });
-  var selBan = mkSelect('cw2Ban', elOptsFor('ban'), 'Pick the banned element', onElement('ban', 'ban'));
-  var selBuf = mkSelect('cw2Buf', elOptsFor('buf'), 'Pick the buffed element', onElement('buf', 'buf'));
-  var selDeb = mkSelect('cw2Deb', elOptsFor('deb'), 'Pick the debuffed element', onElement('deb', 'deb'));
+  var selBan = mkSelect('cw2Ban', elOptsFor('ban'), 'Pick an element', onElement('ban', 'ban'));
+  var selBuf = mkSelect('cw2Buf', elOptsFor('buf'), 'Pick an element', onElement('buf', 'buf'));
+  var selDeb = mkSelect('cw2Deb', elOptsFor('deb'), 'Pick an element', onElement('deb', 'deb'));
 
   el('cw2More').addEventListener('click', function () { shown += 24; render(); });
   el('cw2Auto').addEventListener('click', autoFill);
