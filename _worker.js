@@ -266,8 +266,9 @@ const NAV_CSS = `<style>
 .rot-pools .inf-subdrop.open{border-color:rgba(255,164,91,.55)}
 .rot-pools .inf-subdrop.open .inf-subdrop-body{max-height:8000px}
 .rot-pool-btn{position:relative}
-.rot-pools .rot-pool-btn.has-art{padding:0;display:block}
-.rot-pool-art{display:block;width:100%;aspect-ratio:4/1;object-fit:cover;image-rendering:pixelated;transition:filter .14s}
+.rot-pools .rot-pool-btn.has-art{padding:0;display:block;height:40px;overflow:hidden;background:var(--art) center/cover no-repeat}
+.rot-pools .rot-pool-btn.has-art::before{content:'';position:absolute;inset:-8px;background:inherit;filter:blur(8px) brightness(.5)}
+.rot-pool-art{position:relative;display:block;height:40px;width:auto;aspect-ratio:4/1;image-rendering:pixelated;-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent);transition:filter .14s}
 .rot-pool-btn.has-art:hover .rot-pool-art{filter:brightness(1.12)}
 .rot-pool-btn.has-art .hp-arrow{position:absolute;right:10px;top:50%;margin-top:-13px;width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:rgba(0,0,0,.55);color:#fff}
 .inf-subdrop.open .rot-pool-btn.has-art .hp-arrow{color:#ffa45b}
@@ -2348,7 +2349,7 @@ function infRotRender(){
   if(el){
     if(b){var h='<div class="rot-pools">';_rotPools(b).forEach(function(pool){
       var cur=pool[0],lab=ROT_POOL_LABEL[cur]||cur,art=ROT_POOL_ART[cur];
-      h+='<div class="inf-subdrop"><button class="inf-subdrop-btn rot-pool-btn'+(art?' has-art':'')+'" type="button" onclick="infSubToggle(this)" aria-label="'+_infEsc(lab)+' banner">';
+      h+='<div class="inf-subdrop"><button class="inf-subdrop-btn rot-pool-btn'+(art?' has-art':'')+'" type="button" onclick="infSubToggle(this)" aria-label="'+_infEsc(lab)+' banner"'+(art?' style="--art:url(&quot;'+_infEsc(art)+'&quot;)"':'')+'>';
       h+=art?'<img class="rot-pool-art" src="'+_infEsc(art)+'" alt="'+_infEsc(lab)+'" loading="lazy">':'<span class="hp-btn-label">'+_infEsc(lab)+'</span>';
       h+='<span class="hp-arrow">›</span></button><div class="inf-subdrop-body"><div class="inf-subdrop-inner">';
       pool[1].forEach(function(u){h+=_rotCard(u.name,u.rarity,'',u.type||'','',u.name+(u.type?' ('+u.type+')':''));});
