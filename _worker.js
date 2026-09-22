@@ -261,6 +261,16 @@ const NAV_CSS = `<style>
 .hp-eff{font-size:12.5px;color:#ccc;line-height:1.6;margin-top:3px}
 .rot-group{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,164,91,.85);padding:12px 0 2px}
 .rot-group:first-child{padding-top:2px}
+.rot-pools{display:flex;flex-direction:column;gap:8px}
+.rot-pools .inf-subdrop{border-radius:8px;overflow:hidden;background:rgba(255,255,255,.035);border:1px solid rgba(255,164,91,.16);transition:border-color .14s}
+.rot-pools .inf-subdrop.open{border-color:rgba(255,164,91,.55)}
+.rot-pools .inf-subdrop.open .inf-subdrop-body{max-height:8000px}
+.rot-pool-btn{position:relative}
+.rot-pools .rot-pool-btn.has-art{padding:0;display:block}
+.rot-pool-art{display:block;width:100%;aspect-ratio:4/1;object-fit:cover;image-rendering:pixelated;transition:filter .14s}
+.rot-pool-btn.has-art:hover .rot-pool-art{filter:brightness(1.12)}
+.rot-pool-btn.has-art .hp-arrow{position:absolute;right:10px;top:50%;margin-top:-13px;width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:rgba(0,0,0,.55);color:#fff}
+.inf-subdrop.open .rot-pool-btn.has-art .hp-arrow{color:#ffa45b}
 .rot-obj{font-size:12px;color:#ccc;line-height:1.7}
 .rot-wait{padding:24px 16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px}
 .inf-topstick{position:sticky;top:0;z-index:3}
@@ -2286,6 +2296,23 @@ function infRotTick(){
 }
 var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',material:'materials',present:'presents',banner:'banners'};
 var ROT_POOL_LABEL={Lobby:'Coins'};
+var ROT_POOL_ORDER=['Souls','Lobby','Selection'];
+var ROT_POOL_HIDE={Event:1};
+var ROT_POOL_ART={Souls:'https://images.fntduserguide.com/souls-banner.webp',Lobby:'https://images.fntduserguide.com/coins-banner.webp',Selection:'https://images.fntduserguide.com/select-banner.png'};
+var ROT_POOL_EXTRA={Selection:[{name:'Mangle',type:'Pet'}]};
+function _rotPools(b){
+  var keys=Object.keys(b||{}).filter(function(k){return !ROT_POOL_HIDE[k];});
+  keys.sort(function(a,z){var i=ROT_POOL_ORDER.indexOf(a),j=ROT_POOL_ORDER.indexOf(z);return (i===-1?99:i)-(j===-1?99:j);});
+  return keys.map(function(k){
+    var list=(b[k]||[]).slice();
+    (ROT_POOL_EXTRA[k]||[]).forEach(function(x){
+      var rar=_infNr(x.rarity||_rotLook(x.name,x.type).rarity),at=list.length;
+      for(var i=0;i<list.length;i++)if(_infNr(list[i].rarity)===rar)at=i+1;
+      list.splice(at,0,{name:x.name,rarity:rar,type:x.type});
+    });
+    return [k,list];
+  });
+}
 // Merchant types with no feed behind them. Music has no wiki JSON, so every track
 // falls back to the soundtrack sleeve rather than rendering a blank badge.
 var ROT_TYPE_ART={music:{img:'https://images.fntduserguide.com/Aog%20Background%20Removed.png',rarity:'uncommon'}};
@@ -2319,10 +2346,14 @@ function infRotRender(){
   var el,b=(_rotDig(_rotData.banners)||{}).banners;
   el=document.getElementById('inf-rot-banners-inner');
   if(el){
-    if(b){var h='';Object.keys(b).forEach(function(cur){
-      h+='<div class="rot-group">'+_infEsc(ROT_POOL_LABEL[cur]||cur)+'</div>';
-      (b[cur]||[]).forEach(function(u){h+=_rotCard(u.name,u.rarity,'');});
-    });el.innerHTML=h;}
+    if(b){var h='<div class="rot-pools">';_rotPools(b).forEach(function(pool){
+      var cur=pool[0],lab=ROT_POOL_LABEL[cur]||cur,art=ROT_POOL_ART[cur];
+      h+='<div class="inf-subdrop"><button class="inf-subdrop-btn rot-pool-btn'+(art?' has-art':'')+'" type="button" onclick="infSubToggle(this)" aria-label="'+_infEsc(lab)+' banner">';
+      h+=art?'<img class="rot-pool-art" src="'+_infEsc(art)+'" alt="'+_infEsc(lab)+'" loading="lazy">':'<span class="hp-btn-label">'+_infEsc(lab)+'</span>';
+      h+='<span class="hp-arrow">›</span></button><div class="inf-subdrop-body"><div class="inf-subdrop-inner">';
+      pool[1].forEach(function(u){h+=_rotCard(u.name,u.rarity,'',u.type||'','',u.name+(u.type?' ('+u.type+')':''));});
+      h+='</div></div></div>';
+    });el.innerHTML=h+'</div>';}
     else el.innerHTML='<div class="rot-wait">Rotations unavailable.</div>';
     el.removeAttribute('data-ads');
   }
@@ -2412,9 +2443,9 @@ function infRotBoot(){
 function _infRotRows(){
   var S=[],d=_rotData;if(!d)return S;
   var b=(_rotDig(d.banners)||{}).banners;
-  if(b)Object.keys(b).forEach(function(cur){
-    var lab=ROT_POOL_LABEL[cur]||cur;
-    (b[cur]||[]).forEach(function(u){S.push({n:u.name,c:'rot-banners',cl:'Banners - '+lab,rar:_infNr(u.rarity),m:'In the '+lab+' banner right now'});});
+  if(b)_rotPools(b).forEach(function(pool){
+    var cur=pool[0],lab=ROT_POOL_LABEL[cur]||cur;
+    pool[1].forEach(function(u){S.push({n:u.name,c:'rot-banners',cl:'Banners - '+lab,rar:_infNr(u.rarity),t:u.type,m:'In the '+lab+' banner right now'});});
   });
   var m=(_rotDig(d.merchant)||{}).items;
   if(m)m.forEach(function(i){S.push({n:i.name,c:'rot-merchant',cl:'Merchant',t:i.type,m:i.type+' - '+_rotNum(i.price)+' '+i.currency});});
