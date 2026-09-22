@@ -263,15 +263,9 @@ const NAV_CSS = `<style>
 .rot-group:first-child{padding-top:2px}
 .rot-pools{display:flex;flex-direction:column;gap:8px}
 .rot-pools .inf-subdrop{border-radius:8px;overflow:hidden;background:rgba(255,255,255,.035);border:1px solid rgba(255,164,91,.16);transition:border-color .14s}
-.rot-pools .inf-subdrop.open{border-color:rgba(255,164,91,.55)}
+.rot-pools .inf-subdrop.open{background:rgba(255,164,91,.08);border-color:rgba(255,164,91,.45)}
+.rot-pools .inf-subdrop-btn{padding:10px 12px;gap:10px}
 .rot-pools .inf-subdrop.open .inf-subdrop-body{max-height:8000px}
-.rot-pool-btn{position:relative}
-.rot-pools .rot-pool-btn.has-art{padding:0;display:block;height:40px;overflow:hidden;background:var(--art) center/cover no-repeat}
-.rot-pools .rot-pool-btn.has-art::before{content:'';position:absolute;inset:-8px;background:inherit;filter:blur(8px) brightness(.5)}
-.rot-pool-art{position:relative;display:block;height:40px;width:auto;aspect-ratio:4/1;image-rendering:pixelated;-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent);transition:filter .14s}
-.rot-pool-btn.has-art:hover .rot-pool-art{filter:brightness(1.12)}
-.rot-pool-btn.has-art .hp-arrow{position:absolute;right:10px;top:50%;margin-top:-13px;width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:rgba(0,0,0,.55);color:#fff}
-.inf-subdrop.open .rot-pool-btn.has-art .hp-arrow{color:#ffa45b}
 .rot-obj{font-size:12px;color:#ccc;line-height:1.7}
 .rot-wait{padding:24px 16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px}
 .inf-topstick{position:sticky;top:0;z-index:3}
@@ -2299,7 +2293,6 @@ var ROT_TYPE_FEED={pet:'pets',skin:'skins',food:'foods',potion:'potions',materia
 var ROT_POOL_LABEL={Lobby:'Coins'};
 var ROT_POOL_ORDER=['Souls','Lobby','Selection'];
 var ROT_POOL_HIDE={Event:1};
-var ROT_POOL_ART={Souls:'https://images.fntduserguide.com/souls-banner.webp',Lobby:'https://images.fntduserguide.com/coins-banner.webp',Selection:'https://images.fntduserguide.com/select-banner.png'};
 var ROT_POOL_EXTRA={Selection:[{name:'Mangle',type:'Pet'}]};
 function _rotPools(b){
   var keys=Object.keys(b||{}).filter(function(k){return !ROT_POOL_HIDE[k];});
@@ -2348,10 +2341,8 @@ function infRotRender(){
   el=document.getElementById('inf-rot-banners-inner');
   if(el){
     if(b){var h='<div class="rot-pools">';_rotPools(b).forEach(function(pool){
-      var cur=pool[0],lab=ROT_POOL_LABEL[cur]||cur,art=ROT_POOL_ART[cur];
-      h+='<div class="inf-subdrop"><button class="inf-subdrop-btn rot-pool-btn'+(art?' has-art':'')+'" type="button" onclick="infSubToggle(this)" aria-label="'+_infEsc(lab)+' banner"'+(art?' style="--art:url(&quot;'+_infEsc(art)+'&quot;)"':'')+'>';
-      h+=art?'<img class="rot-pool-art" src="'+_infEsc(art)+'" alt="'+_infEsc(lab)+'" loading="lazy">':'<span class="hp-btn-label">'+_infEsc(lab)+'</span>';
-      h+='<span class="hp-arrow">›</span></button><div class="inf-subdrop-body"><div class="inf-subdrop-inner">';
+      var cur=pool[0],lab=ROT_POOL_LABEL[cur]||cur;
+      h+='<div class="inf-subdrop"><button class="inf-subdrop-btn" type="button" onclick="infSubToggle(this)"><span class="hp-btn-label">'+_infEsc(lab)+'</span><span class="hp-arrow">›</span></button><div class="inf-subdrop-body"><div class="inf-subdrop-inner">';
       pool[1].forEach(function(u){h+=_rotCard(u.name,u.rarity,'',u.type||'','',u.name+(u.type?' ('+u.type+')':''));});
       h+='</div></div></div>';
     });el.innerHTML=h+'</div>';}
