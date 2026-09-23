@@ -1,9 +1,6 @@
 name: Rotations
 
 on:
-  schedule:
-    - cron: '50 * * * *'
-    - cron: '8 * * * *'
   workflow_dispatch:
 
 permissions:
