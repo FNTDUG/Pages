@@ -3168,7 +3168,6 @@ const INF_PROXY = {
 };
 
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
-const ROT_RELAY = 'https://fntd-rorations.fntdug.deno.net/';
 const ROT_MIRROR = 'https://raw.githubusercontent.com/FNTDUG/Pages/rotations/rotations.json';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
@@ -3390,7 +3389,6 @@ export default {
       const stamp = Math.floor(Date.now() / 20000);
       const sources = [
         [ROT_MIRROR + '?t=' + stamp, { cf: { cacheTtlByStatus: { '200-299': 20, '300-599': -1 } } }],
-        [ROT_RELAY, { cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }],
         [ROT_UPSTREAM, { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }]
       ];
       let body = null, ra = 0;
@@ -3418,26 +3416,6 @@ export default {
       return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
         status: 502,
         headers: Object.assign({ 'cache-control': 'no-store' }, rotHeaders)
-      });
-    }
-
-    if (url.pathname === '/rot-check') {
-      const out = [];
-      for (const [label, init] of [
-        ['bare', {}],
-        ['referer+ua', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA } }],
-        ['referer+ua+nocache', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA, 'cache-control': 'no-cache' }, cf: { cacheTtlByStatus: { '100-599': -1 } } }]
-      ]) {
-        try {
-          const r = await fetch(ROT_UPSTREAM, init);
-          const txt = await r.text();
-          out.push({ label, status: r.status, head: txt.slice(0, 70) });
-        } catch (e) {
-          out.push({ label, error: String(e && e.message || e) });
-        }
-      }
-      return new Response(JSON.stringify({ out }, null, 1), {
-        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
       });
     }
 
