@@ -193,13 +193,19 @@
 #cw2 .cw-unit.top { border-color: #ffb14a; }
 #cw2 .cw-rank { position: absolute; top: -9px; left: -9px; width: 24px; height: 24px; border-radius: 50%; background: #17171c; border: 2px solid #55555f; font-size: 8px; color: #ffd98a; display: flex; align-items: center; justify-content: center; }
 #cw2 .cw-unit.top .cw-rank { border-color: #ffb14a; }
-#cw2 .cw-por { width: 54px; height: 54px; border-radius: 8px; padding: 2px; flex-shrink: 0; }
+#cw2 .cw-por { position: relative; width: 54px; height: 54px; border-radius: 8px; padding: 2px; flex-shrink: 0; }
 #cw2 .cw-por img { width: 100%; height: 100%; border-radius: 6px; background: #0d0d10; display: block; object-fit: cover; margin: 0; }
 #cw2 .cw-main { flex: 1; min-width: 0; }
 #cw2 .cw-name { font-size: 9px; line-height: 1.7; color: #fff; word-break: break-word; }
 #cw2 .cw-meta { font-size: 7px; color: rgba(255,255,255,.45); line-height: 1.9; margin-top: 5px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 #cw2 .cw-meta img { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; }
 #cw2 .cw-score { font-size: 7px; color: #ffb14a; margin-top: 6px; line-height: 1.8; }
+#cw2 .cw-tree { font-size: 6px; color: rgba(255,255,255,.5); margin-top: 4px; line-height: 1.8; }
+#cw2 .cw-path { position: absolute; bottom: -4px; right: -6px; width: 26px; height: 26px; pointer-events: none; }
+#cw2 .cw-path img { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; margin: 0; transform: translate(-50%, -50%); image-rendering: auto; }
+#cw2 .cw-path-pair img { width: 66%; height: 66%; }
+#cw2 .cw-path-pair img.cw-path-b { transform: translate(-22%, -22%); opacity: .85; }
+#cw2 .cw-path-pair img.cw-path-a { transform: translate(-78%, -78%); }
 #cw2 .cw-why { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
 #cw2 .cw-tag { font-size: 6px; padding: 3px 5px; border-radius: 3px; line-height: 1.7; background: rgba(255,255,255,.07); color: rgba(255,255,255,.6); }
 #cw2 .cw-tag.good { background: rgba(80,200,120,.16); color: #8ce0a6; }
@@ -1846,6 +1852,19 @@
   ];
 
   var SLOT_COST = { 'Witch of the Sea Scrapbaby': 2 };
+  var NEVER_SUGGEST = { 'nedd bear': 1 };
+  var NEVER_STARTER = { 'lefty': 1 };
+  var MAX_RESULTS = 42;
+  var BOSS_FIRST = 'Old Man Consequences';
+  var TIERLIST_URL = 'https://raw.githubusercontent.com/FNTDUG/characters.json/refs/heads/main/tierlist.js';
+  var PATH_IMG = 'https://images.fntduserguide.com/';
+  var PATH_RE = /^P(\d+)(?:-(\d+))?$/i;
+  var BUILD_RE = /^\d+(?:-\d+)+$/;
+  var STATUS_TAGS = ['NEW', 'BUG', 'UP', 'DOWN'];
+  var LINK_RE = /^linked$/i;
+  var heroBuilds = {};
+  var heroTier = {};
+  var TIER_FACTOR = { op: 1, s: 0.85, a: 0.6, b: 0.4, c: 0.25 };
 
   var NIGHTMARE_PLUS = { nightmare: 1, exclusive: 1, apex: 1, hero: 1 };
   var DOT_TAGS = { Bleed: 1, Burn: 1, Poison: 1, Wither: 1 };
@@ -1982,6 +2001,7 @@
   }
 
   function excluded(u) {
+    if (NEVER_SUGGEST[String(u.name || '').toLowerCase()]) return true;
     if (state.ban && hasElement(u, state.ban)) return true;
     var r = String(u.rarity || '').toLowerCase();
     if (state.res === 'heroes' && r === 'hero') return true;
@@ -2025,20 +2045,70 @@
     }).join('');
   }
 
+  function heroPathInfo(u) {
+    var build = heroBuilds[u.name];
+    if (!build || !Array.isArray(u.paths) || !u.paths.length) return null;
+    var slug = String(u.name).toLowerCase().split(' ').join('-');
+
+    function leg(idx, tier) {
+      var path = u.paths[idx];
+      if (!path || !Array.isArray(path.tiers) || !path.tiers.length) return null;
+      if (!(tier >= 1) || !path.tiers[tier - 1]) return null;
+      var icon = path.tiers[tier - 1].icon;
+      if (!icon) return null;
+      return { url: PATH_IMG + slug + '-paths/' + icon, pathNo: idx + 1, tier: tier };
+    }
+
+    var m = PATH_RE.exec(build);
+    if (m) {
+      var idx = parseInt(m[1], 10) - 1;
+      var pth = u.paths[idx];
+      if (!pth || !Array.isArray(pth.tiers) || !pth.tiers.length) return null;
+      var one = leg(idx, m[2] ? parseInt(m[2], 10) : pth.tiers.length);
+      if (!one) return null;
+      return { primary: one, secondary: null, label: 'Path ' + one.pathNo + (m[2] ? ' \u00b7 Tier ' + one.tier : '') };
+    }
+
+    if (!BUILD_RE.test(build)) return null;
+    var tiers = String(build).split('-').map(function (n) { return parseInt(n, 10) || 0; });
+    var taken = [];
+    for (var i = 0; i < tiers.length; i++) {
+      if (!(tiers[i] > 0)) continue;
+      var l = leg(i, tiers[i]);
+      if (l) taken.push(l);
+    }
+    if (!taken.length) return null;
+    taken.sort(function (a, b) { return b.tier - a.tier || a.pathNo - b.pathNo; });
+    return { primary: taken[0], secondary: taken[1] || null, label: tiers.join('-') };
+  }
+
+  function pathBadge(info) {
+    if (!info) return '';
+    var legs = info.secondary
+      ? [['cw-path-b', info.secondary], ['cw-path-a', info.primary]]
+      : [['', info.primary]];
+    return '<span class="cw-path' + (info.secondary ? ' cw-path-pair' : '') + '">' +
+      legs.map(function (l) {
+        return '<img class="' + l[0] + '" src="' + esc(l[1].url) + '" alt="Path ' + l[1].pathNo + ' Tier ' + l[1].tier + '" loading="lazy">';
+      }).join('') + '</span>';
+  }
+
   function unitCard(entry, rank, cls) {
     var u = entry.unit;
     var grad = RAR_GRAD[String(u.rarity || '').toLowerCase()] || 'linear-gradient(180deg,#444,#222)';
     var icon = ELEMENT_ICONS[u.element] || ELEMENT_ICONS.Neutral;
-    var stat = state.obj === 'money'
-      ? num(entry.stats.cost) + ' total cost'
-      : num(entry.stats.dps) + ' dps';
+    var pInfo = heroPathInfo(u);
+    var stat = entry.noDps
+      ? 'Tier ' + String(heroTier[u.name] || '').toUpperCase() + ' on the tierlist'
+      : (state.obj === 'money' ? num(entry.stats.cost) + ' total cost' : num(entry.stats.dps) + ' dps');
     return '<div class="cw-unit' + (cls || '') + '" data-unit="' + esc(u.name) + '">' +
       (rank ? '<div class="cw-rank">' + rank + '</div>' : '') +
-      '<div class="cw-por" style="background:' + grad + '"><img src="' + esc(u.imgNormal || '') + '" alt="" loading="lazy"></div>' +
+      '<div class="cw-por" style="background:' + grad + '"><img src="' + esc(u.imgNormal || '') + '" alt="" loading="lazy">' + pathBadge(pInfo) + '</div>' +
       '<div class="cw-main">' +
         '<div class="cw-name">' + esc(u.name) + '</div>' +
         '<div class="cw-meta"><img src="' + esc(icon) + '" alt="">' + esc(u.element || 'Neutral') + ' &middot; ' + esc(String(u.rarity || '').toUpperCase()) + '</div>' +
         '<div class="cw-score">' + stat + '</div>' +
+        (pInfo ? '<div class="cw-tree">Hero Tree: ' + esc(pInfo.label) + '</div>' : '') +
         (entry.why.length ? '<div class="cw-why">' + entry.why.map(function (w) {
           return '<span class="cw-tag ' + w[0] + '">' + esc(w[1]) + '</span>';
         }).join('') + '</div>' : '') +
@@ -2072,6 +2142,7 @@
     if (slot + c > TEAM_SIZE) return false;
     if (isHero(entry.unit) && heroOnTeam(entry.unit.name)) return false;
     if (slot === STARTER_SLOT && !(entry.stats.dps > 0)) return false;
+    if (slot === STARTER_SLOT && NEVER_STARTER[String(entry.unit.name || '').toLowerCase()]) return false;
     for (i = slot; i < slot + c; i++) {
       if (team[i] && team[i].name !== entry.unit.name) return false;
       if (i === STARTER_SLOT && !isStarterLegal(entry)) return false;
@@ -2188,7 +2259,36 @@
       if (!(sc.score > 0)) continue;
       ranked.push({ unit: units[i], score: sc.score, why: sc.why, stats: s });
     }
+    var top = 0;
+    for (i = 0; i < ranked.length; i++) if (ranked[i].score > top) top = ranked[i].score;
+
+    for (i = 0; i < units.length; i++) {
+      var h = units[i];
+      if (!isHero(h) || excluded(h)) continue;
+      if (ranked.some(function (e) { return e.unit.name === h.name; })) continue;
+      var f = TIER_FACTOR[heroTier[h.name]];
+      if (!f || !top) continue;
+      var hs = scoreOf(h, statsOf(h));
+      ranked.push({
+        unit: h,
+        score: top * f * elementMult(h),
+        why: hs.why,
+        stats: statsOf(h),
+        noDps: true
+      });
+    }
+
     ranked.sort(function (a, b) { return b.score - a.score || a.unit.name.localeCompare(b.unit.name); });
+
+    if (state.obj === 'boss' && state.res !== 'heroes') {
+      for (i = 0; i < ranked.length; i++) {
+        if (ranked[i].unit.name === BOSS_FIRST) {
+          ranked.unshift(ranked.splice(i, 1)[0]);
+          break;
+        }
+      }
+    }
+    ranked = ranked.slice(0, MAX_RESULTS);
 
     for (i = 0; i < TEAM_SIZE; i++) {
       if (team[i] && !entryFor(team[i].name)) team[i] = null;
@@ -2313,11 +2413,46 @@
 
   el('cw2Grid').innerHTML = '<div class="cw-empty">Loading units...</div>';
 
+  function loadHeroBuilds() {
+    return fetch(TIERLIST_URL)
+      .then(function (r) { return r.text(); })
+      .then(function (text) {
+        var i = text.indexOf('var cfg =');
+        if (i === -1) return;
+        var j = text.indexOf('{', i), depth = 0, k;
+        for (k = j; k < text.length; k++) {
+          if (text.charAt(k) === '{') depth++;
+          else if (text.charAt(k) === '}') { depth--; if (!depth) break; }
+        }
+        var cfg = JSON.parse(text.slice(j, k + 1).replace(/,(\s*[\]}])/g, '$1'));
+        var all = cfg && cfg.lists && cfg.lists.all;
+        if (!all) return;
+        Object.keys(all).forEach(function (tier) {
+          (all[tier] || []).forEach(function (raw) {
+            var parts = String(raw).split(' '), path = '';
+            while (parts.length > 1 && LINK_RE.test(parts[0])) parts.shift();
+            while (parts.length > 1) {
+              var last = parts[parts.length - 1];
+              if (LINK_RE.test(last)) { parts.pop(); continue; }
+              if (STATUS_TAGS.indexOf(last) !== -1) { parts.pop(); continue; }
+              if (!path && (PATH_RE.test(last) || BUILD_RE.test(last))) { path = parts.pop(); continue; }
+              break;
+            }
+            var name = parts.join(' ');
+            if (path && !heroBuilds[name]) heroBuilds[name] = path;
+            if (!heroTier[name]) heroTier[name] = tier;
+          });
+        });
+      })
+      .catch(function () { });
+  }
+
   fetch(UNITS_URL)
     .then(function (r) { return r.json(); })
     .then(function (json) {
       units = (Array.isArray(json) ? json : []).filter(function (u) { return u && u.name; });
       render();
+      loadHeroBuilds().then(function () { if (Object.keys(heroBuilds).length) render(); });
     })
     .catch(function () {
       el('cw2Grid').innerHTML = '<div class="cw-empty">Could not load the unit list. Refresh the page.</div>';
