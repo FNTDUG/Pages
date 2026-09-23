@@ -162,7 +162,10 @@
   justify-content: center;
 }
 #cw2 .cw-slot:hover { border-color: #ffd98a; }
-#cw2 .cw-slot img { width: 100%; height: 100%; object-fit: cover; display: block; margin: 0; }
+#cw2 .cw-slot.filled { border-color: transparent; padding: 3px; }
+#cw2 .cw-slot-rar { position: absolute; inset: 0; border-radius: 1px; }
+#cw2 .cw-slot img { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; margin: 0; border-radius: 1px; }
+#cw2 .cw-slot .cw-path { bottom: 1px; right: 1px; width: 30px; height: 30px; }
 #cw2 .cw-slot .cw-slot-tag {
   position: absolute;
   left: 0;
@@ -2099,7 +2102,7 @@
     var icon = ELEMENT_ICONS[u.element] || ELEMENT_ICONS.Neutral;
     var pInfo = heroPathInfo(u);
     var stat = entry.noDps
-      ? 'Tier ' + String(heroTier[u.name] || '').toUpperCase() + ' on the tierlist'
+      ? ''
       : (state.obj === 'money' ? num(entry.stats.cost) + ' total cost' : num(entry.stats.dps) + ' dps');
     return '<div class="cw-unit' + (cls || '') + '" data-unit="' + esc(u.name) + '">' +
       (rank ? '<div class="cw-rank">' + rank + '</div>' : '') +
@@ -2107,7 +2110,7 @@
       '<div class="cw-main">' +
         '<div class="cw-name">' + esc(u.name) + '</div>' +
         '<div class="cw-meta"><img src="' + esc(icon) + '" alt="">' + esc(u.element || 'Neutral') + ' &middot; ' + esc(String(u.rarity || '').toUpperCase()) + '</div>' +
-        '<div class="cw-score">' + stat + '</div>' +
+        (stat ? '<div class="cw-score">' + stat + '</div>' : '') +
         (pInfo ? '<div class="cw-tree">Hero Tree: ' + esc(pInfo.label) + '</div>' : '') +
         (entry.why.length ? '<div class="cw-why">' + entry.why.map(function (w) {
           return '<span class="cw-tag ' + w[0] + '">' + esc(w[1]) + '</span>';
@@ -2176,9 +2179,12 @@
       var entry = cell ? entryFor(cell.name) : null;
       var starter = i === STARTER_SLOT;
       if (cell && !cell.head) continue;
-      html += '<div class="cw-slot' + (starter ? ' starter' : '') + '" data-slot="' + i + '">';
+      html += '<div class="cw-slot' + (starter ? ' starter' : '') + (entry ? ' filled' : '') + '" data-slot="' + i + '">';
       if (entry) {
-        html += '<img src="' + esc(entry.unit.imgNormal || '') + '" alt="">' +
+        var grad = RAR_GRAD[String(entry.unit.rarity || '').toLowerCase()] || 'linear-gradient(180deg,#444,#222)';
+        html += '<span class="cw-slot-rar" style="background:' + grad + '"></span>' +
+                '<img src="' + esc(entry.unit.imgNormal || '') + '" alt="">' +
+                pathBadge(heroPathInfo(entry.unit)) +
                 (cell.cost > 1 ? '<span class="cw-slot-cost">' + cell.cost + ' slots</span>' : '');
       } else {
         html += '<span class="cw-plus">+</span>' +
