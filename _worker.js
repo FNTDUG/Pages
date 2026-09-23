@@ -3421,6 +3421,26 @@ export default {
       });
     }
 
+    if (url.pathname === '/rot-check') {
+      const out = [];
+      for (const [label, init] of [
+        ['bare', {}],
+        ['referer+ua', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA } }],
+        ['referer+ua+nocache', { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA, 'cache-control': 'no-cache' }, cf: { cacheTtlByStatus: { '100-599': -1 } } }]
+      ]) {
+        try {
+          const r = await fetch(ROT_UPSTREAM, init);
+          const txt = await r.text();
+          out.push({ label, status: r.status, head: txt.slice(0, 70) });
+        } catch (e) {
+          out.push({ label, error: String(e && e.message || e) });
+        }
+      }
+      return new Response(JSON.stringify({ out }, null, 1), {
+        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
+      });
+    }
+
     if (url.pathname === '/news-posts') {
       const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
       const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
