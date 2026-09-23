@@ -3169,6 +3169,7 @@ const INF_PROXY = {
 
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
 const ROT_RELAY = 'https://fntd-rorations.fntdug.deno.net/';
+const ROT_MIRROR = 'https://raw.githubusercontent.com/FNTDUG/Pages/rotations/rotations.json';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
 const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
@@ -3386,7 +3387,9 @@ export default {
     if (url.pathname === '/rotations') {
       const rotHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
       const lastKey = new Request('https://www.fntduserguide.com/_rotations-last');
+      const stamp = Math.floor(Date.now() / 20000);
       const sources = [
+        [ROT_MIRROR + '?t=' + stamp, { cf: { cacheTtlByStatus: { '200-299': 20, '300-599': -1 } } }],
         [ROT_RELAY, { cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }],
         [ROT_UPSTREAM, { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }]
       ];
@@ -3405,7 +3408,7 @@ export default {
         try {
           await caches.default.put(lastKey, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=86400' } }));
         } catch (e) { }
-        const ttl = Math.max(30, Math.min(3600, ra - Math.floor(Date.now() / 1000)));
+        const ttl = Math.max(20, Math.min(120, ra - Math.floor(Date.now() / 1000)));
         return new Response(body, { headers: Object.assign({ 'cache-control': 'public, max-age=' + ttl }, rotHeaders) });
       }
       try {

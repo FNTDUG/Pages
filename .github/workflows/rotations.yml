@@ -1,0 +1,89 @@
+name: Rotations
+
+on:
+  schedule:
+    - cron: '50 * * * *'
+    - cron: '8 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rotations
+  cancel-in-progress: false
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Wait for the next rotation and publish it
+        env:
+          TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          UPSTREAM: https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/
+          UA: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36
+        run: |
+          set -u
+          fetch() {
+            curl -sS --max-time 20 -H "referer: https://fntd2.com/" -H "user-agent: $UA" \
+              "$UPSTREAM?_=$(date +%s%N)" -o "$1" -w '%{http_code}'
+          }
+          rot() { jq -r '[.banners.data.rotationId, .merchant.data.rotationId, .questShop.data.rotationId] | join("-")' "$1" 2>/dev/null; }
+
+          code=$(fetch first.json || true)
+          if [ "$code" != "200" ]; then
+            echo "Upstream answered $code from this runner:"; head -c 200 first.json; echo
+            exit 1
+          fi
+
+          curl -sf "https://raw.githubusercontent.com/$REPO/rotations/rotations.json?t=$(date +%s)" -o published.json || true
+          have=""
+          [ -s published.json ] && have=$(rot published.json)
+          echo "published rotation: ${have:-none}"
+
+          publish() {
+            rm -rf publish && mkdir publish && cp "$1" publish/rotations.json && cd publish
+            git init -q -b rotations
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898298+github-actions[bot]@users.noreply.github.com'
+            git add rotations.json
+            git commit -q -m '[CF-Pages-Skip] [skip ci] Update rotations'
+            git push -qf "https://x-access-token:${TOKEN}@github.com/${REPO}.git" rotations
+            cd ..
+          }
+
+          now=$(date +%s)
+          refresh=$(jq -r '.banners.data.refreshAt // 0' first.json)
+          cur=$(rot first.json)
+
+          if [ "$cur" != "$have" ]; then
+            echo "new rotation already available ($cur), publishing now"
+            publish first.json
+            exit 0
+          fi
+
+          wait_for=$((refresh - now))
+          if [ "$wait_for" -gt 1500 ]; then
+            echo "next rotation is ${wait_for}s away, longer than this run; exiting"
+            exit 0
+          fi
+          if [ "$wait_for" -gt 0 ]; then
+            echo "sleeping ${wait_for}s until the rotation flips"
+            sleep "$wait_for"
+          fi
+
+          for i in $(seq 1 90); do
+            code=$(fetch next.json || true)
+            if [ "$code" = "200" ]; then
+              new=$(rot next.json)
+              if [ -n "$new" ] && [ "$new" != "$cur" ]; then
+                echo "rotation changed to $new after $((i * 10))s of polling"
+                publish next.json
+                exit 0
+              fi
+            fi
+            sleep 10
+          done
+          echo "rotation did not change within the polling window"
