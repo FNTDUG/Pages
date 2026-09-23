@@ -3168,7 +3168,8 @@ const INF_PROXY = {
 };
 
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
-const ROT_MIRROR = 'https://raw.githubusercontent.com/FNTDUG/Pages/rotations/rotations.json';
+const ROT_MIRROR = 'https://images.fntduserguide.com/rotations.json';
+const ROT_MIRROR_ALT = 'https://raw.githubusercontent.com/FNTDUG/Pages/rotations/rotations.json';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
 
 const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
@@ -3388,7 +3389,8 @@ export default {
       const lastKey = new Request('https://www.fntduserguide.com/_rotations-last');
       const stamp = Math.floor(Date.now() / 20000);
       const sources = [
-        [ROT_MIRROR + '?t=' + stamp, { cf: { cacheTtlByStatus: { '200-299': 20, '300-599': -1 } } }],
+        [ROT_MIRROR, { cf: { cacheTtlByStatus: { '200-299': 20, '300-599': -1 } } }],
+        [ROT_MIRROR_ALT + '?t=' + stamp, { cf: { cacheTtlByStatus: { '200-299': 20, '300-599': -1 } } }],
         [ROT_UPSTREAM, { headers: { 'referer': 'https://fntd2.com/', 'user-agent': ROT_UA }, cf: { cacheTtlByStatus: { '200-299': 30, '300-599': -1 } } }]
       ];
       let body = null, ra = 0;
