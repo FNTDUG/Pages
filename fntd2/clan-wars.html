@@ -163,7 +163,7 @@
 }
 #cw2 .cw-slot:hover { border-color: #ffd98a; }
 #cw2 .cw-slot.filled { border: none; border-radius: 12px; padding: 3px; }
-#cw2 .cw-slot .cw-path { bottom: 3px; right: 3px; width: 34px; height: 34px; }
+#cw2 .cw-slot .cw-path { bottom: 4px; right: 4px; width: calc(var(--cw-slot, 120px) * 0.42); height: calc(var(--cw-slot, 120px) * 0.42); }
 #cw2 .cw-slot .cw-slot-tag {
   position: absolute;
   left: 0;
@@ -1868,7 +1868,7 @@
   ];
 
   var SLOT_COST = { 'Witch of the Sea Scrapbaby': 2 };
-  var NEVER_SUGGEST = { 'nedd bear': 1 };
+  var NEVER_SUGGEST = { 'nedd bear': 1, 'plushtrap': 1 };
   var NEVER_STARTER = { 'lefty': 1 };
   var MAX_RESULTS = 42;
   var BOSS_FIRST = 'Old Man Consequences';
