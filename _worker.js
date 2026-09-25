@@ -2801,14 +2801,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
 
 
 const WIP_PAGES = {
-  '/fntd2/tierlists-1':         true,
-  '/fntd2/meta-teams':          true,
-  '/fntd2/story-index':         true,
-  '/fntd2/endless-index':       true,
-  '/fntd2/boss-raids-index':    true,
+  '/fntd2/tierlists-1':         false,
+  '/fntd2/meta-teams':          false,
+  '/fntd2/story-index':         false,
+  '/fntd2/endless-index':       false,
+  '/fntd2/boss-raids-index':    false,
   '/fntd2/event-story-endless': true,
   '/fntd2/unit-engine':         true,
-  '/news':                      false
+  '/news':                      true
 };
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
