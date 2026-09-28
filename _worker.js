@@ -1146,6 +1146,12 @@ var HERO_QUESTS=[
     'Beat 20 Springtrap Bosses',
     'Beat 25 Nights with Springtrap equipped',
     'Beat Game 7 Custom Night on max difficulty'
+  ]},
+  {unit:'Glitchtrap', present:'Glitchtrap Present', quests:[
+    'Deal 500m Dark or Electric damage in Game 8 Endless',
+    'Complete all Game 8 Nights on Nightmare Mode',
+    'Reach Wave 100 in Game 8 Endless',
+    'Find all Glitchtrap masks throughout the Game 8 Nights and Endless'
   ]}
 ];
 function infLoadHeroQuests(){
