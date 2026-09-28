@@ -938,6 +938,7 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
+  {name:'Flipside Fredbear',ing:[['500','souls'],['250','Spring'],['180k','Tokens'],['100','FlipSide Tree'],['20','tangle'],['5','Redbear']]},
   {name:'Ice Cream Mech Suit',ing:[['75','Ice Cream Cones'],['50','Spring'],['15','Ash'],['25','Television']]},
   {name:'Void Shaper Shadow Freddy',ing:[['1','Shadow Freddy'],['1','Shadow Hands'],['25','Agony'],['500','Souls']]},
   {name:'Ocular Nightmare BB',ing:[['1','Nightmare BB'],['1','Nightmare Balloons'],['250','Souls'],['100','Ash'],['50','Agony']]},
