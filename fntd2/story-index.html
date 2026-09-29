@@ -204,11 +204,11 @@ body.ch-modal #ug-hamburger{display:none!important}
 <script>
 (function(){
 
-var COIN_BASE  = {1:100, 2:160, 3:220, 4:270, 5:270, 6:270, 7:270};
-var CANDY_BASE = {1:6,   2:8,   3:8,   4:8,   5:8,   6:8,   7:8};
-var EXP_BASE   = {1:20,  2:23,  3:26,  4:26,  5:26,  6:26,  7:26};
+var COIN_BASE  = {1:100, 2:160, 3:220, 4:270, 5:270, 6:270, 7:270, 8:270};
+var CANDY_BASE = {1:6,   2:8,   3:8,   4:8,   5:8,   6:8,   7:8,   8:8};
+var EXP_BASE   = {1:20,  2:23,  3:26,  4:26,  5:26,  6:26,  7:26,  8:26};
 
-var EXP_CURVE  = {1:'A', 2:'A', 3:'B', 4:'B', 5:'B', 6:'B', 7:'B'};
+var EXP_CURVE  = {1:'A', 2:'A', 3:'B', 4:'B', 5:'B', 6:'B', 7:'B', 8:'B'};
 
 var TIERS = [{key:'easy',label:'Easy'},{key:'nightmare',label:'Nightmare'}];
 var MAX_DIFF = 20;
@@ -230,7 +230,14 @@ function rewardsFor(g,n,tierKey,d){
 
 var MAP_BASE = 'https://images.fntduserguide.com/';
 var MAPS_PER_GAME = 6;
-var NIGHT_MAPS = {};
+var NIGHT_MAPS = {
+  '8-1': MAP_BASE + 'game%208/8-1.png',
+  '8-2': MAP_BASE + 'game%208/8-2.png',
+  '8-3': MAP_BASE + 'game%208/8-3.png',
+  '8-4': MAP_BASE + 'game%208/8-4.png',
+  '8-5': MAP_BASE + 'game%208/8-5.png',
+  '8-6': MAP_BASE + 'game%208/8-6.png'
+};
 var POPUP_BG = {
   nights: 'https://images.fntduserguide.com/carbon-fiber-background.jpg'
 };
@@ -278,7 +285,7 @@ var ITEM = {}, itemsReady = false, onItems = [];
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .catch(function(){ return fetch(LIVE+u).then(function(r){ return r.json(); }).catch(function(){ return {}; }); });
   }
-  Promise.all([J('/inf-data/materials'),J('/inf-data/foods'),J('/inf-data/potions')]).then(function(res){
+  Promise.all([J('/inf-data/materials'),J('/inf-data/foods'),J('/inf-data/potions'),J('/inf-data/presents')]).then(function(res){
     res.forEach(function(obj){
       Object.keys(obj||{}).forEach(function(n){
         var k = n.toLowerCase();
@@ -333,7 +340,13 @@ var NIGHT_INFO = {
   '7-3':{notes:['One entrance and one exit'], cash:3000},
   '7-4':{notes:['One entrance and one exit'], cash:5000},
   '7-5':{notes:['One entrance and one exit'], cash:7000},
-  '7-6':{notes:['Two entrances and one exit'], cash:8000}
+  '7-6':{notes:['Two entrances and one exit'], cash:8000},
+  '8-1':{notes:['One entrance and one exit'], cash:2000},
+  '8-2':{notes:['One entrance and one exit'], cash:2500},
+  '8-3':{notes:['One entrance and one exit'], cash:3000},
+  '8-4':{notes:['Two entrances and one exit'], cash:4500},
+  '8-5':{notes:['One entrance and one exit'], cash:7500},
+  '8-6':{notes:['Two entrances and one exit'], cash:10000}
 };
 var RNG_BASE = {
   1: [{name:'Souls',min:4,max:6,chance:33},{name:'Battery',min:1,max:3,chance:50},
@@ -358,8 +371,21 @@ var RNG_BASE = {
   7: [{name:'Souls',min:8,max:10,chance:33},{name:'Battery',min:1,max:3,chance:50},
       {name:'Soda',min:2,max:4,chance:40},{name:'Spring',min:1,max:3,chance:30},
       {name:'Luck Potion 1',min:1,max:1,chance:1,nmChance:2},{name:'Golden Fazbear Trophy',min:1,max:3,chance:30},
+      {name:'Television',min:1,max:3,chance:30}],
+  8: [{name:'Souls',min:8,max:10,chance:33},{name:'Battery',min:1,max:3,chance:50},
+      {name:'Soda',min:2,max:4,chance:40},{name:'Spring',min:1,max:3,chance:30},
+      {name:'Luck Potion 1',min:1,max:1,chance:1,nmChance:2},{name:'Flipside Tree',min:1,max:3,chance:30},
       {name:'Television',min:1,max:3,chance:30}]
 };
+var RNG_BUNDLES = [
+  'Eternal Hellfire Bones Of The Past Nightmare Freddy Bundle',
+  'Motorist Purple Guy Present',
+  'Dreamer Michael Afton Bundle',
+  'Crewmate Lolbit Present'
+];
+var BUNDLE_CHANCE = {7:0.3, 8:0.3};
+var BUNDLE_CHANCE_DEFAULT = 0.1;
+var BUNDLE_MAX_DIFF_BONUS = 0.1;
 var RNG_SPECIAL = {
   1: {6:[{name:'Hazard Sign',min:1,max:1,chance:7,qtyScale:'tier'}]},
   2: {1:[{name:'Colonel Hat',min:1,max:1,chance:10,qtyScale:'tier'}],
@@ -386,6 +412,10 @@ function rngDropsFor(g,n,d){
   add(RNG_NIGHT[n]);
   if (n === 7) { add(sp[6]); add(RNG_NIGHT[6]); }
   if (n === 7 && d >= CHIP_MIN_DIFF) add(DIFF_DROPS);
+  var bc = BUNDLE_CHANCE[g] != null ? BUNDLE_CHANCE[g] : BUNDLE_CHANCE_DEFAULT;
+  add(RNG_BUNDLES.map(function(name){
+    return {name:name, min:1, max:1, chance:bc, qtyScale:'tier', maxDiffBonus:BUNDLE_MAX_DIFF_BONUS};
+  }));
   return out;
 }
 
@@ -428,7 +458,7 @@ var GAME_TEAM = {
 var NIGHT_TEAM = {
 };
 
-var GAMES = [1,2,3,4,5,6,7];
+var GAMES = [1,2,3,4,5,6,7,8];
 var NIGHTS = [1,2,3,4,5,6,7];
 
 function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
@@ -550,7 +580,8 @@ function rngTiles(list, tier, d){
   var k = (curN === 7) ? (40 + d) / 40 : 1;   
   list.forEach(function(e){
     var chance = (nm && e.nmChance != null) ? e.nmChance : e.chance;
-    chance = chance * k;
+    if (e.maxDiffBonus != null) chance = chance + ((curN === 7 && d >= MAX_DIFF) ? e.maxDiffBonus : 0);
+    else chance = chance * k;
     var amount = '';
     if (e.min != null){
       var sc = e.qtyScale || 'both';
@@ -771,9 +802,10 @@ function paintRng(){
   if (!host) return;
   host.innerHTML = '';
   var drops = rngDropsFor(curG, curN, curD);
-  var chips = curN === 7 && curD >= CHIP_MIN_DIFF;
+  var hasChip = !!CHIP_BY_GAME[curG];
+  var chips = hasChip && curN === 7 && curD >= CHIP_MIN_DIFF;
   var head = document.getElementById('rwRngHead');
-  if (head) head.textContent = (curN === 7 && !chips)
+  if (head) head.textContent = (hasChip && curN === 7 && !chips)
     ? 'RNG Rewards - Chips on Diff ' + CHIP_MIN_DIFF + '+'
     : 'RNG Rewards';
   if (drops.length) host.appendChild(rngTiles(drops, curTier, curD));
