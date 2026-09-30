@@ -790,11 +790,53 @@ function infToggleExp(row,body,arr){
   infEntryAd(body);body.style.maxHeight='2000px';row.style.marginBottom='8px';if(arr)arr.textContent='-';_infExp={row:row,body:body,arr:arr};
   var pb=row.closest('.inf-drop-body');if(pb)pb.style.maxHeight='none';
 }
-function infLightbox(src){
+var _lbNav=null;
+function infLightbox(src,start){
   if(!src)return;
+  var list=Array.isArray(src)?src:[{src:src}];
+  if(!list.length)return;
   var o=document.getElementById('inf-lightbox');
-  if(!o){o=document.createElement('div');o.id='inf-lightbox';o.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;cursor:zoom-out';o.addEventListener('click',function(){o.style.display='none';o.innerHTML='';});document.body.appendChild(o);}
-  o.innerHTML='';var im=document.createElement('img');im.src=src;im.style.cssText='max-width:92vw;max-height:92vh;border-radius:10px;box-shadow:0 0 40px rgba(0,0,0,.85)';o.appendChild(im);o.style.display='flex';
+  if(!o){
+    o=document.createElement('div');o.id='inf-lightbox';o.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out';
+    o.addEventListener('click',function(){o.style.display='none';o.innerHTML='';_lbNav=null;});
+    var tx=null;
+    o.addEventListener('touchstart',function(e){tx=e.touches.length===1?e.touches[0].clientX:null;},{passive:true});
+    o.addEventListener('touchend',function(e){if(tx===null||!_lbNav)return;var dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>50){_lbNav(dx<0?1:-1);e.preventDefault();}});
+    document.addEventListener('keydown',function(e){
+      if(o.style.display!=='flex')return;
+      if(e.key==='Escape'){o.click();}
+      else if(_lbNav&&e.key==='ArrowRight'){_lbNav(1);e.preventDefault();}
+      else if(_lbNav&&e.key==='ArrowLeft'){_lbNav(-1);e.preventDefault();}
+    });
+    document.body.appendChild(o);
+  }
+  var i=Math.max(0,Math.min(list.length-1,start||0));
+  var multi=list.length>1;
+  function arrow(dir){
+    var b=document.createElement('button');b.type='button';b.textContent=dir<0?'‹':'›';b.setAttribute('aria-label',dir<0?'Previous':'Next');
+    b.style.cssText='position:fixed;top:50%;'+(dir<0?'left':'right')+':12px;transform:translateY(-50%);width:44px;height:64px;border:1px solid rgba(255,164,91,.45);border-radius:10px;background:rgba(20,18,34,.8);color:#ffa45b;font-size:34px;line-height:1;cursor:pointer;z-index:1';
+    b.addEventListener('click',function(e){e.stopPropagation();go(dir);});
+    return b;
+  }
+  function render(){
+    var it=list[i];
+    o.innerHTML='';
+    if(it.title||multi){
+      var cap=document.createElement('div');cap.style.cssText='font-family:Audiowide,sans-serif;color:#ffa45b;font-size:18px;text-transform:uppercase;margin-bottom:10px;text-align:center;padding:0 60px';
+      cap.textContent=(it.title||'')+(multi?'  ('+(i+1)+' / '+list.length+')':'');
+      o.appendChild(cap);
+    }
+    var im=document.createElement('img');im.src=it.src;im.alt=it.title||'';im.style.cssText='max-width:'+(multi?'84vw':'92vw')+';max-height:'+(it.title||multi?'82vh':'92vh')+';border-radius:10px;box-shadow:0 0 40px rgba(0,0,0,.85)';
+    o.appendChild(im);
+    if(multi){
+      o.appendChild(arrow(-1));o.appendChild(arrow(1));
+      var nx=new Image();nx.src=list[(i+1)%list.length].src;
+    }
+  }
+  function go(d){i=(i+d+list.length)%list.length;render();}
+  _lbNav=multi?go:null;
+  render();
+  o.style.display='flex';
 }
 var _presentsLoaded=false;
 var PRESENTS_CFG={
@@ -1153,7 +1195,15 @@ var HERO_QUESTS=[
     'Deal 500m Dark or Electric damage in Game 8 Endless',
     'Complete all Game 8 Nights on Nightmare Mode',
     'Reach Wave 100 in Game 8 Endless',
-    'Find all Glitchtrap masks throughout the Game 8 Nights and Endless'
+    {text:'Find all Glitchtrap masks throughout the Game 8 Nights and Endless', link:'Click here to see all locations', gallery:[
+      {title:'Game 8-1', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-1.png'},
+      {title:'Game 8-2', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-2.png'},
+      {title:'Game 8-3', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-3.png'},
+      {title:'Game 8-4', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-4.png'},
+      {title:'Game 8-5', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-5.png'},
+      {title:'Game 8-6', src:'https://images.fntduserguide.com/glitchtrapmasks/game8-6.png'},
+      {title:'Endless 8', src:'https://images.fntduserguide.com/glitchtrapmasks/endless8.png'}
+    ]}
   ]}
 ];
 function infLoadHeroQuests(){
@@ -1186,7 +1236,17 @@ function buildHeroQuests(pEl,uMap,pMap){
     var badges=document.createElement('div');badges.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0';badges.appendChild(ub);badges.appendChild(pb);
     row.appendChild(badges);row.appendChild(h4);card.appendChild(row);
     var qh=document.createElement('div');qh.style.cssText='color:#ffa45b;font-weight:600;font-size:1.01em;font-family:Audiowide,sans-serif;margin-bottom:2px;text-transform:uppercase';qh.textContent=h.header||'Quests';card.appendChild(qh);
-    h.quests.forEach(function(q){var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';qd.textContent='● '+q;card.appendChild(qd);});
+    h.quests.forEach(function(q){
+      var qd=document.createElement('div');qd.style.cssText='font-size:13px;color:#ccc;line-height:1.7';
+      if(typeof q==='string'){qd.textContent='● '+q;}
+      else{
+        qd.textContent='● '+q.text+' — ';
+        var a=document.createElement('a');a.href='#';a.textContent=q.link;a.style.cssText='color:#ffa45b;text-decoration:underline;cursor:zoom-in';
+        a.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();infLightbox(q.gallery,0);});
+        qd.appendChild(a);
+      }
+      card.appendChild(qd);
+    });
     buildHeroPaths(card,h.unit,u.paths);
     pEl.appendChild(card);
   });
