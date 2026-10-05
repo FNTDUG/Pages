@@ -3707,8 +3707,6 @@ const NOTIFY_HTML = `
 .ntf-panel.ok .ntf-stripe{background-image:repeating-linear-gradient(45deg,#6be38a 0 14.142px,#103a1c 14.142px 28.284px)}
 .ntf-panel.bad .ntf-stripe{background-image:repeating-linear-gradient(45deg,#ff6b6b 0 14.142px,#3a1010 14.142px 28.284px)}
 @keyframes ntfSlide{from{background-position:0 0}to{background-position:40px 0}}
-.ntf-close{position:absolute;top:14px;right:12px;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);font-size:15px;line-height:1;cursor:pointer;transition:background .13s,color .13s,border-color .13s}
-.ntf-close:hover{background:rgba(255,164,91,.12);color:#ffa45b;border-color:rgba(255,164,91,.4)}
 .ntf-body{padding:26px 26px 22px;text-align:center}
 .ntf-icon{display:block;width:44px;height:48px;margin:0 auto 14px;fill:#ffa45b;filter:drop-shadow(0 0 10px rgba(255,164,91,.45));animation:ntfRing 2.6s ease-in-out infinite;transform-origin:50% 8%}
 .ntf-panel.ok .ntf-icon{fill:#6be38a;filter:drop-shadow(0 0 10px rgba(107,227,138,.45))}
@@ -3746,7 +3744,7 @@ const NOTIFY_HTML = `
 .ntf-btn.danger{color:#ff8a8a;border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
 .ntf-btn.danger:hover{border-color:#ff6b6b;background:rgba(255,107,107,.18)}
 .ntf-btn.saved{color:#6be38a;border-color:rgba(107,227,138,.6);background:rgba(107,227,138,.1)}
-.ntf-btn:focus-visible,.ntf-close:focus-visible,.ntf-bell:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.ntf-btn:focus-visible,.ntf-bell:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
 .ntf-veil .ntf-fine{font-size:11.5px;color:rgba(255,255,255,.4);padding:0 26px 20px;text-align:center;margin-top:-8px}
 .ntf-bell{display:flex;align-items:center;justify-content:center;position:fixed;top:124px;right:12px;z-index:1047;width:32px;height:32px;padding:0;margin:0;border-radius:50%;cursor:pointer;color:#ff9090;border:1px solid rgba(255,120,120,.55);background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95));box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-sizing:border-box}
 .ntf-bell svg{width:11px;height:12px;display:block;fill:currentColor}
@@ -3769,7 +3767,6 @@ const NOTIFY_HTML = `
   .ntf-veil .ntf-msg{font-size:13.5px}
   .ntf-veil .ntf-actions{padding:12px 20px 18px}
   .ntf-veil .ntf-btn{flex:1}
-  .ntf-veil .ntf-close{top:10px;right:10px}
 }
 @keyframes ntfCorner{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.ntf-stripe,.ntf-icon,.ntf-topics.shake{animation:none}.ntf-panel,.ntf-veil .ntf-panel{animation:none}}
@@ -3792,7 +3789,6 @@ const NOTIFY_HTML = `
 <div class="ntf-veil" id="ntfVeil" data-auto="1" role="dialog" aria-modal="true" aria-labelledby="ntfKicker" aria-describedby="ntfMsg" hidden>
   <div class="ntf-panel" id="ntfPanel">
     <div class="ntf-stripe" aria-hidden="true"></div>
-    <button class="ntf-close" id="ntfClose" type="button" aria-label="Close">&#x2715;</button>
     <div id="ntfContent"></div>
   </div>
 </div>
@@ -4171,7 +4167,6 @@ const NOTIFY_HTML = `
     }
   });
 
-  document.getElementById('ntfClose').addEventListener('click', function () { if (!busyBtn) close(); });
   veil.addEventListener('click', function (e) { if (e.target === veil && !busyBtn) close(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !veil.hidden && !busyBtn) close(); });
   if (desktop.addEventListener) desktop.addEventListener('change', lockScroll);
