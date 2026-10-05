@@ -3814,6 +3814,7 @@ const NOTIFY_HTML = `
 
   var ua = navigator.userAgent || '';
   var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/i.test(ua);
   var standalone = navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
   var canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && window.isSecureContext === true;
   var needsInstall = !canPush && isIOS && !standalone;
@@ -3845,6 +3846,28 @@ const NOTIFY_HTML = `
   var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
   var SHARE = '<svg class="ntf-share" viewBox="0 0 14 16" aria-hidden="true"><path d="M7 1v9M3.5 4.5 7 1l3.5 3.5M2 7.5v7h10v-7" fill="none" stroke="#ffa45b" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   var ERR = '<p class="ntf-err" id="ntfErr" role="alert" hidden></p>';
+  var UNBLOCK = isIOS
+    ? '<p class="ntf-msg" id="ntfMsg">Notifications were set to <b>Don&#39;t Allow</b>, so the site can&#39;t ask again. You can turn them back on:</p>' +
+      '<ol class="ntf-steps">' +
+        '<li>Open the <b>Settings</b> app</li>' +
+        '<li>Tap <b>Notifications</b>, then <b>FNTD Guide</b></li>' +
+        '<li>Turn on <b>Allow Notifications</b>, then come back and tap the bell</li>' +
+      '</ol>'
+    : isAndroid && standalone
+    ? '<p class="ntf-msg" id="ntfMsg">Notifications are blocked for this app, so the site can&#39;t ask again. You can turn them back on:</p>' +
+      '<ol class="ntf-steps">' +
+        '<li>Press and hold the <b>FNTD Guide</b> icon, then tap <b>App info</b></li>' +
+        '<li>Tap <b>Notifications</b> and turn them on</li>' +
+        '<li>Come back and tap the bell</li>' +
+      '</ol>'
+    : isAndroid
+    ? '<p class="ntf-msg" id="ntfMsg">Notifications are blocked for this site, so it can&#39;t ask again. You can turn them back on:</p>' +
+      '<ol class="ntf-steps">' +
+        '<li>Tap the icon to the left of the web address</li>' +
+        '<li>Tap <b>Permissions</b> or <b>Notifications</b> and set it to <b>Allow</b></li>' +
+        '<li>Tap the bell again</li>' +
+      '</ol>'
+    : '<p class="ntf-msg" id="ntfMsg">Your browser is blocking notifications from this site. Click the icon to the left of the web address, set <b>Notifications</b> to <b>Allow</b>, then tap the bell again.</p>';
 
   var SCREENS = {
     ask: {
@@ -3925,7 +3948,7 @@ const NOTIFY_HTML = `
       cls: 'bad',
       html: '<div class="ntf-body">' + BELL +
         '<div class="ntf-kicker" id="ntfKicker">NOTIFICATIONS BLOCKED</div>' +
-        '<p class="ntf-msg" id="ntfMsg">Your browser is blocking notifications from this site. Click the icon to the left of the web address, set <b>Notifications</b> to <b>Allow</b>, then tap the bell again.</p>' +
+        UNBLOCK +
         '</div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn" type="button" data-go="close">Close</button>' +
