@@ -3807,7 +3807,7 @@ const NOTIFY_HTML = `
   };
   var KEY = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
   var GAMES = [
-    { id: 'fntd2', name: 'FNTD 2' },
+    { id: 'fntd2', name: 'FNTD2' },
     { id: 'bbn', name: 'Bite By Night' }
   ];
   var FAIL = 'Something went wrong. Please try again.';
@@ -4347,7 +4347,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
         <label class="f" for="title">Title <small>optional</small></label>
         <input type="text" id="title" maxlength="60" placeholder="FNTD User Guide">
         <label class="f" for="msg">Message</label>
-        <textarea id="msg" maxlength="240" required placeholder="New FNTD 2 metas are up!"></textarea>
+        <textarea id="msg" maxlength="240" required placeholder="New FNTD2 metas are up!"></textarea>
         <p class="count"><span id="msgCount">0</span>/240</p>
         <label class="f" for="link">Opens page <small>when tapped</small></label>
         <input type="text" id="link" list="pages" placeholder="/" value="/">
@@ -4371,13 +4371,13 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
         </datalist>
         <label class="f">Send to people following</label>
         <div class="games" id="games">
-          <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD 2 <em id="cFntd2"></em></span></label>
+          <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD2 <em id="cFntd2"></em></span></label>
           <label class="game"><input type="checkbox" value="bbn"><span>Bite By Night <em id="cBbn"></em></span></label>
         </div>
         <p class="plabel">Preview</p>
         <div class="preview" aria-hidden="true">
           <img src="/favicon-192.png" alt="">
-          <div><b id="pvTitle">FNTD User Guide</b><p id="pvMsg">New FNTD 2 metas are up!</p><small>fntduserguide.com</small></div>
+          <div><b id="pvTitle">FNTD User Guide</b><p id="pvMsg">New FNTD2 metas are up!</p><small>fntduserguide.com</small></div>
         </div>
         <div class="actions" id="mainActions">
           <button class="btn" type="submit" id="sendBtn">Send</button>
@@ -4447,7 +4447,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   function refreshPreview() {
     $('pvTitle').textContent = $('title').value.trim() || 'FNTD User Guide';
-    $('pvMsg').textContent = $('msg').value.trim() || 'New FNTD 2 metas are up!';
+    $('pvMsg').textContent = $('msg').value.trim() || 'New FNTD2 metas are up!';
     $('msgCount').textContent = $('msg').value.length;
   }
 
