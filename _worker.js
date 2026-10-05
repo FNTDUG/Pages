@@ -980,11 +980,11 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
-  {name:'Toy Foxy',ing:[['10','Yellow Crying Soul'],['3','Purple Crying Soul'],['15','Blue Crying Soul'],['20','White Crying Soul'],['1','bubble Bottle']]},
-  {name:'Spakry',ing:[['10','Red Crying Soul'],['10','Blue Crying Soul'],['5','Yellow Crying Soul'],['20','White Crying Soul'],['1','Dog House']]},
-  {name:'Fredtrap',ing:[['10','Red Crying Soul'],['10','Blue Crying Soul'],['1','Rainbow Crying Soul'],['30','White Crying Soul'],['1','Bear Trap']]},
-  {name:'Nightmare Mangle',ing:[['20','Purple Crying Soul'],['8','Red Crying Soul'],['8','Blue Crying Soul'],['1','Rainbow Crying Soul'],['50','White Crying Soul'],['1','Torn Plushie']]},
-  {name:'Yenndo',ing:[['10','Yellow Crying Soul'],['10','Purple Crying Soul'],['15','Green Crying Soul'],['1','Rainbow Crying Soul'],['50','White Crying Soul'],['1','Ghost Capsule']]},
+  {name:'Bubbly Toy Foxy',ing:[['1','Toy Foxy'],['10','Yellow Crying Soul'],['3','Purple Crying Soul'],['15','Blue Crying Soul'],['20','White Crying Soul'],['1','bubble Bottle']]},
+  {name:'Blue Baron Sparky',ing:[['1','Sparky'],['10','Red Crying Soul'],['10','Blue Crying Soul'],['5','Yellow Crying Soul'],['20','White Crying Soul'],['1','Dog House']]},
+  {name:'Scrapbear',ing:[['1','Fredtrap'],['10','Red Crying Soul'],['10','Blue Crying Soul'],['1','Rainbow Crying Soul'],['30','White Crying Soul'],['1','Bear Trap']]},
+  {name:'Executioner Nightmare Mangle',ing:[['1','Nightmare Mangle'],['20','Purple Crying Soul'],['8','Red Crying Soul'],['8','Blue Crying Soul'],['1','Rainbow Crying Soul'],['50','White Crying Soul'],['1','Torn Plushie']]},
+  {name:'Trapper Yenndo',ing:[['1','Yenndo'],['10','Yellow Crying Soul'],['10','Purple Crying Soul'],['15','Green Crying Soul'],['1','Rainbow Crying Soul'],['50','White Crying Soul'],['1','Ghost Capsule']]},
   {name:'Ringmaster Funtime Freddy',ing:[['3','Stack of Cards']]},
   {name:'Flipside Fredbear',ing:[['500','souls'],['250','Spring'],['180k','Tokens'],['100','FlipSide Tree'],['20','tangle'],['5','Redbear']]},
   {name:'Ice Cream Mech Suit',ing:[['75','Ice Cream Cones'],['50','Spring'],['15','Ash'],['25','Television']]},
