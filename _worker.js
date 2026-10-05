@@ -3801,9 +3801,7 @@ const NOTIFY_HTML = `
 
   var POPUP = {
     delay: 5,
-    cooldownHours: 1,
-    everyPages: 0,
-    maxShows: 0
+    snoozeHours: 1
   };
   var KEY = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
   var GAMES = [
@@ -3895,7 +3893,7 @@ const NOTIFY_HTML = `
           '<li>Open the site from your Home Screen and tap the bell</li>' +
         '</ol></div>' +
         '<div class="ntf-actions">' +
-          '<button class="ntf-btn" type="button" data-go="close">Got it</button>' +
+          '<button class="ntf-btn" type="button" data-go="snooze">Got it</button>' +
         '</div>'
     },
     ok: {
@@ -3929,7 +3927,7 @@ const NOTIFY_HTML = `
         '<p class="ntf-msg" id="ntfMsg">You won&#39;t be notified when <b>Metas</b>, <b>TierLists</b> or <b>Patch Notes</b> are updated. You can always turn them on later with the bell.</p>' +
         '</div>' +
         '<div class="ntf-actions">' +
-          '<button class="ntf-btn" type="button" data-go="close">Yes, I&#39;m sure</button>' +
+          '<button class="ntf-btn" type="button" data-go="snooze">Yes, I&#39;m sure</button>' +
           '<button class="ntf-btn secondary" type="button" data-go="back" data-focus>Go back</button>' +
         '</div>'
     },
@@ -4174,6 +4172,9 @@ const NOTIFY_HTML = `
       for (var j = 0; j < again.length; j++) if (again[j].value in back.ticks) again[j].checked = back.ticks[again[j].value];
     } else if (go === 'close') {
       close();
+    } else if (go === 'snooze') {
+      store('ntf:snooze', Date.now());
+      close();
     } else if (go === 'on') {
       turnOn(b);
     } else if (go === 'save') {
@@ -4233,28 +4234,49 @@ const NOTIFY_HTML = `
     return false;
   }
 
+  var shownAt = 0;
+  var pending = false;
+
+  function due() {
+    if (!auto || subscribed || pending || !veil.hidden) return false;
+    if (canPush && Notification.permission === 'denied') return false;
+    var now = Date.now();
+    var hour = POPUP.snoozeHours * 3600000;
+    var snooze = parseInt(load('ntf:snooze'), 10) || 0;
+    if (snooze && now - snooze < hour) return false;
+    if (shownAt && now - shownAt < hour) return false;
+    return true;
+  }
+
   function maybeAuto() {
-    if (!auto || subscribed) return;
-    if (canPush && Notification.permission === 'denied') return;
-    var pages = (parseInt(load('ntf:pages'), 10) || 0) + 1;
-    store('ntf:pages', pages);
-    var last = parseInt(load('ntf:last'), 10) || 0;
-    var shows = parseInt(load('ntf:shows'), 10) || 0;
-    if (POPUP.maxShows && shows >= POPUP.maxShows) return;
-    var due = !last || Date.now() - last >= POPUP.cooldownHours * 3600000 || (POPUP.everyPages && pages >= POPUP.everyPages);
-    if (!due) return;
+    if (!due()) return;
+    pending = true;
     setTimeout(function wait() {
-      if (!veil.hidden || subscribed) return;
+      if (!veil.hidden || subscribed) {
+        pending = false;
+        return;
+      }
       if (blocked()) {
         setTimeout(wait, 700);
         return;
       }
-      store('ntf:last', Date.now());
-      store('ntf:pages', 0);
-      store('ntf:shows', shows + 1);
+      pending = false;
+      if (!due()) return;
+      shownAt = Date.now();
       open('ask', !desktop.matches);
     }, POPUP.delay * 1000);
   }
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) maybeAuto();
+  });
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      shownAt = 0;
+      maybeAuto();
+    }
+  });
+  setInterval(maybeAuto, 60000);
 
   bell.hidden = false;
   getSub().then(function (sub) {
