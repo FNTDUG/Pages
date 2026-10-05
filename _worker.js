@@ -3434,9 +3434,1141 @@ async function ghHealth() {
   return { ok: true };
 }
 
+const PUSH_VAPID_PUBLIC = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
+const PUSH_VAPID_SUBJECT = 'https://www.fntduserguide.com';
+const PUSH_GAMES = ['fntd2', 'bbn'];
+const PUSH_HOSTS = ['fcm.googleapis.com', 'push.services.mozilla.com', 'push.apple.com', 'notify.windows.com'];
+const PUSH_BATCH = 20;
+const pushEnc = new TextEncoder();
+
+function pushB64uToBytes(s) {
+  s = String(s).replace(/=+$/, '').replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function pushBytesToB64u(b) {
+  let s = '';
+  for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function pushConcat(...parts) {
+  let n = 0;
+  for (const p of parts) n += p.length;
+  const out = new Uint8Array(n);
+  let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+
+async function pushSha256(text) {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', pushEnc.encode(text)));
+}
+
+async function pushKeyFor(endpoint) {
+  const h = await pushSha256(endpoint);
+  let hex = '';
+  for (let i = 0; i < h.length; i++) hex += h[i].toString(16).padStart(2, '0');
+  return 's:' + hex;
+}
+
+function pushJson(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status: status || 200,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' }
+  });
+}
+
+async function pushReadBody(request) {
+  const len = Number(request.headers.get('content-length') || 0);
+  if (len > 4096) return null;
+  const text = await request.text().catch(() => '');
+  if (!text || text.length > 4096) return null;
+  try { return JSON.parse(text); } catch (e) { return null; }
+}
+
+function pushCleanSub(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  let u;
+  try { u = new URL(String(raw.endpoint || '')); } catch (e) { return null; }
+  if (u.protocol !== 'https:') return null;
+  if (!PUSH_HOSTS.some(h => u.hostname === h || u.hostname.endsWith('.' + h))) return null;
+  const keys = raw.keys || {};
+  const p = String(keys.p256dh || '').replace(/=+$/, '');
+  const a = String(keys.auth || '').replace(/=+$/, '');
+  if (!/^[A-Za-z0-9_-]+$/.test(p) || !/^[A-Za-z0-9_-]+$/.test(a)) return null;
+  let pb, ab;
+  try { pb = pushB64uToBytes(p); ab = pushB64uToBytes(a); } catch (e) { return null; }
+  if (pb.length !== 65 || pb[0] !== 4 || ab.length !== 16) return null;
+  return { endpoint: u.href, p256dh: p, auth: a };
+}
+
+function pushCleanGames(g) {
+  if (!Array.isArray(g)) return null;
+  const out = PUSH_GAMES.filter(x => g.indexOf(x) !== -1);
+  return out.length ? out : null;
+}
+
+async function pushSubscribe(request, env, url) {
+  if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
+  if (!env.PUSH_SUBS) return pushJson({ ok: false }, 503);
+  const body = await pushReadBody(request);
+  const sub = pushCleanSub(body && body.sub);
+  if (!sub) return pushJson({ ok: false }, 400);
+  let games = pushCleanGames(body.games);
+  const replaces = typeof body.replaces === 'string' && body.replaces !== sub.endpoint ? body.replaces : '';
+  try {
+    if (!games && replaces) {
+      const old = await env.PUSH_SUBS.getWithMetadata(await pushKeyFor(replaces));
+      games = old && old.metadata ? pushCleanGames(String(old.metadata.g || '').split(',')) : null;
+    }
+    if (!games) return pushJson({ ok: false }, 400);
+    const meta = { e: sub.endpoint, p: sub.p256dh, a: sub.auth, g: games.join(',') };
+    if (JSON.stringify(meta).length > 1000) return pushJson({ ok: false }, 400);
+    await env.PUSH_SUBS.put(await pushKeyFor(sub.endpoint), '', { metadata: meta });
+    if (replaces) await env.PUSH_SUBS.delete(await pushKeyFor(replaces));
+  } catch (e) {
+    return pushJson({ ok: false }, 503);
+  }
+  return pushJson({ ok: true });
+}
+
+async function pushUnsubscribe(request, env, url) {
+  if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
+  if (!env.PUSH_SUBS) return pushJson({ ok: false }, 503);
+  const body = await pushReadBody(request);
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length > 1000) return pushJson({ ok: false }, 400);
+  try { await env.PUSH_SUBS.delete(await pushKeyFor(body.endpoint)); } catch (e) { return pushJson({ ok: false }, 503); }
+  return pushJson({ ok: true });
+}
+
+async function pushGames(request, env, url) {
+  if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
+  if (!env.PUSH_SUBS) return pushJson({ ok: false }, 503);
+  const body = await pushReadBody(request);
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length > 1000) return pushJson({ ok: false }, 400);
+  let rec;
+  try { rec = await env.PUSH_SUBS.getWithMetadata(await pushKeyFor(body.endpoint)); } catch (e) { return pushJson({ ok: false }, 503); }
+  if (!rec || !rec.metadata) return pushJson({ ok: false }, 404);
+  return pushJson({ ok: true, games: String(rec.metadata.g || '').split(',').filter(Boolean) });
+}
+
+async function pushPasswordOk(request, env) {
+  const want = env.PUSH_SEND_PASSWORD || '';
+  const got = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!want || !got) return false;
+  const a = await pushSha256(got);
+  const b = await pushSha256(want);
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
+}
+
+async function pushVapidJwt(env, aud) {
+  const pub = pushB64uToBytes(PUSH_VAPID_PUBLIC);
+  const key = await crypto.subtle.importKey(
+    'jwk',
+    { kty: 'EC', crv: 'P-256', x: pushBytesToB64u(pub.slice(1, 33)), y: pushBytesToB64u(pub.slice(33, 65)), d: env.PUSH_VAPID_PRIVATE, ext: true },
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    false,
+    ['sign']
+  );
+  const head = pushBytesToB64u(pushEnc.encode(JSON.stringify({ typ: 'JWT', alg: 'ES256' })));
+  const claims = pushBytesToB64u(pushEnc.encode(JSON.stringify({ aud, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: PUSH_VAPID_SUBJECT })));
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, pushEnc.encode(head + '.' + claims));
+  return head + '.' + claims + '.' + pushBytesToB64u(new Uint8Array(sig));
+}
+
+async function pushHkdf(salt, ikm, info, len) {
+  const k = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt, info }, k, len * 8));
+}
+
+async function pushEncrypt(p256dh, auth, plaintext) {
+  const uaPublic = pushB64uToBytes(p256dh);
+  const authSecret = pushB64uToBytes(auth);
+  const asKeys = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits']);
+  const asPublic = new Uint8Array(await crypto.subtle.exportKey('raw', asKeys.publicKey));
+  const uaKey = await crypto.subtle.importKey('raw', uaPublic, { name: 'ECDH', namedCurve: 'P-256' }, false, []);
+  const shared = new Uint8Array(await crypto.subtle.deriveBits({ name: 'ECDH', public: uaKey }, asKeys.privateKey, 256));
+  const ikm = await pushHkdf(authSecret, shared, pushConcat(pushEnc.encode('WebPush: info\0'), uaPublic, asPublic), 32);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const cek = await pushHkdf(salt, ikm, pushEnc.encode('Content-Encoding: aes128gcm\0'), 16);
+  const nonce = await pushHkdf(salt, ikm, pushEnc.encode('Content-Encoding: nonce\0'), 12);
+  const aesKey = await crypto.subtle.importKey('raw', cek, 'AES-GCM', false, ['encrypt']);
+  const cipher = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, aesKey, pushConcat(plaintext, new Uint8Array([2]))));
+  const head = new Uint8Array(86);
+  head.set(salt, 0);
+  new DataView(head.buffer).setUint32(16, 4096);
+  head[20] = 65;
+  head.set(asPublic, 21);
+  return pushConcat(head, cipher);
+}
+
+async function pushSendOne(env, meta, payload, jwts) {
+  const aud = new URL(meta.e).origin;
+  if (!jwts[aud]) jwts[aud] = pushVapidJwt(env, aud);
+  const jwt = await jwts[aud];
+  const body = await pushEncrypt(meta.p, meta.a, payload);
+  return fetch(meta.e, {
+    method: 'POST',
+    headers: {
+      'TTL': '86400',
+      'Urgency': 'normal',
+      'Content-Encoding': 'aes128gcm',
+      'Content-Type': 'application/octet-stream',
+      'Authorization': 'vapid t=' + jwt + ', k=' + PUSH_VAPID_PUBLIC
+    },
+    body
+  });
+}
+
+function pushCleanLink(v) {
+  let s = String(v || '/').trim();
+  s = s.replace(/^https?:\/\/(www\.)?fntduserguide\.com/i, '');
+  if (s === '') s = '/';
+  if (s.charAt(0) !== '/' || s.charAt(1) === '/' || s.charAt(1) === '\\' || s.length > 200) return null;
+  return s;
+}
+
+async function pushSend(request, env) {
+  if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (!env.PUSH_SUBS || !env.PUSH_VAPID_PRIVATE || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (!(await pushPasswordOk(request, env))) {
+    await new Promise(r => setTimeout(r, 1500));
+    return pushJson({ ok: false, error: 'password' }, 401);
+  }
+  const body = await pushReadBody(request);
+  if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
+
+  if (body.mode === 'count') {
+    const counts = { fntd2: 0, bbn: 0, total: 0 };
+    let cursor;
+    for (let page = 0; page < 20; page++) {
+      const list = await env.PUSH_SUBS.list({ prefix: 's:', cursor });
+      for (const k of list.keys) {
+        const g = String((k.metadata && k.metadata.g) || '').split(',');
+        counts.total++;
+        if (g.indexOf('fntd2') !== -1) counts.fntd2++;
+        if (g.indexOf('bbn') !== -1) counts.bbn++;
+      }
+      if (list.list_complete) break;
+      cursor = list.cursor;
+    }
+    return pushJson({ ok: true, counts });
+  }
+
+  const games = pushCleanGames(body.games);
+  const title = String(body.title || '').trim() || 'FNTD User Guide';
+  const text = String(body.body || '').trim();
+  const link = pushCleanLink(body.url);
+  const tag = String(body.tag || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+  if (!games || !text || !link || title.length > 60 || text.length > 240) return pushJson({ ok: false, error: 'bad-request' }, 400);
+
+  const payload = pushEnc.encode(JSON.stringify({ title, body: text, url: link, tag }));
+  const list = await env.PUSH_SUBS.list({ prefix: 's:', limit: PUSH_BATCH, cursor: body.cursor || undefined });
+  const jwts = {};
+  const out = { sent: 0, removed: 0, failed: 0 };
+  await Promise.all(list.keys.map(async k => {
+    const m = k.metadata;
+    if (!m || !m.e) return;
+    const g = String(m.g || '').split(',');
+    if (!games.some(x => g.indexOf(x) !== -1)) return;
+    try {
+      const res = await pushSendOne(env, m, payload, jwts);
+      if (res.status === 404 || res.status === 410) {
+        await env.PUSH_SUBS.delete(k.name);
+        out.removed++;
+      } else if (res.ok) {
+        out.sent++;
+      } else {
+        out.failed++;
+      }
+    } catch (e) {
+      out.failed++;
+    }
+  }));
+  return pushJson({ ok: true, sent: out.sent, removed: out.removed, failed: out.failed, cursor: list.list_complete ? null : list.cursor });
+}
+
+const NOTIFY_HTML = `
+<style>
+.ntf-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);box-sizing:border-box}
+.ntf-veil[hidden],.ntf-bell[hidden]{display:none}
+.ntf-veil *,.ntf-veil *::before,.ntf-veil *::after{box-sizing:border-box}
+.ntf-veil p,.ntf-veil ol,.ntf-veil li{margin:0;padding:0}
+.ntf-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:ntfIn .22s ease-out;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;color:#fff;text-align:center;line-height:normal}
+@keyframes ntfIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.ntf-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:ntfSlide 1.1s linear infinite}
+.ntf-panel.ok .ntf-stripe{background-image:repeating-linear-gradient(45deg,#6be38a 0 14.142px,#103a1c 14.142px 28.284px)}
+.ntf-panel.bad .ntf-stripe{background-image:repeating-linear-gradient(45deg,#ff6b6b 0 14.142px,#3a1010 14.142px 28.284px)}
+@keyframes ntfSlide{from{background-position:0 0}to{background-position:40px 0}}
+.ntf-close{position:absolute;top:14px;right:12px;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);font-size:15px;line-height:1;cursor:pointer;transition:background .13s,color .13s,border-color .13s}
+.ntf-close:hover{background:rgba(255,164,91,.12);color:#ffa45b;border-color:rgba(255,164,91,.4)}
+.ntf-body{padding:26px 26px 22px;text-align:center}
+.ntf-icon{display:block;width:44px;height:48px;margin:0 auto 14px;fill:#ffa45b;filter:drop-shadow(0 0 10px rgba(255,164,91,.45));animation:ntfRing 2.6s ease-in-out infinite;transform-origin:50% 8%}
+.ntf-panel.ok .ntf-icon{fill:#6be38a;filter:drop-shadow(0 0 10px rgba(107,227,138,.45))}
+.ntf-panel.bad .ntf-icon{fill:#ff6b6b;filter:drop-shadow(0 0 10px rgba(255,107,107,.4))}
+@keyframes ntfRing{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-12deg)}86%{transform:rotate(10deg)}90%{transform:rotate(-7deg)}94%{transform:rotate(4deg)}}
+.ntf-panel.ok .ntf-icon,.ntf-panel.bad .ntf-icon,.ntf-panel.ios .ntf-icon,.ntf-panel.sure .ntf-icon{animation:none}
+.ntf-kicker{font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-shadow:0 0 14px rgba(255,164,91,.35);margin-bottom:14px}
+.ntf-panel.ok .ntf-kicker{color:#6be38a;text-shadow:0 0 14px rgba(107,227,138,.35)}
+.ntf-panel.bad .ntf-kicker{color:#ff6b6b;text-shadow:0 0 14px rgba(255,107,107,.35)}
+.ntf-veil .ntf-msg{font-size:14.5px;line-height:1.75;color:#e6e2ef;max-width:40ch;margin:0 auto}
+.ntf-msg b{color:#fff}
+.ntf-veil .ntf-steps{list-style:none;counter-reset:s;max-width:34ch;margin:14px auto 0;text-align:left}
+.ntf-veil .ntf-steps li{counter-increment:s;position:relative;padding-left:30px;font-size:14px;line-height:1.6;color:#e6e2ef;margin-bottom:8px}
+.ntf-steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;background:rgba(255,164,91,.15);border:1px solid rgba(255,164,91,.5);color:#ffa45b;font-family:'Press Start 2P',monospace;font-size:8px;line-height:19px;text-align:center}
+.ntf-share{display:inline-block;width:14px;height:16px;vertical-align:-2px;margin:0 2px}
+.ntf-topics{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.ntf-topics.shake{animation:ntfShake .35s ease-in-out}
+@keyframes ntfShake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.ntf-topic{position:relative;cursor:pointer}
+.ntf-topic input{position:absolute;opacity:0;pointer-events:none}
+.ntf-topic span{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-family:'Audiowide',sans-serif;font-size:11px;letter-spacing:.4px;transition:background .13s,border-color .13s,color .13s}
+.ntf-topic span::before{content:"";width:10px;height:10px;border-radius:2px;border:1px solid currentColor}
+.ntf-topic input:checked+span{color:#ffa45b;border-color:rgba(255,164,91,.6);background:rgba(255,164,91,.1)}
+.ntf-topic input:checked+span::before{background:#ffa45b;border-color:#ffa45b;box-shadow:inset 0 0 0 2px #2a0a2e}
+.ntf-topic input:focus-visible+span{outline:2px solid #ffa45b;outline-offset:2px}
+.ntf-veil .ntf-err{margin-top:12px;font-family:'Press Start 2P',monospace;font-size:8.5px;line-height:1.8;color:#ff8a8a;text-shadow:0 0 10px rgba(255,107,107,.35)}
+.ntf-err[hidden]{display:none}
+.ntf-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:18px 26px 24px}
+.ntf-btn{font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.6px;padding:12px 22px;border-radius:9px;cursor:pointer;transition:background .14s,border-color .14s,color .14s,transform .1s;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b}
+.ntf-btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.ntf-btn:active{transform:translateY(1px)}
+.ntf-btn:disabled{opacity:.6;cursor:progress}
+.ntf-btn.secondary{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.04)}
+.ntf-btn.secondary:hover{color:#fff;border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.08)}
+.ntf-btn.danger{color:#ff8a8a;border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
+.ntf-btn.danger:hover{border-color:#ff6b6b;background:rgba(255,107,107,.18)}
+.ntf-btn.saved{color:#6be38a;border-color:rgba(107,227,138,.6);background:rgba(107,227,138,.1)}
+.ntf-btn:focus-visible,.ntf-close:focus-visible,.ntf-bell:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.ntf-veil .ntf-fine{font-size:11.5px;color:rgba(255,255,255,.4);padding:0 26px 20px;text-align:center;margin-top:-8px}
+.ntf-bell{display:flex;align-items:center;justify-content:center;position:fixed;top:124px;right:12px;z-index:1047;width:32px;height:32px;padding:0;margin:0;border-radius:50%;cursor:pointer;color:#ff9090;border:1px solid rgba(255,120,120,.55);background:linear-gradient(135deg,rgba(74,12,26,.95),rgba(26,4,12,.95));box-shadow:0 2px 14px rgba(0,0,0,.6),0 0 0 1px rgba(104,31,98,.3);transition:background .15s,border-color .15s,box-shadow .15s,color .15s;box-sizing:border-box}
+.ntf-bell svg{width:11px;height:12px;display:block;fill:currentColor}
+.ntf-bell:hover{border-color:rgba(255,120,120,.8);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(255,120,120,.25)}
+.ntf-bell.on{color:#6be38a;border-color:rgba(107,227,138,.55);background:linear-gradient(135deg,rgba(12,58,28,.95),rgba(4,26,12,.95))}
+.ntf-bell.on:hover{border-color:rgba(107,227,138,.85);box-shadow:0 2px 18px rgba(0,0,0,.7),0 0 0 1px rgba(107,227,138,.25)}
+@media (max-width:520px){
+  .ntf-kicker{font-size:9px}
+  .ntf-veil .ntf-msg{font-size:13.5px}
+  .ntf-btn{width:100%}
+}
+@media (min-width:769px){
+  .ntf-bell{top:170px;width:46px;height:46px}
+  .ntf-bell svg{width:16.5px;height:18px}
+  .ntf-veil{inset:auto 18px calc(18px + env(safe-area-inset-bottom)) auto;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;display:block}
+  .ntf-veil .ntf-panel{width:360px;animation:ntfCorner .26s ease-out}
+  .ntf-veil .ntf-body{padding:20px 20px 14px}
+  .ntf-veil .ntf-icon{width:34px;height:37px;margin-bottom:10px}
+  .ntf-veil .ntf-kicker{font-size:10px;margin-bottom:10px}
+  .ntf-veil .ntf-msg{font-size:13.5px}
+  .ntf-veil .ntf-actions{padding:12px 20px 18px}
+  .ntf-veil .ntf-btn{flex:1}
+  .ntf-veil .ntf-close{top:10px;right:10px}
+}
+@keyframes ntfCorner{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ntf-stripe,.ntf-icon,.ntf-topics.shake{animation:none}.ntf-panel,.ntf-veil .ntf-panel{animation:none}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ntfBellArt" viewBox="0 0 11 12" shape-rendering="crispEdges">
+    <rect x="5" y="0" width="1" height="1"/>
+    <rect x="4" y="1" width="3" height="1"/>
+    <rect x="3" y="2" width="5" height="1"/>
+    <rect x="2" y="3" width="7" height="4"/>
+    <rect x="1" y="7" width="9" height="1"/>
+    <rect x="0" y="8" width="11" height="1"/>
+    <rect x="4" y="10" width="3" height="1"/>
+    <rect x="3" y="3" width="1" height="3" fill="#fff" fill-opacity=".45"/>
+    <rect x="4" y="2" width="1" height="1" fill="#fff" fill-opacity=".45"/>
+    <rect x="8" y="4" width="1" height="3" fill="#000" fill-opacity=".25"/>
+    <rect x="9" y="7" width="1" height="1" fill="#000" fill-opacity=".25"/>
+  </symbol>
+</svg>
+<div class="ntf-veil" id="ntfVeil" data-auto="1" role="dialog" aria-modal="true" aria-labelledby="ntfKicker" aria-describedby="ntfMsg" hidden>
+  <div class="ntf-panel" id="ntfPanel">
+    <div class="ntf-stripe" aria-hidden="true"></div>
+    <button class="ntf-close" id="ntfClose" type="button" aria-label="Close">&#x2715;</button>
+    <div id="ntfContent"></div>
+  </div>
+</div>
+<button class="ntf-bell" id="ntfBell" type="button" aria-label="Notifications are off" title="Notifications" hidden><svg aria-hidden="true"><use href="#ntfBellArt"/></svg></button>
+<script>
+(function () {
+  var veil = document.getElementById('ntfVeil');
+  if (!veil || window.ntfLoaded) return;
+  window.ntfLoaded = true;
+
+  var POPUP = {
+    delay: 5,
+    cooldownHours: 1,
+    everyPages: 0,
+    maxShows: 0
+  };
+  var KEY = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
+  var GAMES = [
+    { id: 'fntd2', name: 'FNTD 2' },
+    { id: 'bbn', name: 'Bite By Night' }
+  ];
+  var FAIL = 'Something went wrong. Please try again.';
+
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var standalone = navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  var canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && window.isSecureContext === true;
+  var needsInstall = !canPush && isIOS && !standalone;
+  if (!canPush && !needsInstall) return;
+
+  var panel = document.getElementById('ntfPanel');
+  var content = document.getElementById('ntfContent');
+  var bell = document.getElementById('ntfBell');
+  var desktop = window.matchMedia('(min-width: 769px)');
+  var auto = veil.getAttribute('data-auto') === '1';
+  var state = '';
+  var prevOverflow = '';
+  var backTo = null;
+  var closeTimer = null;
+  var busyBtn = null;
+  var busyText = '';
+  var subscribed = false;
+
+  function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
+
+  var chosen = { fntd2: true, bbn: true };
+  var savedGames = load('ntf:games');
+  if (savedGames) {
+    chosen = { fntd2: savedGames.indexOf('fntd2') !== -1, bbn: savedGames.indexOf('bbn') !== -1 };
+    if (!chosen.fntd2 && !chosen.bbn) chosen = { fntd2: true, bbn: true };
+  }
+
+  var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
+  var SHARE = '<svg class="ntf-share" viewBox="0 0 14 16" aria-hidden="true"><path d="M7 1v9M3.5 4.5 7 1l3.5 3.5M2 7.5v7h10v-7" fill="none" stroke="#ffa45b" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  var ERR = '<p class="ntf-err" id="ntfErr" role="alert" hidden></p>';
+
+  var SCREENS = {
+    ask: {
+      cls: '',
+      topicMsg: 'One game must be active to turn on.',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">GET NOTIFIED</div>' +
+        '<p class="ntf-msg" id="ntfMsg">Get a notification when <b>Metas</b>, <b>TierLists</b> or <b>Patch Notes</b> are updated, even when the site is closed.</p>' +
+        '{{TOPICS}}' + ERR +
+        '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="on" data-need-topic>Turn on</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="sureSkip">No thanks</button>' +
+        '</div>' +
+        '<p class="ntf-fine">You can turn them off anytime with the bell.</p>'
+    },
+    ios: {
+      cls: 'ios',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">ADD TO HOME SCREEN</div>' +
+        '<p class="ntf-msg" id="ntfMsg">On iPhone, notifications only work from the Home Screen app.</p>' +
+        '<ol class="ntf-steps">' +
+          '<li>Tap Share ' + SHARE + ' in the browser</li>' +
+          '<li>Tap <b>Add to Home Screen</b></li>' +
+          '<li>Open the site from your Home Screen and tap the bell</li>' +
+        '</ol></div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="close">Got it</button>' +
+        '</div>'
+    },
+    ok: {
+      cls: 'ok',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">YOU&#39;RE IN!</div>' +
+        '<p class="ntf-msg" id="ntfMsg">You&#39;ll get a notification next time something is updated. Tap the bell anytime to change games or turn them off.</p>' +
+        ERR + '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="close">Done</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="sureOff">Turn off</button>' +
+        '</div>'
+    },
+    manage: {
+      cls: 'ok',
+      topicMsg: 'One game must be active. Use Turn off to stop all notifications.',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">NOTIFICATIONS ON</div>' +
+        '<p class="ntf-msg" id="ntfMsg">Choose which games you get notifications for.</p>' +
+        '{{TOPICS}}' + ERR +
+        '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="save" data-need-topic>Save</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="sureOff">Turn off</button>' +
+        '</div>'
+    },
+    sureSkip: {
+      cls: 'sure',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">ARE YOU SURE?</div>' +
+        '<p class="ntf-msg" id="ntfMsg">You won&#39;t be notified when <b>Metas</b>, <b>TierLists</b> or <b>Patch Notes</b> are updated. You can always turn them on later with the bell.</p>' +
+        '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="close">Yes, I&#39;m sure</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="back" data-focus>Go back</button>' +
+        '</div>'
+    },
+    sureOff: {
+      cls: 'bad',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">ARE YOU SURE?</div>' +
+        '<p class="ntf-msg" id="ntfMsg">You&#39;ll stop getting notifications for <b>every game</b>. To only stop one game, go back and untick it instead.</p>' +
+        ERR + '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn danger" type="button" data-go="off">Yes, turn off</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="back" data-focus>Go back</button>' +
+        '</div>'
+    },
+    bad: {
+      cls: 'bad',
+      html: '<div class="ntf-body">' + BELL +
+        '<div class="ntf-kicker" id="ntfKicker">NOTIFICATIONS BLOCKED</div>' +
+        '<p class="ntf-msg" id="ntfMsg">Your browser is blocking notifications from this site. Click the icon to the left of the web address, set <b>Notifications</b> to <b>Allow</b>, then tap the bell again.</p>' +
+        '</div>' +
+        '<div class="ntf-actions">' +
+          '<button class="ntf-btn" type="button" data-go="close">Close</button>' +
+        '</div>'
+    }
+  };
+
+  function topicsHtml() {
+    var h = '<div class="ntf-topics" id="ntfTopics" role="group" aria-label="Games">';
+    for (var i = 0; i < GAMES.length; i++) {
+      h += '<label class="ntf-topic"><input type="checkbox" value="' + GAMES[i].id + '"' + (chosen[GAMES[i].id] ? ' checked' : '') + '><span>' + GAMES[i].name + '</span></label>';
+    }
+    return h + '</div>';
+  }
+
+  function readTopics() {
+    var out = [];
+    var boxes = content.querySelectorAll('#ntfTopics input');
+    for (var i = 0; i < boxes.length; i++) if (boxes[i].checked) out.push(boxes[i].value);
+    return out;
+  }
+
+  function setChosen(list) {
+    chosen = { fntd2: list.indexOf('fntd2') !== -1, bbn: list.indexOf('bbn') !== -1 };
+    store('ntf:games', list.join(','));
+  }
+
+  function lockScroll() {
+    if (veil.hidden) return;
+    document.body.style.overflow = desktop.matches ? prevOverflow : 'hidden';
+    veil.setAttribute('aria-modal', desktop.matches ? 'false' : 'true');
+  }
+
+  function setBell(on) {
+    subscribed = on;
+    bell.classList.toggle('on', on);
+    bell.setAttribute('aria-label', on ? 'Notifications are on' : 'Notifications are off');
+  }
+
+  function open(name, focus) {
+    clearTimeout(closeTimer);
+    busyBtn = null;
+    state = name;
+    var s = SCREENS[name];
+    panel.className = 'ntf-panel' + (s.cls ? ' ' + s.cls : '');
+    content.innerHTML = s.html.replace('{{TOPICS}}', topicsHtml());
+    if (veil.hidden) {
+      prevOverflow = document.body.style.overflow;
+      veil.hidden = false;
+    }
+    lockScroll();
+    panel.style.animation = 'none';
+    void panel.offsetWidth;
+    panel.style.animation = '';
+    if (focus) {
+      var first = content.querySelector('[data-focus]') || content.querySelector('.ntf-btn');
+      if (first) {
+        try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+      }
+    }
+  }
+
+  function close() {
+    clearTimeout(closeTimer);
+    busyBtn = null;
+    veil.hidden = true;
+    document.body.style.overflow = prevOverflow;
+  }
+
+  function showErr(text) {
+    var err = document.getElementById('ntfErr');
+    if (!err) return;
+    err.textContent = text;
+    err.hidden = false;
+  }
+
+  function busy(btn, label) {
+    busyBtn = btn;
+    busyText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = label;
+  }
+
+  function unbusy() {
+    if (busyBtn) {
+      busyBtn.disabled = false;
+      busyBtn.textContent = busyText;
+    }
+    busyBtn = null;
+  }
+
+  function keyBytes() {
+    var s = KEY.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var bin = window.atob(s);
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function post(path, data) {
+    return fetch(path, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r;
+    });
+  }
+
+  function getSub() {
+    if (!canPush) return Promise.resolve(null);
+    return navigator.serviceWorker.getRegistration('/').then(function (reg) {
+      return reg ? reg.pushManager.getSubscription() : null;
+    });
+  }
+
+  function askPermission() {
+    return new Promise(function (resolve) {
+      var r = Notification.requestPermission(function (p) { resolve(p); });
+      if (r && r.then) r.then(resolve, function () { resolve(Notification.permission); });
+    });
+  }
+
+  function turnOn(btn) {
+    var games = readTopics();
+    if (needsInstall) {
+      setChosen(games);
+      open('ios', true);
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      open('bad', true);
+      return;
+    }
+    busy(btn, 'Turning on...');
+    askPermission().then(function (p) {
+      if (p === 'denied') {
+        open('bad', true);
+        return;
+      }
+      if (p !== 'granted') {
+        unbusy();
+        close();
+        return;
+      }
+      return navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function () {
+        return navigator.serviceWorker.ready;
+      }).then(function (reg) {
+        return reg.pushManager.getSubscription().then(function (s) {
+          return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes() });
+        });
+      }).then(function (sub) {
+        return post('/push/subscribe', { sub: sub.toJSON(), games: games });
+      }).then(function () {
+        setChosen(games);
+        setBell(true);
+        open('ok', true);
+      });
+    }).catch(function () {
+      unbusy();
+      showErr(FAIL);
+    });
+  }
+
+  function saveGames(btn) {
+    var games = readTopics();
+    busy(btn, 'Saving...');
+    getSub().then(function (sub) {
+      if (!sub) throw new Error('no subscription');
+      return post('/push/subscribe', { sub: sub.toJSON(), games: games });
+    }).then(function () {
+      setChosen(games);
+      busyBtn = null;
+      btn.textContent = 'Saved ✓';
+      btn.classList.add('saved');
+      closeTimer = setTimeout(close, 900);
+    }, function () {
+      unbusy();
+      showErr(FAIL);
+    });
+  }
+
+  function turnOff(btn) {
+    busy(btn, 'Turning off...');
+    getSub().then(function (sub) {
+      if (!sub) return;
+      return post('/push/unsubscribe', { endpoint: sub.endpoint }).catch(function () {}).then(function () {
+        return sub.unsubscribe();
+      });
+    }).then(function () {
+      setBell(false);
+      close();
+    }, function () {
+      unbusy();
+      showErr(FAIL);
+    });
+  }
+
+  content.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-go]') : null;
+    if (!b || busyBtn) return;
+    var go = b.getAttribute('data-go');
+    if (b.hasAttribute('data-need-topic') && readTopics().length === 0) {
+      var row = document.getElementById('ntfTopics');
+      showErr(SCREENS[state].topicMsg);
+      row.classList.remove('shake');
+      void row.offsetWidth;
+      row.classList.add('shake');
+      return;
+    }
+    if (go === 'sureSkip' || go === 'sureOff') {
+      var ticks = {};
+      var boxes = content.querySelectorAll('#ntfTopics input');
+      for (var i = 0; i < boxes.length; i++) ticks[boxes[i].value] = boxes[i].checked;
+      backTo = { screen: state, ticks: ticks };
+      open(go, true);
+    } else if (go === 'back') {
+      var back = backTo || { screen: subscribed ? 'manage' : 'ask', ticks: {} };
+      open(back.screen, true);
+      var again = content.querySelectorAll('#ntfTopics input');
+      for (var j = 0; j < again.length; j++) if (again[j].value in back.ticks) again[j].checked = back.ticks[again[j].value];
+    } else if (go === 'close') {
+      close();
+    } else if (go === 'on') {
+      turnOn(b);
+    } else if (go === 'save') {
+      saveGames(b);
+    } else if (go === 'off') {
+      turnOff(b);
+    }
+  });
+
+  content.addEventListener('change', function (e) {
+    if (e.target.closest && e.target.closest('#ntfTopics') && readTopics().length > 0) {
+      var err = document.getElementById('ntfErr');
+      if (err) err.hidden = true;
+    }
+  });
+
+  document.getElementById('ntfClose').addEventListener('click', function () { if (!busyBtn) close(); });
+  veil.addEventListener('click', function (e) { if (e.target === veil && !busyBtn) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !veil.hidden && !busyBtn) close(); });
+  if (desktop.addEventListener) desktop.addEventListener('change', lockScroll);
+  else if (desktop.addListener) desktop.addListener(lockScroll);
+
+  var opening = false;
+  function openManage() {
+    opening = true;
+    getSub().then(function (sub) {
+      if (!sub) {
+        setBell(false);
+        open('ask', true);
+        return;
+      }
+      return post('/push/games', { endpoint: sub.endpoint }).then(function (r) {
+        return r.json();
+      }).then(function (j) {
+        if (j && j.games && j.games.length) setChosen(j.games);
+      }).catch(function () {}).then(function () {
+        open('manage', true);
+      });
+    }).catch(function () {
+      open('manage', true);
+    }).then(function () {
+      opening = false;
+    });
+  }
+
+  bell.addEventListener('click', function () {
+    if (opening) return;
+    if (subscribed) openManage();
+    else if (canPush && Notification.permission === 'denied') open('bad', true);
+    else open('ask', true);
+  });
+
+  function blocked() {
+    if (document.hidden || document.getElementById('wipVeil')) return true;
+    var g = document.querySelector('.gho-veil');
+    if (g && !g.hidden) return true;
+    if (document.querySelector('#ug-mobile-nav.open, #ug-info-panel.open')) return true;
+    return false;
+  }
+
+  function maybeAuto() {
+    if (!auto || subscribed) return;
+    if (canPush && Notification.permission === 'denied') return;
+    var pages = (parseInt(load('ntf:pages'), 10) || 0) + 1;
+    store('ntf:pages', pages);
+    var last = parseInt(load('ntf:last'), 10) || 0;
+    var shows = parseInt(load('ntf:shows'), 10) || 0;
+    if (POPUP.maxShows && shows >= POPUP.maxShows) return;
+    var due = !last || Date.now() - last >= POPUP.cooldownHours * 3600000 || (POPUP.everyPages && pages >= POPUP.everyPages);
+    if (!due) return;
+    setTimeout(function wait() {
+      if (!veil.hidden || subscribed) return;
+      if (blocked()) {
+        setTimeout(wait, 700);
+        return;
+      }
+      store('ntf:last', Date.now());
+      store('ntf:pages', 0);
+      store('ntf:shows', shows + 1);
+      open('ask', !desktop.matches);
+    }, POPUP.delay * 1000);
+  }
+
+  bell.hidden = false;
+  getSub().then(function (sub) {
+    setBell(!!sub && Notification.permission === 'granted');
+    maybeAuto();
+  }, function () {
+    maybeAuto();
+  });
+})();
+<\/script>`;
+
+const PUSH_SEND_PAGE = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Send a Notification</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px}
+body{display:flex;justify-content:center;padding:28px 16px 60px}
+.wrap{width:min(560px,100%)}
+.card{border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75)}
+.stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:slide 1.1s linear infinite}
+.card.ok .stripe{background-image:repeating-linear-gradient(45deg,#6be38a 0 14.142px,#103a1c 14.142px 28.284px)}
+@keyframes slide{from{background-position:0 0}to{background-position:40px 0}}
+.body{padding:24px 24px 26px}
+.kicker{font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-shadow:0 0 14px rgba(255,164,91,.35);text-align:center;margin-bottom:8px}
+.card.ok .kicker{color:#6be38a;text-shadow:0 0 14px rgba(107,227,138,.35)}
+.sub{font-size:14px;line-height:1.6;color:#cfc8dc;text-align:center;margin-bottom:20px}
+label.f{display:block;font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.5px;color:#ffa45b;margin:16px 0 7px}
+label.f small{font-family:'Franklin Gothic Medium',Arial,sans-serif;font-size:12px;color:rgba(255,255,255,.45);letter-spacing:0;margin-left:6px}
+input[type=text],input[type=password],textarea{width:100%;font:inherit;font-size:15px;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:11px 12px;outline:none;transition:border-color .13s}
+input[type=text]:focus,input[type=password]:focus,textarea:focus{border-color:#ffa45b}
+textarea{min-height:96px;resize:vertical;line-height:1.5}
+.count{font-size:12px;color:rgba(255,255,255,.45);text-align:right;margin-top:4px}
+.games{display:flex;gap:8px;flex-wrap:wrap}
+.game{position:relative;cursor:pointer}
+.game input{position:absolute;opacity:0;pointer-events:none}
+.game span{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-family:'Audiowide',sans-serif;font-size:11.5px;letter-spacing:.4px}
+.game span::before{content:"";width:10px;height:10px;border-radius:2px;border:1px solid currentColor}
+.game input:checked+span{color:#ffa45b;border-color:rgba(255,164,91,.6);background:rgba(255,164,91,.1)}
+.game input:checked+span::before{background:#ffa45b;border-color:#ffa45b;box-shadow:inset 0 0 0 2px #2a0a2e}
+.game input:focus-visible+span{outline:2px solid #ffa45b;outline-offset:2px}
+.game em{font-style:normal;color:rgba(255,255,255,.45)}
+.preview{margin-top:20px;border-radius:12px;background:#f2f2f5;color:#111;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.preview img{width:38px;height:38px;border-radius:8px;flex:none}
+.preview b{display:block;font-size:14px;margin-bottom:2px;word-break:break-word}
+.preview p{font-size:13.5px;line-height:1.4;color:#333;word-break:break-word;white-space:pre-wrap}
+.preview small{display:block;font-size:11.5px;color:#777;margin-top:4px}
+.plabel{font-size:12px;color:rgba(255,255,255,.45);margin-top:20px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{flex:1;min-width:140px;font-family:'Audiowide',sans-serif;font-size:12.5px;letter-spacing:.6px;padding:13px 20px;border-radius:9px;cursor:pointer;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b;transition:background .14s,border-color .14s}
+.btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn.secondary{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.04)}
+.btn.secondary:hover{color:#fff;border-color:rgba(255,255,255,.42)}
+.btn:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.err{margin-top:12px;font-family:'Press Start 2P',monospace;font-size:8.5px;line-height:1.8;color:#ff8a8a;text-align:center}
+.err:empty{display:none}
+.stats{font-size:13.5px;color:#cfc8dc;text-align:center;line-height:1.6}
+.stats b{color:#fff}
+.confirm{margin-top:22px;padding:16px;border-radius:12px;border:1px solid rgba(255,164,91,.4);background:rgba(0,0,0,.25);text-align:center}
+.confirm p{font-size:15px;line-height:1.6;margin-bottom:4px}
+.result{font-size:15px;line-height:1.8;text-align:center;color:#e6e2ef}
+.result b{color:#fff}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.stripe{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="stripe" aria-hidden="true"></div>
+    <div class="body">
+      <h1 class="kicker">SEND A NOTIFICATION</h1>
+
+      <form id="lockView" autocomplete="off">
+        <p class="sub">Enter the password to send a notification to everyone who turned them on.</p>
+        <label class="f" for="pw">Password</label>
+        <input type="password" id="pw" autocomplete="current-password" required>
+        <div class="actions"><button class="btn" type="submit" id="unlockBtn">Unlock</button></div>
+        <p class="err" id="lockErr" role="alert"></p>
+      </form>
+
+      <form id="composeView" hidden autocomplete="off">
+        <p class="stats" id="stats"></p>
+        <label class="f" for="title">Title <small>optional</small></label>
+        <input type="text" id="title" maxlength="60" placeholder="FNTD User Guide">
+        <label class="f" for="msg">Message</label>
+        <textarea id="msg" maxlength="240" required placeholder="New FNTD 2 metas are up!"></textarea>
+        <p class="count"><span id="msgCount">0</span>/240</p>
+        <label class="f" for="link">Opens page <small>when tapped</small></label>
+        <input type="text" id="link" list="pages" placeholder="/" value="/">
+        <datalist id="pages">
+          <option value="/"></option>
+          <option value="/news"></option>
+          <option value="/patch-notes"></option>
+          <option value="/fntd2/meta-teams"></option>
+          <option value="/fntd2/tierlists-1"></option>
+          <option value="/fntd2/story-index"></option>
+          <option value="/fntd2/endless-index"></option>
+          <option value="/fntd2/boss-raids-index"></option>
+          <option value="/fntd2/event-story-endless"></option>
+          <option value="/fntd2/challenges"></option>
+          <option value="/fntd2/unit-engine"></option>
+          <option value="/fntd2/trade-calculator"></option>
+          <option value="/bbn/bite-by-night-tierlists"></option>
+          <option value="/bbn/killer-terminal"></option>
+          <option value="/bbn/survivor-terminal"></option>
+          <option value="/patch-notes/bbn-patch-notes"></option>
+        </datalist>
+        <label class="f">Send to people following</label>
+        <div class="games" id="games">
+          <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD 2 <em id="cFntd2"></em></span></label>
+          <label class="game"><input type="checkbox" value="bbn"><span>Bite By Night <em id="cBbn"></em></span></label>
+        </div>
+        <p class="plabel">Preview</p>
+        <div class="preview" aria-hidden="true">
+          <img src="/favicon-192.png" alt="">
+          <div><b id="pvTitle">FNTD User Guide</b><p id="pvMsg">New FNTD 2 metas are up!</p><small>fntduserguide.com</small></div>
+        </div>
+        <div class="actions" id="mainActions">
+          <button class="btn" type="submit" id="sendBtn">Send</button>
+          <button class="btn secondary" type="button" id="lockBtn">Lock</button>
+        </div>
+        <div class="confirm" id="confirm" hidden>
+          <p id="confirmText"></p>
+          <div class="actions">
+            <button class="btn" type="button" id="yesBtn">Yes, send</button>
+            <button class="btn secondary" type="button" id="noBtn">Go back</button>
+          </div>
+        </div>
+        <p class="err" id="sendErr" role="alert"></p>
+      </form>
+
+      <div id="doneView" hidden>
+        <p class="result" id="result"></p>
+        <div class="actions"><button class="btn" type="button" id="againBtn">Send another</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var password = '';
+  var counts = { fntd2: 0, bbn: 0, total: 0 };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function api(data) {
+    return fetch('/push/send', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + password },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 401) throw new Error('password');
+        if (r.status === 503) throw new Error('setup');
+        if (!r.ok || !j.ok) throw new Error('failed');
+        return j;
+      });
+    });
+  }
+
+  function errText(e) {
+    if (e && e.message === 'password') return 'Wrong password.';
+    if (e && e.message === 'setup') return 'Notifications are not set up yet.';
+    return 'Something went wrong. Please try again.';
+  }
+
+  function games() {
+    return [].filter.call(document.querySelectorAll('#games input'), function (i) { return i.checked; }).map(function (i) { return i.value; });
+  }
+
+  function reach() {
+    var g = games();
+    if (g.length === 2) return counts.total;
+    if (g[0] === 'fntd2') return counts.fntd2;
+    if (g[0] === 'bbn') return counts.bbn;
+    return 0;
+  }
+
+  function showCounts() {
+    $('stats').innerHTML = '<b>' + counts.total + '</b> device' + (counts.total === 1 ? '' : 's') + ' signed up';
+    $('cFntd2').textContent = '(' + counts.fntd2 + ')';
+    $('cBbn').textContent = '(' + counts.bbn + ')';
+  }
+
+  function refreshPreview() {
+    $('pvTitle').textContent = $('title').value.trim() || 'FNTD User Guide';
+    $('pvMsg').textContent = $('msg').value.trim() || 'New FNTD 2 metas are up!';
+    $('msgCount').textContent = $('msg').value.length;
+  }
+
+  function cleanLink(v) {
+    v = String(v || '').trim().replace(/^https?:[/][/](www[.])?fntduserguide[.]com/i, '');
+    if (!v) return '/';
+    if (v.charAt(0) !== '/') v = '/' + v;
+    return v;
+  }
+
+  $('lockView').addEventListener('submit', function (e) {
+    e.preventDefault();
+    password = $('pw').value;
+    $('lockErr').textContent = '';
+    $('unlockBtn').disabled = true;
+    $('unlockBtn').textContent = 'Checking...';
+    api({ mode: 'count' }).then(function (j) {
+      counts = j.counts;
+      $('pw').value = '';
+      showCounts();
+      $('lockView').hidden = true;
+      $('composeView').hidden = false;
+      $('msg').focus();
+    }).catch(function (err) {
+      password = '';
+      $('lockErr').textContent = errText(err);
+    }).then(function () {
+      $('unlockBtn').disabled = false;
+      $('unlockBtn').textContent = 'Unlock';
+    });
+  });
+
+  $('title').addEventListener('input', refreshPreview);
+  $('msg').addEventListener('input', refreshPreview);
+  $('games').addEventListener('change', function () { $('sendErr').textContent = ''; });
+
+  $('composeView').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('sendErr').textContent = '';
+    if (!$('msg').value.trim()) { $('sendErr').textContent = 'Write a message first.'; return; }
+    if (!games().length) { $('sendErr').textContent = 'Pick at least one game.'; return; }
+    var n = reach();
+    $('confirmText').innerHTML = 'Send this to <b>' + n + '</b> device' + (n === 1 ? '' : 's') + '?';
+    $('mainActions').hidden = true;
+    $('confirm').hidden = false;
+    $('noBtn').focus();
+  });
+
+  $('noBtn').addEventListener('click', function () {
+    $('confirm').hidden = true;
+    $('mainActions').hidden = false;
+  });
+
+  $('lockBtn').addEventListener('click', function () {
+    password = '';
+    $('composeView').hidden = true;
+    $('lockView').hidden = false;
+    $('pw').focus();
+  });
+
+  $('yesBtn').addEventListener('click', function () {
+    var data = {
+      mode: 'send',
+      title: $('title').value.trim(),
+      body: $('msg').value.trim(),
+      url: cleanLink($('link').value),
+      games: games(),
+      tag: 'n' + Date.now()
+    };
+    var total = { sent: 0, removed: 0, failed: 0 };
+    $('yesBtn').disabled = true;
+    $('noBtn').disabled = true;
+    function batch(cursor) {
+      data.cursor = cursor || null;
+      return api(data).then(function (j) {
+        total.sent += j.sent;
+        total.removed += j.removed;
+        total.failed += j.failed;
+        $('yesBtn').textContent = 'Sending... ' + total.sent;
+        return j.cursor ? batch(j.cursor) : total;
+      });
+    }
+    batch(null).then(function (t) {
+      var lines = ['Sent to <b>' + t.sent + '</b> device' + (t.sent === 1 ? '' : 's') + '.'];
+      if (t.removed) lines.push(t.removed + ' expired sign-up' + (t.removed === 1 ? ' was' : 's were') + ' removed.');
+      if (t.failed) lines.push(t.failed + ' could not be delivered.');
+      $('result').innerHTML = lines.join('<br>');
+      $('card').classList.add('ok');
+      $('composeView').hidden = true;
+      $('doneView').hidden = false;
+    }).catch(function (err) {
+      $('sendErr').textContent = errText(err) + (total.sent ? ' (' + total.sent + ' already sent)' : '');
+    }).then(function () {
+      $('yesBtn').disabled = false;
+      $('noBtn').disabled = false;
+      $('yesBtn').textContent = 'Yes, send';
+    });
+  });
+
+  $('againBtn').addEventListener('click', function () {
+    $('msg').value = '';
+    $('title').value = '';
+    refreshPreview();
+    $('card').classList.remove('ok');
+    $('confirm').hidden = true;
+    $('mainActions').hidden = false;
+    $('doneView').hidden = true;
+    api({ mode: 'count' }).then(function (j) { counts = j.counts; showCounts(); }).catch(function () {});
+    $('composeView').hidden = false;
+    $('msg').focus();
+  });
+
+  refreshPreview();
+  $('pw').focus();
+})();
+<\/script>
+</body>
+</html>`;
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/push/subscribe') return pushSubscribe(request, env, url);
+    if (url.pathname === '/push/unsubscribe') return pushUnsubscribe(request, env, url);
+    if (url.pathname === '/push/games') return pushGames(request, env, url);
+    if (url.pathname === '/push/send') return pushSend(request, env);
+    if (url.pathname === '/notify-send') {
+      return new Response(PUSH_SEND_PAGE, {
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-robots-tag': 'noindex, nofollow',
+          'referrer-policy': 'no-referrer',
+          'x-frame-options': 'DENY',
+          'content-security-policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+        }
+      });
+    }
 
     if (url.pathname === '/_up') {
       return new Response(null, {
@@ -3662,6 +4794,8 @@ export default {
         element(el) {
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
+          el.append(noInfoPanel ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
+          if (!hasInfo) el.append('<style>.ntf-bell{top:85px}@media(min-width:769px){.ntf-bell{top:117px}}</style>', { html: true });
           el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
