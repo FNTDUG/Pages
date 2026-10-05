@@ -2880,7 +2880,7 @@ const WIP_PAGES = {
   '/fntd2/endless-index':       true,
   '/fntd2/boss-raids-index':    true,
   '/fntd2/event-story-endless': true,
-  '/fntd2/unit-engine':         true,
+  '/fntd2/unit-engine':         false,
   '/news':                      true
 };
 function infoPanelActive(pathname) {
