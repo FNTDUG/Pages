@@ -4632,6 +4632,19 @@ const POLL_SCHEMA = [
   'CREATE TABLE IF NOT EXISTS poll_voters (poll_id INTEGER NOT NULL, who TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (poll_id, who))'
 ];
 
+const POLL_COLUMNS = [
+  ['multi', 'ALTER TABLE polls ADD COLUMN multi INTEGER NOT NULL DEFAULT 0'],
+  ['note', "ALTER TABLE polls ADD COLUMN note TEXT NOT NULL DEFAULT ''"],
+  ['scope', "ALTER TABLE polls ADD COLUMN scope TEXT NOT NULL DEFAULT 'all'"]
+];
+const POLL_SCOPES = ['all', 'fntd2', 'bbn'];
+
+async function pollMigrate(db) {
+  await db.batch(POLL_SCHEMA.map(q => db.prepare(q)));
+  const have = ((await db.prepare('PRAGMA table_info(polls)').all()).results || []).map(c => c.name);
+  for (const c of POLL_COLUMNS) if (have.indexOf(c[0]) === -1) await db.prepare(c[1]).run();
+}
+
 function pollCacheKey(url) {
   return new Request(url.origin + '/poll/__current');
 }
@@ -4646,11 +4659,11 @@ async function pollCurrent(env, url) {
   } catch (e) {}
   let row = null;
   try {
-    row = await env.POLLS.prepare('SELECT id, question, options, ends, total FROM polls WHERE ends > ?1 ORDER BY id DESC LIMIT 1').bind(Date.now()).first();
+    row = await env.POLLS.prepare('SELECT id, question, options, ends, total, multi, scope FROM polls WHERE ends > ?1 ORDER BY id DESC LIMIT 1').bind(Date.now()).first();
   } catch (e) {
     row = null;
   }
-  const body = JSON.stringify({ poll: row ? { id: row.id, q: row.question, opts: JSON.parse(row.options), ends: row.ends, total: row.total } : null });
+  const body = JSON.stringify({ poll: row ? { id: row.id, q: row.question, opts: JSON.parse(row.options), ends: row.ends, total: row.total, multi: !!row.multi, scope: row.scope || 'all' } : null });
   try {
     await caches.default.put(key, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=20' } }));
   } catch (e) {}
@@ -4662,26 +4675,27 @@ async function pollVote(request, env, url) {
   if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false }, 503);
   const body = await pushReadBody(request);
   const id = Number(body && body.id);
-  const opt = Number(body && body.opt);
-  if (!Number.isInteger(id) || !Number.isInteger(opt)) return pushJson({ ok: false }, 400);
+  const picks = Array.isArray(body && body.opts) ? body.opts.map(Number) : [Number(body && body.opt)];
+  if (!Number.isInteger(id) || !picks.length || picks.some(n => !Number.isInteger(n))) return pushJson({ ok: false }, 400);
   const now = Date.now();
   let poll;
-  try { poll = await env.POLLS.prepare('SELECT id, options, ends, total FROM polls WHERE id = ?1').bind(id).first(); } catch (e) { return pushJson({ ok: false }, 503); }
+  try { poll = await env.POLLS.prepare('SELECT id, options, ends, total, multi, note FROM polls WHERE id = ?1').bind(id).first(); } catch (e) { return pushJson({ ok: false }, 503); }
   if (!poll) return pushJson({ ok: false, error: 'missing' }, 404);
   if (poll.ends <= now) return pushJson({ ok: false, error: 'ended', total: poll.total }, 409);
-  if (opt < 0 || opt >= JSON.parse(poll.options).length) return pushJson({ ok: false }, 400);
+  const count = JSON.parse(poll.options).length;
+  const uniq = picks.filter((n, i) => picks.indexOf(n) === i);
+  if (uniq.length !== picks.length || uniq.some(n => n < 0 || n >= count) || (!poll.multi && uniq.length !== 1)) return pushJson({ ok: false }, 400);
   const h = await pushSha256(env.POLL_SALT + '|' + id + '|' + (request.headers.get('cf-connecting-ip') || ''));
   let who = '';
   for (let i = 0; i < h.length; i++) who += h[i].toString(16).padStart(2, '0');
   try {
     const seat = await env.POLLS.prepare('INSERT INTO poll_voters (poll_id, who, n) VALUES (?1, ?2, 1) ON CONFLICT(poll_id, who) DO UPDATE SET n = n + 1 WHERE n < ?3 RETURNING n').bind(id, who, POLL_MAX_PER_IP).first();
     if (!seat) return pushJson({ ok: false, error: 'already', total: poll.total }, 409);
-    const res = await env.POLLS.batch([
-      env.POLLS.prepare('UPDATE poll_counts SET n = n + 1 WHERE poll_id = ?1 AND opt = ?2').bind(id, opt),
-      env.POLLS.prepare('UPDATE polls SET total = total + 1 WHERE id = ?1 RETURNING total').bind(id)
-    ]);
-    const row = res[1].results && res[1].results[0];
-    return pushJson({ ok: true, total: row ? row.total : poll.total + 1 });
+    const res = await env.POLLS.batch(uniq.map(n => env.POLLS.prepare('UPDATE poll_counts SET n = n + 1 WHERE poll_id = ?1 AND opt = ?2').bind(id, n))
+      .concat([env.POLLS.prepare('UPDATE polls SET total = total + 1 WHERE id = ?1 RETURNING total').bind(id)]));
+    const last = res[res.length - 1];
+    const row = last.results && last.results[0];
+    return pushJson({ ok: true, total: row ? row.total : poll.total + 1, note: poll.note || '' });
   } catch (e) {
     return pushJson({ ok: false }, 503);
   }
@@ -4698,19 +4712,22 @@ async function pollAdmin(request, env, url) {
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
   const db = env.POLLS;
   const now = Date.now();
-  await db.batch(POLL_SCHEMA.map(q => db.prepare(q)));
+  await pollMigrate(db);
 
   if (body.mode === 'create') {
     const question = String(body.question || '').trim();
     const opts = Array.isArray(body.options) ? body.options.map(o => String(o || '').trim()).filter(Boolean) : [];
     const minutes = Math.round(Number(body.minutes));
+    const note = String(body.note || '').trim();
+    const scope = POLL_SCOPES.indexOf(body.scope) !== -1 ? body.scope : 'all';
     if (!question || question.length > 140 || opts.length < 2 || opts.length > 6 || opts.some(o => o.length > 60) ||
-        !Number.isFinite(minutes) || minutes < 5 || minutes > 60 * 24 * 60) {
+        note.length > 280 || !Number.isFinite(minutes) || minutes < 5 || minutes > 60 * 24 * 60) {
       return pushJson({ ok: false, error: 'bad-request' }, 400);
     }
     const res = await db.batch([
       db.prepare('UPDATE polls SET ends = ?1 WHERE ends > ?1').bind(now),
-      db.prepare('INSERT INTO polls (question, options, created, ends, total) VALUES (?1, ?2, ?3, ?4, 0)').bind(question, JSON.stringify(opts), now, now + minutes * 60000)
+      db.prepare('INSERT INTO polls (question, options, created, ends, total, multi, note, scope) VALUES (?1, ?2, ?3, ?4, 0, ?5, ?6, ?7)')
+        .bind(question, JSON.stringify(opts), now, now + minutes * 60000, body.multi ? 1 : 0, note, scope)
     ]);
     const id = res[1].meta.last_row_id;
     await db.batch(opts.map((o, i) => db.prepare('INSERT INTO poll_counts (poll_id, opt, n) VALUES (?1, ?2, 0)').bind(id, i)));
@@ -4728,14 +4745,14 @@ async function pollAdmin(request, env, url) {
   }
 
   await db.prepare('DELETE FROM poll_voters WHERE poll_id IN (SELECT id FROM polls WHERE ends <= ?1)').bind(now).run();
-  const rows = (await db.prepare('SELECT id, question, options, created, ends, total FROM polls ORDER BY id DESC LIMIT 10').all()).results || [];
+  const rows = (await db.prepare('SELECT id, question, options, created, ends, total, multi, note, scope FROM polls ORDER BY id DESC LIMIT 10').all()).results || [];
   const counts = (await db.prepare('SELECT poll_id, opt, n FROM poll_counts WHERE poll_id IN (SELECT id FROM polls ORDER BY id DESC LIMIT 10)').all()).results || [];
   const polls = rows.map(r => {
     const opts = JSON.parse(r.options).map((t, i) => {
       const c = counts.find(x => x.poll_id === r.id && x.opt === i);
       return { t, n: c ? c.n : 0 };
     });
-    return { id: r.id, q: r.question, opts, created: r.created, ends: r.ends, total: r.total, active: r.ends > now };
+    return { id: r.id, q: r.question, opts, created: r.created, ends: r.ends, total: r.total, multi: !!r.multi, note: r.note || '', scope: r.scope || 'all', active: r.ends > now };
   });
   return pushJson({ ok: true, now, polls });
 }
@@ -4754,6 +4771,12 @@ const POLL_HTML = `
 .ntf-panel.tight .poll-opt{padding:8px 12px;font-size:13.5px}
 .ntf-veil .ntf-panel.tight .poll-opts{gap:6px;margin-top:10px}
 .ntf-veil .ntf-icon.poll-icon{animation:none}
+.poll-opt[role="checkbox"]::before{border-radius:3px}
+.ntf-veil .poll-hint{margin-top:6px;font-size:12.5px;color:rgba(255,255,255,.5)}
+.ntf-veil .poll-note{margin:16px auto 0;max-width:40ch;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,164,91,.35);background:rgba(255,164,91,.06);text-align:left}
+.ntf-veil .poll-note-head{font-family:'Press Start 2P',monospace;font-size:8px;line-height:1.8;color:#ffa45b;margin-bottom:6px}
+.ntf-veil .poll-note-text{font-size:14px;line-height:1.6;color:#e6e2ef;white-space:pre-wrap;overflow-wrap:anywhere}
+.ntf-veil .ntf-panel.tight .poll-note{margin-top:10px;padding:9px 12px}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="pollArt" viewBox="0 0 11 12" shape-rendering="crispEdges">
@@ -4787,7 +4810,8 @@ const POLL_HTML = `
   var content = document.getElementById('pollContent');
   var desktop = window.matchMedia('(min-width: 769px)');
   var poll = null;
-  var choice = -1;
+  var picks = [];
+  var note = '';
   var busy = false;
   var prevOverflow = '';
   var fitTimer = null;
@@ -4820,14 +4844,15 @@ const POLL_HTML = `
         '</div>' };
     }
     if (name === 'vote') {
-      var opts = '';
+      var opts = '', role = poll.multi ? 'checkbox' : 'radio';
       for (var i = 0; i < poll.opts.length; i++) {
-        opts += '<button class="poll-opt" type="button" role="radio" aria-checked="' + (i === choice) + '" data-opt="' + i + '">' + esc(poll.opts[i]) + '</button>';
+        opts += '<button class="poll-opt" type="button" role="' + role + '" aria-checked="' + (picks.indexOf(i) !== -1) + '" data-opt="' + i + '">' + esc(poll.opts[i]) + '</button>';
       }
       return { cls: 'sure', html: '<div class="ntf-body">' +
         '<div class="ntf-kicker" id="pollKicker">POLL</div>' +
         '<p class="poll-q">' + esc(poll.q) + '</p>' +
-        '<div class="poll-opts" role="radiogroup" aria-labelledby="pollKicker">' + opts + '</div>' +
+        (poll.multi ? '<p class="poll-hint">Pick all that apply.</p>' : '') +
+        '<div class="poll-opts" role="' + (poll.multi ? 'group' : 'radiogroup') + '" aria-labelledby="pollKicker">' + opts + '</div>' +
         '<p class="ntf-err" id="pollErr" role="alert" hidden></p>' +
         '</div><div class="ntf-actions">' +
         '<button class="ntf-btn" type="button" data-go="vote">Vote</button>' +
@@ -4840,6 +4865,7 @@ const POLL_HTML = `
     return { cls: name === 'thanks' ? 'ok' : 'sure', html: '<div class="ntf-body">' + ICON +
       '<div class="ntf-kicker" id="pollKicker">' + head + '</div>' +
       '<p class="ntf-msg">' + msg + '</p>' + foot +
+      (name === 'thanks' && note ? '<div class="poll-note"><div class="poll-note-head">A NOTE FROM US</div><div class="poll-note-text">' + esc(note) + '</div></div>' : '') +
       '</div><div class="ntf-actions">' +
       '<button class="ntf-btn" type="button" data-go="close">Close</button>' +
       '</div>' };
@@ -4920,7 +4946,7 @@ const POLL_HTML = `
 
   function vote(btn) {
     var err = document.getElementById('pollErr');
-    if (choice < 0) {
+    if (!picks.length) {
       err.textContent = 'Pick an answer first.';
       err.hidden = false;
       return;
@@ -4931,12 +4957,13 @@ const POLL_HTML = `
     fetch('/poll/vote', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: poll.id, opt: choice })
+      body: JSON.stringify({ id: poll.id, opts: picks })
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
     }).then(function (res) {
       busy = false;
       if (res.j.ok) {
+        note = res.j.note || '';
         finish('voted');
         open('thanks', res.j.total);
       } else if (res.j.error === 'already') {
@@ -4961,9 +4988,15 @@ const POLL_HTML = `
     if (busy) return;
     var o = e.target.closest ? e.target.closest('[data-opt]') : null;
     if (o) {
-      choice = Number(o.getAttribute('data-opt'));
+      var n = Number(o.getAttribute('data-opt'));
+      if (poll.multi) {
+        var at = picks.indexOf(n);
+        if (at === -1) picks.push(n); else picks.splice(at, 1);
+      } else {
+        picks = [n];
+      }
       var all = content.querySelectorAll('[data-opt]');
-      for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-checked', String(all[i] === o));
+      for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-checked', String(picks.indexOf(Number(all[i].getAttribute('data-opt'))) !== -1));
       var err = document.getElementById('pollErr');
       if (err) err.hidden = true;
       return;
@@ -4982,6 +5015,13 @@ const POLL_HTML = `
   if (desktop.addEventListener) desktop.addEventListener('change', lockScroll);
   else if (desktop.addListener) desktop.addListener(lockScroll);
 
+  function inScope(scope) {
+    var path = location.pathname.toLowerCase();
+    if (scope === 'fntd2') return path.indexOf('/fntd2') === 0;
+    if (scope === 'bbn') return path.indexOf('/bbn') === 0 || path.indexOf('bbn-patch-notes') !== -1;
+    return true;
+  }
+
   function blocked() {
     if (document.hidden || document.getElementById('wipVeil')) return true;
     var n = document.getElementById('ntfVeil');
@@ -4995,7 +5035,7 @@ const POLL_HTML = `
   setTimeout(function () {
     fetch('/poll/current', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       poll = j && j.poll;
-      if (!poll || !poll.opts || load('poll:' + poll.id) || poll.ends <= Date.now()) return;
+      if (!poll || !poll.opts || load('poll:' + poll.id) || poll.ends <= Date.now() || !inScope(poll.scope)) return;
       (function wait() {
         if (!veil.hidden) return;
         if (blocked()) {
@@ -5077,6 +5117,15 @@ select option{background:#14091f}
 .del.sure{background:rgba(255,107,107,.2);border-color:#ff6b6b}
 .del:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
 .empty{font-size:14px;color:rgba(255,255,255,.5);text-align:center}
+textarea{width:100%;min-height:84px;resize:vertical;font:inherit;font-size:15px;line-height:1.5;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:11px 12px;outline:none}
+textarea:focus{border-color:#ffa45b}
+.count{font-size:12px;color:rgba(255,255,255,.45);text-align:right;margin-top:4px}
+.check{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:14.5px;color:#e6e2ef;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:#ffa45b}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:-6px 0 14px}
+.tag{font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.4px;padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
+.note{margin-top:14px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,164,91,.35);background:rgba(255,164,91,.06);font-size:13.5px;line-height:1.55;color:#e6e2ef;white-space:pre-wrap;overflow-wrap:anywhere}
+.note b{display:block;font-family:'Press Start 2P',monospace;font-size:8px;font-weight:400;color:#ffa45b;margin-bottom:6px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.stripe{animation:none}}
 </style>
@@ -5125,6 +5174,16 @@ select option{background:#14091f}
         <label class="f">Answers <small>2 to 6</small></label>
         <div id="opts"></div>
         <button class="btn secondary small" type="button" id="addOpt">+ Add answer</button>
+        <label class="check"><input type="checkbox" id="multi"> Let people pick more than one answer</label>
+        <label class="f" for="scope">Show on</label>
+        <select id="scope">
+          <option value="all">Whole site</option>
+          <option value="fntd2">FNTD2 pages only</option>
+          <option value="bbn">Bite By Night pages only</option>
+        </select>
+        <label class="f" for="note">A note from us <small>optional, shown after someone votes</small></label>
+        <textarea id="note" maxlength="280" placeholder="Thanks for helping us decide what to work on next!"></textarea>
+        <p class="count"><span id="noteCount">0</span>/280</p>
         <label class="f" for="durN">How long it runs</label>
         <div class="dur">
           <input type="number" id="durN" min="1" max="999" value="1" required>
@@ -5213,6 +5272,16 @@ select option{background:#14091f}
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   }
 
+  var SCOPES = { all: 'Whole site', fntd2: 'FNTD2 pages', bbn: 'Bite By Night pages' };
+
+  function tags(p) {
+    return '<div class="tags"><span class="tag">' + (SCOPES[p.scope] || SCOPES.all) + '</span>' + (p.multi ? '<span class="tag">Multi-answer</span>' : '') + '</div>';
+  }
+
+  function noteBox(p) {
+    return p.note ? '<div class="note"><b>A NOTE FROM US</b>' + esc(p.note) + '</div>' : '';
+  }
+
   function results(p) {
     var max = 0;
     p.opts.forEach(function (o) { if (o.n > max) max = o.n; });
@@ -5231,15 +5300,15 @@ select option{background:#14091f}
     $('curActions').hidden = !cur;
     $('endConfirm').hidden = true;
     if (cur) {
-      $('curBody').innerHTML = '<p class="q">' + esc(cur.q) + '</p>' + results(cur) +
-        '<p class="meta"><b>' + cur.total + '</b> vote' + (cur.total === 1 ? '' : 's') + ' &middot; ends in ' + left(cur.ends - now) + ' (' + when(cur.ends) + ')</p>';
+      $('curBody').innerHTML = '<p class="q">' + esc(cur.q) + '</p>' + tags(cur) + results(cur) +
+        '<p class="meta"><b>' + cur.total + '</b> ' + (cur.total === 1 ? 'person' : 'people') + ' voted' + (cur.multi ? ' (they could pick more than one, so answers add up past 100%)' : '') + ' &middot; ends in ' + left(cur.ends - now) + ' (' + when(cur.ends) + ')</p>' + noteBox(cur);
       $('endBtn').setAttribute('data-id', cur.id);
     } else {
       $('curBody').innerHTML = '<p class="empty">Start a poll below and it will pop up for everyone on the site.</p>';
     }
     var past = state.polls.filter(function (p) { return p !== cur; });
     $('past').innerHTML = past.length ? past.map(function (p) {
-      return '<details><summary>' + esc(p.q) + '<small>' + p.total + ' vote' + (p.total === 1 ? '' : 's') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) +
+      return '<details><summary>' + esc(p.q) + '<small>' + p.total + ' ' + (p.total === 1 ? 'person' : 'people') + ' voted &middot; ' + (SCOPES[p.scope] || SCOPES.all) + (p.multi ? ' &middot; multi-answer' : '') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) + noteBox(p) +
         '<button class="del" type="button" data-del="' + p.id + '">Delete this poll</button></details>';
     }).join('') : '<p class="empty">No past polls yet.</p>';
   }
@@ -5312,7 +5381,7 @@ select option{background:#14091f}
     if (m > 86400) { $('newErr').textContent = 'A poll can run for at most 60 days.'; return; }
     var now = Date.now() + state.skew;
     var running = state.polls.some(function (p) { return p.active && p.ends > now; });
-    $('startText').innerHTML = 'Start this poll for <b>' + left(m * 60000) + '</b>?' + (running ? '<br>The poll that is running now will end.' : '');
+    $('startText').innerHTML = 'Start this poll on <b>' + SCOPES[$('scope').value].toLowerCase().replace('fntd2', 'FNTD2').replace('bite by night', 'Bite By Night') + '</b> for <b>' + left(m * 60000) + '</b>?' + ($('multi').checked ? '<br>People can pick more than one answer.' : '') + (running ? '<br>The poll that is running now will end.' : '');
     $('startActions').hidden = true;
     $('startConfirm').hidden = false;
     $('startNo').focus();
@@ -5323,8 +5392,12 @@ select option{background:#14091f}
   });
   $('startYes').addEventListener('click', function () {
     $('startYes').disabled = true;
-    api({ mode: 'create', question: $('question').value.trim(), options: options(), minutes: minutes() }).then(function () {
+    api({ mode: 'create', question: $('question').value.trim(), options: options(), minutes: minutes(), multi: $('multi').checked, scope: $('scope').value, note: $('note').value.trim() }).then(function () {
       $('question').value = '';
+      $('note').value = '';
+      $('noteCount').textContent = '0';
+      $('multi').checked = false;
+      $('scope').value = 'all';
       $('opts').innerHTML = '';
       addOpt(''); addOpt('');
       $('startConfirm').hidden = true;
@@ -5374,6 +5447,7 @@ select option{background:#14091f}
   });
   setInterval(function () { if (password && !$('admin').hidden && $('endConfirm').hidden) render(); }, 30000);
 
+  $('note').addEventListener('input', function () { $('noteCount').textContent = $('note').value.length; });
   addOpt(''); addOpt('');
   $('pw').focus();
 })();
