@@ -4331,6 +4331,8 @@ const PUSH_SEND_PAGE = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Send a Notification</title>
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -5057,6 +5059,8 @@ const POLL_ADMIN_PAGE = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Polls</title>
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
