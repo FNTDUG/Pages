@@ -4718,6 +4718,13 @@ async function pollAdmin(request, env, url) {
   } else if (body.mode === 'end') {
     await db.prepare('UPDATE polls SET ends = ?1 WHERE id = ?2 AND ends > ?1').bind(now, Number(body.id) || 0).run();
     try { await caches.default.delete(pollCacheKey(url)); } catch (e) {}
+  } else if (body.mode === 'delete') {
+    const id = Number(body.id) || 0;
+    const gone = await db.prepare('DELETE FROM polls WHERE id = ?1 AND ends <= ?2 RETURNING id').bind(id, now).first();
+    if (gone) await db.batch([
+      db.prepare('DELETE FROM poll_counts WHERE poll_id = ?1').bind(id),
+      db.prepare('DELETE FROM poll_voters WHERE poll_id = ?1').bind(id)
+    ]);
   }
 
   await db.prepare('DELETE FROM poll_voters WHERE poll_id IN (SELECT id FROM polls WHERE ends <= ?1)').bind(now).run();
@@ -4746,7 +4753,22 @@ const POLL_HTML = `
 .ntf-veil .poll-count{margin-top:12px;font-family:'Press Start 2P',monospace;font-size:9px;line-height:1.8;color:#ffa45b}
 .ntf-panel.tight .poll-opt{padding:8px 12px;font-size:13.5px}
 .ntf-veil .ntf-panel.tight .poll-opts{gap:6px;margin-top:10px}
+.ntf-veil .ntf-icon.poll-icon{animation:none}
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pollArt" viewBox="0 0 11 12" shape-rendering="crispEdges">
+    <rect x="0" y="6" width="3" height="5"/>
+    <rect x="4" y="1" width="3" height="10"/>
+    <rect x="8" y="4" width="3" height="7"/>
+    <rect x="0" y="11" width="11" height="1"/>
+    <rect x="0" y="6" width="1" height="5" fill="#fff" fill-opacity=".45"/>
+    <rect x="4" y="1" width="1" height="10" fill="#fff" fill-opacity=".45"/>
+    <rect x="8" y="4" width="1" height="7" fill="#fff" fill-opacity=".45"/>
+    <rect x="2" y="7" width="1" height="4" fill="#000" fill-opacity=".25"/>
+    <rect x="6" y="2" width="1" height="9" fill="#000" fill-opacity=".25"/>
+    <rect x="10" y="5" width="1" height="6" fill="#000" fill-opacity=".25"/>
+  </symbol>
+</svg>
 <div class="ntf-veil" id="pollVeil" data-auto="1" role="dialog" aria-modal="true" aria-labelledby="pollKicker" hidden>
   <div class="ntf-panel" id="pollPanel">
     <div class="ntf-stripe" aria-hidden="true"></div>
@@ -4785,11 +4807,11 @@ const POLL_HTML = `
     if (h < 48) return h + 'h ' + (m % 60) + 'm';
     return Math.round(h / 24) + ' days';
   }
-  var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
+  var ICON = '<svg class="ntf-icon poll-icon" aria-hidden="true"><use href="#pollArt"/></svg>';
 
   function screen(name, total) {
     if (name === 'ask') {
-      return { cls: '', html: '<div class="ntf-body">' +
+      return { cls: '', html: '<div class="ntf-body">' + ICON +
         '<div class="ntf-kicker" id="pollKicker">NEW POLL</div>' +
         '<p class="ntf-msg">Would you like to vote in a Poll?</p>' +
         '</div><div class="ntf-actions">' +
@@ -4809,14 +4831,13 @@ const POLL_HTML = `
         '<p class="ntf-err" id="pollErr" role="alert" hidden></p>' +
         '</div><div class="ntf-actions">' +
         '<button class="ntf-btn" type="button" data-go="vote">Vote</button>' +
-        '<button class="ntf-btn secondary" type="button" data-go="no">Skip</button>' +
         '</div>' };
     }
     var head = name === 'thanks' ? 'THANKS FOR VOTING!' : name === 'already' ? 'ALREADY VOTED' : 'POLL ENDED';
     var msg = name === 'thanks' ? 'Your vote has been counted.' : name === 'already' ? 'Votes from your connection have already been counted for this poll.' : 'This poll has already ended.';
     var foot = name === 'ended' ? '' : '<p class="poll-count">' + people(total) + '</p>' +
       (poll.ends > Date.now() ? '<p class="ntf-fine" style="padding:6px 0 0;margin:0">Poll ends in ' + left(poll.ends - Date.now()) + '.</p>' : '');
-    return { cls: name === 'thanks' ? 'ok' : 'sure', html: '<div class="ntf-body">' + (name === 'thanks' ? BELL : '') +
+    return { cls: name === 'thanks' ? 'ok' : 'sure', html: '<div class="ntf-body">' + ICON +
       '<div class="ntf-kicker" id="pollKicker">' + head + '</div>' +
       '<p class="ntf-msg">' + msg + '</p>' + foot +
       '</div><div class="ntf-actions">' +
@@ -5052,6 +5073,9 @@ select option{background:#14091f}
 .past summary::-webkit-details-marker{display:none}
 .past summary small{display:block;color:rgba(255,255,255,.45);font-size:12px}
 .past .res{margin-top:10px}
+.del{margin-top:10px;font-family:'Audiowide',sans-serif;font-size:11px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,107,107,.4);background:rgba(255,107,107,.06);color:#ff8a8a;cursor:pointer}
+.del.sure{background:rgba(255,107,107,.2);border-color:#ff6b6b}
+.del:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
 .empty{font-size:14px;color:rgba(255,255,255,.5);text-align:center}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.stripe{animation:none}}
@@ -5215,7 +5239,8 @@ select option{background:#14091f}
     }
     var past = state.polls.filter(function (p) { return p !== cur; });
     $('past').innerHTML = past.length ? past.map(function (p) {
-      return '<details><summary>' + esc(p.q) + '<small>' + p.total + ' vote' + (p.total === 1 ? '' : 's') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) + '</details>';
+      return '<details><summary>' + esc(p.q) + '<small>' + p.total + ' vote' + (p.total === 1 ? '' : 's') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) +
+        '<button class="del" type="button" data-del="' + p.id + '">Delete this poll</button></details>';
     }).join('') : '<p class="empty">No past polls yet.</p>';
   }
 
@@ -5327,6 +5352,20 @@ select option{background:#14091f}
       $('curErr').textContent = errText(err);
     }).then(function () {
       $('endYes').disabled = false;
+    });
+  });
+  $('past').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-del]');
+    if (!b) return;
+    if (!b.classList.contains('sure')) {
+      b.classList.add('sure');
+      b.textContent = 'Tap again to delete';
+      return;
+    }
+    b.disabled = true;
+    api({ mode: 'delete', id: Number(b.getAttribute('data-del')) }).catch(function (err) {
+      b.disabled = false;
+      b.textContent = errText(err);
     });
   });
   $('refreshBtn').addEventListener('click', function () {
