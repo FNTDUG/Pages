@@ -4779,6 +4779,8 @@ const POLL_HTML = `
 .ntf-veil .poll-note-head{font-family:'Press Start 2P',monospace;font-size:8px;line-height:1.8;color:#ffa45b;margin-bottom:6px}
 .ntf-veil .poll-note-text{font-size:14px;line-height:1.6;color:#e6e2ef;white-space:pre-wrap;overflow-wrap:anywhere}
 .ntf-veil .ntf-panel.tight .poll-note{margin-top:10px;padding:9px 12px}
+.ntf-veil .poll-final{flex-basis:100%;margin:0 0 2px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.5);text-align:center}
+.ntf-veil .ntf-panel.tight .poll-actions{flex-wrap:wrap;position:sticky;bottom:0;z-index:1;padding-top:18px;background:linear-gradient(180deg,rgba(28,5,40,0) 0,rgb(28,5,40) 12px)}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="pollArt" viewBox="0 0 11 12" shape-rendering="crispEdges">
@@ -4856,7 +4858,8 @@ const POLL_HTML = `
         (poll.multi ? '<p class="poll-hint">Pick all that apply.</p>' : '') +
         '<div class="poll-opts" role="' + (poll.multi ? 'group' : 'radiogroup') + '" aria-labelledby="pollKicker">' + opts + '</div>' +
         '<p class="ntf-err" id="pollErr" role="alert" hidden></p>' +
-        '</div><div class="ntf-actions">' +
+        '</div><div class="ntf-actions poll-actions">' +
+        '<p class="poll-final">Votes are final and can&#39;t be changed or undone.</p>' +
         '<button class="ntf-btn" type="button" data-go="vote">Vote</button>' +
         '</div>' };
     }
