@@ -1987,26 +1987,7 @@ var ELEMENTS=[
   {name:'Fire',        img:ELEM_IB+'fireelement.webp',
    desc:'[ENEMY]<br>● {-6%} Damage taken from burn effects<br>[UNIT]<br>● Attacks apply {3%} burn/second'},
   {name:'Light',       img:ELEM_IB+'lightelement.webp',
-   desc:'[ENEMY]<br>● {-35%} Stun duration<br>[UNIT]<br>● {-3%} Cooldown'},
-  {name:'Dark/Light',        img:ELEM_IB+'dark%3Alightelement.webp',
-   desc:'[ENEMY]<br>● {1.15x} Base damage dealt (effectively does nothing)<br>● {-35%} Stun duration<br>[UNIT]<br>● {+3%} Damage<br>● {-3%} Cooldown'},
-  {name:'Electricity/Light', img:ELEM_IB+'electricity%3Alightelement.webp',
-   desc:'[ENEMY]<br>● {1.15x} Movement speed boost<br>● {-35%} Stun duration<br>[UNIT]<br>● {-1%} Cooldown to all units in range (caps at {15%})<br>● {-3%} Cooldown'},
-  {name:'Fire/Rust',         img:ELEM_IB+'fire%3Arustelement.webp',
-   desc:'[ENEMY]<br>● {-6%} Damage taken from burn effects<br>● {-0.15x} Movement speed & {+20%} HP<br>[UNIT]<br>● Attacks apply {3%} burn/second<br>● {+3%} Cooldown & {+6%} damage'},
-  {name:'Nature/Rust',       img:ELEM_IB+'nature%3Arustelement.webp',
-   desc:'[ENEMY]<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>● {-0.15x} Movement speed & {+20%} HP<br>[UNIT]<br>● {+1} Stock per placement<br>● {+3%} Cooldown & {+6%} damage'},
-  {name:'Nature/Dark',       img:ELEM_IB+'nature%3Adarkelement.webp',
-   desc:'[ENEMY]<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>● {1.15x} Base damage dealt (effectively does nothing)<br>[UNIT]<br>● {+1} Stock per placement<br>● {+3%} Damage'},
-  {name:'Dark/Water',        img:ELEM_IB+'dark%3Awaterelement.webp',
-   desc:'[ENEMY]<br>● {1.15x} Base damage dealt (effectively does nothing)<br>● {-30%} Movement speed & immune to slows<br>[UNIT]<br>● {+3%} Damage<br>● {+3%} Range to all units on the map (stacks indefinitely)'},
-  {name:'Water/Electricity', img:ELEM_IB+'water%3Aelectricityelement.webp',
-   desc:'[ENEMY]<br>● {-30%} Movement speed & immune to slows<br>● {1.15x} Movement speed boost<br>[UNIT]<br>● {+3%} Range to all units on the map (stacks indefinitely)<br>● {-1%} Cooldown to all units in range (caps at {15%})'},
-  // Universal is neither a base nor a dual — it carries all eight base elements
-  // at once, so its two lists are the eight base rows above concatenated in the
-  // same order. If a base element's numbers change, change them here too.
-  {name:'Universal',         img:ELEM_IB+'universalelement.png',
-   desc:'[ENEMY]<br>● Takes {0.85x} damage<br>● {5%} HP regen/sec to nearby enemies ({4 studs})<br>● {1.15x} Base damage dealt (effectively does nothing)<br>● {-30%} Movement speed & immune to slows<br>● {-0.15x} Movement speed & {+20%} HP<br>● {1.15x} Movement speed boost<br>● {-6%} Damage taken from burn effects<br>● {-35%} Stun duration<br>[UNIT]<br>● {+3%} To all stats<br>● {+1} Stock per placement<br>● {+3%} Damage<br>● {+3%} Range to all units on the map (stacks indefinitely)<br>● {+3%} Cooldown & {+6%} damage<br>● {-1%} Cooldown to all units in range (caps at {15%})<br>● Attacks apply {3%} burn/second<br>● {-3%} Cooldown'}
+   desc:'[ENEMY]<br>● {-35%} Stun duration<br>[UNIT]<br>● {-3%} Cooldown'}
 ];
 (function(){
   var el=document.getElementById('inf-elements-inner');
