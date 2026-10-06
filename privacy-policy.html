@@ -51,6 +51,7 @@
       <li><strong>IP address.</strong> Your device's IP address is collected and processed by our hosting/content-delivery provider and by the advertising and analytics services we use (see below). This is standard for websites and is used to deliver the site to you, keep it secure, and serve advertising.</li>
       <li><strong>Device and browsing information.</strong> Such as your browser type, operating system, device type, screen size, the page that referred you, and the pages you view on the site.</li>
       <li><strong>Cookies and similar technologies.</strong> Small files stored by your browser, used by our advertising and analytics partners (see "Cookies, advertising, and analytics" below).</li>
+      <li><strong>Poll votes (only if you vote).</strong> If you vote in a poll, we count your answer and keep a scrambled code made from your IP address to limit repeat voting. See "Polls" below.</li>
       <li><strong>Push notification sign-ups (only if you turn them on).</strong> If you choose to turn on notifications, we store the information your browser gives us to deliver them, and which games you chose. See "Push notifications" below.</li>
     </ul>
 
@@ -78,6 +79,14 @@
     <p>Your browser also remembers, on your device only, when the notification popup was last shown and which games you picked, so the popup does not keep reappearing. This is never sent to us.</p>
     <p>You can turn notifications off at any time with the bell button on the site, or by blocking notifications for this site in your browser settings. When you turn them off with the bell, your subscription is deleted from our records straight away. If you block notifications in your browser or clear your site data instead, your subscription is deleted automatically the next time we try to send a notification and your browser's push service reports that it is no longer valid.</p>
 
+    <h2>Polls</h2>
+    <p>From time to time we run a poll on the site. Voting is optional. If you vote:</p>
+    <ul>
+      <li><strong>Your answer is only added to a running total</strong> for that answer. We do not store which answer you picked alongside anything that could identify you.</li>
+      <li><strong>A scrambled code made from your IP address</strong> is stored for that poll so the same internet connection cannot vote more than a few times. It is made with a one-way hash and a secret key, so it cannot be turned back into your IP address, and it is different for every poll. These codes are deleted once the poll ends.</li>
+    </ul>
+    <p>Votes are stored with <strong>Cloudflare</strong>, our hosting provider. Your browser also remembers, on your device only, which polls you have already answered, so the poll popup does not keep reappearing.</p>
+
     <h2>Children's privacy</h2>
     <p>This site is a general-audience gaming guide and is not directed at children under the age of 13 (or the equivalent minimum age in your country). We do not knowingly collect personal information from children. If you believe a child has provided personal information, please contact us and we will take appropriate steps to remove it.</p>
 
@@ -85,7 +94,7 @@
     <p>Depending on where you live &mdash; for example, the EEA/UK under the GDPR, or California under the CCPA/CPRA &mdash; you may have rights regarding your data, such as the right to access, delete, or object to certain processing. Because we do not hold user accounts, most of the data involved is handled by our advertising and hosting providers, and you can exercise your choices through <a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer">Google Ad Settings</a> and your browser's cookie controls. If you turned on push notifications, you can delete that information at any time by turning them off with the bell button. To make a request or ask a question, contact us using the details below.</p>
 
     <h2>Data retention</h2>
-    <p>We do not maintain our own database of visitors, other than push notification subscriptions for people who choose to turn notifications on. Those are kept until you turn notifications off, or until your browser's push service reports that the subscription is no longer valid. Automatically-generated logs (for example, via Cloudflare) and advertising/analytics data are retained by those providers in accordance with their own policies.</p>
+    <p>We do not maintain our own database of visitors, other than push notification subscriptions for people who choose to turn notifications on, and poll totals. The scrambled codes used to limit repeat poll voting are deleted when each poll ends. Those are kept until you turn notifications off, or until your browser's push service reports that the subscription is no longer valid. Automatically-generated logs (for example, via Cloudflare) and advertising/analytics data are retained by those providers in accordance with their own policies.</p>
 
     <h2>Links to other sites</h2>
     <p>The site contains links to third-party websites (for example, Discord, the game, and artist portfolios). We are not responsible for the content or privacy practices of those sites, and we encourage you to review their policies.</p>
