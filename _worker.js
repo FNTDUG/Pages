@@ -3616,6 +3616,32 @@ function pushCleanLink(v) {
   return s;
 }
 
+const PUSH_HISTORY_SCHEMA = 'CREATE TABLE IF NOT EXISTS push_history (tag TEXT PRIMARY KEY, created INTEGER NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, url TEXT NOT NULL, games TEXT NOT NULL, sent INTEGER NOT NULL DEFAULT 0, removed INTEGER NOT NULL DEFAULT 0, failed INTEGER NOT NULL DEFAULT 0, done INTEGER NOT NULL DEFAULT 0)';
+
+async function pushHistoryLog(env, rec, out, done) {
+  if (!env.POLLS || !rec.tag) return;
+  const db = env.POLLS;
+  try {
+    await db.batch([
+      db.prepare(PUSH_HISTORY_SCHEMA),
+      db.prepare('INSERT INTO push_history (tag, created, title, body, url, games, sent, removed, failed, done) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10) ' +
+        'ON CONFLICT(tag) DO UPDATE SET sent = sent + ?7, removed = removed + ?8, failed = failed + ?9, done = ?10')
+        .bind(rec.tag, Date.now(), rec.title, rec.body, rec.url, rec.games.join(','), out.sent, out.removed, out.failed, done ? 1 : 0)
+    ]);
+  } catch (e) {}
+}
+
+async function pushHistory(env) {
+  if (!env.POLLS) return [];
+  const db = env.POLLS;
+  try {
+    await db.prepare(PUSH_HISTORY_SCHEMA).run();
+    return (await db.prepare('SELECT created, title, body, url, games, sent, removed, failed, done FROM push_history ORDER BY created DESC LIMIT 10').all()).results || [];
+  } catch (e) {
+    return [];
+  }
+}
+
 async function pushSend(request, env) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.PUSH_SUBS || !env.PUSH_VAPID_PRIVATE || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
@@ -3640,7 +3666,7 @@ async function pushSend(request, env) {
       if (list.list_complete) break;
       cursor = list.cursor;
     }
-    return pushJson({ ok: true, counts });
+    return pushJson({ ok: true, counts, history: await pushHistory(env) });
   }
 
   const games = pushCleanGames(body.games);
@@ -3673,6 +3699,7 @@ async function pushSend(request, env) {
       out.failed++;
     }
   }));
+  await pushHistoryLog(env, { tag, title, body: text, url: link, games }, out, list.list_complete);
   return pushJson({ ok: true, sent: out.sent, removed: out.removed, failed: out.failed, cursor: list.list_complete ? null : list.cursor });
 }
 
@@ -4383,6 +4410,16 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 .confirm p{font-size:15px;line-height:1.6;margin-bottom:4px}
 .result{font-size:15px;line-height:1.8;text-align:center;color:#e6e2ef}
 .result b{color:#fff}
+.past details{border-top:1px solid rgba(255,255,255,.08);padding:12px 0}
+.past details:first-child{border-top:0}
+.past summary{cursor:pointer;font-size:14px;line-height:1.5;color:#e6e2ef;list-style:none;word-break:break-word}
+.past summary::-webkit-details-marker{display:none}
+.past summary small{display:block;color:rgba(255,255,255,.45);font-size:12px}
+.past .msg{margin-top:10px;font-size:14px;line-height:1.55;color:#e6e2ef;white-space:pre-wrap;word-break:break-word}
+.past .info{margin-top:8px;font-size:13px;line-height:1.7;color:rgba(255,255,255,.55);word-break:break-word}
+.past .info b{color:#fff;font-weight:400}
+.past .warn{color:#ff8a8a}
+.empty{font-size:14px;color:rgba(255,255,255,.5);text-align:center}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.stripe{animation:none}}
 </style>
@@ -4459,6 +4496,14 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
       </div>
     </div>
   </div>
+
+  <div class="card" id="histCard" style="margin-top:18px" hidden>
+    <div class="stripe" aria-hidden="true"></div>
+    <div class="body">
+      <h2 class="kicker">SENT BEFORE</h2>
+      <div class="past" id="hist"></div>
+    </div>
+  </div>
 </div>
 <script>
 (function () {
@@ -4505,6 +4550,40 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
     $('cBbn').textContent = '(' + counts.bbn + ')';
   }
 
+  var GAME_NAMES = { fntd2: 'FNTD2', bbn: 'Bite By Night' };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function when(t) {
+    var d = new Date(t);
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
+
+  function showHistory(list) {
+    if (!list) return;
+    $('histCard').hidden = false;
+    $('hist').innerHTML = list.length ? list.map(function (h, i) {
+      var g = String(h.games || '').split(',').map(function (x) { return GAME_NAMES[x] || x; }).join(' + ');
+      var info = ['Sent to <b>' + plural(h.sent, 'device') + '</b>'];
+      if (h.removed) info.push(plural(h.removed, 'expired sign-up') + ' removed');
+      if (h.failed) info.push(h.failed + ' could not be delivered');
+      return '<details' + (i === 0 ? ' open' : '') + '><summary>' + esc(h.title) +
+        '<small>' + when(h.created) + ' &middot; ' + esc(g) + (h.done ? '' : ' &middot; <span class="warn">stopped partway</span>') + '</small></summary>' +
+        '<p class="msg">' + esc(h.body) + '</p>' +
+        '<p class="info">' + info.join(' &middot; ') + '<br>Opens <b>' + esc(h.url) + '</b></p></details>';
+    }).join('') : '<p class="empty">Nothing sent yet.</p>';
+  }
+
+  function refresh() {
+    return api({ mode: 'count' }).then(function (j) { counts = j.counts; showCounts(); showHistory(j.history); }).catch(function () {});
+  }
+
   function refreshPreview() {
     $('pvTitle').textContent = $('title').value.trim() || 'FNTD User Guide';
     $('pvMsg').textContent = $('msg').value.trim() || 'New FNTD2 metas are up!';
@@ -4528,6 +4607,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
       counts = j.counts;
       $('pw').value = '';
       showCounts();
+      showHistory(j.history);
       $('lockView').hidden = true;
       $('composeView').hidden = false;
       $('msg').focus();
@@ -4564,6 +4644,8 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
   $('lockBtn').addEventListener('click', function () {
     password = '';
     $('composeView').hidden = true;
+    $('histCard').hidden = true;
+    $('hist').innerHTML = '';
     $('lockView').hidden = false;
     $('pw').focus();
   });
@@ -4598,8 +4680,10 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
       $('card').classList.add('ok');
       $('composeView').hidden = true;
       $('doneView').hidden = false;
+      refresh();
     }).catch(function (err) {
       $('sendErr').textContent = errText(err) + (total.sent ? ' (' + total.sent + ' already sent)' : '');
+      refresh();
     }).then(function () {
       $('yesBtn').disabled = false;
       $('noBtn').disabled = false;
@@ -4615,7 +4699,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
     $('confirm').hidden = true;
     $('mainActions').hidden = false;
     $('doneView').hidden = true;
-    api({ mode: 'count' }).then(function (j) { counts = j.counts; showCounts(); }).catch(function () {});
+    refresh();
     $('composeView').hidden = false;
     $('msg').focus();
   });
