@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Wiki Builder | FNTD User Guide</title>
+<link rel="icon" type="image/png" href="/favicon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/wiki-blocks.css">
+<style>
+:root{--bg:#07060f;--panel:#100c1c;--panel2:#171226;--field:#0b0814;--line:rgba(255,164,91,.16);--line2:rgba(255,255,255,.08);--acc:#ffa45b;--acc2:#ffc861;--purple:#681f62;--txt:#ece8f3;--mute:#9c93a8;--ok:#4ade80;--bad:#f87171;--top:58px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--txt);font:13px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+[hidden]{display:none!important}
+.wb-top{flex:none;height:var(--top);display:flex;align-items:center;gap:10px;padding:0 14px;background:linear-gradient(180deg,#160a26,#24092b);border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(104,31,98,.35);position:relative;z-index:30}
+.wb-brand{display:flex;align-items:center;gap:9px;font-family:'Audiowide',sans-serif;font-size:14px;letter-spacing:1px;white-space:nowrap}
+.wb-logo{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),#c2410c);color:#1a0b05;font-size:16px;box-shadow:0 0 14px rgba(255,164,91,.4)}
+.wb-tag{font-size:9px;padding:2px 6px;border-radius:5px;background:rgba(255,164,91,.15);color:var(--acc);border:1px solid rgba(255,164,91,.35)}
+.wb-pick{position:relative;min-width:0}
+.wb-pagebtn{display:flex;align-items:center;gap:8px;max-width:260px;height:36px;padding:0 12px;border-radius:9px;background:rgba(0,0,0,.35);border:1px solid var(--line2);transition:border-color .15s}
+.wb-pagebtn:hover,.wb-pagebtn.on{border-color:rgba(255,164,91,.5)}
+.wb-pagebtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.wb-pagebtn i{font-style:normal;color:var(--mute);font-size:10px}
+.wb-menu{position:absolute;top:44px;left:0;width:330px;max-width:calc(100vw - 24px);background:var(--panel2);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.6);overflow:hidden}
+.wb-menu-list{max-height:min(340px,50vh);overflow-y:auto;padding:6px}
+.wb-menu-item{display:block;width:100%;text-align:left;padding:9px 11px;border-radius:8px}
+.wb-menu-item:hover,.wb-menu-item.cur{background:rgba(255,164,91,.1)}
+.wb-menu-item b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wb-menu-item small{color:var(--mute);font-size:11.5px}
+.wb-menu-empty{padding:14px;color:var(--mute);text-align:center}
+.wb-new{border-top:1px solid var(--line2);padding:12px;display:grid;gap:8px;background:rgba(0,0,0,.2)}
+.wb-new-h{font-family:'Audiowide',sans-serif;font-size:11px;letter-spacing:1px;color:var(--acc)}
+.wb-new-row{display:flex;gap:8px}
+.wb-new-row input{flex:1;min-width:0}
+.wb-new small{color:var(--mute);font-size:11.5px;min-height:17px}
+.wb-new small.err{color:var(--bad)}
+.wb-sp{flex:1}
+.wb-status{display:flex;align-items:center;gap:7px;height:30px;padding:0 11px;border-radius:999px;background:rgba(0,0,0,.4);border:1px solid var(--line2);font-size:12px;white-space:nowrap;color:var(--mute)}
+.wb-status .dot{width:8px;height:8px;border-radius:50%;background:var(--mute);flex:none}
+.wb-status.saved .dot{background:var(--ok);box-shadow:0 0 8px var(--ok);animation:wbPulse 2s ease-in-out infinite}
+.wb-status.edit .dot,.wb-status.saving .dot{background:var(--acc2);box-shadow:0 0 8px var(--acc2)}
+.wb-status.saving .dot{animation:wbPulse .6s ease-in-out infinite}
+.wb-status.error .dot,.wb-status.conflict .dot,.wb-status.slow .dot{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+@keyframes wbPulse{50%{opacity:.35}}
+.wb-tb{display:flex;align-items:center;gap:6px;min-width:0}
+.wb-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--line2);background:rgba(255,255,255,.04);white-space:nowrap;text-decoration:none;color:var(--txt);transition:background .15s,border-color .15s,opacity .15s}
+.wb-btn:hover{background:rgba(255,164,91,.12);border-color:rgba(255,164,91,.4)}
+.wb-btn:disabled{opacity:.35;pointer-events:none}
+.wb-btn.ic{width:34px;padding:0;font-size:16px}
+.wb-btn.pri{background:linear-gradient(180deg,#ffb36f,#f08a3e);color:#1d0d03;border-color:transparent;font-weight:700}
+.wb-btn.pri:hover{filter:brightness(1.08)}
+.wb-btn.dng:hover{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.5);color:#fecaca}
+.wb-seg{display:inline-flex;padding:3px;border-radius:9px;background:rgba(0,0,0,.35);border:1px solid var(--line2)}
+.wb-seg button{height:26px;padding:0 10px;border-radius:6px;color:var(--mute);font-size:12px}
+.wb-seg button.on{background:rgba(255,164,91,.18);color:var(--acc)}
+.wb-name{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:12px;white-space:nowrap}
+.wb-name input{width:120px;height:34px}
+input[type=text],textarea{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type=text]{height:36px}
+input[type=text]:focus,textarea:focus{border-color:rgba(255,164,91,.6);box-shadow:0 0 0 3px rgba(255,164,91,.12)}
+textarea{resize:vertical;min-height:90px;line-height:1.55;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+.wb-conflict{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 16px;background:rgba(248,113,113,.12);border-bottom:1px solid rgba(248,113,113,.35);color:#fecaca;position:relative;z-index:25}
+.wb-conflict p{flex:1;min-width:220px}
+.wb-main{flex:1;min-height:0;display:grid;grid-template-columns:232px minmax(0,1fr) 330px}
+.wb-pal{border-right:1px solid var(--line2);background:var(--panel);padding:16px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.wb-h{font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--mute);margin:4px 2px 0}
+.wb-tile{display:block;width:100%;text-align:left;padding:10px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.wb-tile:hover{border-color:rgba(255,164,91,.45);transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.wb-tile:active{cursor:grabbing}
+.wb-tile b{display:block;font-family:'Audiowide',sans-serif;font-weight:400;font-size:13px;color:var(--acc);margin-top:9px}
+.wb-tile span{display:block;color:var(--mute);font-size:11.5px;line-height:1.4;margin-top:2px}
+.wb-art{height:62px;border-radius:8px;background:#07060f;display:grid;place-items:center;overflow:hidden;pointer-events:none}
+.wb-art-panel{width:78%;height:46px;border:9px solid transparent;border-image:url('https://images.fntduserguide.com/game-ui-background.webp') 18 fill / 9px stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.wb-art-panel i{display:block;height:3px;border-radius:2px;background:#ffc861;width:50%}
+.wb-art-panel i+i{background:#9a9a9a;width:72%}
+.wb-art-card{width:80%;display:grid;gap:4px}
+.wb-art-card i{display:block;height:19px;border-radius:4px;background:#1a1b1e;border-left:3px solid var(--acc);box-shadow:-2px 0 8px rgba(255,164,91,.25)}
+.wb-cheat{display:grid;gap:5px;padding:10px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid var(--line2);font-size:12px;color:var(--mute)}
+.wb-cheat code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--acc2);background:rgba(255,200,97,.08);padding:1px 4px;border-radius:4px}
+.wb-keys{font-size:11.5px;color:var(--mute);line-height:1.7;padding:0 2px}
+.wb-keys kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--txt)}
+.wb-stage{position:relative;overflow:auto;overscroll-behavior:contain;background:#0a0c1e url('https://images.fntduserguide.com/952b91dc-d51b-434a-bee1-591d5d60126a.jpg') center/cover;padding:26px 22px 80px}
+.wb-pv{position:sticky;top:-26px;z-index:8;margin:-26px -22px 18px;padding:10px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:rgba(18,10,32,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.wb-pv p{flex:1;min-width:200px;color:var(--acc2)}
+.wb-frame{width:860px;max-width:100%;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);background:rgba(7,6,15,.55);transition:width .25s ease}
+.wb-frame.phone{width:390px}
+.wb-hero{position:relative;padding:24px 18px 22px;text-align:center;background:url('https://images.fntduserguide.com/starry1.webp') center top/cover}
+.wb-hero::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.48)}
+.wb-ptitle{position:relative;display:inline-block;max-width:100%;font-family:'Audiowide',sans-serif;font-size:32px;line-height:1.3;color:#fff;text-shadow:0 0 8px rgba(255,164,91,.35);text-decoration:underline;text-underline-offset:6px;padding:4px 10px;border-radius:10px;cursor:pointer;outline:1.5px dashed transparent;outline-offset:2px;overflow-wrap:break-word}
+.wb-ptitle:hover{outline-color:rgba(255,164,91,.35)}
+.wb-ptitle.sel{outline:1.5px solid var(--acc)}
+.wb-frame.phone .wb-ptitle{font-size:22px}
+.wb-canvas{padding:30px 18px 50px;min-height:240px;user-select:none;-webkit-user-select:none}
+.wb-blk{position:relative;border-radius:10px;cursor:pointer}
+.wb-blk::after{content:'';position:absolute;inset:-8px -8px -8px -8px;border:1.5px dashed transparent;border-radius:12px;pointer-events:none;transition:border-color .12s}
+.wb-blk:hover::after{border-color:rgba(255,164,91,.35)}
+.wb-blk.sel::after{border:1.5px solid var(--acc);box-shadow:0 0 0 4px rgba(255,164,91,.12),0 0 24px rgba(255,164,91,.18)}
+.wb-blk+.wb-blk{margin-top:16px}
+.wb-blk.wb-moving{opacity:.3}
+.wb-lab{position:absolute;top:-22px;left:-2px;z-index:4;font-family:'Audiowide',sans-serif;font-size:9.5px;letter-spacing:1px;color:#1d0d03;background:var(--acc);padding:2px 7px;border-radius:5px;opacity:0;pointer-events:none;transition:opacity .12s}
+.wb-tools{position:absolute;top:-25px;right:-4px;z-index:4;display:flex;gap:2px;padding:2px;border-radius:8px;background:#1d1530;border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .12s}
+.wb-tools button{width:26px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:13px;color:var(--txt)}
+.wb-tools button:hover{background:rgba(255,164,91,.18);color:var(--acc)}
+.wb-tools .wb-grip{cursor:grab;touch-action:none;font-size:15px;letter-spacing:-2px}
+.wb-tools .wb-del:hover{background:rgba(248,113,113,.2);color:#fecaca}
+.wb-blk:hover .wb-lab,.wb-blk.sel .wb-lab{opacity:1}
+.wb-blk:hover .wb-tools,.wb-blk.sel .wb-tools{opacity:1;pointer-events:auto}
+@media (hover:none){.wb-blk:hover .wb-tools{opacity:0;pointer-events:none}.wb-blk:hover .wb-lab{opacity:0}.wb-blk.sel .wb-tools,.wb-blk.sel .wb-lab{opacity:1;pointer-events:auto}}
+.wb-content a{pointer-events:none}
+.wb-empty{display:grid;place-items:center;text-align:center;min-height:200px;border:2px dashed rgba(255,164,91,.3);border-radius:14px;color:var(--mute);font-family:'Audiowide',sans-serif;font-size:13px;letter-spacing:.5px;padding:20px;background:rgba(0,0,0,.25)}
+.wb-empty b{display:block;color:var(--acc);font-weight:400;font-size:15px;margin-bottom:4px}
+body.wb-dragging,body.wb-dragging *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important}
+body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
+.wb-ghost{position:fixed;left:0;top:0;z-index:100;pointer-events:none;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--acc);box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 20px rgba(255,164,91,.25);font-family:'Audiowide',sans-serif;font-size:12px;color:var(--acc);white-space:nowrap;will-change:transform}
+.wb-line{position:fixed;z-index:90;height:4px;margin-top:-2px;border-radius:4px;background:var(--acc);box-shadow:0 0 12px rgba(255,164,91,.8);pointer-events:none}
+.wb-line::before,.wb-line::after{content:'';position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--acc)}
+.wb-line::before{left:-6px}.wb-line::after{right:-6px}
+.wb-insp{border-left:1px solid var(--line2);background:var(--panel);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column}
+.wb-ih{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line2)}
+.wb-ih h2{flex:1;font-family:'Audiowide',sans-serif;font-weight:400;font-size:13px;letter-spacing:1px;color:var(--acc)}
+.wb-done{display:none}
+.wb-ib{padding:14px 16px 26px;display:grid;gap:16px}
+.wb-f{display:grid;gap:6px}
+.wb-fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.3px;color:#cfc7dc;text-transform:uppercase}
+.wb-fl em{font-style:normal;font-weight:400;text-transform:none;color:var(--mute);letter-spacing:0}
+.wb-count{justify-self:end;font-size:11px;color:var(--mute)}
+.wb-count.hi{color:var(--acc2)}
+.wb-fmt{display:flex;flex-wrap:wrap;gap:4px}
+.wb-fmt button{height:28px;min-width:30px;padding:0 8px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid var(--line2);font-size:12px;color:#ddd}
+.wb-fmt button:hover{border-color:rgba(255,164,91,.45);color:var(--acc)}
+.wb-range{display:flex;align-items:center;gap:10px}
+.wb-range input{flex:1;accent-color:var(--acc);min-width:0}
+.wb-range input:disabled{opacity:.35}
+.wb-range output{width:52px;text-align:right;font-variant-numeric:tabular-nums;color:var(--acc2);font-weight:600}
+.wb-chk{display:flex;align-items:center;gap:8px;cursor:pointer;color:#ddd}
+.wb-chk input{accent-color:var(--acc);width:16px;height:16px}
+.wb-seg2{display:flex;padding:3px;border-radius:9px;background:var(--field);border:1px solid rgba(255,255,255,.1)}
+.wb-seg2 button{flex:1;height:30px;border-radius:6px;color:var(--mute)}
+.wb-seg2 button.on{background:rgba(255,164,91,.18);color:var(--acc);font-weight:600}
+.wb-sec{display:grid;gap:8px;padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);border-left:3px solid var(--acc)}
+.wb-sec-h{display:flex;align-items:center;gap:4px}
+.wb-sec-h b{flex:1;font-family:'Audiowide',sans-serif;font-weight:400;font-size:11px;letter-spacing:1px;color:var(--acc2)}
+.wb-sec-h button{width:26px;height:26px;border-radius:6px;color:var(--mute)}
+.wb-sec-h button:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.wb-sec-h button:disabled{opacity:.25;pointer-events:none}
+.wb-sec textarea{min-height:70px}
+.wb-acts{display:flex;gap:8px;flex-wrap:wrap}
+.wb-acts .wb-btn{flex:1}
+.wb-note{padding:12px;border-radius:10px;background:rgba(255,164,91,.06);border:1px solid var(--line);color:#d6cfe2;line-height:1.6}
+.wb-note b{color:var(--acc)}
+.wb-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wb-stat{padding:10px;border-radius:10px;background:var(--panel2);border:1px solid var(--line2)}
+.wb-stat b{display:block;font-family:'Audiowide',sans-serif;font-weight:400;font-size:18px;color:var(--acc)}
+.wb-stat span{color:var(--mute);font-size:11.5px}
+.wb-url{display:flex;gap:6px}
+.wb-url input{color:var(--mute)}
+.wb-drawer{position:fixed;top:var(--top);right:0;bottom:0;width:360px;max-width:100%;z-index:40;background:var(--panel2);border-left:1px solid var(--line);box-shadow:-20px 0 50px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:wbSlide .2s ease-out}
+@keyframes wbSlide{from{transform:translateX(30px);opacity:0}}
+.wb-dl{flex:1;overflow-y:auto;padding:10px}
+.wb-rev{padding:11px 12px;border-radius:10px;border:1px solid transparent;display:grid;gap:3px}
+.wb-rev:hover{background:rgba(255,255,255,.03);border-color:var(--line2)}
+.wb-rev.cur{border-color:var(--line);background:rgba(255,164,91,.05)}
+.wb-rev-top{display:flex;align-items:center;gap:8px}
+.wb-rev-top b{font-family:'Audiowide',sans-serif;font-weight:400;color:var(--acc);font-size:12px}
+.wb-rev-top span{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wb-rev small{color:var(--mute)}
+.wb-rev-acts{display:flex;gap:6px;margin-top:6px}
+.wb-rev-acts .wb-btn{height:28px;font-size:12px;padding:0 10px}
+.wb-toast{position:fixed;left:50%;bottom:24px;z-index:120;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:#1f1733;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.6);transition:opacity .2s,transform .2s;max-width:calc(100vw - 24px)}
+.wb-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.wb-toast button{color:var(--acc);font-weight:700}
+@media (max-width:1100px){.wb-main{grid-template-columns:200px minmax(0,1fr) 300px}.wb-name span{display:none}}
+@media (max-width:860px){
+  :root{--top:auto}
+  .wb-top{height:auto;flex-wrap:wrap;padding:8px 10px;gap:8px}
+  .wb-brand .wb-bt{display:none}
+  .wb-pick{flex:1}
+  .wb-pagebtn{max-width:none;width:100%}
+  .wb-sp{display:none}
+  .wb-seg{display:none}
+  .wb-tb{order:5;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .wb-tb::-webkit-scrollbar{display:none}
+  .wb-main{grid-template-columns:1fr}
+  .wb-stage{padding:22px 10px 110px}
+  .wb-pv{margin:-22px -10px 14px;top:-22px}
+  .wb-pal{position:fixed;left:0;right:0;bottom:0;z-index:20;flex-direction:row;align-items:stretch;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);overflow:visible;box-shadow:0 -10px 30px rgba(0,0,0,.5)}
+  .wb-pal>:not(.wb-tile){display:none}
+  .wb-tile{display:flex;align-items:center;gap:10px;padding:8px}
+  .wb-tile b{margin:0;font-size:12px}
+  .wb-tile span{display:none}
+  .wb-art{height:38px;width:52px;flex:none}
+  .wb-art-panel{height:30px;border-width:6px;border-image-width:6px}
+  .wb-art-card i{height:10px}
+  .wb-insp{position:fixed;left:0;right:0;bottom:0;z-index:35;max-height:64vh;max-height:64dvh;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -20px 50px rgba(0,0,0,.6);transform:translateY(105%);transition:transform .22s ease}
+  .wb-insp.open{transform:none}
+  .wb-ih{border-radius:16px 16px 0 0}
+  .wb-done{display:inline-flex}
+  .wb-drawer{top:0;width:100%}
+  .wb-toast{bottom:84px}
+}
+</style>
+</head>
+<body>
+<header class="wb-top">
+  <div class="wb-brand"><span class="wb-logo">&#9638;</span><span class="wb-bt">WIKI BUILDER</span><span class="wb-tag">DEV</span></div>
+  <div class="wb-pick">
+    <button class="wb-pagebtn" id="pageBtn" type="button" aria-haspopup="true"><span id="pageBtnTxt">Loading...</span><i>&#9660;</i></button>
+    <div class="wb-menu" id="pageMenu" hidden>
+      <div class="wb-menu-list" id="pageList"></div>
+      <form class="wb-new" id="newForm" autocomplete="off">
+        <div class="wb-new-h">START A NEW PAGE</div>
+        <div class="wb-new-row"><input type="text" id="newTitle" maxlength="80" placeholder="Page title, e.g. Security Owl"><button class="wb-btn pri" type="submit">Create</button></div>
+        <small id="newSlug">The page address is made from the title.</small>
+      </form>
+    </div>
+  </div>
+  <div class="wb-sp"></div>
+  <div class="wb-status" id="status"><span class="dot"></span><span id="statusTxt">Connecting</span></div>
+  <div class="wb-tb">
+    <button class="wb-btn ic" id="undoBtn" type="button" title="Undo (Ctrl+Z)" disabled>&#8630;</button>
+    <button class="wb-btn ic" id="redoBtn" type="button" title="Redo (Ctrl+Shift+Z)" disabled>&#8631;</button>
+    <div class="wb-seg" id="viewSeg"><button type="button" data-view="desk" class="on">Desktop</button><button type="button" data-view="phone">Phone</button></div>
+    <button class="wb-btn" id="histBtn" type="button">&#128337; History</button>
+    <a class="wb-btn" id="viewLink" href="/wiki" target="_blank" rel="noopener">View page &#8599;</a>
+    <label class="wb-name"><span>Your name</span><input type="text" id="nameIn" maxlength="24" placeholder="anonymous"></label>
+  </div>
+</header>
+<div class="wb-conflict" id="conflict" hidden>
+  <p id="conflictTxt">Someone else saved this page while you were editing.</p>
+  <button class="wb-btn" id="keepMine" type="button">Keep my version</button>
+  <button class="wb-btn pri" id="takeTheirs" type="button">Load theirs</button>
+</div>
+<div class="wb-main">
+  <aside class="wb-pal" id="pal">
+    <div class="wb-h">BLOCKS</div>
+    <button class="wb-tile" type="button" data-add="panel"><div class="wb-art"><div class="wb-art-panel"><i></i><i></i></div></div><b>Text panel</b><span>The framed game-UI box. A title, then text, lists and headings.</span></button>
+    <button class="wb-tile" type="button" data-add="card"><div class="wb-art"><div class="wb-art-card"><i></i><i></i></div></div><b>Info card</b><span>Orange-bar cards. Stack up to 8 sections.</span></button>
+    <div class="wb-h">FORMATTING</div>
+    <div class="wb-cheat">
+      <div><code>**bold**</code> &nbsp;<code>*italic*</code></div>
+      <div><code>[text](https://...)</code> link</div>
+      <div><code>- item</code> bullet list</div>
+      <div><code>## Heading</code> sub-heading</div>
+      <div>Blank line = new paragraph</div>
+    </div>
+    <div class="wb-h">SHORTCUTS</div>
+    <div class="wb-keys"><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo &middot; <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicate<br><kbd>Alt</kbd>+<kbd>&uarr;</kbd><kbd>&darr;</kbd> move &middot; <kbd>Del</kbd> delete<br><kbd>Esc</kbd> deselect</div>
+  </aside>
+  <main class="wb-stage" id="stage">
+    <div class="wb-pv" id="pvBar" hidden>
+      <p id="pvTxt"></p>
+      <button class="wb-btn" id="pvBack" type="button">Back to editing</button>
+      <button class="wb-btn pri" id="pvRestore" type="button">Restore this version</button>
+    </div>
+    <div class="wb-frame" id="frame">
+      <div class="wb-hero"><div class="wb-ptitle" id="ptitle" title="Page settings">&nbsp;</div></div>
+      <div class="wb-canvas wk-doc" id="canvas"></div>
+    </div>
+  </main>
+  <aside class="wb-insp" id="insp"></aside>
+</div>
+<div class="wb-drawer" id="drawer" hidden>
+  <div class="wb-ih"><h2>HISTORY</h2><button class="wb-btn ic" id="drawerClose" type="button" title="Close">&#10005;</button></div>
+  <div class="wb-dl" id="revList"></div>
+</div>
+<div class="wb-toast" id="toast"><span id="toastTxt"></span><button id="toastBtn" type="button" hidden></button></div>
+<div class="wb-ghost" id="ghost" hidden></div>
+<div class="wb-line" id="line" hidden></div>
+<script src="/wiki-blocks.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var canvas = $('canvas'), stage = $('stage'), insp = $('insp'), frame = $('frame'), ptitle = $('ptitle');
+  var ghost = $('ghost'), line = $('line'), toastEl = $('toast');
+  var esc = WikiBlocks.esc;
+  var NAMES = { panel: 'TEXT PANEL', card: 'INFO CARD' };
+  var S = { slug: '', title: '', doc: { blocks: [] }, version: 0, updated: 0, by: '', sel: null, seq: 0, savedSeq: 0, saving: false, conflict: null, preview: null, sheet: false, base: '{"title":"","doc":{"blocks":[]}}' };
+  var U = { stack: [], i: 0, group: null, t: 0 };
+  var saveT = null, pollT = null, toastT = null, fails = 0;
+  var isNarrow = window.matchMedia('(max-width: 860px)');
+
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function newId() { return (Date.now().toString(36).slice(-5) + Math.random().toString(36).slice(2, 8)).replace(/[^a-z0-9]/g, '').slice(0, 12); }
+  function slugify(t) { return String(t || '').toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48).replace(/-+$/, ''); }
+  function ago(t) {
+    var s = Math.max(0, Math.round((Date.now() - t) / 1000));
+    if (s < 45) return 'just now';
+    if (s < 3600) return Math.max(1, Math.round(s / 60)) + ' min ago';
+    if (s < 86400) return Math.floor(s / 3600) + ' h ago';
+    return new Date(t).toLocaleDateString();
+  }
+  function dirty() { return S.seq !== S.savedSeq; }
+  function byName() { return $('nameIn').value.trim(); }
+  function blockIndex(id) { for (var i = 0; i < S.doc.blocks.length; i++) if (S.doc.blocks[i].id === id) return i; return -1; }
+  function selBlock() { var i = blockIndex(S.sel); return i < 0 ? null : S.doc.blocks[i]; }
+
+  function api(path, body) {
+    var opts = body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : { cache: 'no-store' };
+    return fetch(path, opts).then(function (r) {
+      return r.json().catch(function () { return { ok: false, error: 'bad' }; }).then(function (j) { j.status = r.status; return j; });
+    });
+  }
+
+  function setStatus(kind, txt) {
+    $('status').className = 'wb-status ' + kind;
+    $('statusTxt').textContent = txt;
+  }
+
+  function toast(msg, label, fn) {
+    clearTimeout(toastT);
+    $('toastTxt').textContent = msg;
+    var b = $('toastBtn');
+    b.hidden = !label;
+    b.textContent = label || '';
+    b.onclick = function () { toastEl.classList.remove('on'); if (fn) fn(); };
+    toastEl.classList.add('on');
+    toastT = setTimeout(function () { toastEl.classList.remove('on'); }, label ? 6000 : 3000);
+  }
+
+  function snap() { return JSON.stringify({ title: S.title, doc: S.doc }); }
+  function resetUndo() { U.stack = [snap()]; U.i = 0; U.group = null; undoBtns(); }
+  function undoBtns() { $('undoBtn').disabled = U.i <= 0 || !!S.preview; $('redoBtn').disabled = U.i >= U.stack.length - 1 || !!S.preview; }
+  function pushUndo(group) {
+    var now = Date.now(), s = snap();
+    if (group && group === U.group && now - U.t < 1500 && U.i === U.stack.length - 1) U.stack[U.i] = s;
+    else {
+      U.stack = U.stack.slice(0, U.i + 1);
+      U.stack.push(s);
+      if (U.stack.length > 150) U.stack.shift();
+      U.i = U.stack.length - 1;
+    }
+    U.group = group;
+    U.t = now;
+    undoBtns();
+  }
+  function applySnap(s) {
+    var o = JSON.parse(s);
+    S.title = o.title;
+    S.doc = o.doc;
+    if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
+    U.group = null;
+    S.seq++;
+    renderAll();
+    scheduleSave();
+    undoBtns();
+  }
+  function undo() { if (U.i > 0 && !S.preview) { U.i--; applySnap(U.stack[U.i]); } }
+  function redo() { if (U.i < U.stack.length - 1 && !S.preview) { U.i++; applySnap(U.stack[U.i]); } }
+
+  function changed(group, onlyId) {
+    S.seq++;
+    pushUndo(group);
+    if (onlyId) refreshBlock(onlyId); else renderCanvas();
+    scheduleSave();
+  }
+
+  function blockShell(b, sel) {
+    return '<div class="wb-blk' + (sel ? ' sel' : '') + '" data-id="' + b.id + '">' +
+      '<span class="wb-lab">' + NAMES[b.type] + '</span>' +
+      '<div class="wb-tools"><button type="button" class="wb-grip" data-act="grip" title="Drag to move">&#10303;</button><button type="button" data-act="edit" title="Edit">&#9998;</button>' +
+      '<button type="button" data-act="up" title="Move up">&#8593;</button><button type="button" data-act="down" title="Move down">&#8595;</button>' +
+      '<button type="button" data-act="dup" title="Duplicate">&#10697;</button><button type="button" class="wb-del" data-act="del" title="Delete">&#10005;</button></div>' +
+      '<div class="wb-content">' + WikiBlocks.blockHtml(b) + '</div></div>';
+  }
+
+  function renderCanvas(prev) {
+    var doc = S.preview ? S.preview.doc : S.doc;
+    var title = S.preview ? S.preview.title : S.title;
+    ptitle.textContent = title || 'Untitled page';
+    ptitle.classList.toggle('sel', S.sel === 'page' && !S.preview);
+    var bl = doc.blocks;
+    if (!bl.length) {
+      canvas.innerHTML = '<div class="wb-empty" id="emptyZone"><div><b>This page is empty</b>Drag a block here, or tap one in the block list.</div></div>';
+      return;
+    }
+    var old = {};
+    if (prev) for (var p = 0; p < prev.blocks.length; p++) old[prev.blocks[p].id] = JSON.stringify(prev.blocks[p]);
+    var html = '';
+    for (var i = 0; i < bl.length; i++) html += blockShell(bl[i], !S.preview && bl[i].id === S.sel);
+    canvas.innerHTML = html;
+    if (prev) {
+      for (var j = 0; j < bl.length; j++) {
+        if (old[bl[j].id] === JSON.stringify(bl[j])) continue;
+        var el = canvas.querySelector('.wb-blk[data-id="' + bl[j].id + '"] .wb-content');
+        if (el && el.firstChild) el.firstChild.classList.add('wk-flash');
+      }
+    }
+  }
+
+  function refreshBlock(id) {
+    var b = S.doc.blocks[blockIndex(id)];
+    var el = canvas.querySelector('.wb-blk[data-id="' + id + '"] .wb-content');
+    if (!b || !el) { renderCanvas(); return; }
+    var body = el.querySelector('.ns-body');
+    var top = body ? body.scrollTop : 0;
+    el.innerHTML = WikiBlocks.blockHtml(b);
+    body = el.querySelector('.ns-body');
+    if (body) body.scrollTop = top;
+  }
+
+  function markSel() {
+    var els = canvas.querySelectorAll('.wb-blk');
+    for (var i = 0; i < els.length; i++) els[i].classList.toggle('sel', els[i].getAttribute('data-id') === S.sel);
+    ptitle.classList.toggle('sel', S.sel === 'page');
+  }
+
+  function select(id, focus) {
+    if (S.preview) return;
+    S.sel = id;
+    S.sheet = !!focus && !!id;
+    markSel();
+    renderInspector();
+    if (focus && !isNarrow.matches) {
+      var f = insp.querySelector('textarea, input[type=text]');
+      if (f) f.focus();
+    }
+  }
+
+  function fmtBar() {
+    return '<div class="wb-fmt"><button type="button" data-fmt="b" title="Bold"><b>B</b></button><button type="button" data-fmt="i" title="Italic"><i>I</i></button>' +
+      '<button type="button" data-fmt="link" title="Link">&#128279; Link</button><button type="button" data-fmt="list" title="Bullet list">&bull; List</button><button type="button" data-fmt="h" title="Sub-heading">## Heading</button></div>';
+  }
+
+  function textArea(val, max, rows, s) {
+    return fmtBar() + '<textarea data-f="text"' + (s !== undefined ? ' data-s="' + s + '"' : '') + ' maxlength="' + max + '" rows="' + rows + '" spellcheck="true">' + esc(val) + '</textarea>' +
+      '<span class="wb-count" data-max="' + max + '">' + val.length + ' / ' + max + '</span>';
+  }
+
+  function rangeRow(f, min, max, step, val, unit, disabled) {
+    return '<div class="wb-range"><input type="range" data-f="' + f + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '"' + (disabled ? ' disabled' : '') + '><output data-unit="' + unit + '">' + val + unit + '</output></div>';
+  }
+
+  function alignSeg(v) {
+    return '<div class="wb-seg2" data-seg="align"><button type="button" data-v="left"' + (v === 'left' ? ' class="on"' : '') + '>Left</button><button type="button" data-v="center"' + (v !== 'left' ? ' class="on"' : '') + '>Center</button></div>';
+  }
+
+  function head(t, extra) {
+    return '<div class="wb-ih"><h2>' + t + '</h2>' + (extra || '') + '<button class="wb-btn wb-done" type="button" data-act="done">Done</button></div>';
+  }
+
+  function renderInspector() {
+    var html;
+    var b = selBlock();
+    if (S.preview) {
+      html = head('PREVIEW') + '<div class="wb-ib"><div class="wb-note">You are looking at an older version. <b>Restore</b> it to make it the live page again, or go back to editing.</div></div>';
+    } else if (b && b.type === 'panel') {
+      html = head('TEXT PANEL') + '<div class="wb-ib">' +
+        '<label class="wb-f"><span class="wb-fl">Title<em>optional</em></span><input type="text" data-f="title" maxlength="120" value="' + esc(b.title) + '"></label>' +
+        '<div class="wb-f"><span class="wb-fl">Text</span>' + textArea(b.text, 4000, 10) + '</div>' +
+        '<div class="wb-f"><span class="wb-fl">Width<em>phones always use full width</em></span>' + rangeRow('width', 30, 100, 5, b.width, '%') + '</div>' +
+        '<div class="wb-f"><span class="wb-fl">Height</span><label class="wb-chk"><input type="checkbox" data-f="hfix"' + (b.height ? ' checked' : '') + '> Fixed height, scroll the rest</label>' + rangeRow('height', 120, 900, 10, b.height || 270, 'px', !b.height) + '</div>' +
+        '<div class="wb-f"><span class="wb-fl">Text align</span>' + alignSeg(b.align) + '</div>' +
+        '<div class="wb-acts"><button class="wb-btn" type="button" data-act="dup">&#10697; Duplicate</button><button class="wb-btn dng" type="button" data-act="del">&#10005; Delete</button></div>' +
+        '</div>';
+    } else if (b && b.type === 'card') {
+      var secs = '';
+      for (var i = 0; i < b.sections.length; i++) {
+        var s = b.sections[i];
+        secs += '<div class="wb-sec"><div class="wb-sec-h"><b>SECTION ' + (i + 1) + '</b>' +
+          '<button type="button" data-sec="up" data-s="' + i + '" title="Move up"' + (i === 0 ? ' disabled' : '') + '>&#8593;</button>' +
+          '<button type="button" data-sec="down" data-s="' + i + '" title="Move down"' + (i === b.sections.length - 1 ? ' disabled' : '') + '>&#8595;</button>' +
+          '<button type="button" data-sec="del" data-s="' + i + '" title="Remove section"' + (b.sections.length < 2 ? ' disabled' : '') + '>&#10005;</button></div>' +
+          '<input type="text" data-f="title" data-s="' + i + '" maxlength="80" placeholder="Heading (optional)" value="' + esc(s.title) + '">' +
+          textArea(s.text, 1500, 4, i) + '</div>';
+      }
+      html = head('INFO CARD') + '<div class="wb-ib">' + secs +
+        '<button class="wb-btn" type="button" data-sec="add"' + (b.sections.length >= 8 ? ' disabled' : '') + '>&#10010; Add section</button>' +
+        '<div class="wb-f"><span class="wb-fl">Width<em>phones always use full width</em></span>' + rangeRow('width', 30, 100, 5, b.width, '%') + '</div>' +
+        '<div class="wb-f"><span class="wb-fl">Text align</span>' + alignSeg(b.align) + '</div>' +
+        '<div class="wb-acts"><button class="wb-btn" type="button" data-act="dup">&#10697; Duplicate</button><button class="wb-btn dng" type="button" data-act="del">&#10005; Delete</button></div>' +
+        '</div>';
+    } else {
+      var url = location.origin + '/wiki/' + S.slug;
+      html = head('PAGE') + '<div class="wb-ib">' +
+        (S.slug ? '<label class="wb-f"><span class="wb-fl">Page title</span><input type="text" data-f="ptitle" maxlength="80" value="' + esc(S.title) + '"></label>' +
+        '<div class="wb-f"><span class="wb-fl">Address</span><div class="wb-url"><input type="text" readonly value="' + esc(url) + '"><button class="wb-btn" type="button" data-act="copy">Copy</button></div></div>' +
+        '<div class="wb-stats"><div class="wb-stat"><b>' + S.doc.blocks.length + '</b><span>blocks</span></div><div class="wb-stat"><b>v' + S.version + '</b><span>' + (S.updated ? 'saved ' + esc(ago(S.updated)) + (S.by ? ' by ' + esc(S.by) : '') : 'version') + '</span></div></div>' : '') +
+        '<div class="wb-note"><b>Drag</b> a block from the list onto the page, or tap it to add it under the selected block. <b>Click</b> a block to edit it here (on a phone, tap it twice or press &#9998;). Every change saves by itself and shows up live for everyone viewing the page.</div>' +
+        '</div>';
+    }
+    insp.innerHTML = html;
+    sheetState();
+  }
+
+  function sheetState() { insp.classList.toggle('open', S.sheet && !!S.sel && isNarrow.matches); }
+
+  function renderAll(prev) { renderCanvas(prev); renderInspector(); }
+
+  function setRange(input) {
+    var out = input.parentNode.querySelector('output');
+    if (out) out.textContent = input.value + out.getAttribute('data-unit');
+  }
+
+  insp.addEventListener('input', function (e) {
+    var t = e.target, f = t.getAttribute('data-f');
+    if (!f || S.preview) return;
+    if (f === 'ptitle') {
+      S.title = t.value.replace(/\n/g, ' ');
+      $('pageBtnTxt').textContent = S.title || 'Untitled page';
+      ptitle.textContent = S.title || 'Untitled page';
+      S.seq++;
+      pushUndo('ptitle');
+      scheduleSave();
+      return;
+    }
+    var b = selBlock();
+    if (!b || f === 'hfix') return;
+    var s = t.getAttribute('data-s');
+    if (t.type === 'range') { b[f] = Number(t.value); setRange(t); }
+    else if (s !== null) b.sections[Number(s)][f] = t.value;
+    else b[f] = t.value;
+    var c = t.nextElementSibling;
+    if (c && c.classList.contains('wb-count')) {
+      var max = Number(c.getAttribute('data-max'));
+      c.textContent = t.value.length + ' / ' + max;
+      c.classList.toggle('hi', t.value.length > max * 0.9);
+    }
+    changed('f:' + b.id + ':' + s + ':' + f, b.id);
+  });
+
+  insp.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.getAttribute('data-f') !== 'hfix') return;
+    var b = selBlock();
+    if (!b) return;
+    b.height = t.checked ? 270 : 0;
+    var r = insp.querySelector('input[data-f="height"]');
+    if (r) { r.disabled = !t.checked; r.value = b.height || 270; setRange(r); }
+    changed('hfix', b.id);
+  });
+
+  function wrapSel(ta, kind) {
+    var a = ta.selectionStart, z = ta.selectionEnd, v = ta.value, sel = v.slice(a, z), ins, from, to;
+    if (kind === 'b' || kind === 'i') {
+      var m = kind === 'b' ? '**' : '*';
+      var word = sel || (kind === 'b' ? 'bold text' : 'italic text');
+      ins = m + word + m;
+      from = a + m.length;
+      to = from + word.length;
+    } else if (kind === 'link') {
+      var label = sel || 'link text';
+      ins = '[' + label + '](https://)';
+      from = a + label.length + 3;
+      to = from + 8;
+    } else {
+      var ls = v.lastIndexOf('\n', a - 1) + 1;
+      var le = v.indexOf('\n', z);
+      if (le < 0) le = v.length;
+      a = ls;
+      z = le;
+      var pre = kind === 'list' ? '- ' : '## ';
+      var lines = v.slice(ls, le).split('\n');
+      for (var i = 0; i < lines.length; i++) lines[i] = lines[i].indexOf(pre) === 0 ? lines[i].slice(pre.length) : pre + lines[i].replace(/^(- |## )/, '');
+      ins = lines.join('\n');
+      from = a;
+      to = a + ins.length;
+    }
+    ta.focus();
+    ta.setSelectionRange(a, z);
+    var done = false;
+    try { done = document.execCommand('insertText', false, ins); } catch (e) {}
+    if (!done || ta.value.slice(a, a + ins.length) !== ins) {
+      ta.setRangeText(ins, a, z, 'end');
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    ta.setSelectionRange(from, to);
+  }
+
+  insp.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t || S.preview) return;
+    var b = selBlock();
+    if (t.hasAttribute('data-fmt')) {
+      var ta = t.parentNode.nextElementSibling;
+      if (ta && ta.tagName === 'TEXTAREA') wrapSel(ta, t.getAttribute('data-fmt'));
+      return;
+    }
+    var seg = t.parentNode.getAttribute('data-seg');
+    if (seg && b) {
+      b[seg] = t.getAttribute('data-v');
+      var sib = t.parentNode.children;
+      for (var i = 0; i < sib.length; i++) sib[i].classList.toggle('on', sib[i] === t);
+      changed(null, b.id);
+      return;
+    }
+    var sec = t.getAttribute('data-sec');
+    if (sec && b) {
+      var n = Number(t.getAttribute('data-s'));
+      if (sec === 'add' && b.sections.length < 8) b.sections.push({ title: '', text: 'More info here.' });
+      else if (sec === 'del' && b.sections.length > 1) b.sections.splice(n, 1);
+      else if (sec === 'up' && n > 0) b.sections.splice(n - 1, 0, b.sections.splice(n, 1)[0]);
+      else if (sec === 'down' && n < b.sections.length - 1) b.sections.splice(n + 1, 0, b.sections.splice(n, 1)[0]);
+      else return;
+      changed(null, b.id);
+      renderInspector();
+      if (sec === 'add') { var l = insp.querySelectorAll('.wb-sec'); var last = l[l.length - 1]; if (last) { last.scrollIntoView({ block: 'nearest' }); last.querySelector('input').focus(); } }
+      return;
+    }
+    var act = t.getAttribute('data-act');
+    if (act === 'done') { S.sheet = false; sheetState(); return; }
+    if (act === 'copy') {
+      var inp = t.previousElementSibling;
+      inp.select();
+      try { navigator.clipboard.writeText(inp.value).then(function () { toast('Link copied'); }, function () { document.execCommand('copy'); toast('Link copied'); }); } catch (x) { document.execCommand('copy'); toast('Link copied'); }
+      return;
+    }
+    if (act && b) blockAct(act, b.id);
+  });
+
+  function blockAct(act, id) {
+    var i = blockIndex(id), bl = S.doc.blocks;
+    if (i < 0) return;
+    if (act === 'up' || act === 'down') {
+      var j = act === 'up' ? i - 1 : i + 1;
+      if (j < 0 || j >= bl.length) return;
+      bl.splice(j, 0, bl.splice(i, 1)[0]);
+      changed(null);
+      scrollToBlock(id);
+    } else if (act === 'dup') {
+      if (bl.length >= 60) { toast('A page can hold 60 blocks'); return; }
+      var c = clone(bl[i]);
+      c.id = newId();
+      bl.splice(i + 1, 0, c);
+      S.sel = c.id;
+      changed(null);
+      renderInspector();
+      scrollToBlock(c.id);
+    } else if (act === 'del') {
+      bl.splice(i, 1);
+      if (S.sel === id) S.sel = null;
+      changed(null);
+      renderInspector();
+      toast('Block deleted', 'Undo', undo);
+    }
+  }
+
+  function scrollToBlock(id) {
+    var el = canvas.querySelector('.wb-blk[data-id="' + id + '"]');
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function makeBlock(type) {
+    if (type === 'panel') return { id: newId(), type: 'panel', title: 'New panel', text: 'Write something here.\n\n- Lists start with a dash\n- Use **stars** for bold', width: 70, height: 0, align: 'center' };
+    return { id: newId(), type: 'card', sections: [{ title: 'Heading', text: 'Card text goes here.' }], width: 85, align: 'center' };
+  }
+
+  function addBlock(type, at) {
+    if (S.preview || !S.slug) return;
+    if (S.doc.blocks.length >= 60) { toast('A page can hold 60 blocks'); return; }
+    var b = makeBlock(type);
+    if (at === undefined || at < 0) {
+      var si = blockIndex(S.sel);
+      at = si < 0 ? S.doc.blocks.length : si + 1;
+    }
+    S.doc.blocks.splice(at, 0, b);
+    S.sel = b.id;
+    changed(null);
+    renderInspector();
+    scrollToBlock(b.id);
+  }
+
+  canvas.addEventListener('click', function (e) {
+    if (e.target.closest('a')) e.preventDefault();
+    if (S.preview || justDragged) return;
+    var blk = e.target.closest('.wb-blk');
+    if (!blk) { if (!e.target.closest('.wb-empty')) select(null); return; }
+    var id = blk.getAttribute('data-id');
+    var btn = e.target.closest('button[data-act]');
+    if (btn) {
+      var act = btn.getAttribute('data-act');
+      if (act === 'edit') { select(id, true); return; }
+      if (act !== 'grip') { blockAct(act, id); return; }
+      return;
+    }
+    if (S.sel !== id) select(id);
+    else if (isNarrow.matches && !S.sheet) select(id, true);
+  });
+  canvas.addEventListener('dblclick', function (e) {
+    var blk = e.target.closest('.wb-blk');
+    if (blk && !S.preview) select(blk.getAttribute('data-id'), true);
+  });
+  ptitle.addEventListener('click', function () { select('page', true); });
+  stage.addEventListener('click', function (e) { if (!justDragged && e.target === stage || e.target === frame) select(null); });
+
+  var D = null, justDragged = false;
+  function press(e, info) {
+    if (e.button !== 0 || S.preview || !S.slug) return;
+    D = { info: info, x: e.clientX, y: e.clientY, cx: e.clientX, cy: e.clientY, on: false, idx: -1, pid: e.pointerId, raf: 0 };
+    window.addEventListener('pointermove', onMove, { passive: false });
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onCancel);
+  }
+  function startDrag() {
+    D.on = true;
+    document.body.classList.add('wb-dragging');
+    ghost.innerHTML = D.info.kind === 'new' ? '&#10010; ' + NAMES[D.info.type] : '&#10303; ' + NAMES[S.doc.blocks[blockIndex(D.info.id)].type];
+    ghost.hidden = false;
+    if (D.info.el) D.info.el.classList.add('wb-moving');
+    if (D.info.kind === 'move' && S.sel !== D.info.id) select(D.info.id);
+    D.raf = requestAnimationFrame(autoScroll);
+  }
+  function onMove(e) {
+    if (!D || e.pointerId !== D.pid) return;
+    D.cx = e.clientX;
+    D.cy = e.clientY;
+    if (!D.on) {
+      if (Math.abs(D.cx - D.x) + Math.abs(D.cy - D.y) < 6) return;
+      startDrag();
+    }
+    e.preventDefault();
+    ghost.style.transform = 'translate(' + (D.cx + 14) + 'px,' + (D.cy + 14) + 'px)';
+    findDrop();
+  }
+  function findDrop() {
+    var sr = stage.getBoundingClientRect();
+    var inside = D.cx >= sr.left && D.cx <= sr.right && D.cy >= sr.top && D.cy <= sr.bottom;
+    document.body.classList.toggle('wb-over', inside && D.info.kind === 'new');
+    if (!inside && D.info.kind === 'new') { D.idx = -1; line.hidden = true; return; }
+    var all = canvas.querySelectorAll('.wb-blk'), list = [];
+    for (var i = 0; i < all.length; i++) if (all[i].getAttribute('data-id') !== D.info.id) list.push(all[i]);
+    var idx = list.length, r;
+    for (var j = 0; j < list.length; j++) {
+      r = list[j].getBoundingClientRect();
+      if (D.cy < r.top + r.height / 2) { idx = j; break; }
+    }
+    D.idx = idx;
+    var cr = canvas.getBoundingClientRect(), y;
+    if (!list.length) {
+      var ez = $('emptyZone');
+      r = (ez || canvas).getBoundingClientRect();
+      y = r.top + r.height / 2;
+    } else if (idx < list.length) {
+      r = list[idx].getBoundingClientRect();
+      var prevEl = list[idx - 1];
+      y = prevEl ? (prevEl.getBoundingClientRect().bottom + r.top) / 2 : r.top - 12;
+    } else {
+      r = list[list.length - 1].getBoundingClientRect();
+      y = r.bottom + 12;
+    }
+    line.style.left = (cr.left + 18) + 'px';
+    line.style.width = Math.max(40, cr.width - 36) + 'px';
+    line.style.top = Math.max(sr.top + 2, Math.min(sr.bottom - 2, y)) + 'px';
+    line.hidden = false;
+  }
+  function autoScroll() {
+    if (!D || !D.on) return;
+    var r = stage.getBoundingClientRect(), v = 0;
+    if (D.cy < r.top + 70 && D.cy > r.top - 40) v = -Math.ceil((r.top + 70 - D.cy) / 5);
+    else if (D.cy > r.bottom - 70) v = Math.ceil((D.cy - (r.bottom - 70)) / 5);
+    if (v) { stage.scrollTop += v; findDrop(); }
+    D.raf = requestAnimationFrame(autoScroll);
+  }
+  function endDrag() {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('pointercancel', onCancel);
+    if (D && D.raf) cancelAnimationFrame(D.raf);
+    if (D && D.info.el) D.info.el.classList.remove('wb-moving');
+    document.body.classList.remove('wb-dragging', 'wb-over');
+    ghost.hidden = true;
+    line.hidden = true;
+    var d = D;
+    D = null;
+    return d;
+  }
+  function onCancel(e) { if (D && e.pointerId === D.pid) endDrag(); }
+  function onUp(e) {
+    if (!D || e.pointerId !== D.pid) return;
+    var d = endDrag();
+    if (d.on) { justDragged = true; setTimeout(function () { justDragged = false; }, 0); }
+    if (!d.on) {
+      if (d.info.kind === 'new') addBlock(d.info.type);
+      return;
+    }
+    if (d.idx < 0) return;
+    if (d.info.kind === 'new') { addBlock(d.info.type, d.idx); return; }
+    var from = blockIndex(d.info.id);
+    if (from < 0) return;
+    var b = S.doc.blocks.splice(from, 1)[0];
+    S.doc.blocks.splice(d.idx, 0, b);
+    if (d.idx === from) { renderCanvas(); return; }
+    S.sel = b.id;
+    changed(null);
+    renderInspector();
+  }
+
+  var tiles = document.querySelectorAll('.wb-tile');
+  for (var ti = 0; ti < tiles.length; ti++) {
+    tiles[ti].addEventListener('pointerdown', function (e) { press(e, { kind: 'new', type: this.getAttribute('data-add') }); });
+    tiles[ti].addEventListener('click', function (e) { if (e.detail === 0) addBlock(this.getAttribute('data-add')); });
+  }
+  canvas.addEventListener('pointerdown', function (e) {
+    var blk = e.target.closest('.wb-blk');
+    if (!blk) return;
+    var grip = e.target.closest('.wb-grip');
+    if (!grip && (e.pointerType !== 'mouse' || e.target.closest('.wb-tools'))) return;
+    var body = e.target.closest('.ns-body');
+    if (body && e.offsetX > body.clientWidth) return;
+    if (grip) e.preventDefault();
+    press(e, { kind: 'move', id: blk.getAttribute('data-id'), el: blk });
+  });
+
+  function scheduleSave() {
+    if (!S.slug) return;
+    setStatus('edit', 'Editing');
+    clearTimeout(saveT);
+    saveT = setTimeout(save, 700);
+  }
+
+  function save() {
+    clearTimeout(saveT);
+    if (!S.slug || S.conflict || !dirty()) return;
+    if (S.saving) { saveT = setTimeout(save, 300); return; }
+    S.saving = true;
+    var seq = S.seq, slug = S.slug, sent = snap();
+    setStatus('saving', 'Saving');
+    api('/wiki/api/save', { slug: slug, title: S.title.trim() || 'Untitled page', doc: S.doc, base: S.version, by: byName() })
+      .then(function (j) {
+        S.saving = false;
+        if (slug !== S.slug) return;
+        if (j.ok) {
+          fails = 0;
+          S.version = j.version;
+          S.updated = j.updated;
+          S.by = byName();
+          S.savedSeq = seq;
+          S.base = sent;
+          if (dirty()) save();
+          else setStatus('saved', 'Saved · live');
+          return;
+        }
+        if (j.status === 409 && j.page) { if (!autoMerge(j.page)) showConflict(j.page); return; }
+        if (j.status === 429) { setStatus('slow', 'Too fast, waiting'); saveT = setTimeout(save, 5000); return; }
+        if (j.status === 400) { setStatus('error', 'Could not save'); toast('That change could not be saved. Undo it and try again.'); return; }
+        throw new Error('save');
+      })
+      .catch(function () {
+        S.saving = false;
+        fails++;
+        setStatus('error', 'Offline, retrying');
+        saveT = setTimeout(save, Math.min(15000, 2000 * fails));
+      });
+  }
+
+  function byId(list) {
+    var o = {};
+    for (var i = 0; i < list.length; i++) o[list[i].id] = JSON.stringify(list[i]);
+    return o;
+  }
+
+  function mergeDocs(base, mine, theirs) {
+    var B = byId(base.blocks), M = byId(mine.blocks), T = byId(theirs.blocks), out = {}, clash = false, id, i;
+    var ids = mine.blocks.concat(theirs.blocks);
+    for (i = 0; i < ids.length; i++) {
+      id = ids[i].id;
+      if (out.hasOwnProperty(id)) continue;
+      var b = B[id], m = M[id], t = T[id];
+      if (b === undefined) { out[id] = m || t; continue; }
+      if (m === undefined || t === undefined) {
+        var left = m === undefined ? t : m;
+        if (left !== b) out[id] = left;
+        continue;
+      }
+      if (m === b || m === t) out[id] = t;
+      else if (t === b) out[id] = m;
+      else { out[id] = m; clash = true; }
+    }
+    function order(list) { var r = []; for (var k = 0; k < list.length; k++) if (B[list[k].id] !== undefined) r.push(list[k].id); return r.join(','); }
+    var baseInMine = [];
+    for (i = 0; i < base.blocks.length; i++) if (M[base.blocks[i].id] !== undefined) baseInMine.push(base.blocks[i].id);
+    var mineMoved = order(mine.blocks) !== baseInMine.join(',');
+    var primary = mineMoved ? mine.blocks : theirs.blocks, other = mineMoved ? theirs.blocks : mine.blocks;
+    var seq = [];
+    for (i = 0; i < primary.length; i++) if (out[primary[i].id] !== undefined) seq.push(primary[i].id);
+    for (i = 0; i < other.length; i++) {
+      id = other[i].id;
+      if (out[id] === undefined || seq.indexOf(id) !== -1) continue;
+      var at = 0;
+      for (var p = i - 1; p >= 0; p--) { var pos = seq.indexOf(other[p].id); if (pos !== -1) { at = pos + 1; break; } }
+      seq.splice(at, 0, id);
+    }
+    var blocks = [];
+    for (i = 0; i < seq.length; i++) blocks.push(JSON.parse(out[seq[i]]));
+    return { blocks: blocks.slice(0, 60), clash: clash };
+  }
+
+  function autoMerge(page) {
+    var base = JSON.parse(S.base);
+    var r = mergeDocs(base.doc, S.doc, page.doc);
+    var title = S.title !== base.title ? S.title : page.title;
+    if (r.clash || (S.title !== base.title && page.title !== base.title && S.title !== page.title)) return false;
+    var prev = S.doc;
+    S.doc = { blocks: r.blocks };
+    S.title = title;
+    S.version = page.version;
+    S.base = JSON.stringify({ title: page.title, doc: page.doc });
+    if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
+    $('pageBtnTxt').textContent = S.title || 'Untitled page';
+    S.seq++;
+    pushUndo(null);
+    renderCanvas(prev);
+    if (!document.activeElement || !insp.contains(document.activeElement)) renderInspector();
+    toast('Merged with changes from ' + (page.by || 'someone else'));
+    save();
+    return true;
+  }
+
+  function showConflict(page) {
+    S.conflict = page;
+    setStatus('conflict', 'Conflict');
+    $('conflictTxt').textContent = (page.by || 'Someone else') + ' changed the same block you were editing (version ' + page.version + '). Keep your version of the page, or load theirs?';
+    $('conflict').hidden = false;
+  }
+  $('keepMine').addEventListener('click', function () {
+    if (!S.conflict) return;
+    S.version = S.conflict.version;
+    S.base = JSON.stringify({ title: S.conflict.title, doc: S.conflict.doc });
+    S.conflict = null;
+    $('conflict').hidden = true;
+    save();
+  });
+  $('takeTheirs').addEventListener('click', function () {
+    var p = S.conflict;
+    if (!p) return;
+    S.conflict = null;
+    $('conflict').hidden = true;
+    applyRemote(p, false);
+  });
+
+  function applyRemote(p, flash) {
+    var prev = S.doc;
+    S.title = p.title;
+    S.doc = p.doc;
+    S.version = p.version;
+    S.updated = p.updated;
+    S.by = p.by;
+    S.seq++;
+    S.savedSeq = S.seq;
+    S.base = JSON.stringify({ title: p.title, doc: p.doc });
+    if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
+    $('pageBtnTxt').textContent = S.title || 'Untitled page';
+    var a = document.activeElement, f = null, s = null, c = 0;
+    if (a && insp.contains(a)) { f = a.getAttribute('data-f'); s = a.getAttribute('data-s'); c = a.selectionStart; }
+    renderCanvas(flash ? prev : null);
+    if (!S.preview) renderInspector();
+    if (f) {
+      var el = insp.querySelector('[data-f="' + f + '"]' + (s !== null ? '[data-s="' + s + '"]' : ':not([data-s])'));
+      if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (x) {} }
+    }
+    resetUndo();
+    setStatus('saved', 'Saved · live');
+  }
+
+  function poll() {
+    clearTimeout(pollT);
+    pollT = setTimeout(poll, 2500);
+    if (!S.slug || document.hidden || S.saving || S.conflict || dirty() || (D && D.on)) return;
+    var slug = S.slug, v = S.version;
+    api('/wiki/api/page?slug=' + encodeURIComponent(slug) + '&since=' + v).then(function (j) {
+      if (slug !== S.slug || v !== S.version || dirty() || S.saving || S.conflict) return;
+      if (!j.ok) { if (j.status >= 500) setStatus('error', 'Reconnecting'); return; }
+      if (j.same) { if ($('status').className.indexOf('error') !== -1) setStatus('saved', 'Saved · live'); return; }
+      applyRemote(j.page, true);
+      toast('Live update' + (j.page.by ? ' from ' + j.page.by : ''));
+    }, function () { setStatus('error', 'Reconnecting'); });
+  }
+
+  function whenSaved(fn) {
+    var tries = 0;
+    (function wait() {
+      if ((!dirty() && !S.saving) || S.conflict || tries++ > 30) { fn(); return; }
+      if (!S.saving) save();
+      setTimeout(wait, 200);
+    })();
+  }
+
+  function openPage(slug) {
+    whenSaved(function () {
+      setStatus('', 'Loading');
+      api('/wiki/api/page?slug=' + encodeURIComponent(slug)).then(function (j) {
+        if (!j.ok) {
+          if (j.status === 404) {
+            setStatus('', 'No page');
+            openMenu();
+            $('newTitle').value = slug.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+            updSlug();
+            toast('There is no page called "' + slug + '" yet. Create it below.');
+            return;
+          }
+          throw new Error('load');
+        }
+        exitPreview();
+        S.conflict = null;
+        $('conflict').hidden = true;
+        S.slug = j.page.slug;
+        S.sel = null;
+        applyRemote(j.page, false);
+        $('viewLink').href = '/wiki/' + S.slug;
+        try { history.replaceState(null, '', '/wiki-edit?page=' + encodeURIComponent(S.slug)); } catch (e) {}
+        document.title = S.title + ' · Wiki Builder';
+        stage.scrollTop = 0;
+        poll();
+      }).catch(function () {
+        setStatus('error', 'Could not load');
+        toast('Could not load that page.', 'Retry', function () { openPage(slug); });
+      });
+    });
+  }
+
+  var menu = $('pageMenu');
+  function openMenu() {
+    menu.hidden = false;
+    $('pageBtn').classList.add('on');
+    $('pageList').innerHTML = '<div class="wb-menu-empty">Loading pages...</div>';
+    api('/wiki/api/list').then(function (j) {
+      if (!j.ok) throw new Error('list');
+      if (!j.pages.length) { $('pageList').innerHTML = '<div class="wb-menu-empty">No pages yet. Start the first one!</div>'; return; }
+      var h = '';
+      for (var i = 0; i < j.pages.length; i++) {
+        var p = j.pages[i];
+        h += '<button type="button" class="wb-menu-item' + (p.slug === S.slug ? ' cur' : '') + '" data-slug="' + esc(p.slug) + '"><b>' + esc(p.title) + '</b><small>/wiki/' + esc(p.slug) + ' &middot; ' + esc(ago(p.updated)) + (p.by ? ' by ' + esc(p.by) : '') + '</small></button>';
+      }
+      $('pageList').innerHTML = h;
+    }).catch(function () { $('pageList').innerHTML = '<div class="wb-menu-empty">Could not load the page list.</div>'; });
+  }
+  function closeMenu() { menu.hidden = true; $('pageBtn').classList.remove('on'); }
+  $('pageBtn').addEventListener('click', function () { if (menu.hidden) openMenu(); else closeMenu(); });
+  $('pageList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-slug]');
+    if (!b) return;
+    closeMenu();
+    if (b.getAttribute('data-slug') !== S.slug) openPage(b.getAttribute('data-slug'));
+  });
+  document.addEventListener('pointerdown', function (e) { if (!menu.hidden && !e.target.closest('.wb-pick')) closeMenu(); });
+  function updSlug() {
+    var s = slugify($('newTitle').value);
+    var el = $('newSlug');
+    el.className = '';
+    el.textContent = s ? 'Address: /wiki/' + s : 'The page address is made from the title.';
+  }
+  $('newTitle').addEventListener('input', updSlug);
+  $('newForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var title = $('newTitle').value.trim(), slug = slugify(title), el = $('newSlug');
+    if (!slug) { el.className = 'err'; el.textContent = 'Give the page a title with some letters or numbers.'; return; }
+    el.className = '';
+    el.textContent = 'Creating...';
+    api('/wiki/api/create', { slug: slug, title: title, by: byName() }).then(function (j) {
+      if (j.ok) { $('newTitle').value = ''; updSlug(); closeMenu(); openPage(slug); toast('Page created'); return; }
+      el.className = 'err';
+      if (j.error === 'taken') { el.innerHTML = '/wiki/' + esc(slug) + ' already exists. <a href="#" id="openTaken" style="color:var(--acc)">Open it</a>'; $('openTaken').onclick = function (ev) { ev.preventDefault(); closeMenu(); openPage(slug); }; }
+      else if (j.error === 'full') el.textContent = 'The wiki is full for this test (200 pages).';
+      else if (j.status === 429) el.textContent = 'Slow down a little and try again.';
+      else el.textContent = 'Could not create the page.';
+    }, function () { el.className = 'err'; el.textContent = 'Could not reach the server.'; });
+  });
+
+  var drawer = $('drawer');
+  function openHistory() {
+    if (!S.slug) return;
+    drawer.hidden = false;
+    $('revList').innerHTML = '<div class="wb-menu-empty">Loading...</div>';
+    api('/wiki/api/history?slug=' + encodeURIComponent(S.slug)).then(function (j) {
+      if (!j.ok) throw new Error('h');
+      if (!j.revs.length) { $('revList').innerHTML = '<div class="wb-menu-empty">No saved versions yet.</div>'; return; }
+      var h = '';
+      for (var i = 0; i < j.revs.length; i++) {
+        var r = j.revs[i];
+        h += '<div class="wb-rev' + (r.version === S.version ? ' cur' : '') + '"><div class="wb-rev-top"><b>v' + r.version + '</b><span>' + esc(r.by || 'anonymous') + '</span><small>' + esc(ago(r.created)) + '</small></div>' +
+          '<small>' + esc(r.title) + ' &middot; ' + (r.blocks || 0) + ' block' + (r.blocks === 1 ? '' : 's') + (r.version === S.version ? ' &middot; current' : '') + '</small>' +
+          '<div class="wb-rev-acts"><button class="wb-btn" type="button" data-rev="' + r.id + '">Preview</button></div></div>';
+      }
+      $('revList').innerHTML = h;
+    }).catch(function () { $('revList').innerHTML = '<div class="wb-menu-empty">Could not load history.</div>'; });
+  }
+  $('histBtn').addEventListener('click', function () { if (drawer.hidden) openHistory(); else drawer.hidden = true; });
+  $('drawerClose').addEventListener('click', function () { drawer.hidden = true; });
+  $('revList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-rev]');
+    if (!b) return;
+    api('/wiki/api/rev?id=' + b.getAttribute('data-rev')).then(function (j) {
+      if (!j.ok) throw new Error('r');
+      S.preview = j.rev;
+      $('pvTxt').textContent = 'Previewing version ' + j.rev.version + ' from ' + ago(j.rev.created) + (j.rev.by ? ' by ' + j.rev.by : '') + '.';
+      $('pvBar').hidden = false;
+      if (isNarrow.matches) drawer.hidden = true;
+      undoBtns();
+      renderAll();
+      stage.scrollTop = 0;
+    }).catch(function () { toast('Could not load that version.'); });
+  });
+  function exitPreview() {
+    if (!S.preview) return;
+    S.preview = null;
+    $('pvBar').hidden = true;
+    undoBtns();
+    renderAll();
+  }
+  $('pvBack').addEventListener('click', exitPreview);
+  $('pvRestore').addEventListener('click', function () {
+    var p = S.preview;
+    if (!p) return;
+    S.preview = null;
+    $('pvBar').hidden = true;
+    S.title = p.title;
+    S.doc = clone(p.doc);
+    S.sel = null;
+    $('pageBtnTxt').textContent = S.title;
+    changed(null);
+    renderInspector();
+    drawer.hidden = true;
+    toast('Version ' + p.version + ' restored', 'Undo', undo);
+  });
+
+  $('undoBtn').addEventListener('click', undo);
+  $('redoBtn').addEventListener('click', redo);
+  $('viewSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    var kids = this.children;
+    for (var i = 0; i < kids.length; i++) kids[i].classList.toggle('on', kids[i] === b);
+    frame.classList.toggle('phone', b.getAttribute('data-view') === 'phone');
+  });
+  $('nameIn').value = store('wkName') || '';
+  $('nameIn').addEventListener('input', function () { store('wkName', this.value.trim()); });
+
+  document.addEventListener('keydown', function (e) {
+    var t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
+    var mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+    if (k === 'escape') {
+      if (typing) { t.blur(); return; }
+      if (!menu.hidden) { closeMenu(); return; }
+      if (!drawer.hidden) { drawer.hidden = true; return; }
+      if (S.preview) { exitPreview(); return; }
+      select(null);
+      return;
+    }
+    if (typing) return;
+    if (mod && k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); return; }
+    if (mod && k === 'y') { e.preventDefault(); redo(); return; }
+    var b = selBlock();
+    if (!b || S.preview) return;
+    if (mod && k === 'd') { e.preventDefault(); blockAct('dup', b.id); return; }
+    if (e.altKey && (k === 'arrowup' || k === 'arrowdown')) { e.preventDefault(); blockAct(k === 'arrowup' ? 'up' : 'down', b.id); return; }
+    if (k === 'delete' || k === 'backspace') { e.preventDefault(); blockAct('del', b.id); return; }
+    if (k === 'enter') { e.preventDefault(); select(b.id, true); }
+  });
+
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+  window.addEventListener('beforeunload', function (e) { if (dirty() && S.slug) { save(); e.preventDefault(); e.returnValue = ''; } });
+  if (isNarrow.addEventListener) isNarrow.addEventListener('change', sheetState);
+
+  renderAll();
+  var want = '';
+  try { want = new URLSearchParams(location.search).get('page') || ''; } catch (e) {}
+  want = /^[a-z0-9][a-z0-9-]{0,47}$/.test(want) ? want : '';
+  if (want) openPage(want);
+  else {
+    api('/wiki/api/list').then(function (j) {
+      if (j.ok && j.pages.length) openPage(j.pages[0].slug);
+      else { setStatus('', 'No pages yet'); $('pageBtnTxt').textContent = 'Start a page'; openMenu(); $('newTitle').focus(); }
+    }, function () { setStatus('error', 'Offline'); });
+  }
+})();
+</script>
+</body>
+</html>

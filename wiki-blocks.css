@@ -1,0 +1,158 @@
+.wk-doc {
+  container: wkdoc / inline-size;
+  width: 100%;
+}
+.wk-doc *, .wk-doc *::before, .wk-doc *::after { box-sizing: border-box; }
+
+.wk-doc .ns-panel {
+  --ns-width: 70%;
+  --ns-height: none;
+  --ns-align: center;
+  --ns-slice: 18;
+  --ns-border: 20px;
+  --ns-pad: 10px 10px 10px;
+  --ns-gap: 22px;
+  --ns-bullets: outside;
+  --ns-bullet-pad: 16px;
+  --ns-art: url('https://images.fntduserguide.com/game-ui-background.webp');
+  width: var(--ns-width);
+  max-width: 100%;
+  margin: 0 auto var(--ns-gap);
+  border-style: solid;
+  border-width: var(--ns-border);
+  border-color: transparent;
+  border-image-source: var(--ns-art);
+  border-image-slice: var(--ns-slice) fill;
+  border-image-repeat: stretch;
+  border-image-width: var(--ns-border);
+}
+.wk-doc .ns-body {
+  max-height: var(--ns-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--ns-pad);
+  text-align: var(--ns-align);
+  font-family: 'Press Start 2P', cursive;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,164,91,.45) transparent;
+}
+.wk-doc .ns-body::-webkit-scrollbar { width: 8px; }
+.wk-doc .ns-body::-webkit-scrollbar-track { background: rgba(0,0,0,.35); border-radius: 4px; }
+.wk-doc .ns-body::-webkit-scrollbar-thumb { background: rgba(255,164,91,.45); border-radius: 4px; }
+.wk-doc .ns-body h2 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #ffc861;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 #000;
+  margin: 0 0 12px;
+}
+.wk-doc .ns-body h3 {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #ffb14a;
+  letter-spacing: 1px;
+  margin: 18px 0 8px;
+}
+.wk-doc .ns-body p {
+  font-size: 10px;
+  line-height: 2.1;
+  color: #cfcfcf;
+  margin: 0 0 12px;
+}
+.wk-doc .ns-body p:last-child, .wk-doc .ns-body ul:last-child { margin-bottom: 0; }
+.wk-doc .ns-body b { color: #fff; }
+.wk-doc .ns-body ul {
+  margin: 0 0 12px;
+  padding-left: var(--ns-bullet-pad);
+  list-style-position: var(--ns-bullets);
+  text-align: left;
+}
+.wk-doc .ns-body li {
+  font-size: 10px;
+  line-height: 2.1;
+  color: #cfcfcf;
+  margin-bottom: 6px;
+}
+.wk-doc .ns-body a { color: #ffa45b; }
+
+.wk-doc .info-card {
+  width: var(--wk-w, 85%);
+  max-width: 100%;
+  margin: 0 auto 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wk-doc .info-card-section {
+  background: #1a1b1e;
+  border-radius: 8px;
+  padding: 14px 18px;
+  position: relative;
+  text-align: var(--wk-align, center);
+}
+.wk-doc .info-card-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #ffa45b;
+  border-radius: 3px 0 0 3px;
+  box-shadow: 0 0 8px rgba(255,164,91,.25), -2px 0 10px rgba(255,164,91,.15);
+}
+.wk-doc .info-card-section h4 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #ffa45b;
+  margin: 0 0 6px;
+  letter-spacing: .5px;
+}
+.wk-doc .info-card-section h5 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ffc861;
+  margin: 10px 0 4px;
+}
+.wk-doc .info-card-section p {
+  font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.8;
+  margin: 0 0 8px;
+}
+.wk-doc .info-card-section ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  text-align: left;
+}
+.wk-doc .info-card-section li {
+  font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.7;
+}
+.wk-doc .info-card-section p:last-child, .wk-doc .info-card-section ul:last-child { margin-bottom: 0; }
+.wk-doc .info-card-section b { color: #fff; }
+.wk-doc .info-card-section a { color: #ffa45b; text-decoration: none; }
+.wk-doc .info-card-section a:hover { text-decoration: underline; }
+
+.wk-doc .wk-flash { animation: wkFlash 1.4s ease-out; }
+@keyframes wkFlash {
+  0% { filter: drop-shadow(0 0 0 rgba(255,164,91,0)); }
+  20% { filter: drop-shadow(0 0 10px rgba(255,164,91,.85)); }
+  100% { filter: drop-shadow(0 0 0 rgba(255,164,91,0)); }
+}
+
+@container wkdoc (max-width: 720px) {
+  .wk-doc .ns-panel { width: 100%; border-width: 16px; border-image-width: 16px; }
+  .wk-doc .ns-body { padding: 13px 14px 15px; }
+  .wk-doc .ns-body h2 { font-size: 13px; }
+  .wk-doc .info-card { width: 100%; }
+  .wk-doc .info-card-section h4 { font-size: 16px; }
+  .wk-doc .info-card-section p, .wk-doc .info-card-section li { font-size: 15px; }
+}

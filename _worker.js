@@ -5553,6 +5553,178 @@ textarea:focus{border-color:#ffa45b}
 </body>
 </html>`;
 
+const WIKI_MAX_BODY = 65536;
+const WIKI_MAX_BLOCKS = 60;
+const WIKI_MAX_PAGES = 200;
+const WIKI_MAX_REVS = 200;
+const WIKI_RATE_PER_MIN = 60;
+const WIKI_SCHEMA = [
+  'CREATE TABLE IF NOT EXISTS wiki_pages (slug TEXT PRIMARY KEY, title TEXT NOT NULL, doc TEXT NOT NULL, version INTEGER NOT NULL, updated INTEGER NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
+  'CREATE TABLE IF NOT EXISTS wiki_revs (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, version INTEGER NOT NULL, title TEXT NOT NULL, doc TEXT NOT NULL, created INTEGER NOT NULL, who TEXT NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
+  'CREATE INDEX IF NOT EXISTS wiki_revs_slug ON wiki_revs (slug, id)',
+  'CREATE TABLE IF NOT EXISTS wiki_rate (who TEXT NOT NULL, win INTEGER NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (who, win))'
+];
+let wikiReady = null;
+
+function wikiInit(db) {
+  if (!wikiReady) wikiReady = db.batch(WIKI_SCHEMA.map(s => db.prepare(s))).catch(e => { wikiReady = null; throw e; });
+  return wikiReady;
+}
+
+function wikiStr(v, max) {
+  return String(v == null ? '' : v).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').slice(0, max);
+}
+
+function wikiNum(v, lo, hi, d) {
+  const n = Math.round(Number(v));
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d;
+}
+
+function wikiSlug(v) {
+  const s = String(v || '');
+  return /^[a-z0-9][a-z0-9-]{0,47}$/.test(s) ? s : '';
+}
+
+function wikiCleanDoc(doc) {
+  if (!doc || !Array.isArray(doc.blocks) || doc.blocks.length > WIKI_MAX_BLOCKS) return null;
+  const seen = {};
+  const out = [];
+  for (const b of doc.blocks) {
+    if (!b || typeof b !== 'object') return null;
+    const id = String(b.id || '');
+    if (!/^[a-z0-9]{4,16}$/.test(id) || seen[id]) return null;
+    seen[id] = 1;
+    const align = b.align === 'left' ? 'left' : 'center';
+    if (b.type === 'panel') {
+      out.push({ id, type: 'panel', title: wikiStr(b.title, 120), text: wikiStr(b.text, 4000), width: wikiNum(b.width, 30, 100, 70), height: b.height ? wikiNum(b.height, 120, 900, 270) : 0, align });
+    } else if (b.type === 'card') {
+      if (!Array.isArray(b.sections) || !b.sections.length || b.sections.length > 8) return null;
+      const sections = b.sections.map(s => ({ title: wikiStr(s && s.title, 80), text: wikiStr(s && s.text, 1500) }));
+      out.push({ id, type: 'card', sections, width: wikiNum(b.width, 30, 100, 85), align });
+    } else {
+      return null;
+    }
+  }
+  return { blocks: out };
+}
+
+async function wikiReadBody(request) {
+  const len = Number(request.headers.get('content-length') || 0);
+  if (len > WIKI_MAX_BODY) return null;
+  const text = await request.text().catch(() => '');
+  if (!text || text.length > WIKI_MAX_BODY) return null;
+  try { return JSON.parse(text); } catch (e) { return null; }
+}
+
+function wikiPageOut(row) {
+  let doc = { blocks: [] };
+  try { doc = JSON.parse(row.doc); } catch (e) {}
+  return { slug: row.slug, title: row.title, doc, version: row.version, updated: row.updated, by: row.by || '' };
+}
+
+async function wikiApi(request, env, url) {
+  if (!env.POLLS) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  const db = env.POLLS;
+  const route = url.pathname.slice('/wiki/api/'.length);
+  try {
+    await wikiInit(db);
+
+    if (request.method === 'GET') {
+      if (route === 'list') {
+        const res = await db.prepare('SELECT slug, title, version, updated, by FROM wiki_pages ORDER BY updated DESC LIMIT ?1').bind(WIKI_MAX_PAGES).all();
+        return pushJson({ ok: true, pages: res.results || [] });
+      }
+      if (route === 'page') {
+        const slug = wikiSlug(url.searchParams.get('slug'));
+        if (!slug) return pushJson({ ok: false, error: 'bad-slug' }, 400);
+        const since = Number(url.searchParams.get('since'));
+        if (Number.isInteger(since) && since > 0) {
+          const v = await db.prepare('SELECT version FROM wiki_pages WHERE slug = ?1').bind(slug).first();
+          if (!v) return pushJson({ ok: false, error: 'missing' }, 404);
+          if (v.version === since) return pushJson({ ok: true, same: true, version: since });
+        }
+        const row = await db.prepare('SELECT slug, title, doc, version, updated, by FROM wiki_pages WHERE slug = ?1').bind(slug).first();
+        if (!row) return pushJson({ ok: false, error: 'missing' }, 404);
+        return pushJson({ ok: true, page: wikiPageOut(row) });
+      }
+      if (route === 'history') {
+        const slug = wikiSlug(url.searchParams.get('slug'));
+        if (!slug) return pushJson({ ok: false, error: 'bad-slug' }, 400);
+        const res = await db.prepare('SELECT id, version, title, created, by, json_array_length(doc, \'$.blocks\') AS blocks FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 40').bind(slug).all();
+        return pushJson({ ok: true, revs: res.results || [] });
+      }
+      if (route === 'rev') {
+        const id = Number(url.searchParams.get('id'));
+        if (!Number.isInteger(id)) return pushJson({ ok: false }, 400);
+        const row = await db.prepare('SELECT id, slug, version, title, doc, created, by FROM wiki_revs WHERE id = ?1').bind(id).first();
+        if (!row) return pushJson({ ok: false, error: 'missing' }, 404);
+        const out = wikiPageOut(row);
+        out.id = row.id;
+        out.created = row.created;
+        return pushJson({ ok: true, rev: out });
+      }
+      return pushJson({ ok: false }, 404);
+    }
+
+    if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
+    if (!env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+    const now = Date.now();
+    const h = await pushSha256(env.POLL_SALT + '|wiki|' + (request.headers.get('cf-connecting-ip') || ''));
+    let who = '';
+    for (let i = 0; i < 6; i++) who += h[i].toString(16).padStart(2, '0');
+    const win = Math.floor(now / 60000);
+    const seat = await db.prepare('INSERT INTO wiki_rate (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1 WHERE n < ?3 RETURNING n').bind(who, win, WIKI_RATE_PER_MIN).first();
+    if (!seat) return pushJson({ ok: false, error: 'slow-down' }, 429);
+    if (Math.random() < 0.05) await db.prepare('DELETE FROM wiki_rate WHERE win < ?1').bind(win - 5).run();
+
+    const body = await wikiReadBody(request);
+    if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
+    const by = wikiStr(body.by, 24).replace(/\n/g, ' ').trim();
+
+    if (route === 'create') {
+      const slug = wikiSlug(body.slug);
+      const title = wikiStr(body.title, 80).replace(/\n/g, ' ').trim();
+      if (!slug || !title) return pushJson({ ok: false, error: 'bad-request' }, 400);
+      const count = await db.prepare('SELECT COUNT(*) AS n FROM wiki_pages').first();
+      if (count && count.n >= WIKI_MAX_PAGES) return pushJson({ ok: false, error: 'full' }, 409);
+      const doc = JSON.stringify({ blocks: [{ id: 'p' + now.toString(36), type: 'panel', title, text: 'Start writing here.', width: 70, height: 0, align: 'center' }] });
+      const made = await db.prepare('INSERT INTO wiki_pages (slug, title, doc, version, updated, by) VALUES (?1, ?2, ?3, 1, ?4, ?5) ON CONFLICT(slug) DO NOTHING RETURNING slug').bind(slug, title, doc, now, by).first();
+      if (!made) return pushJson({ ok: false, error: 'taken' }, 409);
+      await db.prepare('INSERT INTO wiki_revs (slug, version, title, doc, created, who, by) VALUES (?1, 1, ?2, ?3, ?4, ?5, ?6)').bind(slug, title, doc, now, who, by).run();
+      return pushJson({ ok: true, slug });
+    }
+
+    if (route === 'save') {
+      const slug = wikiSlug(body.slug);
+      const base = Number(body.base);
+      const title = wikiStr(body.title, 80).replace(/\n/g, ' ').trim();
+      const clean = wikiCleanDoc(body.doc);
+      if (!slug || !title || !clean || !Number.isInteger(base)) return pushJson({ ok: false, error: 'bad-request' }, 400);
+      const doc = JSON.stringify(clean);
+      const row = await db.prepare('UPDATE wiki_pages SET title = ?3, doc = ?4, version = version + 1, updated = ?5, by = ?6 WHERE slug = ?1 AND version = ?2 RETURNING version').bind(slug, base, title, doc, now, by).first();
+      if (!row) {
+        const cur = await db.prepare('SELECT slug, title, doc, version, updated, by FROM wiki_pages WHERE slug = ?1').bind(slug).first();
+        if (!cur) return pushJson({ ok: false, error: 'missing' }, 404);
+        return pushJson({ ok: false, error: 'conflict', page: wikiPageOut(cur) }, 409);
+      }
+      const last = await db.prepare('SELECT id, who, by, created FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 1').bind(slug).first();
+      if (last && last.who === who && last.by === by && now - last.created < 120000) {
+        await db.prepare('UPDATE wiki_revs SET version = ?2, title = ?3, doc = ?4 WHERE id = ?1').bind(last.id, row.version, title, doc).run();
+      } else {
+        await db.batch([
+          db.prepare('INSERT INTO wiki_revs (slug, version, title, doc, created, who, by) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)').bind(slug, row.version, title, doc, now, who, by),
+          db.prepare('DELETE FROM wiki_revs WHERE slug = ?1 AND id <= (SELECT id FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 1 OFFSET ?2)').bind(slug, WIKI_MAX_REVS)
+        ]);
+      }
+      return pushJson({ ok: true, version: row.version, updated: now });
+    }
+
+    return pushJson({ ok: false }, 404);
+  } catch (e) {
+    return pushJson({ ok: false, error: 'db' }, 503);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -5564,6 +5736,22 @@ export default {
     if (url.pathname === '/poll/current') return pollCurrent(env, url);
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
+    if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
+    if (url.pathname === '/wiki-edit') {
+      const page = await env.ASSETS.fetch(request);
+      if (!(page.headers.get('content-type') || '').includes('text/html')) return page;
+      return new Response(page.body, {
+        status: page.status,
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-robots-tag': 'noindex, nofollow',
+          'referrer-policy': 'no-referrer',
+          'x-frame-options': 'DENY',
+          'content-security-policy': "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://images.fntduserguide.com; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+        }
+      });
+    }
     if (url.pathname === '/notify-send' || url.pathname === '/poll-admin') {
       return new Response(url.pathname === '/notify-send' ? PUSH_SEND_PAGE : POLL_ADMIN_PAGE, {
         headers: {
@@ -5756,7 +5944,7 @@ export default {
     }
 
     let assetReq = request;
-    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams'];
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
       if (url.pathname.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
