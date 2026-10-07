@@ -980,6 +980,13 @@ var EVO_ALIAS={
   'paperpals':'PaperPals'
 };
 var EVOLUTIONS=[
+  {name:'Rainbow Crying Soul',ing:[['2','Blue Crying Soul'],['2','Green Crying Soul'],['2','Purple Crying Soul'],['2','Red Crying Soul'],['2','Yellow Crying Soul']]},
+  {name:'Purple Crying Soul',ing:[['3','White Crying Soul']]},
+  {name:'Blue Crying Soul',ing:[['3','White Crying Soul']]},
+  {name:'Green Crying Soul',ing:[['3','White Crying Soul']]},
+  {name:'Yellow Crying Soul',ing:[['3','White Crying Soul']]},
+  {name:'Red Crying Soul',ing:[['3','White Crying Soul']]},
+  {name:'White Crying Soul',ing:[['1','Red Crying Soul']]},
   {name:'Bubbly Toy Foxy',ing:[['1','Toy Foxy'],['10','Yellow Crying Soul'],['3','Purple Crying Soul'],['15','Blue Crying Soul'],['20','White Crying Soul'],['1','bubble Bottle']]},
   {name:'Blue Baron Sparky',ing:[['1','Sparky'],['10','Red Crying Soul'],['10','Blue Crying Soul'],['5','Yellow Crying Soul'],['20','White Crying Soul'],['1','Dog House']]},
   {name:'Scrapbear',ing:[['1','Fredtrap'],['10','Red Crying Soul'],['10','Blue Crying Soul'],['1','Rainbow Crying Soul'],['30','White Crying Soul'],['1','Bear Trap']]},
