@@ -5619,6 +5619,20 @@ function wikiCleanDoc(doc) {
       if (!Array.isArray(b.sections) || !b.sections.length || b.sections.length > 8) return null;
       const sections = b.sections.map(s => ({ title: wikiStr(s && s.title, 80), text: wikiStr(s && s.text, 1500) }));
       out.push({ id, type: 'card', sections, width: wikiNum(b.width, 30, 100, 85), align });
+    } else if (b.type === 'team') {
+      if (!Array.isArray(b.units) || b.units.length > 6) return null;
+      const one = (v, max) => wikiStr(v, max).replace(/\n/g, ' ').trim();
+      const units = [];
+      for (const u of b.units) {
+        if (!u || typeof u !== 'object') return null;
+        const name = one(u.name, 80);
+        if (!name) return null;
+        const o = { name, label: one(u.label, 24), byte: one(u.byte, 160), chip: one(u.chip, 60), enchant: one(u.enchant, 60), replacement: one(u.replacement, 80), caption: one(u.caption, 60) };
+        const path = String(u.path || '');
+        if (/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(path) && /[1-9]/.test(path)) o.path = path;
+        units.push(o);
+      }
+      out.push({ id, type: 'team', title: one(b.title, 80), units });
     } else {
       return null;
     }
@@ -5834,7 +5848,7 @@ export default {
           'x-robots-tag': 'noindex, nofollow',
           'referrer-policy': 'no-referrer',
           'x-frame-options': 'DENY',
-          'content-security-policy': "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://images.fntduserguide.com; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+          'content-security-policy': "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
         }
       });
     }

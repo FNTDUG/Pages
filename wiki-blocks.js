@@ -67,9 +67,49 @@
     return html + '</div>';
   }
 
+  var teams = {}, metaLoading = false, metaWaiting = [];
+
+  function teamHtml(b) {
+    teams[b.id] = b;
+    return '<div class="wk-team" data-tid="' + esc(b.id) + '"></div>';
+  }
+
+  function teamUnits(b) {
+    var out = [];
+    for (var i = 0; i < b.units.length; i++) {
+      var u = b.units[i], o = { name: u.name, label: u.label || '', byte: u.byte || '', chip: u.chip || '', enchant: u.enchant || '', replacement: u.replacement || '', caption: u.caption || '' };
+      if (u.path) o.path = u.path;
+      out.push(o);
+    }
+    return out;
+  }
+
+  function loadMeta(cb) {
+    if (window.FntdMeta) { cb(); return; }
+    metaWaiting.push(cb);
+    if (metaLoading) return;
+    metaLoading = true;
+    var s = document.createElement('script');
+    s.src = '/wiki-metas.js';
+    s.onload = function () { var w = metaWaiting; metaWaiting = []; for (var i = 0; i < w.length; i++) w[i](); };
+    (document.head || document.documentElement).appendChild(s);
+  }
+
+  function hydrate(root) {
+    var els = root.querySelectorAll('.wk-team[data-tid]');
+    if (!els.length) return;
+    loadMeta(function () {
+      for (var i = 0; i < els.length; i++) {
+        var b = teams[els[i].getAttribute('data-tid')];
+        if (b && els[i].isConnected) window.FntdMeta.render(els[i], b.title, teamUnits(b));
+      }
+    });
+  }
+
   function blockHtml(b) {
     if (b.type === 'panel') return panelHtml(b);
     if (b.type === 'card') return cardHtml(b);
+    if (b.type === 'team') return teamHtml(b);
     return '';
   }
 
@@ -96,9 +136,10 @@
     }
     mount.innerHTML = '';
     mount.appendChild(frag);
+    hydrate(mount);
     for (var k = 0; k < changed.length; k++) changed[k].firstChild && changed[k].firstChild.classList.add('wk-flash');
     return mount;
   }
 
-  window.WikiBlocks = { esc: esc, inline: inline, rich: rich, blockHtml: blockHtml, blockEl: blockEl, render: render };
+  window.WikiBlocks = { esc: esc, inline: inline, rich: rich, blockHtml: blockHtml, blockEl: blockEl, render: render, hydrate: hydrate, teamUnits: teamUnits, loadMeta: loadMeta };
 })();
