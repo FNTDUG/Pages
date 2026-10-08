@@ -5557,12 +5557,18 @@ const WIKI_MAX_BODY = 65536;
 const WIKI_MAX_BLOCKS = 60;
 const WIKI_MAX_PAGES = 200;
 const WIKI_MAX_REVS = 200;
-const WIKI_RATE_PER_MIN = 60;
+const WIKI_SUBMITS_PER_MIN = 20;
+const WIKI_LOGINS_PER_10MIN = 10;
+const WIKI_SIGNUPS_PER_HOUR = 5;
+const WIKI_SESSION_DAYS = 30;
+const WIKI_PASS_ITER = 10000;
 const WIKI_SCHEMA = [
   'CREATE TABLE IF NOT EXISTS wiki_pages (slug TEXT PRIMARY KEY, title TEXT NOT NULL, doc TEXT NOT NULL, version INTEGER NOT NULL, updated INTEGER NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
   'CREATE TABLE IF NOT EXISTS wiki_revs (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, version INTEGER NOT NULL, title TEXT NOT NULL, doc TEXT NOT NULL, created INTEGER NOT NULL, who TEXT NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
   'CREATE INDEX IF NOT EXISTS wiki_revs_slug ON wiki_revs (slug, id)',
-  'CREATE TABLE IF NOT EXISTS wiki_rate (who TEXT NOT NULL, win INTEGER NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (who, win))'
+  'CREATE TABLE IF NOT EXISTS wiki_rate (who TEXT NOT NULL, win INTEGER NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (who, win))',
+  'CREATE TABLE IF NOT EXISTS wiki_users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE COLLATE NOCASE, pass TEXT NOT NULL, created INTEGER NOT NULL)',
+  'CREATE TABLE IF NOT EXISTS wiki_sessions (token TEXT PRIMARY KEY, user_id INTEGER NOT NULL, expires INTEGER NOT NULL)'
 ];
 let wikiReady = null;
 
@@ -5583,6 +5589,18 @@ function wikiNum(v, lo, hi, d) {
 function wikiSlug(v) {
   const s = String(v || '');
   return /^[a-z0-9][a-z0-9-]{0,47}$/.test(s) ? s : '';
+}
+
+function wikiHex(bytes) {
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += bytes[i].toString(16).padStart(2, '0');
+  return s;
+}
+
+function wikiB64(bytes) {
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s);
 }
 
 function wikiCleanDoc(doc) {
@@ -5622,8 +5640,55 @@ function wikiPageOut(row) {
   return { slug: row.slug, title: row.title, doc, version: row.version, updated: row.updated, by: row.by || '' };
 }
 
+async function wikiRate(db, who, win, max) {
+  const seat = await db.prepare('INSERT INTO wiki_rate (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1 WHERE n < ?3 RETURNING n').bind(who, win, max).first();
+  return !!seat;
+}
+
+async function wikiPassHash(env, password, saltB64, iter) {
+  const salt = saltB64 ? Uint8Array.from(atob(saltB64), c => c.charCodeAt(0)) : crypto.getRandomValues(new Uint8Array(16));
+  const key = await crypto.subtle.importKey('raw', pushEnc.encode(env.POLL_SALT + '|wiki|' + password), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter }, key, 256));
+  return 'pbkdf2$' + iter + '$' + wikiB64(salt) + '$' + wikiB64(bits);
+}
+
+async function wikiPassOk(env, password, stored) {
+  const parts = String(stored || '').split('$');
+  if (parts.length !== 4 || parts[0] !== 'pbkdf2') return false;
+  const again = await wikiPassHash(env, password, parts[2], Number(parts[1]));
+  const a = await pushSha256(again);
+  const b = await pushSha256(String(stored));
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
+}
+
+function wikiCookie(request) {
+  const m = /(?:^|;\s*)wk_s=([a-f0-9]{64})(?:;|$)/.exec(request.headers.get('cookie') || '');
+  return m ? m[1] : '';
+}
+
+async function wikiUser(request, db) {
+  const tok = wikiCookie(request);
+  if (!tok) return null;
+  const h = wikiHex(await pushSha256(tok));
+  return await db.prepare('SELECT u.id, u.name FROM wiki_sessions s JOIN wiki_users u ON u.id = s.user_id WHERE s.token = ?1 AND s.expires > ?2').bind(h, Date.now()).first();
+}
+
+async function wikiStartSession(db, userId, obj) {
+  const tok = wikiHex(crypto.getRandomValues(new Uint8Array(32)));
+  const now = Date.now();
+  await db.batch([
+    db.prepare('INSERT INTO wiki_sessions (token, user_id, expires) VALUES (?1, ?2, ?3)').bind(wikiHex(await pushSha256(tok)), userId, now + WIKI_SESSION_DAYS * 86400000),
+    db.prepare('DELETE FROM wiki_sessions WHERE expires < ?1').bind(now)
+  ]);
+  const res = pushJson(obj);
+  res.headers.append('set-cookie', 'wk_s=' + tok + '; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=' + WIKI_SESSION_DAYS * 86400);
+  return res;
+}
+
 async function wikiApi(request, env, url) {
-  if (!env.POLLS) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
   const db = env.POLLS;
   const route = url.pathname.slice('/wiki/api/'.length);
   try {
@@ -5631,7 +5696,7 @@ async function wikiApi(request, env, url) {
 
     if (request.method === 'GET') {
       if (route === 'list') {
-        const res = await db.prepare('SELECT slug, title, version, updated, by FROM wiki_pages ORDER BY updated DESC LIMIT ?1').bind(WIKI_MAX_PAGES).all();
+        const res = await db.prepare('SELECT slug, title, version, updated FROM wiki_pages ORDER BY updated DESC LIMIT ?1').bind(WIKI_MAX_PAGES).all();
         return pushJson({ ok: true, pages: res.results || [] });
       }
       if (route === 'page') {
@@ -5645,8 +5710,13 @@ async function wikiApi(request, env, url) {
         }
         const row = await db.prepare('SELECT slug, title, doc, version, updated, by FROM wiki_pages WHERE slug = ?1').bind(slug).first();
         if (!row) return pushJson({ ok: false, error: 'missing' }, 404);
-        return pushJson({ ok: true, page: wikiPageOut(row) });
+        const page = wikiPageOut(row);
+        if (url.searchParams.get('view') === '1') delete page.by;
+        return pushJson({ ok: true, page });
       }
+      const user = await wikiUser(request, db);
+      if (!user) return pushJson({ ok: false, error: 'login' }, 401);
+      if (route === 'me') return pushJson({ ok: true, user: { name: user.name } });
       if (route === 'history') {
         const slug = wikiSlug(url.searchParams.get('slug'));
         if (!slug) return pushJson({ ok: false, error: 'bad-slug' }, 400);
@@ -5667,56 +5737,72 @@ async function wikiApi(request, env, url) {
     }
 
     if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
-    if (!env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
     const now = Date.now();
-    const h = await pushSha256(env.POLL_SALT + '|wiki|' + (request.headers.get('cf-connecting-ip') || ''));
-    let who = '';
-    for (let i = 0; i < 6; i++) who += h[i].toString(16).padStart(2, '0');
-    const win = Math.floor(now / 60000);
-    const seat = await db.prepare('INSERT INTO wiki_rate (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1 WHERE n < ?3 RETURNING n').bind(who, win, WIKI_RATE_PER_MIN).first();
-    if (!seat) return pushJson({ ok: false, error: 'slow-down' }, 429);
-    if (Math.random() < 0.05) await db.prepare('DELETE FROM wiki_rate WHERE win < ?1').bind(win - 5).run();
-
+    const minute = Math.floor(now / 60000);
+    if (Math.random() < 0.05) await db.prepare('DELETE FROM wiki_rate WHERE win < ?1').bind(minute - 120).run();
     const body = await wikiReadBody(request);
     if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
-    const by = wikiStr(body.by, 24).replace(/\n/g, ' ').trim();
 
-    if (route === 'create') {
-      const slug = wikiSlug(body.slug);
-      const title = wikiStr(body.title, 80).replace(/\n/g, ' ').trim();
-      if (!slug || !title) return pushJson({ ok: false, error: 'bad-request' }, 400);
-      const count = await db.prepare('SELECT COUNT(*) AS n FROM wiki_pages').first();
-      if (count && count.n >= WIKI_MAX_PAGES) return pushJson({ ok: false, error: 'full' }, 409);
-      const doc = JSON.stringify({ blocks: [{ id: 'p' + now.toString(36), type: 'panel', title, text: 'Start writing here.', width: 70, height: 0, align: 'center' }] });
-      const made = await db.prepare('INSERT INTO wiki_pages (slug, title, doc, version, updated, by) VALUES (?1, ?2, ?3, 1, ?4, ?5) ON CONFLICT(slug) DO NOTHING RETURNING slug').bind(slug, title, doc, now, by).first();
-      if (!made) return pushJson({ ok: false, error: 'taken' }, 409);
-      await db.prepare('INSERT INTO wiki_revs (slug, version, title, doc, created, who, by) VALUES (?1, 1, ?2, ?3, ?4, ?5, ?6)').bind(slug, title, doc, now, who, by).run();
-      return pushJson({ ok: true, slug });
+    if (route === 'signup' || route === 'login') {
+      const ip = wikiHex((await pushSha256(env.POLL_SALT + '|wiki|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 6));
+      const name = String(body.name || '').trim();
+      const password = String(body.password || '');
+      if (route === 'signup') {
+        if (!(await wikiRate(db, 'S' + ip, Math.floor(now / 3600000) * 60, WIKI_SIGNUPS_PER_HOUR))) return pushJson({ ok: false, error: 'slow-down' }, 429);
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(name)) return pushJson({ ok: false, error: 'bad-name' }, 400);
+        if (password.length < 8 || password.length > 200) return pushJson({ ok: false, error: 'bad-password' }, 400);
+        const pass = await wikiPassHash(env, password, '', WIKI_PASS_ITER);
+        const made = await db.prepare('INSERT INTO wiki_users (name, pass, created) VALUES (?1, ?2, ?3) ON CONFLICT(name) DO NOTHING RETURNING id, name').bind(name, pass, now).first();
+        if (!made) return pushJson({ ok: false, error: 'taken' }, 409);
+        return await wikiStartSession(db, made.id, { ok: true, user: { name: made.name } });
+      }
+      if (!(await wikiRate(db, 'L' + ip, Math.floor(now / 600000) * 10, WIKI_LOGINS_PER_10MIN))) return pushJson({ ok: false, error: 'slow-down' }, 429);
+      const row = name.length <= 20 ? await db.prepare('SELECT id, name, pass FROM wiki_users WHERE name = ?1').bind(name).first() : null;
+      if (!row || password.length > 200 || !(await wikiPassOk(env, password, row.pass))) {
+        await new Promise(r => setTimeout(r, 800));
+        return pushJson({ ok: false, error: 'wrong' }, 401);
+      }
+      return await wikiStartSession(db, row.id, { ok: true, user: { name: row.name } });
     }
 
-    if (route === 'save') {
+    if (route === 'logout') {
+      const tok = wikiCookie(request);
+      if (tok) await db.prepare('DELETE FROM wiki_sessions WHERE token = ?1').bind(wikiHex(await pushSha256(tok))).run();
+      const res = pushJson({ ok: true });
+      res.headers.append('set-cookie', 'wk_s=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0');
+      return res;
+    }
+
+    const user = await wikiUser(request, db);
+    if (!user) return pushJson({ ok: false, error: 'login' }, 401);
+
+    if (route === 'submit') {
+      if (!(await wikiRate(db, 'u' + user.id, minute, WIKI_SUBMITS_PER_MIN))) return pushJson({ ok: false, error: 'slow-down' }, 429);
       const slug = wikiSlug(body.slug);
       const base = Number(body.base);
       const title = wikiStr(body.title, 80).replace(/\n/g, ' ').trim();
       const clean = wikiCleanDoc(body.doc);
-      if (!slug || !title || !clean || !Number.isInteger(base)) return pushJson({ ok: false, error: 'bad-request' }, 400);
+      if (!slug || !title || !clean || !Number.isInteger(base) || base < 0) return pushJson({ ok: false, error: 'bad-request' }, 400);
       const doc = JSON.stringify(clean);
-      const row = await db.prepare('UPDATE wiki_pages SET title = ?3, doc = ?4, version = version + 1, updated = ?5, by = ?6 WHERE slug = ?1 AND version = ?2 RETURNING version').bind(slug, base, title, doc, now, by).first();
-      if (!row) {
-        const cur = await db.prepare('SELECT slug, title, doc, version, updated, by FROM wiki_pages WHERE slug = ?1').bind(slug).first();
-        if (!cur) return pushJson({ ok: false, error: 'missing' }, 404);
-        return pushJson({ ok: false, error: 'conflict', page: wikiPageOut(cur) }, 409);
-      }
-      const last = await db.prepare('SELECT id, who, by, created FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 1').bind(slug).first();
-      if (last && last.who === who && last.by === by && now - last.created < 120000) {
-        await db.prepare('UPDATE wiki_revs SET version = ?2, title = ?3, doc = ?4 WHERE id = ?1').bind(last.id, row.version, title, doc).run();
+      let row;
+      if (base === 0) {
+        const count = await db.prepare('SELECT COUNT(*) AS n FROM wiki_pages').first();
+        if (count && count.n >= WIKI_MAX_PAGES) return pushJson({ ok: false, error: 'full' }, 409);
+        row = await db.prepare('INSERT INTO wiki_pages (slug, title, doc, version, updated, by) VALUES (?1, ?2, ?3, 1, ?4, ?5) ON CONFLICT(slug) DO NOTHING RETURNING version').bind(slug, title, doc, now, user.name).first();
+        if (!row) return pushJson({ ok: false, error: 'taken' }, 409);
       } else {
-        await db.batch([
-          db.prepare('INSERT INTO wiki_revs (slug, version, title, doc, created, who, by) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)').bind(slug, row.version, title, doc, now, who, by),
-          db.prepare('DELETE FROM wiki_revs WHERE slug = ?1 AND id <= (SELECT id FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 1 OFFSET ?2)').bind(slug, WIKI_MAX_REVS)
-        ]);
+        row = await db.prepare('UPDATE wiki_pages SET title = ?3, doc = ?4, version = version + 1, updated = ?5, by = ?6 WHERE slug = ?1 AND version = ?2 RETURNING version').bind(slug, base, title, doc, now, user.name).first();
+        if (!row) {
+          const cur = await db.prepare('SELECT slug, title, doc, version, updated, by FROM wiki_pages WHERE slug = ?1').bind(slug).first();
+          if (!cur) return pushJson({ ok: false, error: 'missing' }, 404);
+          return pushJson({ ok: false, error: 'conflict', page: wikiPageOut(cur) }, 409);
+        }
       }
-      return pushJson({ ok: true, version: row.version, updated: now });
+      await db.batch([
+        db.prepare('INSERT INTO wiki_revs (slug, version, title, doc, created, who, by) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)').bind(slug, row.version, title, doc, now, 'u' + user.id, user.name),
+        db.prepare('DELETE FROM wiki_revs WHERE slug = ?1 AND id <= (SELECT id FROM wiki_revs WHERE slug = ?1 ORDER BY id DESC LIMIT 1 OFFSET ?2)').bind(slug, WIKI_MAX_REVS)
+      ]);
+      return pushJson({ ok: true, version: row.version, updated: now, by: user.name });
     }
 
     return pushJson({ ok: false }, 404);

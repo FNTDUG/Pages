@@ -57,11 +57,14 @@ button{cursor:pointer;background:none;border:0}
 .wb-seg{display:inline-flex;padding:3px;border-radius:9px;background:rgba(0,0,0,.35);border:1px solid var(--line2)}
 .wb-seg button{height:26px;padding:0 10px;border-radius:6px;color:var(--mute);font-size:12px}
 .wb-seg button.on{background:rgba(255,164,91,.18);color:var(--acc)}
-.wb-name{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:12px;white-space:nowrap}
-.wb-name input{width:120px;height:34px}
-input[type=text],textarea{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s,box-shadow .15s}
-input[type=text]{height:36px}
-input[type=text]:focus,textarea:focus{border-color:rgba(255,164,91,.6);box-shadow:0 0 0 3px rgba(255,164,91,.12)}
+.wb-sub{display:flex;align-items:center;gap:6px;flex:none}
+.wb-sub .pri{min-width:92px}
+.wb-sub .pri:disabled{opacity:1;background:rgba(255,255,255,.06);color:var(--mute);border-color:var(--line2)}
+.wb-who{flex:none;color:var(--acc2);font-weight:600;white-space:nowrap;padding:0 2px 0 6px;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.wb-draft{display:block;color:var(--acc2)!important}
+input[type=text],input[type=password],textarea{width:100%;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type=text],input[type=password]{height:36px}
+input[type=text]:focus,input[type=password]:focus,textarea:focus{border-color:rgba(255,164,91,.6);box-shadow:0 0 0 3px rgba(255,164,91,.12)}
 textarea{resize:vertical;min-height:90px;line-height:1.55;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
 .wb-conflict{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 16px;background:rgba(248,113,113,.12);border-bottom:1px solid rgba(248,113,113,.35);color:#fecaca;position:relative;z-index:25}
 .wb-conflict p{flex:1;min-width:220px}
@@ -170,6 +173,14 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
 .wb-rev small{color:var(--mute)}
 .wb-rev-acts{display:flex;gap:6px;margin-top:6px}
 .wb-rev-acts .wb-btn{height:28px;font-size:12px;padding:0 10px}
+.wb-auth{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:rgba(7,6,15,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto}
+.wb-auth-card{width:380px;max-width:100%;display:grid;gap:14px;padding:26px 24px 24px;border-radius:18px;background:linear-gradient(180deg,#1b1330,#120d20);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 40px rgba(104,31,98,.35)}
+.wb-auth-brand{display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Audiowide',sans-serif;font-size:16px;letter-spacing:1px}
+.wb-auth-lead{text-align:center;color:var(--mute);line-height:1.55}
+.wb-auth-hint{color:var(--mute);font-size:11.5px;line-height:1.5}
+.wb-auth-err{color:var(--bad);min-height:18px;font-size:12.5px}
+.wb-auth-go{height:42px;font-size:14px}
+body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:none}
 .wb-toast{position:fixed;left:50%;bottom:24px;z-index:120;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:#1f1733;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.6);transition:opacity .2s,transform .2s;max-width:calc(100vw - 24px)}
 .wb-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .wb-toast button{color:var(--acc);font-weight:700}
@@ -181,6 +192,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
   .wb-pick{flex:1}
   .wb-pagebtn{max-width:none;width:100%}
   .wb-sp{display:none}
+  .wb-sub{order:3}
+  .wb-status{order:4}
   .wb-seg{display:none}
   .wb-tb{order:5;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   .wb-tb::-webkit-scrollbar{display:none}
@@ -213,25 +226,30 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
       <div class="wb-menu-list" id="pageList"></div>
       <form class="wb-new" id="newForm" autocomplete="off">
         <div class="wb-new-h">START A NEW PAGE</div>
-        <div class="wb-new-row"><input type="text" id="newTitle" maxlength="80" placeholder="Page title, e.g. Security Owl"><button class="wb-btn pri" type="submit">Create</button></div>
+        <div class="wb-new-row"><input type="text" id="newTitle" maxlength="80" placeholder="Page title, e.g. Security Owl"><button class="wb-btn pri" type="submit">Start</button></div>
         <small id="newSlug">The page address is made from the title.</small>
       </form>
     </div>
   </div>
   <div class="wb-sp"></div>
   <div class="wb-status" id="status"><span class="dot"></span><span id="statusTxt">Connecting</span></div>
+  <div class="wb-sub">
+    <button class="wb-btn" id="discardBtn" type="button" hidden>Discard</button>
+    <button class="wb-btn pri" id="submitBtn" type="button" title="Submit (Ctrl+S)" disabled>Submit</button>
+  </div>
   <div class="wb-tb">
     <button class="wb-btn ic" id="undoBtn" type="button" title="Undo (Ctrl+Z)" disabled>&#8630;</button>
     <button class="wb-btn ic" id="redoBtn" type="button" title="Redo (Ctrl+Shift+Z)" disabled>&#8631;</button>
     <div class="wb-seg" id="viewSeg"><button type="button" data-view="desk" class="on">Desktop</button><button type="button" data-view="phone">Phone</button></div>
     <button class="wb-btn" id="histBtn" type="button">&#128337; History</button>
     <a class="wb-btn" id="viewLink" href="/wiki" target="_blank" rel="noopener">View page &#8599;</a>
-    <label class="wb-name"><span>Your name</span><input type="text" id="nameIn" maxlength="24" placeholder="anonymous"></label>
+    <span class="wb-who" id="whoName"></span>
+    <button class="wb-btn" id="logoutBtn" type="button">Log out</button>
   </div>
 </header>
 <div class="wb-conflict" id="conflict" hidden>
-  <p id="conflictTxt">Someone else saved this page while you were editing.</p>
-  <button class="wb-btn" id="keepMine" type="button">Keep my version</button>
+  <p id="conflictTxt">Someone else changed the same block.</p>
+  <button class="wb-btn" id="keepMine" type="button">Keep mine and submit</button>
   <button class="wb-btn pri" id="takeTheirs" type="button">Load theirs</button>
 </div>
 <div class="wb-main">
@@ -248,13 +266,13 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
       <div>Blank line = new paragraph</div>
     </div>
     <div class="wb-h">SHORTCUTS</div>
-    <div class="wb-keys"><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo &middot; <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicate<br><kbd>Alt</kbd>+<kbd>&uarr;</kbd><kbd>&darr;</kbd> move &middot; <kbd>Del</kbd> delete<br><kbd>Esc</kbd> deselect</div>
+    <div class="wb-keys"><kbd>Ctrl</kbd>+<kbd>S</kbd> submit &middot; <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo<br><kbd>Ctrl</kbd>+<kbd>D</kbd> duplicate &middot; <kbd>Del</kbd> delete<br><kbd>Alt</kbd>+<kbd>&uarr;</kbd><kbd>&darr;</kbd> move &middot; <kbd>Esc</kbd> deselect</div>
   </aside>
   <main class="wb-stage" id="stage">
     <div class="wb-pv" id="pvBar" hidden>
       <p id="pvTxt"></p>
       <button class="wb-btn" id="pvBack" type="button">Back to editing</button>
-      <button class="wb-btn pri" id="pvRestore" type="button">Restore this version</button>
+      <button class="wb-btn pri" id="pvRestore" type="button">Use this version</button>
     </div>
     <div class="wb-frame" id="frame">
       <div class="wb-hero"><div class="wb-ptitle" id="ptitle" title="Page settings">&nbsp;</div></div>
@@ -267,6 +285,19 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
   <div class="wb-ih"><h2>HISTORY</h2><button class="wb-btn ic" id="drawerClose" type="button" title="Close">&#10005;</button></div>
   <div class="wb-dl" id="revList"></div>
 </div>
+<div class="wb-auth" id="auth" hidden>
+  <form class="wb-auth-card" id="authForm" autocomplete="on" novalidate>
+    <div class="wb-auth-brand"><span class="wb-logo">&#9638;</span><span>WIKI BUILDER</span></div>
+    <p class="wb-auth-lead">Sign in to build and submit wiki pages. Reading the wiki is open to everyone.</p>
+    <div class="wb-seg2" id="authTabs"><button type="button" data-mode="login" class="on">Sign in</button><button type="button" data-mode="signup">Create account</button></div>
+    <label class="wb-f"><span class="wb-fl">Username</span><input type="text" id="authName" name="username" autocomplete="username" maxlength="20" spellcheck="false" autocapitalize="off"></label>
+    <label class="wb-f"><span class="wb-fl">Password</span><input type="password" id="authPass" name="password" autocomplete="current-password" maxlength="200"></label>
+    <label class="wb-f" id="authConfirmRow" hidden><span class="wb-fl">Confirm password</span><input type="password" id="authPass2" autocomplete="new-password" maxlength="200"></label>
+    <small class="wb-auth-hint" id="authHint" hidden>Usernames are 3&ndash;20 letters, numbers or _. Passwords need at least 8 characters.</small>
+    <small class="wb-auth-err" id="authErr"></small>
+    <button class="wb-btn pri wb-auth-go" type="submit" id="authGo">Sign in</button>
+  </form>
+</div>
 <div class="wb-toast" id="toast"><span id="toastTxt"></span><button id="toastBtn" type="button" hidden></button></div>
 <div class="wb-ghost" id="ghost" hidden></div>
 <div class="wb-line" id="line" hidden></div>
@@ -278,12 +309,14 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
   var ghost = $('ghost'), line = $('line'), toastEl = $('toast');
   var esc = WikiBlocks.esc;
   var NAMES = { panel: 'TEXT PANEL', card: 'INFO CARD' };
-  var S = { slug: '', title: '', doc: { blocks: [] }, version: 0, updated: 0, by: '', sel: null, seq: 0, savedSeq: 0, saving: false, conflict: null, preview: null, sheet: false, base: '{"title":"","doc":{"blocks":[]}}' };
+  var EMPTY = '{"title":"","doc":{"blocks":[]}}';
+  var S = { user: '', slug: '', title: '', doc: { blocks: [] }, version: 0, updated: 0, by: '', sel: null, submitting: false, conflict: null, preview: null, sheet: false, base: EMPTY };
   var U = { stack: [], i: 0, group: null, t: 0 };
-  var saveT = null, pollT = null, toastT = null, fails = 0;
+  var pollT = null, toastT = null, draftT = null;
   var isNarrow = window.matchMedia('(max-width: 860px)');
 
-  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+  function storeKeys() { var out = []; try { for (var i = 0; i < localStorage.length; i++) out.push(localStorage.key(i)); } catch (e) {} return out; }
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function newId() { return (Date.now().toString(36).slice(-5) + Math.random().toString(36).slice(2, 8)).replace(/[^a-z0-9]/g, '').slice(0, 12); }
   function slugify(t) { return String(t || '').toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48).replace(/-+$/, ''); }
@@ -294,15 +327,19 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     if (s < 86400) return Math.floor(s / 3600) + ' h ago';
     return new Date(t).toLocaleDateString();
   }
-  function dirty() { return S.seq !== S.savedSeq; }
-  function byName() { return $('nameIn').value.trim(); }
+  function snap() { return JSON.stringify({ title: S.title, doc: S.doc }); }
+  function dirty() { return !!S.slug && (S.version === 0 || snap() !== S.base); }
   function blockIndex(id) { for (var i = 0; i < S.doc.blocks.length; i++) if (S.doc.blocks[i].id === id) return i; return -1; }
   function selBlock() { var i = blockIndex(S.sel); return i < 0 ? null : S.doc.blocks[i]; }
 
   function api(path, body) {
-    var opts = body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : { cache: 'no-store' };
+    var opts = body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), credentials: 'same-origin' } : { cache: 'no-store', credentials: 'same-origin' };
     return fetch(path, opts).then(function (r) {
-      return r.json().catch(function () { return { ok: false, error: 'bad' }; }).then(function (j) { j.status = r.status; return j; });
+      return r.json().catch(function () { return { ok: false, error: 'bad' }; }).then(function (j) {
+        j.status = r.status;
+        if (r.status === 401 && j.error === 'login' && S.user) needLogin();
+        return j;
+      });
     });
   }
 
@@ -311,7 +348,7 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     $('statusTxt').textContent = txt;
   }
 
-  function toast(msg, label, fn) {
+  function toast(msg, label, fn, ms) {
     clearTimeout(toastT);
     $('toastTxt').textContent = msg;
     var b = $('toastBtn');
@@ -319,10 +356,33 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     b.textContent = label || '';
     b.onclick = function () { toastEl.classList.remove('on'); if (fn) fn(); };
     toastEl.classList.add('on');
-    toastT = setTimeout(function () { toastEl.classList.remove('on'); }, label ? 6000 : 3000);
+    toastT = setTimeout(function () { toastEl.classList.remove('on'); }, ms || (label ? 6000 : 3200));
   }
 
-  function snap() { return JSON.stringify({ title: S.title, doc: S.doc }); }
+  function draftKey(slug) { return 'wkDraft:' + S.user.toLowerCase() + ':' + slug; }
+  function writeDraft() {
+    clearTimeout(draftT);
+    if (!S.slug || !S.user) return;
+    if (!dirty()) { store(draftKey(S.slug), null); return; }
+    store(draftKey(S.slug), JSON.stringify({ title: S.title, doc: S.doc, version: S.version, base: S.base, at: Date.now() }));
+  }
+  function readDraft(slug) {
+    try { var d = JSON.parse(store(draftKey(slug)) || 'null'); return d && d.doc && Array.isArray(d.doc.blocks) ? d : null; } catch (e) { return null; }
+  }
+
+  function refreshUi() {
+    var d = dirty();
+    $('submitBtn').disabled = !d || S.submitting || !!S.preview || !!S.conflict;
+    $('discardBtn').hidden = !d || S.submitting;
+    $('submitBtn').textContent = S.submitting ? 'Submitting...' : (S.version === 0 ? 'Submit page' : 'Submit');
+    if (!S.slug) return;
+    if (S.conflict) setStatus('conflict', 'Needs a decision');
+    else if (S.submitting) setStatus('saving', 'Submitting');
+    else if (S.version === 0) setStatus('edit', 'New page · not submitted');
+    else if (d) setStatus('edit', 'Unsubmitted changes');
+    else setStatus('saved', 'Published · v' + S.version);
+  }
+
   function resetUndo() { U.stack = [snap()]; U.i = 0; U.group = null; undoBtns(); }
   function undoBtns() { $('undoBtn').disabled = U.i <= 0 || !!S.preview; $('redoBtn').disabled = U.i >= U.stack.length - 1 || !!S.preview; }
   function pushUndo(group) {
@@ -344,19 +404,24 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     S.doc = o.doc;
     if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
     U.group = null;
-    S.seq++;
+    $('pageBtnTxt').textContent = S.title || 'Untitled page';
     renderAll();
-    scheduleSave();
+    afterChange();
     undoBtns();
   }
   function undo() { if (U.i > 0 && !S.preview) { U.i--; applySnap(U.stack[U.i]); } }
   function redo() { if (U.i < U.stack.length - 1 && !S.preview) { U.i++; applySnap(U.stack[U.i]); } }
 
+  function afterChange() {
+    refreshUi();
+    clearTimeout(draftT);
+    draftT = setTimeout(writeDraft, 400);
+  }
+
   function changed(group, onlyId) {
-    S.seq++;
     pushUndo(group);
     if (onlyId) refreshBlock(onlyId); else renderCanvas();
-    scheduleSave();
+    afterChange();
   }
 
   function blockShell(b, sel) {
@@ -375,7 +440,7 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     ptitle.classList.toggle('sel', S.sel === 'page' && !S.preview);
     var bl = doc.blocks;
     if (!bl.length) {
-      canvas.innerHTML = '<div class="wb-empty" id="emptyZone"><div><b>This page is empty</b>Drag a block here, or tap one in the block list.</div></div>';
+      canvas.innerHTML = '<div class="wb-empty" id="emptyZone"><div><b>' + (S.slug ? 'This page is empty' : 'No page open') + '</b>' + (S.slug ? 'Drag a block here, or tap one in the block list.' : 'Pick a page or start a new one from the menu at the top.') + '</div></div>';
       return;
     }
     var old = {};
@@ -410,7 +475,7 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
   }
 
   function select(id, focus) {
-    if (S.preview) return;
+    if (S.preview || !S.slug) return;
     S.sel = id;
     S.sheet = !!focus && !!id;
     markSel();
@@ -439,15 +504,15 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     return '<div class="wb-seg2" data-seg="align"><button type="button" data-v="left"' + (v === 'left' ? ' class="on"' : '') + '>Left</button><button type="button" data-v="center"' + (v !== 'left' ? ' class="on"' : '') + '>Center</button></div>';
   }
 
-  function head(t, extra) {
-    return '<div class="wb-ih"><h2>' + t + '</h2>' + (extra || '') + '<button class="wb-btn wb-done" type="button" data-act="done">Done</button></div>';
+  function head(t) {
+    return '<div class="wb-ih"><h2>' + t + '</h2><button class="wb-btn wb-done" type="button" data-act="done">Done</button></div>';
   }
 
   function renderInspector() {
     var html;
     var b = selBlock();
     if (S.preview) {
-      html = head('PREVIEW') + '<div class="wb-ib"><div class="wb-note">You are looking at an older version. <b>Restore</b> it to make it the live page again, or go back to editing.</div></div>';
+      html = head('PREVIEW') + '<div class="wb-ib"><div class="wb-note">You are looking at an older version. <b>Use this version</b> copies it into your draft; it only goes live when you press <b>Submit</b>.</div></div>';
     } else if (b && b.type === 'panel') {
       html = head('TEXT PANEL') + '<div class="wb-ib">' +
         '<label class="wb-f"><span class="wb-fl">Title<em>optional</em></span><input type="text" data-f="title" maxlength="120" value="' + esc(b.title) + '"></label>' +
@@ -479,8 +544,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
       html = head('PAGE') + '<div class="wb-ib">' +
         (S.slug ? '<label class="wb-f"><span class="wb-fl">Page title</span><input type="text" data-f="ptitle" maxlength="80" value="' + esc(S.title) + '"></label>' +
         '<div class="wb-f"><span class="wb-fl">Address</span><div class="wb-url"><input type="text" readonly value="' + esc(url) + '"><button class="wb-btn" type="button" data-act="copy">Copy</button></div></div>' +
-        '<div class="wb-stats"><div class="wb-stat"><b>' + S.doc.blocks.length + '</b><span>blocks</span></div><div class="wb-stat"><b>v' + S.version + '</b><span>' + (S.updated ? 'saved ' + esc(ago(S.updated)) + (S.by ? ' by ' + esc(S.by) : '') : 'version') + '</span></div></div>' : '') +
-        '<div class="wb-note"><b>Drag</b> a block from the list onto the page, or tap it to add it under the selected block. <b>Click</b> a block to edit it here (on a phone, tap it twice or press &#9998;). Every change saves by itself and shows up live for everyone viewing the page.</div>' +
+        '<div class="wb-stats"><div class="wb-stat"><b>' + S.doc.blocks.length + '</b><span>blocks</span></div><div class="wb-stat"><b>' + (S.version ? 'v' + S.version : 'New') + '</b><span>' + (S.version ? 'published ' + esc(ago(S.updated)) + (S.by ? ' by ' + esc(S.by) : '') : 'not submitted yet') + '</span></div></div>' : '') +
+        '<div class="wb-note"><b>Drag</b> a block from the list onto the page, or tap it to add it under the selected block. <b>Click</b> a block to edit it here (on a phone, tap it twice or press &#9998;).<br><br>Your changes stay private in this browser until you press <b>Submit</b>. Submitting updates the public page for everyone.</div>' +
         '</div>';
     }
     insp.innerHTML = html;
@@ -503,9 +568,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
       S.title = t.value.replace(/\n/g, ' ');
       $('pageBtnTxt').textContent = S.title || 'Untitled page';
       ptitle.textContent = S.title || 'Untitled page';
-      S.seq++;
       pushUndo('ptitle');
-      scheduleSave();
+      afterChange();
       return;
     }
     var b = selBlock();
@@ -644,8 +708,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
-  function makeBlock(type) {
-    if (type === 'panel') return { id: newId(), type: 'panel', title: 'New panel', text: 'Write something here.\n\n- Lists start with a dash\n- Use **stars** for bold', width: 70, height: 0, align: 'center' };
+  function makeBlock(type, title) {
+    if (type === 'panel') return { id: newId(), type: 'panel', title: title || 'New panel', text: 'Write something here.\n\n- Lists start with a dash\n- Use **stars** for bold', width: 70, height: 0, align: 'center' };
     return { id: newId(), type: 'card', sections: [{ title: 'Heading', text: 'Card text goes here.' }], width: 85, align: 'center' };
   }
 
@@ -663,6 +727,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     renderInspector();
     scrollToBlock(b.id);
   }
+
+  var D = null, justDragged = false;
 
   canvas.addEventListener('click', function (e) {
     if (e.target.closest('a')) e.preventDefault();
@@ -685,9 +751,8 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     if (blk && !S.preview) select(blk.getAttribute('data-id'), true);
   });
   ptitle.addEventListener('click', function () { select('page', true); });
-  stage.addEventListener('click', function (e) { if (!justDragged && e.target === stage || e.target === frame) select(null); });
+  stage.addEventListener('click', function (e) { if (!justDragged && (e.target === stage || e.target === frame)) select(null); });
 
-  var D = null, justDragged = false;
   function press(e, info) {
     if (e.button !== 0 || S.preview || !S.slug) return;
     D = { info: info, x: e.clientX, y: e.clientY, cx: e.clientX, cy: e.clientY, on: false, idx: -1, pid: e.pointerId, raf: 0 };
@@ -805,45 +870,41 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     press(e, { kind: 'move', id: blk.getAttribute('data-id'), el: blk });
   });
 
-  function scheduleSave() {
-    if (!S.slug) return;
-    setStatus('edit', 'Editing');
-    clearTimeout(saveT);
-    saveT = setTimeout(save, 700);
-  }
-
-  function save() {
-    clearTimeout(saveT);
-    if (!S.slug || S.conflict || !dirty()) return;
-    if (S.saving) { saveT = setTimeout(save, 300); return; }
-    S.saving = true;
-    var seq = S.seq, slug = S.slug, sent = snap();
-    setStatus('saving', 'Saving');
-    api('/wiki/api/save', { slug: slug, title: S.title.trim() || 'Untitled page', doc: S.doc, base: S.version, by: byName() })
+  function submit() {
+    if (!S.slug || S.submitting || S.conflict || S.preview || !dirty()) return;
+    var title = S.title.trim();
+    if (!title) { toast('Give the page a title before submitting.'); select('page', true); return; }
+    if (!S.doc.blocks.length) { toast('Add at least one block before submitting.'); return; }
+    S.submitting = true;
+    refreshUi();
+    var slug = S.slug, sent = snap();
+    api('/wiki/api/submit', { slug: slug, title: title, doc: S.doc, base: S.version })
       .then(function (j) {
-        S.saving = false;
+        S.submitting = false;
         if (slug !== S.slug) return;
         if (j.ok) {
-          fails = 0;
           S.version = j.version;
           S.updated = j.updated;
-          S.by = byName();
-          S.savedSeq = seq;
+          S.by = j.by;
           S.base = sent;
-          if (dirty()) save();
-          else setStatus('saved', 'Saved · live');
+          writeDraft();
+          refreshUi();
+          if (S.sel === null || S.sel === 'page') renderInspector();
+          toast('Submitted. The page is updated.', 'View page', function () { window.open('/wiki/' + slug, '_blank', 'noopener'); });
           return;
         }
-        if (j.status === 409 && j.page) { if (!autoMerge(j.page)) showConflict(j.page); return; }
-        if (j.status === 429) { setStatus('slow', 'Too fast, waiting'); saveT = setTimeout(save, 5000); return; }
-        if (j.status === 400) { setStatus('error', 'Could not save'); toast('That change could not be saved. Undo it and try again.'); return; }
-        throw new Error('save');
-      })
-      .catch(function () {
-        S.saving = false;
-        fails++;
-        setStatus('error', 'Offline, retrying');
-        saveT = setTimeout(save, Math.min(15000, 2000 * fails));
+        refreshUi();
+        if (j.status === 401) toast('Sign in again to submit. Your changes are kept.');
+        else if (j.status === 409 && j.error === 'taken') toast('Someone just published a page at /wiki/' + slug + '. Start your page under a different title.', null, null, 7000);
+        else if (j.status === 409 && j.error === 'full') toast('The wiki is full for this test (200 pages).');
+        else if (j.status === 409 && j.page) { if (!autoMerge(j.page)) showConflict(j.page); }
+        else if (j.status === 429) toast('Too many submits. Wait a minute and try again.');
+        else if (j.status === 400) toast('This page could not be submitted. Check it has a title and blocks.');
+        else toast('Could not submit. Your changes are kept; try again.');
+      }, function () {
+        S.submitting = false;
+        refreshUi();
+        toast('Could not reach the server. Your changes are kept; try again.');
       });
   }
 
@@ -898,23 +959,24 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     S.doc = { blocks: r.blocks };
     S.title = title;
     S.version = page.version;
+    S.updated = page.updated;
+    S.by = page.by;
     S.base = JSON.stringify({ title: page.title, doc: page.doc });
     if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
     $('pageBtnTxt').textContent = S.title || 'Untitled page';
-    S.seq++;
     pushUndo(null);
     renderCanvas(prev);
     if (!document.activeElement || !insp.contains(document.activeElement)) renderInspector();
-    toast('Merged with changes from ' + (page.by || 'someone else'));
-    save();
+    afterChange();
+    toast((page.by || 'Someone') + ' submitted changes while you were editing. They are merged into your draft; check it and press Submit again.', null, null, 8000);
     return true;
   }
 
   function showConflict(page) {
     S.conflict = page;
-    setStatus('conflict', 'Conflict');
-    $('conflictTxt').textContent = (page.by || 'Someone else') + ' changed the same block you were editing (version ' + page.version + '). Keep your version of the page, or load theirs?';
+    $('conflictTxt').textContent = (page.by || 'Someone else') + ' submitted a change to the same block you edited (version ' + page.version + '). Keep your version, or load theirs?';
     $('conflict').hidden = false;
+    refreshUi();
   }
   $('keepMine').addEventListener('click', function () {
     if (!S.conflict) return;
@@ -922,110 +984,179 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     S.base = JSON.stringify({ title: S.conflict.title, doc: S.conflict.doc });
     S.conflict = null;
     $('conflict').hidden = true;
-    save();
+    submit();
   });
   $('takeTheirs').addEventListener('click', function () {
     var p = S.conflict;
     if (!p) return;
     S.conflict = null;
     $('conflict').hidden = true;
-    applyRemote(p, false);
+    applyPublished(p, false);
   });
 
-  function applyRemote(p, flash) {
+  function applyPublished(p, flash) {
     var prev = S.doc;
     S.title = p.title;
     S.doc = p.doc;
     S.version = p.version;
     S.updated = p.updated;
     S.by = p.by;
-    S.seq++;
-    S.savedSeq = S.seq;
     S.base = JSON.stringify({ title: p.title, doc: p.doc });
     if (S.sel !== 'page' && blockIndex(S.sel) < 0) S.sel = null;
     $('pageBtnTxt').textContent = S.title || 'Untitled page';
-    var a = document.activeElement, f = null, s = null, c = 0;
-    if (a && insp.contains(a)) { f = a.getAttribute('data-f'); s = a.getAttribute('data-s'); c = a.selectionStart; }
     renderCanvas(flash ? prev : null);
     if (!S.preview) renderInspector();
-    if (f) {
-      var el = insp.querySelector('[data-f="' + f + '"]' + (s !== null ? '[data-s="' + s + '"]' : ':not([data-s])'));
-      if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (x) {} }
-    }
     resetUndo();
-    setStatus('saved', 'Saved · live');
+    writeDraft();
+    refreshUi();
   }
 
   function poll() {
     clearTimeout(pollT);
-    pollT = setTimeout(poll, 2500);
-    if (!S.slug || document.hidden || S.saving || S.conflict || dirty() || (D && D.on)) return;
+    pollT = setTimeout(poll, 10000);
+    if (!S.slug || !S.version || document.hidden || S.submitting || S.conflict || S.preview || dirty() || (D && D.on)) return;
     var slug = S.slug, v = S.version;
     api('/wiki/api/page?slug=' + encodeURIComponent(slug) + '&since=' + v).then(function (j) {
-      if (slug !== S.slug || v !== S.version || dirty() || S.saving || S.conflict) return;
-      if (!j.ok) { if (j.status >= 500) setStatus('error', 'Reconnecting'); return; }
-      if (j.same) { if ($('status').className.indexOf('error') !== -1) setStatus('saved', 'Saved · live'); return; }
-      applyRemote(j.page, true);
-      toast('Live update' + (j.page.by ? ' from ' + j.page.by : ''));
-    }, function () { setStatus('error', 'Reconnecting'); });
+      if (!j.ok || j.same || slug !== S.slug || v !== S.version || dirty() || S.submitting || S.conflict) return;
+      applyPublished(j.page, true);
+      toast('Loaded the newest version' + (j.page.by ? ' from ' + j.page.by : ''));
+    }, function () {});
   }
 
-  function whenSaved(fn) {
-    var tries = 0;
-    (function wait() {
-      if ((!dirty() && !S.saving) || S.conflict || tries++ > 30) { fn(); return; }
-      if (!S.saving) save();
-      setTimeout(wait, 200);
-    })();
+  function setUrl() {
+    $('viewLink').href = '/wiki/' + S.slug;
+    try { history.replaceState(null, '', '/wiki-edit?page=' + encodeURIComponent(S.slug)); } catch (e) {}
+    document.title = (S.title || 'Untitled page') + ' · Wiki Builder';
+  }
+
+  function loadDraftInto(d) {
+    S.title = d.title;
+    S.doc = d.doc;
+    S.version = d.version || 0;
+    S.base = d.base || EMPTY;
+    $('pageBtnTxt').textContent = S.title || 'Untitled page';
+    resetUndo();
+    renderAll();
+    refreshUi();
   }
 
   function openPage(slug) {
-    whenSaved(function () {
-      setStatus('', 'Loading');
-      api('/wiki/api/page?slug=' + encodeURIComponent(slug)).then(function (j) {
-        if (!j.ok) {
-          if (j.status === 404) {
-            setStatus('', 'No page');
-            openMenu();
-            $('newTitle').value = slug.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-            updSlug();
-            toast('There is no page called "' + slug + '" yet. Create it below.');
-            return;
-          }
-          throw new Error('load');
+    writeDraft();
+    setStatus('', 'Loading');
+    api('/wiki/api/page?slug=' + encodeURIComponent(slug)).then(function (j) {
+      var d = readDraft(slug);
+      exitPreview();
+      S.conflict = null;
+      $('conflict').hidden = true;
+      if (!j.ok) {
+        if (j.status === 404 && d && !d.version) {
+          S.slug = slug;
+          S.sel = null;
+          loadDraftInto(d);
+          setUrl();
+          stage.scrollTop = 0;
+          return;
         }
-        exitPreview();
-        S.conflict = null;
-        $('conflict').hidden = true;
-        S.slug = j.page.slug;
-        S.sel = null;
-        applyRemote(j.page, false);
-        $('viewLink').href = '/wiki/' + S.slug;
-        try { history.replaceState(null, '', '/wiki-edit?page=' + encodeURIComponent(S.slug)); } catch (e) {}
-        document.title = S.title + ' · Wiki Builder';
-        stage.scrollTop = 0;
-        poll();
-      }).catch(function () {
-        setStatus('error', 'Could not load');
-        toast('Could not load that page.', 'Retry', function () { openPage(slug); });
-      });
+        if (j.status === 404) {
+          setStatus('', 'No page');
+          openMenu();
+          $('newTitle').value = slug.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+          updSlug();
+          toast('There is no page called "' + slug + '" yet. You can start it below.');
+          return;
+        }
+        throw new Error('load');
+      }
+      S.slug = j.page.slug;
+      S.sel = null;
+      applyPublished(j.page, false);
+      if (d && d.version) {
+        loadDraftInto(d);
+        writeDraft();
+        if (dirty()) toast('Your unsubmitted changes were restored.', 'Discard', discard, 7000);
+      }
+      setUrl();
+      stage.scrollTop = 0;
+      poll();
+    }).catch(function () {
+      setStatus('error', 'Could not load');
+      toast('Could not load that page.', 'Retry', function () { openPage(slug); });
     });
   }
 
+  function startNewPage(title, slug) {
+    writeDraft();
+    exitPreview();
+    S.conflict = null;
+    $('conflict').hidden = true;
+    S.slug = slug;
+    S.title = title;
+    S.version = 0;
+    S.updated = 0;
+    S.by = '';
+    S.base = EMPTY;
+    S.doc = { blocks: [makeBlock('panel', title)] };
+    S.sel = null;
+    $('pageBtnTxt').textContent = title;
+    resetUndo();
+    renderAll();
+    refreshUi();
+    writeDraft();
+    setUrl();
+    stage.scrollTop = 0;
+    toast('New page started. It goes live when you press Submit page.');
+  }
+
+  function discard() {
+    if (!S.slug || !dirty()) return;
+    if (!window.confirm(S.version ? 'Throw away your unsubmitted changes to this page?' : 'Throw away this new page? It was never submitted.')) return;
+    store(draftKey(S.slug), null);
+    if (!S.version) {
+      S.slug = '';
+      S.title = '';
+      S.doc = { blocks: [] };
+      S.sel = null;
+      $('pageBtnTxt').textContent = 'Pick a page';
+      setStatus('', 'No page open');
+      refreshUi();
+      renderAll();
+      openMenu();
+      return;
+    }
+    var slug = S.slug;
+    S.base = snap();
+    openPage(slug);
+  }
+  $('discardBtn').addEventListener('click', discard);
+  $('submitBtn').addEventListener('click', submit);
+
   var menu = $('pageMenu');
+  function localNewDrafts() {
+    var pre = 'wkDraft:' + S.user.toLowerCase() + ':', out = [], keys = storeKeys();
+    for (var i = 0; i < keys.length; i++) {
+      if (!keys[i] || keys[i].indexOf(pre) !== 0) continue;
+      var d = readDraft(keys[i].slice(pre.length));
+      if (d) out.push({ slug: keys[i].slice(pre.length), title: d.title, at: d.at, isNew: !d.version });
+    }
+    return out;
+  }
   function openMenu() {
     menu.hidden = false;
     $('pageBtn').classList.add('on');
     $('pageList').innerHTML = '<div class="wb-menu-empty">Loading pages...</div>';
     api('/wiki/api/list').then(function (j) {
       if (!j.ok) throw new Error('list');
-      if (!j.pages.length) { $('pageList').innerHTML = '<div class="wb-menu-empty">No pages yet. Start the first one!</div>'; return; }
-      var h = '';
-      for (var i = 0; i < j.pages.length; i++) {
-        var p = j.pages[i];
-        h += '<button type="button" class="wb-menu-item' + (p.slug === S.slug ? ' cur' : '') + '" data-slug="' + esc(p.slug) + '"><b>' + esc(p.title) + '</b><small>/wiki/' + esc(p.slug) + ' &middot; ' + esc(ago(p.updated)) + (p.by ? ' by ' + esc(p.by) : '') + '</small></button>';
+      var drafts = localNewDrafts(), mine = {}, h = '', i;
+      for (i = 0; i < drafts.length; i++) mine[drafts[i].slug] = drafts[i];
+      for (i = 0; i < drafts.length; i++) {
+        if (!drafts[i].isNew) continue;
+        h += '<button type="button" class="wb-menu-item' + (drafts[i].slug === S.slug ? ' cur' : '') + '" data-slug="' + esc(drafts[i].slug) + '"><b>' + esc(drafts[i].title || drafts[i].slug) + '</b><small class="wb-draft">Your new page &middot; not submitted</small></button>';
       }
-      $('pageList').innerHTML = h;
+      for (i = 0; i < j.pages.length; i++) {
+        var p = j.pages[i];
+        h += '<button type="button" class="wb-menu-item' + (p.slug === S.slug ? ' cur' : '') + '" data-slug="' + esc(p.slug) + '"><b>' + esc(p.title) + '</b><small>/wiki/' + esc(p.slug) + ' &middot; updated ' + esc(ago(p.updated)) + '</small>' + (mine[p.slug] ? '<small class="wb-draft">You have unsubmitted changes</small>' : '') + '</button>';
+      }
+      $('pageList').innerHTML = h || '<div class="wb-menu-empty">No pages yet. Start the first one!</div>';
     }).catch(function () { $('pageList').innerHTML = '<div class="wb-menu-empty">Could not load the page list.</div>'; });
   }
   function closeMenu() { menu.hidden = true; $('pageBtn').classList.remove('on'); }
@@ -1048,31 +1179,32 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     e.preventDefault();
     var title = $('newTitle').value.trim(), slug = slugify(title), el = $('newSlug');
     if (!slug) { el.className = 'err'; el.textContent = 'Give the page a title with some letters or numbers.'; return; }
+    if (readDraft(slug)) { closeMenu(); openPage(slug); return; }
     el.className = '';
-    el.textContent = 'Creating...';
-    api('/wiki/api/create', { slug: slug, title: title, by: byName() }).then(function (j) {
-      if (j.ok) { $('newTitle').value = ''; updSlug(); closeMenu(); openPage(slug); toast('Page created'); return; }
+    el.textContent = 'Checking...';
+    api('/wiki/api/page?slug=' + slug + '&since=1').then(function (j) {
+      if (j.status === 404) { $('newTitle').value = ''; updSlug(); closeMenu(); startNewPage(title, slug); return; }
+      if (!j.ok) throw new Error('check');
       el.className = 'err';
-      if (j.error === 'taken') { el.innerHTML = '/wiki/' + esc(slug) + ' already exists. <a href="#" id="openTaken" style="color:var(--acc)">Open it</a>'; $('openTaken').onclick = function (ev) { ev.preventDefault(); closeMenu(); openPage(slug); }; }
-      else if (j.error === 'full') el.textContent = 'The wiki is full for this test (200 pages).';
-      else if (j.status === 429) el.textContent = 'Slow down a little and try again.';
-      else el.textContent = 'Could not create the page.';
-    }, function () { el.className = 'err'; el.textContent = 'Could not reach the server.'; });
+      el.innerHTML = '/wiki/' + esc(slug) + ' already exists. <a href="#" id="openTaken" style="color:var(--acc)">Open it</a>';
+      $('openTaken').onclick = function (ev) { ev.preventDefault(); closeMenu(); openPage(slug); };
+    }).catch(function () { el.className = 'err'; el.textContent = 'Could not reach the server.'; });
   });
 
   var drawer = $('drawer');
   function openHistory() {
     if (!S.slug) return;
     drawer.hidden = false;
+    if (!S.version) { $('revList').innerHTML = '<div class="wb-menu-empty">This page has not been submitted yet.</div>'; return; }
     $('revList').innerHTML = '<div class="wb-menu-empty">Loading...</div>';
     api('/wiki/api/history?slug=' + encodeURIComponent(S.slug)).then(function (j) {
       if (!j.ok) throw new Error('h');
-      if (!j.revs.length) { $('revList').innerHTML = '<div class="wb-menu-empty">No saved versions yet.</div>'; return; }
+      if (!j.revs.length) { $('revList').innerHTML = '<div class="wb-menu-empty">No submitted versions yet.</div>'; return; }
       var h = '';
       for (var i = 0; i < j.revs.length; i++) {
         var r = j.revs[i];
-        h += '<div class="wb-rev' + (r.version === S.version ? ' cur' : '') + '"><div class="wb-rev-top"><b>v' + r.version + '</b><span>' + esc(r.by || 'anonymous') + '</span><small>' + esc(ago(r.created)) + '</small></div>' +
-          '<small>' + esc(r.title) + ' &middot; ' + (r.blocks || 0) + ' block' + (r.blocks === 1 ? '' : 's') + (r.version === S.version ? ' &middot; current' : '') + '</small>' +
+        h += '<div class="wb-rev' + (r.version === S.version ? ' cur' : '') + '"><div class="wb-rev-top"><b>v' + r.version + '</b><span>' + esc(r.by || 'unknown') + '</span><small>' + esc(ago(r.created)) + '</small></div>' +
+          '<small>' + esc(r.title) + ' &middot; ' + (r.blocks || 0) + ' block' + (r.blocks === 1 ? '' : 's') + (r.version === S.version ? ' &middot; live now' : '') + '</small>' +
           '<div class="wb-rev-acts"><button class="wb-btn" type="button" data-rev="' + r.id + '">Preview</button></div></div>';
       }
       $('revList').innerHTML = h;
@@ -1086,11 +1218,12 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     api('/wiki/api/rev?id=' + b.getAttribute('data-rev')).then(function (j) {
       if (!j.ok) throw new Error('r');
       S.preview = j.rev;
-      $('pvTxt').textContent = 'Previewing version ' + j.rev.version + ' from ' + ago(j.rev.created) + (j.rev.by ? ' by ' + j.rev.by : '') + '.';
+      $('pvTxt').textContent = 'Previewing version ' + j.rev.version + ', submitted ' + ago(j.rev.created) + (j.rev.by ? ' by ' + j.rev.by : '') + '.';
       $('pvBar').hidden = false;
       if (isNarrow.matches) drawer.hidden = true;
       undoBtns();
       renderAll();
+      refreshUi();
       stage.scrollTop = 0;
     }).catch(function () { toast('Could not load that version.'); });
   });
@@ -1100,6 +1233,7 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     $('pvBar').hidden = true;
     undoBtns();
     renderAll();
+    refreshUi();
   }
   $('pvBack').addEventListener('click', exitPreview);
   $('pvRestore').addEventListener('click', function () {
@@ -1114,7 +1248,7 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     changed(null);
     renderInspector();
     drawer.hidden = true;
-    toast('Version ' + p.version + ' restored', 'Undo', undo);
+    toast('Version ' + p.version + ' copied into your draft. Press Submit to make it live.', 'Undo', undo, 7000);
   });
 
   $('undoBtn').addEventListener('click', undo);
@@ -1126,12 +1260,73 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     for (var i = 0; i < kids.length; i++) kids[i].classList.toggle('on', kids[i] === b);
     frame.classList.toggle('phone', b.getAttribute('data-view') === 'phone');
   });
-  $('nameIn').value = store('wkName') || '';
-  $('nameIn').addEventListener('input', function () { store('wkName', this.value.trim()); });
+
+  var authMode = 'login';
+  function setAuthMode(m) {
+    authMode = m;
+    var tabs = $('authTabs').children;
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle('on', tabs[i].getAttribute('data-mode') === m);
+    $('authConfirmRow').hidden = m !== 'signup';
+    $('authHint').hidden = m !== 'signup';
+    $('authPass').setAttribute('autocomplete', m === 'signup' ? 'new-password' : 'current-password');
+    $('authGo').textContent = m === 'signup' ? 'Create account' : 'Sign in';
+    $('authErr').textContent = '';
+  }
+  $('authTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setAuthMode(b.getAttribute('data-mode')); });
+  function showAuth() {
+    $('auth').hidden = false;
+    document.body.classList.add('wb-locked');
+    setTimeout(function () { $('authName').focus(); }, 50);
+  }
+  function needLogin() {
+    S.user = '';
+    showAuth();
+    $('authErr').textContent = 'You were signed out. Sign in again; your changes are kept.';
+  }
+  var AUTH_ERRORS = {
+    wrong: 'Wrong username or password.',
+    taken: 'That username is already taken.',
+    'bad-name': 'Usernames are 3–20 letters, numbers or _.',
+    'bad-password': 'Passwords need at least 8 characters.',
+    'slow-down': 'Too many tries. Wait a few minutes and try again.'
+  };
+  $('authForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('authName').value.trim(), pass = $('authPass').value, err = $('authErr');
+    if (authMode === 'signup') {
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(name)) { err.textContent = AUTH_ERRORS['bad-name']; return; }
+      if (pass.length < 8) { err.textContent = AUTH_ERRORS['bad-password']; return; }
+      if (pass !== $('authPass2').value) { err.textContent = 'The two passwords do not match.'; return; }
+    } else if (!name || !pass) { err.textContent = 'Enter your username and password.'; return; }
+    err.textContent = '';
+    $('authGo').disabled = true;
+    api('/wiki/api/' + authMode, { name: name, password: pass }).then(function (j) {
+      $('authGo').disabled = false;
+      if (!j.ok) { err.textContent = AUTH_ERRORS[j.error] || 'Something went wrong. Try again.'; return; }
+      var was = S.user;
+      $('authPass').value = '';
+      $('authPass2').value = '';
+      $('auth').hidden = true;
+      document.body.classList.remove('wb-locked');
+      signedIn(j.user.name);
+      if (authMode === 'signup') toast('Welcome, ' + j.user.name + '! Your account is ready.');
+      if (!was && !S.slug) boot();
+    }, function () { $('authGo').disabled = false; err.textContent = 'Could not reach the server.'; });
+  });
+  function signedIn(name) {
+    S.user = name;
+    $('whoName').textContent = '@' + name;
+  }
+  $('logoutBtn').addEventListener('click', function () {
+    writeDraft();
+    api('/wiki/api/logout', {}).then(function () { location.reload(); }, function () { location.reload(); });
+  });
 
   document.addEventListener('keydown', function (e) {
     var t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
-    var mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+    var mod = e.ctrlKey || e.metaKey, k = (e.key || '').toLowerCase();
+    if (!$('auth').hidden) return;
+    if (mod && k === 's') { e.preventDefault(); submit(); return; }
     if (k === 'escape') {
       if (typing) { t.blur(); return; }
       if (!menu.hidden) { closeMenu(); return; }
@@ -1151,21 +1346,30 @@ body.wb-over .wb-stage{box-shadow:inset 0 0 0 2px rgba(255,164,91,.4)}
     if (k === 'enter') { e.preventDefault(); select(b.id, true); }
   });
 
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
-  window.addEventListener('beforeunload', function (e) { if (dirty() && S.slug) { save(); e.preventDefault(); e.returnValue = ''; } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) writeDraft(); else poll(); });
+  window.addEventListener('pagehide', writeDraft);
   if (isNarrow.addEventListener) isNarrow.addEventListener('change', sheetState);
 
-  renderAll();
-  var want = '';
-  try { want = new URLSearchParams(location.search).get('page') || ''; } catch (e) {}
-  want = /^[a-z0-9][a-z0-9-]{0,47}$/.test(want) ? want : '';
-  if (want) openPage(want);
-  else {
+  function boot() {
+    var want = '';
+    try { want = new URLSearchParams(location.search).get('page') || ''; } catch (e) {}
+    want = /^[a-z0-9][a-z0-9-]{0,47}$/.test(want) ? want : '';
+    if (want) { openPage(want); return; }
     api('/wiki/api/list').then(function (j) {
       if (j.ok && j.pages.length) openPage(j.pages[0].slug);
       else { setStatus('', 'No pages yet'); $('pageBtnTxt').textContent = 'Start a page'; openMenu(); $('newTitle').focus(); }
     }, function () { setStatus('error', 'Offline'); });
   }
+
+  renderAll();
+  refreshUi();
+  setStatus('', 'Signing in');
+  api('/wiki/api/me').then(function (j) {
+    if (j.ok) { signedIn(j.user.name); boot(); return; }
+    setStatus('', 'Signed out');
+    $('pageBtnTxt').textContent = 'Sign in to edit';
+    showAuth();
+  }, function () { setStatus('error', 'Offline'); toast('Could not reach the server.', 'Retry', function () { location.reload(); }); });
 })();
 </script>
 </body>

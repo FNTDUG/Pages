@@ -28,13 +28,6 @@
     <div id="ug-content">
 <link rel="stylesheet" href="/wiki-blocks.css">
 <style>
-.wkv-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 16px;margin:0 auto 22px;font-family:'Audiowide',sans-serif;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:.5px}
-.wkv-live{display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;background:rgba(0,0,0,.45);border:1px solid rgba(255,164,91,.25)}
-.wkv-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:wkvPulse 1.8s ease-in-out infinite}
-.wkv-live.off .wkv-dot{background:#888;box-shadow:none;animation:none}
-@keyframes wkvPulse{50%{opacity:.35}}
-.wkv-edit{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,164,91,.55);color:#ffa45b;text-decoration:none;background:rgba(255,164,91,.08);transition:background .15s,color .15s}
-.wkv-edit:hover{background:rgba(255,164,91,.2);color:#fff}
 .wkv-msg{font-family:'Audiowide',sans-serif;color:rgba(255,255,255,.45);text-align:center;padding:40px 10px;font-size:14px}
 .wkv-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:0 auto}
 .wkv-item{display:block;min-width:0;background:#1a1b1e;border-radius:8px;padding:14px 16px 14px 19px;position:relative;text-decoration:none;color:#fff;transition:transform .12s,background .12s}
@@ -43,73 +36,24 @@
 .wkv-item b{display:block;font-family:'Audiowide',sans-serif;font-weight:400;font-size:15px;color:#ffa45b;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wkv-item span{font-size:13px;color:rgba(255,255,255,.55)}
 </style>
-<div class="wkv-bar" id="wkvBar" hidden>
-  <span class="wkv-live off" id="wkvLive"><span class="wkv-dot"></span><span id="wkvLiveTxt">CONNECTING</span></span>
-  <span id="wkvBy"></span>
-  <a class="wkv-edit" id="wkvEdit" href="/wiki-edit">&#9998; Edit this page</a>
-</div>
 <div id="wkvMount"><p class="wkv-msg">Loading...</p></div>
 <script src="/wiki-blocks.js"></script>
 <script>
 (function () {
   var mount = document.getElementById('wkvMount');
-  var bar = document.getElementById('wkvBar');
-  var live = document.getElementById('wkvLive');
-  var liveTxt = document.getElementById('wkvLiveTxt');
-  var byEl = document.getElementById('wkvBy');
   var titleEl = document.querySelector('.ug-page-title');
   var descEl = document.querySelector('.ug-page-desc');
   var slug = decodeURIComponent(location.pathname.replace(/^\/wiki\/?/, '').replace(/\/+$/, '')).toLowerCase();
-  var page = null, timer = null, fails = 0;
   var esc = WikiBlocks.esc;
 
-  function ago(t) {
-    var s = Math.max(0, Math.round((Date.now() - t) / 1000));
-    if (s < 60) return 'just now';
-    if (s < 3600) return Math.floor(s / 60) + ' min ago';
-    if (s < 86400) return Math.floor(s / 3600) + ' h ago';
-    return new Date(t).toLocaleDateString();
-  }
-
-  function setLive(ok) {
-    live.className = 'wkv-live' + (ok ? '' : ' off');
-    liveTxt.textContent = ok ? 'LIVE' : 'RECONNECTING';
-  }
-
-  function showPage(p, flash) {
-    var prev = page ? page.doc : null;
-    page = p;
-    document.title = p.title + ' | FNTD User Guide Wiki';
-    if (titleEl) titleEl.textContent = p.title;
-    byEl.textContent = 'Updated ' + ago(p.updated) + (p.by ? ' by ' + p.by : '');
-    WikiBlocks.render(p.doc, mount, flash ? prev : null);
-    if (!p.doc.blocks.length) mount.innerHTML = '<p class="wkv-msg">This page is empty. Be the first to add something!</p>';
-  }
-
-  function poll() {
-    clearTimeout(timer);
-    if (document.hidden) return;
-    fetch('/wiki/api/page?slug=' + encodeURIComponent(slug) + '&since=' + page.version, { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        if (!j.ok) throw new Error(j.error || 'bad');
-        fails = 0;
-        setLive(true);
-        if (!j.same) showPage(j.page, true);
-        else byEl.textContent = 'Updated ' + ago(page.updated) + (page.by ? ' by ' + page.by : '');
-      })
-      .catch(function () { fails++; setLive(false); })
-      .then(function () { timer = setTimeout(poll, Math.min(30000, 4000 * Math.pow(2, Math.min(fails, 3)))); });
+  function day(t) {
+    return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
   function loadList() {
     if (titleEl) titleEl.textContent = 'Community Wiki';
-    if (descEl) descEl.textContent = 'Pages built by the community, block by block. Pick a page or start a new one.';
-    bar.hidden = false;
-    live.style.display = 'none';
-    byEl.textContent = '';
-    document.getElementById('wkvEdit').innerHTML = '&#10010; Start a page';
-    fetch('/wiki/api/list', { cache: 'no-store' })
+    if (descEl) descEl.textContent = 'Pages built by the community, block by block.';
+    fetch('/wiki/api/list')
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (!j.ok) throw new Error('bad');
@@ -117,7 +61,7 @@
         var html = '<div class="wkv-list">';
         for (var i = 0; i < j.pages.length; i++) {
           var p = j.pages[i];
-          html += '<a class="wkv-item" href="/wiki/' + esc(p.slug) + '"><b>' + esc(p.title) + '</b><span>Updated ' + esc(ago(p.updated)) + (p.by ? ' by ' + esc(p.by) : '') + '</span></a>';
+          html += '<a class="wkv-item" href="/wiki/' + esc(p.slug) + '"><b>' + esc(p.title) + '</b><span>Updated ' + esc(day(p.updated)) + '</span></a>';
         }
         mount.innerHTML = html + '</div>';
       })
@@ -125,21 +69,21 @@
   }
 
   if (!slug) { loadList(); return; }
-  document.getElementById('wkvEdit').href = '/wiki-edit?page=' + encodeURIComponent(slug);
-  if (descEl) descEl.textContent = 'A community page. Changes show up here live.';
-  fetch('/wiki/api/page?slug=' + encodeURIComponent(slug), { cache: 'no-store' })
+  fetch('/wiki/api/page?view=1&slug=' + encodeURIComponent(slug))
     .then(function (r) { return r.json(); })
     .then(function (j) {
       if (!j.ok) {
         if (titleEl) titleEl.textContent = 'Page not found';
-        mount.innerHTML = '<p class="wkv-msg">There is no wiki page called &ldquo;' + esc(slug) + '&rdquo; yet. <a href="/wiki" style="color:#ffa45b">See all pages</a></p>';
+        if (descEl) descEl.textContent = '';
+        mount.innerHTML = '<p class="wkv-msg">There is no wiki page called &ldquo;' + esc(slug) + '&rdquo;. <a href="/wiki" style="color:#ffa45b">See all pages</a></p>';
         return;
       }
-      bar.hidden = false;
-      setLive(true);
-      showPage(j.page, false);
-      timer = setTimeout(poll, 4000);
-      document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+      var p = j.page;
+      document.title = p.title + ' | FNTD User Guide Wiki';
+      if (titleEl) titleEl.textContent = p.title;
+      if (descEl) descEl.textContent = 'Last updated ' + day(p.updated);
+      if (!p.doc.blocks.length) { mount.innerHTML = '<p class="wkv-msg">This page is empty.</p>'; return; }
+      WikiBlocks.render(p.doc, mount, null);
     })
     .catch(function () { mount.innerHTML = '<p class="wkv-msg">Could not load this page. Please refresh.</p>'; });
 })();
