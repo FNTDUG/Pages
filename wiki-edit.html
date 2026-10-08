@@ -243,8 +243,8 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     <div class="wb-seg" id="viewSeg"><button type="button" data-view="desk" class="on">Desktop</button><button type="button" data-view="phone">Phone</button></div>
     <button class="wb-btn" id="histBtn" type="button">&#128337; History</button>
     <a class="wb-btn" id="viewLink" href="/wiki" target="_blank" rel="noopener">View page &#8599;</a>
-    <span class="wb-who" id="whoName"></span>
-    <button class="wb-btn" id="logoutBtn" type="button">Log out</button>
+    <span class="wb-who" id="whoName" hidden></span>
+    <button class="wb-btn" id="logoutBtn" type="button" hidden>Log out</button>
   </div>
 </header>
 <div class="wb-conflict" id="conflict" hidden>
@@ -359,10 +359,11 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     toastT = setTimeout(function () { toastEl.classList.remove('on'); }, ms || (label ? 6000 : 3200));
   }
 
-  function draftKey(slug) { return 'wkDraft:' + S.user.toLowerCase() + ':' + slug; }
+  function draftOwner() { return (S.user || 'guest').toLowerCase(); }
+  function draftKey(slug) { return 'wkDraft:' + draftOwner() + ':' + slug; }
   function writeDraft() {
     clearTimeout(draftT);
-    if (!S.slug || !S.user) return;
+    if (!S.slug) return;
     if (!dirty()) { store(draftKey(S.slug), null); return; }
     store(draftKey(S.slug), JSON.stringify({ title: S.title, doc: S.doc, version: S.version, base: S.base, at: Date.now() }));
   }
@@ -875,6 +876,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     var title = S.title.trim();
     if (!title) { toast('Give the page a title before submitting.'); select('page', true); return; }
     if (!S.doc.blocks.length) { toast('Add at least one block before submitting.'); return; }
+    if (!S.user) { toast('Submitting needs an account, and sign-in is switched off for now. Your changes are kept as a draft in this browser.', null, null, 7000); return; }
     S.submitting = true;
     refreshUi();
     var slug = S.slug, sent = snap();
@@ -1132,7 +1134,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
 
   var menu = $('pageMenu');
   function localNewDrafts() {
-    var pre = 'wkDraft:' + S.user.toLowerCase() + ':', out = [], keys = storeKeys();
+    var pre = 'wkDraft:' + draftOwner() + ':', out = [], keys = storeKeys();
     for (var i = 0; i < keys.length; i++) {
       if (!keys[i] || keys[i].indexOf(pre) !== 0) continue;
       var d = readDraft(keys[i].slice(pre.length));
@@ -1195,6 +1197,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   function openHistory() {
     if (!S.slug) return;
     drawer.hidden = false;
+    if (!S.user) { $('revList').innerHTML = '<div class="wb-menu-empty">History needs an account. Sign-in is switched off for now.</div>'; return; }
     if (!S.version) { $('revList').innerHTML = '<div class="wb-menu-empty">This page has not been submitted yet.</div>'; return; }
     $('revList').innerHTML = '<div class="wb-menu-empty">Loading...</div>';
     api('/wiki/api/history?slug=' + encodeURIComponent(S.slug)).then(function (j) {
@@ -1272,7 +1275,9 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     $('authGo').textContent = m === 'signup' ? 'Create account' : 'Sign in';
     $('authErr').textContent = '';
   }
-  try { if (new URLSearchParams(location.search).has('signup')) $('authTabs').hidden = false; } catch (e) {}
+  var authUrl = false;
+  try { authUrl = new URLSearchParams(location.search).has('signup'); } catch (e) {}
+  if (authUrl) $('authTabs').hidden = false;
   $('authTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setAuthMode(b.getAttribute('data-mode')); });
   function showAuth() {
     $('auth').hidden = false;
@@ -1280,9 +1285,11 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     setTimeout(function () { $('authName').focus(); }, 50);
   }
   function needLogin() {
+    writeDraft();
     S.user = '';
-    showAuth();
-    $('authErr').textContent = 'You were signed out. Sign in again; your changes are kept.';
+    $('whoName').hidden = true;
+    $('logoutBtn').hidden = true;
+    if (authUrl) { showAuth(); $('authErr').textContent = 'You were signed out. Sign in again; your changes are kept.'; }
   }
   var AUTH_ERRORS = {
     wrong: 'Wrong username or password.',
@@ -1317,6 +1324,8 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   function signedIn(name) {
     S.user = name;
     $('whoName').textContent = '@' + name;
+    $('whoName').hidden = false;
+    $('logoutBtn').hidden = false;
   }
   $('logoutBtn').addEventListener('click', function () {
     writeDraft();
@@ -1367,9 +1376,8 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   setStatus('', 'Signing in');
   api('/wiki/api/me').then(function (j) {
     if (j.ok) { signedIn(j.user.name); boot(); return; }
-    setStatus('', 'Signed out');
-    $('pageBtnTxt').textContent = 'Sign in to edit';
-    showAuth();
+    if (authUrl) { setStatus('', 'Signed out'); $('pageBtnTxt').textContent = 'Sign in to edit'; showAuth(); return; }
+    boot();
   }, function () { setStatus('error', 'Offline'); toast('Could not reach the server.', 'Retry', function () { location.reload(); }); });
 })();
 </script>
