@@ -3206,7 +3206,7 @@ const ANALYTICS =
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
-const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624'];
+const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624', '7344880866'];
 
 const EXTRA_ITEMS = {
   materials: {
