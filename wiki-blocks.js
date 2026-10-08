@@ -106,7 +106,41 @@
     });
   }
 
+  var FRAMES = {
+    orange: '#ffa45b',
+    white: '#ffffff',
+    black: '#000000',
+    purple: 'linear-gradient(180deg,#a855f7,#681f62)',
+    uncommon: 'linear-gradient(180deg,#3FFF8E,#5CFF4E)',
+    rare: 'linear-gradient(180deg,#2244B0,#57A4FE)',
+    epic: 'linear-gradient(180deg,#8A01A1,#FD34FE)',
+    mythic: 'linear-gradient(180deg,#FFF006,#FFD114)',
+    exclusive: 'linear-gradient(180deg,#8CFFCB 0%,#14735B 25.1%,#33E7FF 50%,#154A76 74.6%,#4FA4FF 100%)',
+    secret: 'linear-gradient(180deg,#FF8700,#FF0F0C)',
+    nightmare: 'linear-gradient(180deg,#492590,#2A1E42)',
+    apex: 'linear-gradient(180deg,#9D0078,#0063F8)',
+    hero: 'linear-gradient(180deg,#FFCD19 0%,#353815 50%,#FFFB85 100%)',
+    radiant: 'linear-gradient(180deg,#FF6600,#FFCC33)',
+    shiny: 'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,magenta,red)'
+  };
+
+  function frameBg(f) {
+    if (/^#[0-9a-fA-F]{6}$/.test(String(f || ''))) return f;
+    return FRAMES[f] || '';
+  }
+
+  function imageHtml(b) {
+    if (!b.src) return '<div class="wk-img-empty">No image yet</div>';
+    var bg = b.frame && b.frame !== 'none' ? frameBg(b.frame) : '';
+    var t = bg ? b.thick : 0, r = b.radius || 0;
+    return '<figure class="wk-img" style="--wk-w:' + b.width + '%">' +
+      '<div class="wk-img-frame' + (b.frame === 'shiny' ? ' wk-img-shiny' : '') + '" style="padding:' + t + 'px;border-radius:' + r + 'px;' + (bg ? 'background:' + bg : '') + '">' +
+      '<img src="' + esc(b.src) + '" alt="' + esc(b.alt) + '" loading="lazy" style="display:block;width:100%;height:auto;max-width:none;margin:0;border-radius:' + Math.max(0, r - t) + 'px"></div>' +
+      (b.caption ? '<figcaption>' + inline(b.caption) + '</figcaption>' : '') + '</figure>';
+  }
+
   function blockHtml(b) {
+    if (b.type === 'image') return imageHtml(b);
     if (b.type === 'panel') return panelHtml(b);
     if (b.type === 'card') return cardHtml(b);
     if (b.type === 'team') return teamHtml(b);
@@ -141,5 +175,5 @@
     return mount;
   }
 
-  window.WikiBlocks = { esc: esc, inline: inline, rich: rich, blockHtml: blockHtml, blockEl: blockEl, render: render, hydrate: hydrate, teamUnits: teamUnits, loadMeta: loadMeta };
+  window.WikiBlocks = { esc: esc, inline: inline, rich: rich, blockHtml: blockHtml, blockEl: blockEl, render: render, hydrate: hydrate, frames: FRAMES, frameBg: frameBg, teamUnits: teamUnits, loadMeta: loadMeta };
 })();

@@ -5563,6 +5563,9 @@ const WIKI_SIGNUPS_PER_HOUR = 5;
 const WIKI_SESSION_DAYS = 30;
 const WIKI_PASS_ITER = 10000;
 const WIKI_REQUIRE_LOGIN = false;
+const WIKI_IMG_MAX = 2 * 1024 * 1024;
+const WIKI_UPLOADS_PER_HOUR = 30;
+const WIKI_FRAMES = ['none', 'orange', 'white', 'black', 'purple', 'uncommon', 'rare', 'epic', 'mythic', 'exclusive', 'secret', 'nightmare', 'apex', 'hero', 'radiant', 'shiny'];
 const WIKI_SCHEMA = [
   'CREATE TABLE IF NOT EXISTS wiki_pages (slug TEXT PRIMARY KEY, title TEXT NOT NULL, doc TEXT NOT NULL, version INTEGER NOT NULL, updated INTEGER NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
   'CREATE TABLE IF NOT EXISTS wiki_revs (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, version INTEGER NOT NULL, title TEXT NOT NULL, doc TEXT NOT NULL, created INTEGER NOT NULL, who TEXT NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
@@ -5632,10 +5635,20 @@ function wikiCleanDoc(doc) {
         if (bytes.length > 2) return null;
         const o = { name, label: one(u.label, 24), byte: bytes.join(', '), chip: one(u.chip, 60), enchant: one(u.enchant, 60), replacement: one(u.replacement, 80), caption: one(u.caption, 60) };
         const path = String(u.path || '');
-        if (/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(path) && /[1-9]/.test(path)) o.path = path;
+        if (/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(path) && /[1-9]/.test(path)) {
+          if (path.split('-').filter(n => Number(n) > 0).length > 2) return null;
+          o.path = path;
+        }
         units.push(o);
       }
       out.push({ id, type: 'team', title: one(b.title, 80), units });
+    } else if (b.type === 'image') {
+      const src = String(b.src || '');
+      if (!/^\/wiki\/img\/[a-f0-9]{24}$/.test(src)) return null;
+      const f = String(b.frame || '');
+      const frame = WIKI_FRAMES.indexOf(f) !== -1 || /^#[0-9a-fA-F]{6}$/.test(f) ? f : 'none';
+      const line = (v, max) => wikiStr(v, max).replace(/\n/g, ' ').trim();
+      out.push({ id, type: 'image', src, alt: line(b.alt, 120), caption: line(b.caption, 160), width: wikiNum(b.width, 20, 100, 70), frame, thick: wikiNum(b.thick, 0, 16, 4), radius: wikiNum(b.radius, 0, 30, 10) });
     } else {
       return null;
     }
@@ -5704,6 +5717,32 @@ async function wikiStartSession(db, userId, obj) {
   return res;
 }
 
+function wikiSniff(bytes) {
+  if (bytes.length < 12) return '';
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return 'image/png';
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg';
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38) return 'image/gif';
+  if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return 'image/webp';
+  return '';
+}
+
+async function wikiImage(env, url) {
+  const key = url.pathname.slice('/wiki/img/'.length);
+  if (!/^[a-f0-9]{24}$/.test(key) || !env.PUSH_SUBS) return new Response('Not found', { status: 404 });
+  const rec = await env.PUSH_SUBS.getWithMetadata('wimg:' + key, { type: 'stream', cacheTtl: 86400 });
+  if (!rec || !rec.value) return new Response('Not found', { status: 404 });
+  const type = rec.metadata && /^image\/(png|jpeg|gif|webp)$/.test(rec.metadata.t) ? rec.metadata.t : 'application/octet-stream';
+  return new Response(rec.value, {
+    headers: {
+      'content-type': type,
+      'cache-control': 'public, max-age=31536000, immutable',
+      'x-content-type-options': 'nosniff',
+      'content-security-policy': "default-src 'none'",
+      'x-robots-tag': 'noindex'
+    }
+  });
+}
+
 async function wikiApi(request, env, url) {
   if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
   const db = env.POLLS;
@@ -5757,6 +5796,23 @@ async function wikiApi(request, env, url) {
     const now = Date.now();
     const minute = Math.floor(now / 60000);
     if (Math.random() < 0.05) await db.prepare('DELETE FROM wiki_rate WHERE win < ?1').bind(minute - 120).run();
+    if (route === 'upload') {
+      let upUser = await wikiUser(request, db);
+      if (!upUser && WIKI_REQUIRE_LOGIN) return pushJson({ ok: false, error: 'login' }, 401);
+      if (!env.PUSH_SUBS) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+      const ipw = wikiHex((await pushSha256(env.POLL_SALT + '|wiki|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 6));
+      const len = Number(request.headers.get('content-length') || 0);
+      if (!len || len > WIKI_IMG_MAX) return pushJson({ ok: false, error: 'too-big' }, 413);
+      if (!(await wikiRate(db, 'I' + ipw, Math.floor(now / 3600000) * 60, WIKI_UPLOADS_PER_HOUR))) return pushJson({ ok: false, error: 'slow-down' }, 429);
+      const buf = new Uint8Array(await request.arrayBuffer());
+      if (!buf.length || buf.length > WIKI_IMG_MAX) return pushJson({ ok: false, error: 'too-big' }, 413);
+      const type = wikiSniff(buf);
+      if (!type) return pushJson({ ok: false, error: 'not-image' }, 415);
+      const key = wikiHex(crypto.getRandomValues(new Uint8Array(12)));
+      await env.PUSH_SUBS.put('wimg:' + key, buf, { metadata: { t: type, s: buf.length, c: now, w: upUser ? 'u' + upUser.id : 'g' + ipw } });
+      return pushJson({ ok: true, src: '/wiki/img/' + key });
+    }
+
     const body = await wikiReadBody(request);
     if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
 
@@ -5843,6 +5899,7 @@ export default {
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
+    if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
     if (url.pathname === '/wiki-edit') {
       const page = await env.ASSETS.fetch(request);
       if (!(page.headers.get('content-type') || '').includes('text/html')) return page;

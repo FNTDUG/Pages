@@ -211,6 +211,22 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
 .wb-insp select{width:100%;height:34px;padding:0 8px;border-radius:8px;background:var(--field);border:1px solid rgba(255,255,255,.1);color:var(--txt);font:inherit}
 .wb-warn{color:var(--acc2);font-size:11.5px}
 .wb-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wb-art-img{width:70%;height:44px;border-radius:7px;border:3px solid var(--acc);background:linear-gradient(160deg,#3b2a5c 0%,#1d3a5f 55%,#ffa45b 56%,#c2410c 100%);box-shadow:0 0 8px rgba(255,164,91,.35)}
+.wb-drop{position:relative;display:grid;place-items:center;min-height:150px;padding:14px;border-radius:12px;border:2px dashed rgba(255,164,91,.35);background:rgba(0,0,0,.25);text-align:center;transition:border-color .15s,background .15s}
+.wb-drop.over{border-color:var(--acc);background:rgba(255,164,91,.1)}
+.wb-drop.has{border-style:solid;padding:10px;gap:10px}
+.wb-drop img{max-width:100%;max-height:220px;border-radius:8px;display:block}
+.wb-drop-msg{display:grid;gap:4px;color:var(--mute);line-height:1.5}
+.wb-drop-msg b{color:var(--txt);font-size:14px}
+.wb-drop-msg small{font-size:11.5px;margin-top:4px}
+.wb-drop-acts{display:flex;gap:8px;justify-content:center}
+.wb-linkbtn{color:var(--acc);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.wb-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:6px}
+.wb-swatch{position:relative;aspect-ratio:1;border-radius:8px;border:2px solid rgba(255,255,255,.12);background:#1c1530;display:grid;place-items:center;color:var(--mute);font-size:14px;cursor:pointer}
+.wb-swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--acc)}
+.wb-swatch-custom input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.wb-path-off{opacity:.45}
+.wb-path-off span{display:grid;place-items:center;height:34px;border-radius:8px;border:1px dashed rgba(255,255,255,.15);font-size:10.5px;text-align:center;line-height:1.2;padding:0 4px}
 .wb-toast{position:fixed;left:50%;bottom:24px;z-index:120;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:#1f1733;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.6);transition:opacity .2s,transform .2s;max-width:calc(100vw - 24px)}
 .wb-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .wb-toast button{color:var(--acc);font-weight:700}
@@ -290,6 +306,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     <button class="wb-tile" type="button" data-add="panel"><div class="wb-art"><div class="wb-art-panel"><i></i><i></i></div></div><b>Text panel</b><span>The framed game-UI box. A title, then text, lists and headings.</span></button>
     <button class="wb-tile" type="button" data-add="card"><div class="wb-art"><div class="wb-art-card"><i></i><i></i></div></div><b>Info card</b><span>Orange-bar cards. Stack up to 8 sections.</span></button>
     <button class="wb-tile" type="button" data-add="team"><div class="wb-art"><div class="wb-art-team"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><b>Team row</b><span>A meta team, just like the meta pages: units, paths, bytes, chips, enchants and more.</span></button>
+    <button class="wb-tile" type="button" data-add="image"><div class="wb-art"><div class="wb-art-img"></div></div><b>Image</b><span>Upload a picture, with an optional coloured frame.</span></button>
     <div class="wb-h">FORMATTING</div>
     <div class="wb-cheat">
       <div><code>**bold**</code> &nbsp;<code>*italic*</code></div>
@@ -343,7 +360,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   var canvas = $('canvas'), stage = $('stage'), insp = $('insp'), frame = $('frame'), ptitle = $('ptitle');
   var ghost = $('ghost'), line = $('line'), toastEl = $('toast');
   var esc = WikiBlocks.esc;
-  var NAMES = { panel: 'TEXT PANEL', card: 'INFO CARD', team: 'TEAM ROW' };
+  var NAMES = { panel: 'TEXT PANEL', card: 'INFO CARD', team: 'TEAM ROW', image: 'IMAGE' };
   var openUnit = '';
   var EMPTY = '{"title":"","doc":{"blocks":[]}}';
   var S = { user: '', slug: '', title: '', doc: { blocks: [] }, version: 0, updated: 0, by: '', sel: null, submitting: false, conflict: null, preview: null, sheet: false, base: EMPTY };
@@ -580,6 +597,8 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
         '</div>';
     } else if (b && b.type === 'team') {
       html = teamInspector(b);
+    } else if (b && b.type === 'image') {
+      html = imageInspector(b);
     } else {
       var url = location.origin + '/wiki/' + S.slug;
       html = head('PAGE') + '<div class="wb-ib">' +
@@ -618,10 +637,12 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   function pathRow(u, i) {
     var m = metaUnits()[u.name];
     if (!m || !m.paths || !m.paths.length) return '';
-    var cur = String(u.path || '').split('-');
-    var h = '<div class="wb-f"><span class="wb-fl">Path<em>tier picked on each hero path</em></span><div class="wb-paths">';
+    var cur = String(u.path || '').split('-'), used = 0;
+    for (var c = 0; c < cur.length; c++) if (parseInt(cur[c], 10) > 0) used++;
+    var h = '<div class="wb-f"><span class="wb-fl">Path<em>' + (used >= 2 ? 'two paths picked, set one to None to switch' : 'pick up to 2 paths') + '</em></span><div class="wb-paths">';
     for (var p = 0; p < m.paths.length; p++) {
       var max = (m.paths[p].tiers || []).length, v = parseInt(cur[p], 10) || 0;
+      if (used >= 2 && !v) { h += '<label class="wb-path-off">Path ' + (p + 1) + '<span>Not used</span></label>'; continue; }
       h += '<label>Path ' + (p + 1) + '<select data-f="path" data-p="' + p + '" data-s="' + i + '">';
       for (var t = 0; t <= max; t++) h += '<option value="' + t + '"' + (t === v ? ' selected' : '') + '>' + (t ? 'Tier ' + t : 'None') + '</option>';
       h += '</select></label>';
@@ -661,6 +682,130 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
       '<div class="wb-acts"><button class="wb-btn" type="button" data-act="dup">&#10697; Duplicate</button><button class="wb-btn dng" type="button" data-act="del">&#10005; Delete</button></div>' +
       '</div>';
   }
+
+  var FRAME_NAMES = ['none', 'orange', 'white', 'black', 'purple', 'uncommon', 'rare', 'epic', 'mythic', 'exclusive', 'secret', 'nightmare', 'apex', 'hero', 'radiant', 'shiny'];
+  var uploading = {};
+
+  function imageInspector(b) {
+    var custom = /^#[0-9a-fA-F]{6}$/.test(b.frame || '');
+    var sw = '<div class="wb-sw">';
+    for (var i = 0; i < FRAME_NAMES.length; i++) {
+      var k = FRAME_NAMES[i], bg = k === 'none' ? '' : WikiBlocks.frameBg(k);
+      sw += '<button type="button" class="wb-swatch' + (b.frame === k ? ' on' : '') + (k === 'shiny' ? ' wk-img-shiny' : '') + '" data-frame="' + k + '" title="' + k.charAt(0).toUpperCase() + k.slice(1) + '" style="' + (bg ? 'background:' + bg : '') + '">' + (k === 'none' ? '&#8856;' : '') + '</button>';
+    }
+    sw += '<label class="wb-swatch wb-swatch-custom' + (custom ? ' on' : '') + '" title="Custom colour" style="' + (custom ? 'background:' + b.frame : '') + '"><input type="color" data-f="frame" value="' + (custom ? b.frame : '#ffa45b') + '">&#10010;</label></div>';
+    var noFrame = !b.frame || b.frame === 'none';
+    var up = uploading[b.id];
+    return head('IMAGE') + '<div class="wb-ib">' +
+      '<div class="wb-drop' + (b.src ? ' has' : '') + '" data-drop="1">' +
+        (up ? '<div class="wb-drop-msg"><b>Uploading...</b></div>' :
+          b.src ? '<img src="' + esc(b.src) + '" alt=""><div class="wb-drop-acts"><button class="wb-btn" type="button" data-img="pick">Replace</button><button class="wb-btn dng" type="button" data-img="remove">Remove</button></div>'
+                : '<div class="wb-drop-msg"><b>Drop an image here</b>or <button class="wb-linkbtn" type="button" data-img="pick">choose a file</button>, or paste one<small>PNG, JPG, WebP or GIF. Big images are shrunk automatically.</small></div>') +
+        '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-img="file" hidden>' +
+      '</div>' +
+      '<label class="wb-f"><span class="wb-fl">Alt text<em>describes the image for screen readers</em></span><input type="text" data-f="alt" maxlength="120" value="' + esc(b.alt) + '" placeholder="e.g. Boss Raids modifier screen"></label>' +
+      '<label class="wb-f"><span class="wb-fl">Caption<em>optional</em></span><input type="text" data-f="caption" maxlength="160" value="' + esc(b.caption) + '" placeholder="Shown under the image"></label>' +
+      '<div class="wb-f"><span class="wb-fl">Width<em>phones always use full width</em></span>' + rangeRow('width', 20, 100, 5, b.width, '%') + '</div>' +
+      '<div class="wb-f"><span class="wb-fl">Frame</span>' + sw + '</div>' +
+      '<div class="wb-f"><span class="wb-fl">Frame thickness</span>' + rangeRow('thick', 1, 16, 1, Math.max(1, b.thick), 'px', noFrame) + '</div>' +
+      '<div class="wb-f"><span class="wb-fl">Rounded corners</span>' + rangeRow('radius', 0, 30, 1, b.radius, 'px') + '</div>' +
+      '<div class="wb-acts"><button class="wb-btn" type="button" data-act="dup">&#10697; Duplicate</button><button class="wb-btn dng" type="button" data-act="del">&#10005; Delete</button></div>' +
+      '</div>';
+  }
+
+  function shrinkImage(file, cb) {
+    var MAX = 2 * 1024 * 1024;
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) { cb('Only PNG, JPG, WebP or GIF images can be uploaded.'); return; }
+    if (file.type === 'image/gif') { if (file.size <= MAX) cb(null, file); else cb('GIFs need to be under 2 MB.'); return; }
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+      var w = img.naturalWidth, h = img.naturalHeight, sc = Math.min(1, 1600 / Math.max(w, h));
+      var c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(w * sc));
+      c.height = Math.max(1, Math.round(h * sc));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      function pick(blob) {
+        if (blob && blob.size <= MAX && (sc < 1 || blob.size < file.size)) cb(null, blob);
+        else if (file.size <= MAX) cb(null, file);
+        else cb('That image is too big, even after shrinking it.');
+      }
+      c.toBlob(function (wb) {
+        if (wb && wb.type === 'image/webp') { pick(wb); return; }
+        if (file.type === 'image/png') c.toBlob(pick, 'image/png');
+        else c.toBlob(pick, 'image/jpeg', 0.88);
+      }, 'image/webp', 0.86);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); cb('That file could not be read as an image.'); };
+    img.src = url;
+  }
+
+  function uploadInto(id, file) {
+    var b = S.doc.blocks[blockIndex(id)];
+    if (!b || b.type !== 'image' || uploading[id]) return;
+    uploading[id] = true;
+    if (S.sel === id) keepScroll(renderInspector);
+    function done(msg) {
+      delete uploading[id];
+      if (msg) toast(msg, null, null, 5000);
+      if (S.sel === id) keepScroll(renderInspector);
+    }
+    shrinkImage(file, function (err, blob) {
+      if (err) { done(err); return; }
+      fetch('/wiki/api/upload', { method: 'POST', headers: { 'content-type': blob.type || 'application/octet-stream' }, body: blob, credentials: 'same-origin' })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }).then(function (j) { j.status = r.status; return j; }); })
+        .then(function (j) {
+          var cur = S.doc.blocks[blockIndex(id)];
+          if (!j.ok || !cur) {
+            done(j.status === 429 ? 'Too many uploads. Try again in a while.' : j.status === 413 ? 'That image is too big (2 MB max).' : j.status === 415 ? 'That file is not a supported image.' : j.status === 401 ? 'Uploading needs an account.' : 'The upload failed. Try again.');
+            return;
+          }
+          cur.src = j.src;
+          if (!cur.alt) cur.alt = String(file.name || '').replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').slice(0, 120);
+          delete uploading[id];
+          changed(null, id);
+          if (S.sel === id) keepScroll(renderInspector);
+        }, function () { done('Could not reach the server. Try again.'); });
+    });
+  }
+
+  insp.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.getAttribute('data-img') !== 'file' || !t.files || !t.files[0]) return;
+    var b = selBlock();
+    if (b && b.type === 'image') uploadInto(b.id, t.files[0]);
+    t.value = '';
+  });
+  insp.addEventListener('dragover', function (e) {
+    var z = e.target.closest && e.target.closest('[data-drop]');
+    if (!z) return;
+    e.preventDefault();
+    z.classList.add('over');
+  });
+  insp.addEventListener('dragleave', function (e) {
+    var z = e.target.closest && e.target.closest('[data-drop]');
+    if (z && !z.contains(e.relatedTarget)) z.classList.remove('over');
+  });
+  insp.addEventListener('drop', function (e) {
+    var z = e.target.closest && e.target.closest('[data-drop]');
+    if (!z) return;
+    e.preventDefault();
+    z.classList.remove('over');
+    var b = selBlock(), f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (b && b.type === 'image' && f) uploadInto(b.id, f);
+  });
+  window.addEventListener('dragover', function (e) { if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1) e.preventDefault(); });
+  window.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) e.preventDefault(); });
+  document.addEventListener('paste', function (e) {
+    var b = selBlock();
+    if (!b || b.type !== 'image' || S.preview) return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    var items = (e.clipboardData && e.clipboardData.files) || [];
+    for (var i = 0; i < items.length; i++) {
+      if (/^image\//.test(items[i].type)) { e.preventDefault(); uploadInto(b.id, items[i]); return; }
+    }
+  });
 
   function keepScroll(fn) { var top = insp.scrollTop; fn(); insp.scrollTop = top; }
 
@@ -714,10 +859,17 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
       var tu = b.units[Number(s)];
       if (!tu) return;
       if (f === 'path') {
-        var sels = insp.querySelectorAll('.wb-pathbox[data-s="' + s + '"] select'), parts = [];
-        for (var q = 0; q < sels.length; q++) parts.push(sels[q].value);
+        var parts = String(tu.path || '').split('-'), pi = Number(t.getAttribute('data-p'));
         while (parts.length < 3) parts.push('0');
+        parts[pi] = t.value;
+        parts = parts.slice(0, 3).map(function (x) { return String(parseInt(x, 10) || 0); });
         tu.path = /[1-9]/.test(parts.join('')) ? parts.join('-') : '';
+        var pbox = insp.querySelector('.wb-pathbox[data-s="' + s + '"]');
+        if (pbox) {
+          pbox.innerHTML = pathRow(tu, Number(s));
+          var again = pbox.querySelector('select[data-p="' + pi + '"]');
+          if (again) again.focus();
+        }
       } else {
         tu[f] = t.value;
         if (f === 'name') {
@@ -737,6 +889,17 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
         }
       }
       changed('f:' + b.id + ':' + s + ':' + f, b.id);
+      return;
+    }
+    if (b.type === 'image' && f === 'frame') {
+      b.frame = t.value;
+      if (!b.thick) b.thick = 4;
+      var sws = insp.querySelectorAll('.wb-swatch');
+      for (var si = 0; si < sws.length; si++) sws[si].classList.toggle('on', sws[si] === t.parentNode);
+      t.parentNode.style.background = t.value;
+      var thr = insp.querySelector('input[data-f="thick"]');
+      if (thr) thr.disabled = false;
+      changed('frame:' + b.id, b.id);
       return;
     }
     if (t.type === 'range') { b[f] = Number(t.value); setRange(t); }
@@ -807,6 +970,19 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     if (t.hasAttribute('data-fmt')) {
       var ta = t.parentNode.nextElementSibling;
       if (ta && ta.tagName === 'TEXTAREA') wrapSel(ta, t.getAttribute('data-fmt'));
+      return;
+    }
+    if (t.hasAttribute('data-frame') && b && b.type === 'image') {
+      b.frame = t.getAttribute('data-frame');
+      if (b.frame !== 'none' && !b.thick) b.thick = 4;
+      changed(null, b.id);
+      keepScroll(renderInspector);
+      return;
+    }
+    var imgAct = t.getAttribute('data-img');
+    if (imgAct && b && b.type === 'image') {
+      if (imgAct === 'pick') { var fi = insp.querySelector('input[data-img="file"]'); if (fi) fi.click(); }
+      else if (imgAct === 'remove') { b.src = ''; changed(null, b.id); keepScroll(renderInspector); }
       return;
     }
     var pick = t.getAttribute('data-pick');
@@ -926,6 +1102,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   function makeBlock(type, title) {
     if (type === 'panel') return { id: newId(), type: 'panel', title: title || 'New panel', text: 'Write something here.\n\n- Lists start with a dash\n- Use **stars** for bold', width: 70, height: 0, align: 'center' };
     if (type === 'team') return { id: newId(), type: 'team', title: 'New Team', units: [] };
+    if (type === 'image') return { id: newId(), type: 'image', src: '', alt: '', caption: '', width: 70, frame: 'orange', thick: 4, radius: 10 };
     return { id: newId(), type: 'card', sections: [{ title: 'Heading', text: 'Card text goes here.' }], width: 85, align: 'center' };
   }
 
@@ -1101,6 +1278,13 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
         toast('Every unit slot in a team row needs a unit picked.');
         return;
       }
+    }
+    for (var bk = 0; bk < S.doc.blocks.length; bk++) {
+      var ib = S.doc.blocks[bk];
+      if (ib.type !== 'image' || ib.src) continue;
+      select(ib.id, true);
+      toast(uploading[ib.id] ? 'Wait for the image to finish uploading.' : 'Upload an image or delete the empty image block.');
+      return;
     }
     for (var bj = 0; bj < S.doc.blocks.length; bj++) {
       var tb2 = S.doc.blocks[bj];
