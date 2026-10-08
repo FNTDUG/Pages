@@ -22,7 +22,7 @@
       <nav id="ug-topnav"><div class="ug-tn-inner"></div></nav>
     </header>
     <div id="ug-hero"><div id="ug-hero-inner">
-      <div class="ug-page-title-area"><div class="ug-page-title">Community Wiki</div><p class="ug-page-desc">Loading...</p></div>
+      <div class="ug-page-title-area"><div class="ug-page-title">Community Wiki</div><div class="ug-status-badge" id="wkvBadge" style="display:none"></div><p class="ug-page-desc" style="margin-top:8px">Loading...</p></div>
       
     </div></div>
     <div id="ug-content">
@@ -43,11 +43,17 @@
   var mount = document.getElementById('wkvMount');
   var titleEl = document.querySelector('.ug-page-title');
   var descEl = document.querySelector('.ug-page-desc');
+  var badge = document.getElementById('wkvBadge');
   var slug = decodeURIComponent(location.pathname.replace(/^\/wiki\/?/, '').replace(/\/+$/, '')).toLowerCase();
   var esc = WikiBlocks.esc;
 
   function day(t) {
     return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function short(t) {
+    var d = new Date(t);
+    return (d.getMonth() + 1) + '/' + d.getDate() + '/' + String(d.getFullYear()).slice(2);
   }
 
   function loadList() {
@@ -74,14 +80,16 @@
     .then(function (j) {
       if (!j.ok) {
         if (titleEl) titleEl.textContent = 'Page not found';
-        if (descEl) descEl.textContent = '';
+        if (descEl) descEl.hidden = true;
         mount.innerHTML = '<p class="wkv-msg">There is no wiki page called &ldquo;' + esc(slug) + '&rdquo;. <a href="/wiki" style="color:#ffa45b">See all pages</a></p>';
         return;
       }
       var p = j.page;
       document.title = p.title + ' | FNTD User Guide Wiki';
       if (titleEl) titleEl.textContent = p.title;
-      if (descEl) descEl.textContent = 'Last updated ' + day(p.updated);
+      if (descEl) descEl.hidden = true;
+      badge.textContent = 'Last updated - ' + short(p.updated);
+      badge.style.display = '';
       if (!p.doc.blocks.length) { mount.innerHTML = '<p class="wkv-msg">This page is empty.</p>'; return; }
       WikiBlocks.render(p.doc, mount, null);
     })

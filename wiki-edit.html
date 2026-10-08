@@ -289,7 +289,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   <form class="wb-auth-card" id="authForm" autocomplete="on" novalidate>
     <div class="wb-auth-brand"><span class="wb-logo">&#9638;</span><span>WIKI BUILDER</span></div>
     <p class="wb-auth-lead">Sign in to build and submit wiki pages. Reading the wiki is open to everyone.</p>
-    <div class="wb-seg2" id="authTabs"><button type="button" data-mode="login" class="on">Sign in</button><button type="button" data-mode="signup">Create account</button></div>
+    <div class="wb-seg2" id="authTabs" hidden><button type="button" data-mode="login" class="on">Sign in</button><button type="button" data-mode="signup">Create account</button></div>
     <label class="wb-f"><span class="wb-fl">Username</span><input type="text" id="authName" name="username" autocomplete="username" maxlength="20" spellcheck="false" autocapitalize="off"></label>
     <label class="wb-f"><span class="wb-fl">Password</span><input type="password" id="authPass" name="password" autocomplete="current-password" maxlength="200"></label>
     <label class="wb-f" id="authConfirmRow" hidden><span class="wb-fl">Confirm password</span><input type="password" id="authPass2" autocomplete="new-password" maxlength="200"></label>
@@ -1272,6 +1272,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     $('authGo').textContent = m === 'signup' ? 'Create account' : 'Sign in';
     $('authErr').textContent = '';
   }
+  try { if (new URLSearchParams(location.search).has('signup')) $('authTabs').hidden = false; } catch (e) {}
   $('authTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setAuthMode(b.getAttribute('data-mode')); });
   function showAuth() {
     $('auth').hidden = false;
