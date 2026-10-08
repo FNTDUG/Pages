@@ -5562,6 +5562,7 @@ const WIKI_LOGINS_PER_10MIN = 10;
 const WIKI_SIGNUPS_PER_HOUR = 5;
 const WIKI_SESSION_DAYS = 30;
 const WIKI_PASS_ITER = 10000;
+const WIKI_REQUIRE_LOGIN = false;
 const WIKI_SCHEMA = [
   'CREATE TABLE IF NOT EXISTS wiki_pages (slug TEXT PRIMARY KEY, title TEXT NOT NULL, doc TEXT NOT NULL, version INTEGER NOT NULL, updated INTEGER NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
   'CREATE TABLE IF NOT EXISTS wiki_revs (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, version INTEGER NOT NULL, title TEXT NOT NULL, doc TEXT NOT NULL, created INTEGER NOT NULL, who TEXT NOT NULL, by TEXT NOT NULL DEFAULT \'\')',
@@ -5627,7 +5628,9 @@ function wikiCleanDoc(doc) {
         if (!u || typeof u !== 'object') return null;
         const name = one(u.name, 80);
         if (!name) return null;
-        const o = { name, label: one(u.label, 24), byte: one(u.byte, 160), chip: one(u.chip, 60), enchant: one(u.enchant, 60), replacement: one(u.replacement, 80), caption: one(u.caption, 60) };
+        const bytes = one(u.byte, 160).split(/\s*[,+/&]\s*/).filter(Boolean);
+        if (bytes.length > 2) return null;
+        const o = { name, label: one(u.label, 24), byte: bytes.join(', '), chip: one(u.chip, 60), enchant: one(u.enchant, 60), replacement: one(u.replacement, 80), caption: one(u.caption, 60) };
         const path = String(u.path || '');
         if (/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(path) && /[1-9]/.test(path)) o.path = path;
         units.push(o);
@@ -5729,8 +5732,8 @@ async function wikiApi(request, env, url) {
         return pushJson({ ok: true, page });
       }
       const user = await wikiUser(request, db);
-      if (!user) return pushJson({ ok: false, error: 'login' }, 401);
-      if (route === 'me') return pushJson({ ok: true, user: { name: user.name } });
+      if (route === 'me') return user ? pushJson({ ok: true, user: { name: user.name } }) : pushJson({ ok: false, error: 'login' }, 401);
+      if (!user && WIKI_REQUIRE_LOGIN) return pushJson({ ok: false, error: 'login' }, 401);
       if (route === 'history') {
         const slug = wikiSlug(url.searchParams.get('slug'));
         if (!slug) return pushJson({ ok: false, error: 'bad-slug' }, 400);
@@ -5787,8 +5790,11 @@ async function wikiApi(request, env, url) {
       return res;
     }
 
-    const user = await wikiUser(request, db);
-    if (!user) return pushJson({ ok: false, error: 'login' }, 401);
+    let user = await wikiUser(request, db);
+    if (!user) {
+      if (WIKI_REQUIRE_LOGIN) return pushJson({ ok: false, error: 'login' }, 401);
+      user = { id: 'g' + wikiHex((await pushSha256(env.POLL_SALT + '|wiki|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 6)), name: 'guest' };
+    }
 
     if (route === 'submit') {
       if (!(await wikiRate(db, 'u' + user.id, minute, WIKI_SUBMITS_PER_MIN))) return pushJson({ ok: false, error: 'slow-down' }, 429);

@@ -634,7 +634,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
     return '<label class="wb-f"><span class="wb-fl">Unit</span><input type="text" list="wkUnitNames" data-f="name" data-s="' + i + '" maxlength="80" value="' + esc(u.name) + '" placeholder="Start typing a unit name" autocomplete="off" spellcheck="false"></label>' +
       (u.name && metaLoaded() && !known ? '<small class="wb-warn">Not a unit in the game data, so it will show as an empty card.</small>' : '') +
       '<div class="wb-pathbox" data-s="' + i + '">' + pathRow(u, i) + '</div>' +
-      '<div class="wb-f"><span class="wb-fl">Bytes<em>up to 3, the first sets the frame colour</em></span>' + icoGrid('byte', sh.bytes || {}, splitBytes(u.byte), i) + '</div>' +
+      '<div class="wb-f"><span class="wb-fl">Bytes<em>up to 2, the first sets the frame colour</em></span>' + icoGrid('byte', sh.bytes || {}, splitBytes(u.byte), i) + '</div>' +
       '<div class="wb-f"><span class="wb-fl">Chip</span>' + icoGrid('chip', sh.chips || {}, u.chip ? [u.chip] : [], i) + '</div>' +
       '<div class="wb-f"><span class="wb-fl">Enchant</span>' + icoGrid('enchant', sh.enchants || {}, u.enchant ? [u.enchant] : [], i) + '</div>' +
       '<label class="wb-f"><span class="wb-fl">Replacement<em>optional</em></span><input type="text" list="wkUnitNames" data-f="replacement" data-s="' + i + '" maxlength="80" value="' + esc(u.replacement) + '" placeholder="A unit that can swap in" autocomplete="off" spellcheck="false"></label>' +
@@ -816,7 +816,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
       if (pick === 'byte') {
         var list = splitBytes(pu.byte), at = list.indexOf(v);
         if (at >= 0) list.splice(at, 1);
-        else if (list.length >= 3) { toast('A unit can show up to 3 bytes.'); return; }
+        else if (list.length >= 2) { toast('A unit can only have 2 bytes.'); return; }
         else list.push(v);
         pu.byte = list.join(', ');
       } else {
@@ -1102,7 +1102,17 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
         return;
       }
     }
-    if (!S.user) { toast('Submitting needs an account, and sign-in is switched off for now. Your changes are kept as a draft in this browser.', null, null, 7000); return; }
+    for (var bj = 0; bj < S.doc.blocks.length; bj++) {
+      var tb2 = S.doc.blocks[bj];
+      if (tb2.type !== 'team') continue;
+      for (var uj = 0; uj < tb2.units.length; uj++) {
+        if (splitBytes(tb2.units[uj].byte).length <= 2) continue;
+        openUnit = tb2.id + ':' + uj;
+        select(tb2.id, true);
+        toast('A unit can only have 2 bytes. Remove one from ' + (tb2.units[uj].name || 'this unit') + '.');
+        return;
+      }
+    }
     S.submitting = true;
     refreshUi();
     var slug = S.slug, sent = snap();
@@ -1122,7 +1132,7 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
           return;
         }
         refreshUi();
-        if (j.status === 401) toast('Sign in again to submit. Your changes are kept.');
+        if (j.status === 401) toast('Submitting needs an account. Your changes are kept.');
         else if (j.status === 409 && j.error === 'taken') toast('Someone just published a page at /wiki/' + slug + '. Start your page under a different title.', null, null, 7000);
         else if (j.status === 409 && j.error === 'full') toast('The wiki is full for this test (200 pages).');
         else if (j.status === 409 && j.page) { if (!autoMerge(j.page)) showConflict(j.page); }
@@ -1423,7 +1433,6 @@ body.wb-locked .wb-top,body.wb-locked .wb-main{filter:blur(3px);pointer-events:n
   function openHistory() {
     if (!S.slug) return;
     drawer.hidden = false;
-    if (!S.user) { $('revList').innerHTML = '<div class="wb-menu-empty">History needs an account. Sign-in is switched off for now.</div>'; return; }
     if (!S.version) { $('revList').innerHTML = '<div class="wb-menu-empty">This page has not been submitted yet.</div>'; return; }
     $('revList').innerHTML = '<div class="wb-menu-empty">Loading...</div>';
     api('/wiki/api/history?slug=' + encodeURIComponent(S.slug)).then(function (j) {
