@@ -1,9 +1,6 @@
 
 const MOBILE_NAV_BODY = `
 <a href="/" class="ug-mn-link" data-nav-href="/">Home</a>
-<!-- HIDDEN-NEWS
-<a href="/news" class="ug-mn-link" data-nav-href="/news">News</a>
--->
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
@@ -56,9 +53,6 @@ const MOBILE_NAV_BODY = `
 
 const DESKTOP_NAV_INNER = `
 <a href="/" class="ug-tn-link" data-nav-href="/">Home</a>
-<!-- HIDDEN-NEWS
-<a href="/news" class="ug-tn-link" data-nav-href="/news">News</a>
--->
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
@@ -2869,8 +2863,7 @@ const WIP_PAGES = {
   '/fntd2/endless-index':       false,
   '/fntd2/boss-raids-index':    false,
   '/fntd2/event-story-endless': true,
-  '/fntd2/unit-engine':         false,
-  '/news':                      true
+  '/fntd2/unit-engine':         false
 };
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
@@ -3254,174 +3247,6 @@ const INF_PROXY = {
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
 const ROT_MIRROR = 'https://images.fntduserguide.com/rotations.json';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
-
-const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
-const X_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
-function xEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function xUser(u) {
-  if (!u) return null;
-  return {
-    name: u.name || '',
-    handle: u.screen_name || '',
-    avatar: (u.profile_image_url_https || '').replace('_normal.', '_200x200.'),
-    banner: u.profile_banner_url ? u.profile_banner_url + '/1500x500' : '',
-    followers: typeof u.followers_count === 'number' ? u.followers_count : null
-  };
-}
-function xText(t) {
-  let text = t.full_text || t.text || '';
-  const ent = t.entities || {};
-  const media = ent.media || [];
-  const urls = ent.urls || [];
-  const range = t.display_text_range;
-  if (Array.isArray(range) && range.length === 2) text = Array.from(text).slice(range[0], range[1]).join('');
-  text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-  media.forEach(m => { if (m.url) text = text.replace(m.url, ''); });
-  const cardUrl = t.card && t.card.url;
-  if (cardUrl && text.trim().endsWith(cardUrl)) text = text.trim().slice(0, -cardUrl.length);
-  let html = xEsc(text.trim());
-  urls.forEach(u => {
-    if (!u.url) return;
-    html = html.split(xEsc(u.url)).join('<a href="' + xEsc(u.expanded_url || u.url) + '" target="_blank" rel="noopener noreferrer">' + xEsc(u.display_url || u.expanded_url || u.url) + '</a>');
-  });
-  html = html
-    .replace(/(^|[^\w/])@([A-Za-z0-9_]{1,15})\b/g, '$1<a href="https://x.com/$2" target="_blank" rel="noopener noreferrer">@$2</a>')
-    .replace(/(^|\s)#([\p{L}\p{N}_]+)/gu, '$1<a href="https://x.com/hashtag/$2" target="_blank" rel="noopener noreferrer">#$2</a>')
-    .replace(/\n/g, '<br>');
-  return { text: text.trim(), html };
-}
-function xMedia(t) {
-  const list = (t.extended_entities && t.extended_entities.media) || (t.entities && t.entities.media) || [];
-  return list.map(m => {
-    const info = m.original_info || {};
-    const vi = m.video_info || {};
-    const ar = Array.isArray(vi.aspect_ratio) && vi.aspect_ratio.length === 2 ? vi.aspect_ratio : null;
-    const isVideo = m.type === 'video' || m.type === 'animated_gif';
-    const out = {
-      type: m.type === 'animated_gif' ? 'gif' : (isVideo ? 'video' : 'photo'),
-      w: info.width || (ar ? ar[0] : 0),
-      h: info.height || (ar ? ar[1] : 0),
-      thumb: m.media_url_https ? m.media_url_https + '?name=medium' : '',
-      alt: m.ext_alt_text || ''
-    };
-    if (isVideo) {
-      const vs = (vi.variants || []).filter(v => v.content_type === 'video/mp4' && v.url).sort((x, y) => (y.bitrate || 0) - (x.bitrate || 0));
-      const pick = vs.find(v => (v.bitrate || 0) <= 2200000) || vs[vs.length - 1];
-      out.src = pick ? pick.url : '';
-      out.duration = vi.duration_millis || 0;
-    } else {
-      out.src = m.media_url_https ? m.media_url_https + '?name=large' : '';
-    }
-    return out;
-  });
-}
-function xCard(t) {
-  const c = t.card;
-  if (!c || !c.binding_values) return null;
-  const b = c.binding_values;
-  const str = k => (b[k] && b[k].string_value) || '';
-  const img = keys => { for (const k of keys) if (b[k] && b[k].image_value && b[k].image_value.url) return b[k].image_value; return null; };
-  const name = c.name || '';
-  const large = /summary_large_image|player/.test(name);
-  const image = large
-    ? img(['photo_image_full_size_large', 'summary_photo_image_large', 'player_image_large', 'thumbnail_image_large'])
-    : img(['thumbnail_image_large', 'thumbnail_image', 'photo_image_full_size_large', 'player_image_large']);
-  const title = str('title');
-  if (!title && !image) return null;
-  const u = ((t.entities && t.entities.urls) || []).find(x => x.url === c.url);
-  return {
-    kind: large ? 'large' : 'small',
-    player: /player/.test(name),
-    url: (u && u.expanded_url) || str('card_url') || c.url || '',
-    title,
-    description: str('description'),
-    domain: str('vanity_url') || str('domain'),
-    image: image ? image.url : '',
-    w: image ? image.width || 0 : 0,
-    h: image ? image.height || 0 : 0
-  };
-}
-function xPost(t) {
-  const base = t.retweeted_status || t;
-  const user = xUser(base.user);
-  const txt = xText(base);
-  const post = {
-    id: base.id_str || '',
-    url: 'https://x.com/' + (user ? user.handle : '') + '/status/' + (base.id_str || ''),
-    date: new Date(base.created_at).toISOString(),
-    text: txt.text,
-    html: txt.html,
-    media: xMedia(base),
-    replies: base.reply_count || 0,
-    reposts: base.retweet_count || 0,
-    likes: base.favorite_count || 0
-  };
-  if (!post.media.length) { const card = xCard(base); if (card) post.card = card; }
-  if (t.retweeted_status && user) { post.user = user; post.repostOf = user.handle; }
-  if (base.quoted_status) {
-    const q = base.quoted_status, qu = q.user || {};
-    post.quote = { name: qu.name || '', handle: qu.screen_name || '', text: xText(q).text, url: 'https://x.com/' + (qu.screen_name || '') + '/status/' + (q.id_str || '') };
-  }
-  return post;
-}
-function xParse(html) {
-  const m = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
-  if (!m) return null;
-  const data = JSON.parse(m[1]);
-  const props = (data && data.props && data.props.pageProps) || {};
-  const entries = (props.timeline && props.timeline.entries) || [];
-  const tweets = entries.filter(e => e && e.type === 'tweet' && e.content && e.content.tweet).map(e => e.content.tweet);
-  const posts = tweets.map(xPost).filter(p => p.id);
-  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  const first = tweets.find(t => t.user && !t.retweeted_status) || tweets[0];
-  return { user: first ? xUser(first.user) : null, posts, hasResults: props.contextProvider ? props.contextProvider.hasResults !== false : posts.length > 0 };
-}
-async function xTimeline(handle) {
-  const up = await fetch(X_SYNDICATION + handle, {
-    headers: { 'user-agent': X_UA, 'accept': 'text/html,application/xhtml+xml' },
-    cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 600, '400-599': 0 } }
-  });
-  if (!up.ok) return null;
-  const feed = xParse(await up.text());
-  return feed && feed.posts.length ? feed : null;
-}
-const X_RESULT = 'https://cdn.syndication.twimg.com/tweet-result?lang=en&id=';
-function xToken(id) { return ((Number(id) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, ''); }
-function xFromResult(d) {
-  if (!d || d.__typename !== 'Tweet' || !d.id_str) return null;
-  const q = d.quoted_tweet;
-  const t = {
-    id_str: d.id_str,
-    created_at: d.created_at,
-    full_text: d.text || '',
-    display_text_range: d.display_text_range,
-    entities: d.entities || {},
-    extended_entities: { media: d.mediaDetails || [] },
-    user: d.user,
-    card: d.card,
-    reply_count: d.conversation_count || 0,
-    retweet_count: 0,
-    favorite_count: d.favorite_count || 0
-  };
-  if (q && q.id_str) t.quoted_status = { id_str: q.id_str, full_text: q.text || '', entities: q.entities || {}, user: q.user };
-  const post = xPost(t);
-  const user = xUser(d.user);
-  if (user) post.user = user;
-  return post;
-}
-const X_SNAPSHOT = 'https://images.fntduserguide.com/news/x/';
-async function xSnapshot(handle) {
-  try {
-    const r = await fetch(X_SNAPSHOT + handle + '.json', {
-      cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 60, '400-599': 0 } }
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    return j && Array.isArray(j.posts) && j.posts.length ? j : null;
-  } catch (e) {
-    return null;
-  }
-}
 
 const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
 async function ghRawOk() {
@@ -4481,7 +4306,6 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
         <input type="text" id="link" list="pages" placeholder="/" value="/">
         <datalist id="pages">
           <option value="/"></option>
-          <option value="/news"></option>
           <option value="/patch-notes"></option>
           <option value="/fntd2/meta-teams"></option>
           <option value="/fntd2/tierlists-1"></option>
@@ -6785,78 +6609,6 @@ export default {
       return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
         status: 502,
         headers: Object.assign({ 'cache-control': 'no-store' }, rotHeaders)
-      });
-    }
-
-    if (url.pathname === '/news-posts') {
-      const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
-      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
-      const results = await Promise.all(ids.map(async id => {
-        try {
-          const r = await fetch(X_RESULT + id + '&token=' + xToken(id), {
-            headers: { 'user-agent': X_UA },
-            cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 3600, '400-599': -1 } }
-          });
-          if (!r.ok) return null;
-          return xFromResult(await r.json());
-        } catch (e) {
-          return null;
-        }
-      }));
-      const posts = results.filter(Boolean).sort((a, b) => new Date(b.date) - new Date(a.date));
-      return new Response(JSON.stringify({ posts }), {
-        headers: Object.assign({ 'cache-control': posts.length ? 'public, max-age=600' : 'no-store' }, jsonHeaders)
-      });
-    }
-
-    if (url.pathname === '/news-media') {
-      let target;
-      try { target = new URL(url.searchParams.get('u') || ''); } catch (e) { return new Response('Bad request', { status: 400 }); }
-      if (target.protocol !== 'https:' || target.hostname !== 'video.twimg.com') return new Response('Not found', { status: 404 });
-      const upHeaders = { 'user-agent': X_UA };
-      const range = request.headers.get('range');
-      if (range) upHeaders.range = range;
-      const up = await fetch(target.toString(), { headers: upHeaders, cf: { cacheTtlByStatus: { '100-599': -1 } } });
-      const out = new Headers();
-      ['content-type', 'content-length', 'content-range', 'accept-ranges', 'last-modified', 'etag'].forEach(h => { const v = up.headers.get(h); if (v) out.set(h, v); });
-      if (!out.has('accept-ranges')) out.set('accept-ranges', 'bytes');
-      out.set('cache-control', 'public, max-age=86400');
-      out.set('access-control-allow-origin', '*');
-      return new Response(up.body, { status: up.status, headers: out });
-    }
-
-    if (url.pathname.startsWith('/news-x/')) {
-      const handle = url.pathname.slice('/news-x/'.length);
-      if (!/^[A-Za-z0-9_]{1,15}$/.test(handle)) return new Response('Not found', { status: 404 });
-      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
-      const cacheKey = new Request('https://www.fntduserguide.com/_news-x-cache/' + handle.toLowerCase());
-      let feed = await xSnapshot(handle);
-      if (feed) {
-        feed.source = 'snapshot';
-      } else {
-        try { feed = await xTimeline(handle); } catch (e) { feed = null; }
-        if (feed) {
-          feed.fetchedAt = new Date().toISOString();
-          feed.source = 'live';
-          try {
-            await caches.default.put(cacheKey, new Response(JSON.stringify(feed), {
-              headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' }
-            }));
-          } catch (e) {}
-        } else {
-          try {
-            const hit = await caches.default.match(cacheKey);
-            if (hit) { feed = await hit.json(); feed.source = 'cache'; feed.stale = true; }
-          } catch (e) { feed = null; }
-        }
-      }
-      if (!feed) {
-        return new Response(JSON.stringify({ user: null, posts: [], unavailable: true }), {
-          headers: Object.assign({ 'cache-control': 'no-store' }, jsonHeaders)
-        });
-      }
-      return new Response(JSON.stringify(feed), {
-        headers: Object.assign({ 'cache-control': feed.stale ? 'public, max-age=60' : 'public, max-age=300, stale-while-revalidate=3600' }, jsonHeaders)
       });
     }
 
