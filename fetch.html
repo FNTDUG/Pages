@@ -77,8 +77,6 @@
 .fg-yes svg{color:#79d98f}
 .fg-no svg{color:#ff8f8f}
 
-.fg-sub{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:40px 0 16px}
-.fg-sub small{color:var(--mute);font-size:14px}
 .fg-wait,.fg-empty{padding:28px 20px;border:1px dashed rgba(255,255,255,.14);border-radius:12px;text-align:center;color:var(--mute);font-size:15px}
 .fg-game{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
 .fg-game-top{display:flex;align-items:center;gap:16px;padding:18px 20px}
@@ -117,8 +115,34 @@ iframe.fg-vid{cursor:auto}
 .fg-faq details[open] .fg-chev{transform:rotate(180deg);color:var(--acc)}
 .fg-faq details p{padding:0 36px 18px 0;color:var(--mute);font-size:15px}
 
+.fg-feat{margin:0 0 32px;scroll-margin-top:calc(var(--ug-fetch-h,0px) + 24px)}
+.fg-feat-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.fg-feat-head small{color:var(--mute);font-size:14px}
+.fg-cards{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 48px) / 5);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 6px 12px;margin:0 -6px;scrollbar-width:thin;scrollbar-color:rgba(255,164,91,.4) transparent}
+.fg-cards > div{scroll-snap-align:start;min-width:0}
+.fg-card{position:relative;display:block;width:100%;padding:0;border:0;background:none;border-radius:14px;cursor:pointer;transition:transform .18s ease}
+.fg-card:hover{transform:translateY(-3px)}
+#ug-content .fg-card img{display:block;width:100%;height:auto;aspect-ratio:977/1488;object-fit:cover;margin:0;border-radius:14px;background:rgba(255,255,255,.05)}
+.fg-card[aria-expanded="true"]{outline:3px solid var(--acc);outline-offset:3px}
+.fg-card:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.fg-badge{position:absolute;top:8px;left:8px;padding:4px 8px;border-radius:6px;background:var(--acc);color:#1a0d05;font-family:'Audiowide',sans-serif;font-size:10.5px;line-height:1.2}
+.fg-card.plain{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;aspect-ratio:977/1488;padding:16px;background:var(--card);border:1px solid var(--line);color:#fff;font-family:'Audiowide',sans-serif;font-size:14px;line-height:1.3;text-align:center}
+#ug-content .fg-card.plain img{width:64px;height:64px;aspect-ratio:auto;border-radius:14px}
+.fg-detail{margin:16px 0 0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.fg-detail-top{display:flex;align-items:center;gap:16px;padding:18px 20px}
+#ug-content .fg-detail-top img{flex:none;width:44px;height:67px;object-fit:cover;border-radius:8px;margin:0}
+.fg-detail-top div{flex:1;min-width:0}
+.fg-detail-top small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
+.fg-x{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--mute);font-size:18px;line-height:1;cursor:pointer}
+.fg-x:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.fg-x:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.fg-none{padding:0 20px 20px;color:var(--mute);font-size:15px}
+.fg-jump{margin:24px 0 0;font-size:15px;color:var(--mute)}
 @media(max-width:720px){
   .fg{padding:18px 16px;border-radius:14px}
+  .fg-cards{grid-auto-columns:132px}
+  .fg-detail-top{padding:16px}
+  .fg-none{padding:0 16px 16px}
   .fg-track{grid-template-columns:1fr}
   .fg-track li+li{border-left:0;border-top:1px solid var(--line)}
   .fg-track a{padding:14px 16px}
@@ -145,6 +169,12 @@ iframe.fg-vid{cursor:auto}
 </svg>
 
 <div class="fg" id="fetchGuide">
+  <section class="fg-feat" id="featured" aria-labelledby="fgFeat">
+    <div class="fg-feat-head"><h2 id="fgFeat">Featured on Fetch</h2><small id="fgFeatSub">Tap a game for tips</small></div>
+    <div class="fg-cards" id="fgCards" role="list"><p class="fg-wait">Loading featured games...</p></div>
+    <div class="fg-detail" id="fgDetail" hidden></div>
+  </section>
+
   <ol class="fg-track" aria-label="Steps">
     <li><a href="#scan"><span class="fg-num">1</span><span>Scan receipts</span></a></li>
     <li><a href="#games"><span class="fg-num">2</span><span>Play featured games</span></a></li>
@@ -203,8 +233,7 @@ iframe.fg-vid{cursor:auto}
         <li><span>Points arrive automatically. <b>Keep the game installed</b> until they do.</span></li>
       </ol>
       <div class="fg-note"><svg aria-hidden="true"><use href="#fgInfo"/></svg><p>You never need to spend money to reach a milestone. Games and points can differ in your app, and the app always has the final say.</p></div>
-      <div class="fg-sub"><h3>Featured games</h3><small id="fgCount"></small></div>
-      <div id="fgGames" aria-live="polite"><p class="fg-wait">Loading featured games...</p></div>
+      <p class="fg-jump">Not sure what to play? Start with one of the <a href="#featured">featured games</a> at the top of this page.</p>
     </div>
   </section>
 
@@ -235,18 +264,21 @@ iframe.fg-vid{cursor:auto}
 <script>
 (function () {
   var REFERRAL_CODE = '';
-  var mount = document.getElementById('fgGames');
-  if (!mount) return;
+  var cards = document.getElementById('fgCards');
+  var detail = document.getElementById('fgDetail');
+  if (!cards || !detail) return;
   if (REFERRAL_CODE) {
     document.getElementById('fgCodeText').textContent = REFERRAL_CODE;
     document.getElementById('fgCode').hidden = false;
   }
   var CHEV = '<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg>';
+  var list = [];
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
   function youtube(u) {
     var m = /^https:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(u || '');
     return m ? m[1] : '';
@@ -261,44 +293,82 @@ iframe.fg-vid{cursor:auto}
     if (!id) return '<p><a href="' + esc(m.video) + '" target="_blank" rel="noopener">Watch the video guide</a></p>';
     return '<button class="fg-vid" type="button" data-yt="' + id + '" aria-label="Play the video guide for ' + esc(m.t) + '"><img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><span class="fg-play"><svg aria-hidden="true"><use href="#fgPlay"/></svg></span></button>';
   }
-  function render(games) {
+  function merge(featured, games) {
     var t = new Date();
     var today = t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
     games = games.filter(function (g) { return !g.ends || g.ends >= today; });
-    document.getElementById('fgCount').textContent = games.length ? games.length + ' right now' : '';
-    if (!games.length) {
-      mount.innerHTML = '<p class="fg-empty">No featured games right now. Check the Play tab in Fetch, and we\'ll add new ones here.</p>';
+    var used = [];
+    var out = featured.map(function (f) {
+      var n = norm(f.name), g = null;
+      for (var i = 0; i < games.length; i++) {
+        var gn = norm(games[i].name);
+        if (used.indexOf(i) === -1 && gn && (gn === n || gn.indexOf(n + ' ') === 0 || n.indexOf(gn + ' ') === 0)) { g = games[i]; used.push(i); break; }
+      }
+      return { name: g ? g.name : f.name, art: f.img, guide: g };
+    });
+    games.forEach(function (g, i) { if (used.indexOf(i) === -1) out.push({ name: g.name, art: '', guide: g }); });
+    return out;
+  }
+  function milestones(g) {
+    var ms = g.milestones.map(function (m) {
+      var main = '<span class="fg-ms-t">' + esc(m.t) + (m.limit ? '<small>' + esc(m.limit) + '</small>' : '') + '</span><span class="fg-pts">' + esc(m.pts || '') + '</span>';
+      if (!m.guide && !m.video) return '<li><div class="fg-ms-row">' + main + '<span aria-hidden="true"></span></div></li>';
+      return '<li><details><summary>' + main + CHEV + '</summary><div class="fg-ms-body">' + (m.guide ? '<p>' + esc(m.guide) + '</p>' : '') + video(m) + '</div></details></li>';
+    }).join('');
+    return (g.note ? '<p class="fg-game-note">' + esc(g.note) + '</p>' : '') + (ms ? '<ol class="fg-ms">' + ms + '</ol>' : '');
+  }
+  function open(i) {
+    var all = cards.querySelectorAll('.fg-card');
+    var was = all[i] && all[i].getAttribute('aria-expanded') === 'true';
+    for (var k = 0; k < all.length; k++) all[k].setAttribute('aria-expanded', 'false');
+    if (was || !list[i]) { detail.hidden = true; detail.innerHTML = ''; return; }
+    var it = list[i], g = it.guide, n = g ? g.milestones.length : 0;
+    all[i].setAttribute('aria-expanded', 'true');
+    detail.innerHTML = '<div class="fg-detail-top">' +
+      (it.art ? '<img src="' + esc(it.art) + '" alt="">' : (g && g.icon ? '<img src="' + esc(g.icon) + '" alt="" style="width:44px;height:44px">' : '')) +
+      '<div><h3>' + esc(it.name) + '</h3><small>' + (g && n ? n + ' milestone' + (n === 1 ? '' : 's') + (g.ends ? ' &middot; until ' + until(g.ends) : '') : 'Find it in the Play tab in Fetch') + '</small></div>' +
+      '<button class="fg-x" type="button" aria-label="Close ' + esc(it.name) + '">&times;</button></div>' +
+      (g && (n || g.note) ? milestones(g) : '<p class="fg-none">We haven\'t written a guide for this game yet. Open it from the Play tab in Fetch to see its tasks and points.</p>');
+    detail.hidden = false;
+  }
+  function render(featured, games) {
+    list = merge(featured, games);
+    if (!list.length) {
+      cards.innerHTML = '<p class="fg-empty">No featured games right now. Check the Play tab in Fetch.</p>';
       return;
     }
-    mount.innerHTML = games.map(function (g) {
-      var n = g.milestones.length;
-      var ms = g.milestones.map(function (m) {
-        var main = '<span class="fg-ms-t">' + esc(m.t) + (m.limit ? '<small>' + esc(m.limit) + '</small>' : '') + '</span><span class="fg-pts">' + esc(m.pts || '') + '</span>';
-        if (!m.guide && !m.video) return '<li><div class="fg-ms-row">' + main + '<span aria-hidden="true"></span></div></li>';
-        return '<li><details><summary>' + main + CHEV + '</summary><div class="fg-ms-body">' + (m.guide ? '<p>' + esc(m.guide) + '</p>' : '') + video(m) + '</div></details></li>';
-      }).join('');
-      return '<article class="fg-game"><div class="fg-game-top">' +
-        (g.icon ? '<img src="' + esc(g.icon) + '" alt="" loading="lazy">' : '<span class="fg-game-ph" aria-hidden="true"></span>') +
-        '<div><h3>' + esc(g.name) + '</h3><small>' + n + ' milestone' + (n === 1 ? '' : 's') + (g.ends ? ' &middot; until ' + until(g.ends) : '') + '</small></div></div>' +
-        (g.note ? '<p class="fg-game-note">' + esc(g.note) + '</p>' : '') +
-        (ms ? '<ol class="fg-ms">' + ms + '</ol>' : '') + '</article>';
+    cards.innerHTML = list.map(function (it, i) {
+      var badge = it.guide && (it.guide.milestones.length || it.guide.note) ? '<span class="fg-badge">Guide</span>' : '';
+      if (it.art) return '<div role="listitem"><button class="fg-card" type="button" aria-expanded="false" aria-controls="fgDetail" data-i="' + i + '"><img src="' + esc(it.art) + '" alt="' + esc(it.name) + '" width="977" height="1488" loading="lazy">' + badge + '</button></div>';
+      return '<div role="listitem"><button class="fg-card plain" type="button" aria-expanded="false" aria-controls="fgDetail" data-i="' + i + '">' + (it.guide && it.guide.icon ? '<img src="' + esc(it.guide.icon) + '" alt="" loading="lazy">' : '') + '<span>' + esc(it.name) + '</span>' + badge + '</button></div>';
     }).join('');
   }
-  mount.addEventListener('click', function (e) {
-    var b = e.target.closest ? e.target.closest('[data-yt]') : null;
-    if (!b) return;
+  cards.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.fg-card') : null;
+    if (b) open(Number(b.getAttribute('data-i')));
+  });
+  detail.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('.fg-x')) {
+      var on = cards.querySelector('.fg-card[aria-expanded="true"]');
+      detail.hidden = true;
+      detail.innerHTML = '';
+      if (on) { on.setAttribute('aria-expanded', 'false'); on.focus(); }
+      return;
+    }
+    var v = e.target.closest ? e.target.closest('[data-yt]') : null;
+    if (!v) return;
     var f = document.createElement('iframe');
     f.className = 'fg-vid';
-    f.src = 'https://www.youtube-nocookie.com/embed/' + b.getAttribute('data-yt') + '?autoplay=1&rel=0';
-    f.title = b.getAttribute('aria-label').replace('Play the ', '');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + v.getAttribute('data-yt') + '?autoplay=1&rel=0';
+    f.title = v.getAttribute('aria-label').replace('Play the ', '');
     f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
     f.allowFullscreen = true;
-    b.parentNode.replaceChild(f, b);
+    v.parentNode.replaceChild(f, v);
   });
   fetch('/fetch-api/games').then(function (r) { return r.json(); }).then(function (j) {
-    render((j && j.games) || []);
+    render((j && j.featured) || [], (j && j.games) || []);
   }).catch(function () {
-    mount.innerHTML = '<p class="fg-empty">Featured games couldn\'t load. Refresh to try again.</p>';
+    cards.innerHTML = '<p class="fg-empty">Featured games couldn\'t load. Refresh to try again.</p>';
   });
 })();
 </script>

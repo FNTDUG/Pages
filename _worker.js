@@ -5357,21 +5357,74 @@ function fetchRow(r) {
   return { id: r.id, name: r.name, active: !!r.active, updated: r.updated, icon: d.icon || '', ends: d.ends || '', note: d.note || '', milestones: Array.isArray(d.milestones) ? d.milestones : [] };
 }
 
+const FETCH_PLAY_PAGE = 'https://fetch.com/fetch-play';
+const FETCH_ART_HOST = 'https://prod-static-content.fetchrewards.com/content-service/';
+const FETCH_ART_RE = /^Play_Carousel_Game_[A-Za-z0-9_]+_[0-9a-f]{10}\.webp$/;
+const FETCH_FEATURED_FALLBACK = ['Play_Carousel_Game_Bubble_Bus_062e88841f.webp', 'Play_Carousel_Game_Fish_Of_Fortune_c5a67f3308.webp', 'Play_Carousel_Game_Panthia_744d15028b.webp', 'Play_Carousel_Game_Yarn_Loop_040d902d57.webp', 'Play_Carousel_Game_Ball_Sort_ff4de86c40.webp'];
+
+function fetchArtName(file) {
+  const words = file.replace(/^Play_Carousel_Game_/, '').replace(/_[0-9a-f]{10}\.webp$/, '').split('_').filter(Boolean);
+  return words.map((w, i) => i && /^(of|the|and|a|an|in|on)$/i.test(w) ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+async function fetchFeatured(url) {
+  const key = new Request(url.origin + '/fetch-api/__featured');
+  const keep = new Request(url.origin + '/fetch-api/__featured-last');
+  try {
+    const hit = await caches.default.match(key);
+    if (hit) return await hit.json();
+  } catch (e) {}
+  let files = [];
+  try {
+    const r = await fetch(FETCH_PLAY_PAGE, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; FNTDUserGuide/1.0; +https://www.fntduserguide.com/fetch)' }, cf: { cacheTtl: 3600, cacheEverything: true } });
+    if (r.ok) {
+      const html = await r.text();
+      const re = /prod-static-content\.fetchrewards\.com\/content-service\/(Play_Carousel_Game_[A-Za-z0-9_]+?_[0-9a-f]{10}\.webp)/g;
+      let m;
+      while ((m = re.exec(html))) if (files.indexOf(m[1]) === -1) files.push(m[1]);
+    }
+  } catch (e) {}
+  let list = files.slice(0, 12).map(f => ({ name: fetchArtName(f), img: '/fetch-api/art/' + f }));
+  if (list.length) {
+    try { await caches.default.put(keep, new Response(JSON.stringify(list), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } })); } catch (e) {}
+  } else {
+    try {
+      const last = await caches.default.match(keep);
+      if (last) list = await last.json();
+    } catch (e) {}
+    if (!list.length) list = FETCH_FEATURED_FALLBACK.map(f => ({ name: fetchArtName(f), img: '/fetch-api/art/' + f }));
+  }
+  try { await caches.default.put(key, new Response(JSON.stringify(list), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=' + (files.length ? 21600 : 900) } })); } catch (e) {}
+  return list;
+}
+
+async function fetchArt(url) {
+  const file = url.pathname.slice('/fetch-api/art/'.length);
+  if (!FETCH_ART_RE.test(file)) return new Response('Not found', { status: 404 });
+  const up = await fetch(FETCH_ART_HOST + file, { cf: { cacheTtl: 604800, cacheEverything: true } });
+  if (!up.ok) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  return new Response(up.body, {
+    headers: { 'content-type': 'image/webp', 'cache-control': 'public, max-age=604800, immutable', 'x-content-type-options': 'nosniff' }
+  });
+}
+
 async function fetchGames(env, url) {
   const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
-  if (!env.POLLS) return new Response('{"games":[],"unavailable":true}', { headers });
   const key = fetchCacheKey(url);
   try {
     const hit = await caches.default.match(key);
     if (hit) return new Response(await hit.text(), { headers });
   } catch (e) {}
-  let rows;
-  try {
-    rows = (await env.POLLS.prepare('SELECT id, name, data, active, updated FROM fetch_games WHERE active = 1 ORDER BY sort, id').all()).results || [];
-  } catch (e) {
-    try { await env.POLLS.prepare(FETCH_SCHEMA).run(); rows = []; } catch (e2) { return new Response('{"games":[],"unavailable":true}', { headers }); }
+  let rows = [];
+  if (env.POLLS) {
+    try {
+      rows = (await env.POLLS.prepare('SELECT id, name, data, active, updated FROM fetch_games WHERE active = 1 ORDER BY sort, id').all()).results || [];
+    } catch (e) {
+      try { await env.POLLS.prepare(FETCH_SCHEMA).run(); } catch (e2) {}
+    }
   }
-  const body = JSON.stringify({ games: rows.map(fetchRow).map(g => { delete g.active; return g; }) });
+  const featured = await fetchFeatured(url);
+  const body = JSON.stringify({ games: rows.map(fetchRow).map(g => { delete g.active; return g; }), featured });
   try {
     await caches.default.put(key, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=60' } }));
   } catch (e) {}
@@ -5476,6 +5529,12 @@ input:focus,textarea:focus{border-color:#ffa45b}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .icon-prev{display:block;width:64px;height:64px;border-radius:14px;object-fit:cover;margin-top:10px;background:rgba(255,255,255,.08)}
 .tag{display:inline-block;font-family:'Audiowide',sans-serif;font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.65);margin-left:6px;vertical-align:2px}
+.feat{margin:0 0 18px;padding:14px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.1)}
+.feat p{font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.6);margin-bottom:10px}
+.feat-list{display:flex;flex-wrap:wrap;gap:8px}
+.feat-list button{font-family:'Audiowide',sans-serif;font-size:11px;padding:8px 12px;border-radius:16px;border:1px solid rgba(255,164,91,.5);background:rgba(255,164,91,.07);color:#ffa45b;cursor:pointer}
+.feat-list button.has{border-color:rgba(107,227,138,.5);background:rgba(107,227,138,.08);color:#6be38a}
+.feat-list button:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
 [hidden]{display:none!important}
 @media (max-width:520px){.two{grid-template-columns:1fr}.game{flex-wrap:wrap}.tools{width:100%;justify-content:flex-start}}
 </style>
@@ -5499,7 +5558,8 @@ input:focus,textarea:focus{border-color:#ffa45b}
       <div class="stripe" aria-hidden="true"></div>
       <div class="body">
         <h2 class="kicker">FEATURED GAMES</h2>
-        <p class="sub">These show on <a href="/fetch#games" target="_blank">the Fetch guide</a> in this order. Hidden games stay here but don't show on the site. Changes show up on the site within a minute.</p>
+        <p class="sub">The guide shows the games Fetch is featuring on fetch.com automatically. Add a game here with the same name to attach milestones, tips and videos to its card. Games that aren't on fetch.com show after them, in this order. Changes show up within a minute.</p>
+        <div class="feat" id="feat" hidden><p>Featured on fetch.com right now. Green ones already have a guide.</p><div class="feat-list" id="featList"></div></div>
         <div id="list"></div>
         <div class="actions"><button class="btn" type="button" id="addBtn">+ Add a game</button></div>
         <p class="err" id="listErr" role="alert"></p>
@@ -5569,7 +5629,21 @@ input:focus,textarea:focus{border-color:#ffa45b}
     return 'Something went wrong. Please try again.';
   }
 
+  var featured = [];
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+  function guideFor(name) {
+    var n = norm(name);
+    return games.filter(function (g) { var gn = norm(g.name); return gn === n || gn.indexOf(n + ' ') === 0 || n.indexOf(gn + ' ') === 0; })[0];
+  }
+  function renderFeat() {
+    $('feat').hidden = !featured.length;
+    $('featList').innerHTML = featured.map(function (f, i) {
+      var g = guideFor(f.name);
+      return '<button type="button" data-feat="' + i + '"' + (g ? ' class="has"' : '') + '>' + (g ? 'Edit ' : '+ ') + esc(f.name) + '</button>';
+    }).join('');
+  }
   function render() {
+    renderFeat();
     $('list').innerHTML = games.length ? games.map(function (g, i) {
       var n = g.milestones.length;
       return '<div class="game' + (g.active ? '' : ' off') + '">' +
@@ -5683,6 +5757,17 @@ input:focus,textarea:focus{border-color:#ffa45b}
   });
 
   $('addBtn').addEventListener('click', function () { openEdit(null); });
+  $('featList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-feat]');
+    if (!b) return;
+    var f = featured[Number(b.getAttribute('data-feat'))], g = guideFor(f.name);
+    openEdit(g || null);
+    if (!g) $('gName').value = f.name;
+  });
+  fetch('/fetch-api/games').then(function (r) { return r.json(); }).then(function (j) {
+    featured = (j && j.featured) || [];
+    renderFeat();
+  }).catch(function () {});
   $('cancelBtn').addEventListener('click', closeEdit);
   $('addMs').addEventListener('click', function () { msBlock({}).querySelector('.m-t').focus(); });
   $('gIcon').addEventListener('input', iconPreview);
@@ -6544,6 +6629,7 @@ export default {
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
     if (url.pathname === '/poll/image') return pollImageUpload(request, env);
     if (url.pathname === '/fetch-api/games') return fetchGames(env, url);
+    if (url.pathname.indexOf('/fetch-api/art/') === 0) return fetchArt(url);
     if (url.pathname === '/fetch-api/admin') return fetchAdmin(request, env, url);
     if (url.pathname.indexOf('/poll/img/') === 0) return pollImageGet(env, url);
     if (url.pathname === '/notify-send' || url.pathname === '/poll-admin' || url.pathname === '/fetch-admin') {
