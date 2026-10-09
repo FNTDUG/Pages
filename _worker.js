@@ -2899,7 +2899,7 @@ body #ug-hamburger,body #ug-info-btn,body #ug-sound-btn,body .ntf-bell{margin-to
 @media(max-width:340px){.ug-fb-tag{display:none}}
 @media print{#ug-fetch-bar{display:none}}
 </style>
-<a id="ug-fetch-bar" href="/fetch"><span class="ug-fb-tag">PARTNER</span><span class="ug-fb-msg"><span class="ug-fb-long">Earn Robux with <b>Fetch</b>: Scan receipts, play games, and earn</span><span class="ug-fb-short">Earn Robux with <b>Fetch</b></span></span><span class="ug-fb-go"><span class="ug-fb-long">Read the guide</span><span class="ug-fb-short">Guide</span></span></a>`;
+<a id="ug-fetch-bar" href="/fetch"><span class="ug-fb-tag">PARTNER</span><span class="ug-fb-msg"><span class="ug-fb-long">Earn Robux with <b>Fetch</b>: Scan receipts, play games, and earn</span><span class="ug-fb-short">Earn Robux with <b>Fetch</b></span></span><span class="ug-fb-go"><span class="ug-fb-long">Read Guides</span><span class="ug-fb-short">Guide</span></span></a>`;
 const WIP_HTML = `
 <style>
 .wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
