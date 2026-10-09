@@ -2885,6 +2885,28 @@ function wipActive(pathname) {
   }
   return false;
 }
+const FETCH_BAR_ON = true;
+function fetchBarActive(pathname) {
+  const p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');
+  return FETCH_BAR_ON && p !== '/fetch' && p !== '/privacy-policy';
+}
+const FETCH_BAR_HTML = `<style>
+:root{--ug-fetch-h:44px}
+html{scroll-padding-top:var(--ug-fetch-h)}
+#ug-fetch-bar{position:sticky;top:0;z-index:1030;display:flex;align-items:center;justify-content:center;gap:12px;height:var(--ug-fetch-h);padding:0 16px;background:linear-gradient(90deg,#1d0630 0%,#4a1462 50%,#1d0630 100%);border-bottom:1px solid rgba(255,164,91,.6);box-shadow:0 2px 18px rgba(0,0,0,.6);color:#fff;text-decoration:none;font-family:'Audiowide',sans-serif;font-size:13px;line-height:1;white-space:nowrap;overflow:hidden}
+#ug-fetch-bar:hover .ug-fb-go,#ug-fetch-bar:focus-visible .ug-fb-go{background:#ffa45b;color:#1d0630}
+#ug-fetch-bar:focus-visible{outline:2px solid #ffa45b;outline-offset:-4px}
+.ug-fb-tag{flex:none;font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:.5px;padding:5px 7px;border:1px solid rgba(255,164,91,.7);border-radius:4px;color:#ffa45b}
+.ug-fb-msg{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ug-fb-msg b{color:#ffa45b;font-weight:400}
+.ug-fb-short{display:none}
+.ug-fb-go{flex:none;padding:7px 12px;border-radius:16px;background:rgba(255,164,91,.14);border:1px solid rgba(255,164,91,.7);color:#ffa45b;font-size:11.5px;transition:background .15s,color .15s}
+body #ug-hamburger,body #ug-info-btn,body #ug-sound-btn,body .ntf-bell{margin-top:var(--ug-fetch-h)}
+@media(max-width:768px){:root{--ug-fetch-h:40px}#ug-fetch-bar{gap:8px;padding:0 12px;font-size:12px}.ug-fb-long{display:none}.ug-fb-short{display:inline}.ug-fb-go{padding:6px 11px;font-size:10.5px}.ug-fb-tag{font-size:7px;padding:5px 6px}}
+@media(max-width:340px){.ug-fb-tag{display:none}}
+@media print{#ug-fetch-bar{display:none}}
+</style>
+<a id="ug-fetch-bar" href="/fetch"><span class="ug-fb-tag">PARTNER</span><span class="ug-fb-msg"><span class="ug-fb-long">Earn rewards with <b>Fetch</b>: scan receipts, play games and redeem digital codes</span><span class="ug-fb-short">Earn rewards with <b>Fetch</b></span></span><span class="ug-fb-go"><span class="ug-fb-long">Read the guide</span><span class="ug-fb-short">Guide</span></span></a>`;
 const WIP_HTML = `
 <style>
 .wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
@@ -5467,6 +5489,442 @@ const POLL_HTML = `
 })();
 <\/script>`;
 
+const FETCH_SCHEMA = 'CREATE TABLE IF NOT EXISTS fetch_games (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, data TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1, sort INTEGER NOT NULL DEFAULT 0, updated INTEGER NOT NULL)';
+
+function fetchCacheKey(url) {
+  return new Request(url.origin + '/fetch-api/__games');
+}
+
+function fetchUrl(v) {
+  const t = String(v || '').trim();
+  if (!t) return '';
+  try {
+    const u = new URL(t);
+    return u.protocol === 'https:' && t.length <= 500 ? u.href : null;
+  } catch (e) { return null; }
+}
+
+function fetchCleanGame(g) {
+  if (!g || typeof g !== 'object') return null;
+  const name = String(g.name || '').trim();
+  const icon = fetchUrl(g.icon);
+  const ends = String(g.ends || '').trim();
+  const note = String(g.note || '').trim();
+  if (!name || name.length > 80 || icon === null || note.length > 400 || (ends && !/^\d{4}-\d{2}-\d{2}$/.test(ends))) return null;
+  const raw = Array.isArray(g.milestones) ? g.milestones : [];
+  if (raw.length > 30) return null;
+  const milestones = [];
+  for (const m of raw) {
+    const t = String((m && m.t) || '').trim();
+    const pts = String((m && m.pts) || '').trim();
+    const limit = String((m && m.limit) || '').trim();
+    const guide = String((m && m.guide) || '').trim();
+    const video = fetchUrl(m && m.video);
+    if (!t && !guide) continue;
+    if (!t || t.length > 120 || pts.length > 40 || limit.length > 60 || guide.length > 1500 || video === null) return null;
+    milestones.push({ t, pts, limit, guide, video });
+  }
+  return { name, data: { icon, ends, note, milestones } };
+}
+
+function fetchRow(r) {
+  let d = {};
+  try { d = JSON.parse(r.data) || {}; } catch (e) {}
+  return { id: r.id, name: r.name, active: !!r.active, updated: r.updated, icon: d.icon || '', ends: d.ends || '', note: d.note || '', milestones: Array.isArray(d.milestones) ? d.milestones : [] };
+}
+
+async function fetchGames(env, url) {
+  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
+  if (!env.POLLS) return new Response('{"games":[],"unavailable":true}', { headers });
+  const key = fetchCacheKey(url);
+  try {
+    const hit = await caches.default.match(key);
+    if (hit) return new Response(await hit.text(), { headers });
+  } catch (e) {}
+  let rows;
+  try {
+    rows = (await env.POLLS.prepare('SELECT id, name, data, active, updated FROM fetch_games WHERE active = 1 ORDER BY sort, id').all()).results || [];
+  } catch (e) {
+    try { await env.POLLS.prepare(FETCH_SCHEMA).run(); rows = []; } catch (e2) { return new Response('{"games":[],"unavailable":true}', { headers }); }
+  }
+  const body = JSON.stringify({ games: rows.map(fetchRow).map(g => { delete g.active; return g; }) });
+  try {
+    await caches.default.put(key, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=60' } }));
+  } catch (e) {}
+  return new Response(body, { headers });
+}
+
+async function fetchAdmin(request, env, url) {
+  if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (!env.POLLS || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (!(await pushPasswordOk(request, env))) {
+    await new Promise(r => setTimeout(r, 1500));
+    return pushJson({ ok: false, error: 'password' }, 401);
+  }
+  const body = await pollReadBody(request);
+  if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
+  const db = env.POLLS;
+  await db.prepare(FETCH_SCHEMA).run();
+  const now = Date.now();
+  const id = Number(body.id) || 0;
+  let changed = true;
+  if (body.mode === 'save') {
+    const g = fetchCleanGame(body.game);
+    if (!g) return pushJson({ ok: false, error: 'bad-request' }, 400);
+    if (id) {
+      await db.prepare('UPDATE fetch_games SET name = ?1, data = ?2, updated = ?3 WHERE id = ?4').bind(g.name, JSON.stringify(g.data), now, id).run();
+    } else {
+      const top = await db.prepare('SELECT COALESCE(MAX(sort), 0) AS m FROM fetch_games').first();
+      await db.prepare('INSERT INTO fetch_games (name, data, active, sort, updated) VALUES (?1, ?2, 1, ?3, ?4)').bind(g.name, JSON.stringify(g.data), (top ? top.m : 0) + 1, now).run();
+    }
+  } else if (body.mode === 'active') {
+    await db.prepare('UPDATE fetch_games SET active = ?1, updated = ?2 WHERE id = ?3').bind(body.active ? 1 : 0, now, id).run();
+  } else if (body.mode === 'delete') {
+    await db.prepare('DELETE FROM fetch_games WHERE id = ?1').bind(id).run();
+  } else if (body.mode === 'move') {
+    const list = (await db.prepare('SELECT id FROM fetch_games ORDER BY sort, id').all()).results || [];
+    const at = list.findIndex(r => r.id === id), to = at + (body.dir < 0 ? -1 : 1);
+    if (at !== -1 && to >= 0 && to < list.length) {
+      const ids = list.map(r => r.id);
+      ids.splice(to, 0, ids.splice(at, 1)[0]);
+      await db.batch(ids.map((x, i) => db.prepare('UPDATE fetch_games SET sort = ?1 WHERE id = ?2').bind(i + 1, x)));
+    }
+  } else {
+    changed = false;
+  }
+  if (changed) {
+    try { await caches.default.delete(fetchCacheKey(url)); } catch (e) {}
+  }
+  const rows = (await db.prepare('SELECT id, name, data, active, updated FROM fetch_games ORDER BY sort, id').all()).results || [];
+  return pushJson({ ok: true, games: rows.map(fetchRow) });
+}
+
+const FETCH_ADMIN_PAGE = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fetch games</title>
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px}
+body{display:flex;justify-content:center;padding:28px 16px 60px}
+.wrap{width:min(640px,100%);display:flex;flex-direction:column;gap:18px}
+.card{border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75)}
+.stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px)}
+.body{padding:22px 22px 24px}
+.kicker{font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-align:center;margin-bottom:8px}
+.sub{font-size:14px;line-height:1.6;color:#cfc8dc;text-align:center;margin-bottom:16px}
+.sub a{color:#ffa45b}
+label.f{display:block;font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.5px;color:#ffa45b;margin:16px 0 7px}
+label.f small{font-family:'Franklin Gothic Medium',Arial,sans-serif;font-size:12px;color:rgba(255,255,255,.45);letter-spacing:0;margin-left:6px}
+input[type=text],input[type=password],input[type=url],input[type=date],textarea{width:100%;font:inherit;font-size:15px;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:11px 12px;outline:none;color-scheme:dark}
+textarea{min-height:80px;resize:vertical;line-height:1.5}
+input:focus,textarea:focus{border-color:#ffa45b}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{flex:1;min-width:140px;font-family:'Audiowide',sans-serif;font-size:12.5px;letter-spacing:.6px;padding:13px 18px;border-radius:9px;cursor:pointer;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b}
+.btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn.secondary{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.04)}
+.btn.danger{color:#ff8a8a;border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
+.btn.small{flex:none;min-width:0;padding:8px 12px;font-size:11px}
+.btn:focus-visible,.x:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.err{margin-top:12px;font-family:'Press Start 2P',monospace;font-size:8.5px;line-height:1.8;color:#ff8a8a;text-align:center}
+.err:empty{display:none}
+.empty{font-size:14px;color:rgba(255,255,255,.5);text-align:center}
+.game{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
+.game:first-child{border-top:0}
+.game img,.game .ph{flex:none;width:48px;height:48px;border-radius:11px;object-fit:cover;background:rgba(255,255,255,.08)}
+.game .info{flex:1;min-width:0}
+.game b{display:block;font-size:15px;overflow-wrap:anywhere}
+.game small{display:block;color:rgba(255,255,255,.5);font-size:12.5px;margin-top:2px}
+.game.off b{color:rgba(255,255,255,.5)}
+.tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.x{flex:none;width:36px;height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer}
+.x:disabled{opacity:.3;cursor:default}
+.ms{margin-top:14px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);border-left:3px solid #ffa45b;background:rgba(0,0,0,.22)}
+.ms-head{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.ms-head b{flex:1;font-family:'Press Start 2P',monospace;font-size:9px;font-weight:400;color:#ffa45b}
+.ms label.f{margin-top:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.icon-prev{display:block;width:64px;height:64px;border-radius:14px;object-fit:cover;margin-top:10px;background:rgba(255,255,255,.08)}
+.tag{display:inline-block;font-family:'Audiowide',sans-serif;font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.65);margin-left:6px;vertical-align:2px}
+[hidden]{display:none!important}
+@media (max-width:520px){.two{grid-template-columns:1fr}.game{flex-wrap:wrap}.tools{width:100%;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form class="card" id="lockView" autocomplete="off">
+    <div class="stripe" aria-hidden="true"></div>
+    <div class="body">
+      <h1 class="kicker">FETCH GAMES</h1>
+      <p class="sub">Enter the password to edit the featured games on the Fetch guide.</p>
+      <label class="f" for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <div class="actions"><button class="btn" type="submit" id="unlockBtn">Unlock</button></div>
+      <p class="err" id="lockErr" role="alert"></p>
+    </div>
+  </form>
+
+  <div id="admin" hidden>
+    <div class="card">
+      <div class="stripe" aria-hidden="true"></div>
+      <div class="body">
+        <h2 class="kicker">FEATURED GAMES</h2>
+        <p class="sub">These show on <a href="/fetch#games" target="_blank">the Fetch guide</a> in this order. Hidden games stay here but don't show on the site. Changes show up on the site within a minute.</p>
+        <div id="list"></div>
+        <div class="actions"><button class="btn" type="button" id="addBtn">+ Add a game</button></div>
+        <p class="err" id="listErr" role="alert"></p>
+      </div>
+    </div>
+
+    <form class="card" id="editView" autocomplete="off" hidden>
+      <div class="stripe" aria-hidden="true"></div>
+      <div class="body">
+        <h2 class="kicker" id="editKicker">ADD A GAME</h2>
+        <label class="f" for="gName">Game name</label>
+        <input type="text" id="gName" maxlength="80" placeholder="Monopoly Go">
+        <label class="f" for="gIcon">Icon image link <small>optional, https only</small></label>
+        <input type="url" id="gIcon" maxlength="500" placeholder="https://...">
+        <img class="icon-prev" id="gIconPrev" alt="" hidden>
+        <label class="f" for="gEnds">Featured until <small>optional</small></label>
+        <input type="date" id="gEnds">
+        <label class="f" for="gNote">Note <small>optional, shown under the name</small></label>
+        <textarea id="gNote" maxlength="400" placeholder="Install it from the Play tab in Fetch so your progress counts."></textarea>
+        <label class="f">Milestones <small>in the order people reach them</small></label>
+        <div id="msList"></div>
+        <div class="actions" style="margin-top:12px"><button class="btn secondary" type="button" id="addMs">+ Add milestone</button></div>
+        <div class="actions">
+          <button class="btn" type="submit" id="saveBtn">Save game</button>
+          <button class="btn secondary" type="button" id="cancelBtn">Cancel</button>
+        </div>
+        <p class="err" id="editErr" role="alert"></p>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+(function () {
+  var password = '';
+  var games = [];
+  var editing = 0;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function api(data) {
+    return fetch('/fetch-api/admin', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + password },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 401) throw new Error('password');
+        if (r.status === 503) throw new Error('setup');
+        if (r.status === 400) throw new Error('bad');
+        if (!r.ok || !j.ok) throw new Error('failed');
+        games = j.games;
+        render();
+        return j;
+      });
+    });
+  }
+
+  function errText(e) {
+    if (e && e.message === 'password') return 'Wrong password.';
+    if (e && e.message === 'setup') return 'This isn\\'t set up yet.';
+    if (e && e.message === 'bad') return 'Check the name, links and dates. Links must start with https://.';
+    return 'Something went wrong. Please try again.';
+  }
+
+  function render() {
+    $('list').innerHTML = games.length ? games.map(function (g, i) {
+      var n = g.milestones.length;
+      return '<div class="game' + (g.active ? '' : ' off') + '">' +
+        (g.icon ? '<img src="' + esc(g.icon) + '" alt="">' : '<span class="ph" aria-hidden="true"></span>') +
+        '<div class="info"><b>' + esc(g.name) + (g.active ? '' : '<span class="tag">Hidden</span>') + '</b><small>' + n + ' milestone' + (n === 1 ? '' : 's') + (g.ends ? ' &middot; until ' + esc(g.ends) : '') + '</small></div>' +
+        '<div class="tools">' +
+          '<button class="x" type="button" data-go="up" data-id="' + g.id + '" aria-label="Move ' + esc(g.name) + ' up"' + (i === 0 ? ' disabled' : '') + '>&#8593;</button>' +
+          '<button class="x" type="button" data-go="down" data-id="' + g.id + '" aria-label="Move ' + esc(g.name) + ' down"' + (i === games.length - 1 ? ' disabled' : '') + '>&#8595;</button>' +
+          '<button class="btn small secondary" type="button" data-go="toggle" data-id="' + g.id + '">' + (g.active ? 'Hide' : 'Show') + '</button>' +
+          '<button class="btn small" type="button" data-go="edit" data-id="' + g.id + '">Edit</button>' +
+          '<button class="btn small danger" type="button" data-go="del" data-id="' + g.id + '">Delete</button>' +
+        '</div></div>';
+    }).join('') : '<p class="empty">No featured games yet. Add the ones showing in the Play tab in Fetch.</p>';
+  }
+
+  function msBlock(m) {
+    var d = document.createElement('div');
+    d.className = 'ms';
+    d.innerHTML = '<div class="ms-head"><b class="ms-n"></b>' +
+      '<button class="x" type="button" data-ms="up" aria-label="Move milestone up">&#8593;</button>' +
+      '<button class="x" type="button" data-ms="down" aria-label="Move milestone down">&#8595;</button>' +
+      '<button class="x" type="button" data-ms="del" aria-label="Remove milestone">&#x2715;</button></div>' +
+      '<label class="f">Goal</label><input type="text" class="m-t" maxlength="120" placeholder="Reach level 10">' +
+      '<div class="two"><div><label class="f">Points <small>optional</small></label><input type="text" class="m-pts" maxlength="40" placeholder="2,500 points"></div>' +
+      '<div><label class="f">Time limit <small>optional</small></label><input type="text" class="m-limit" maxlength="60" placeholder="Within 7 days"></div></div>' +
+      '<label class="f">How to do it <small>optional</small></label><textarea class="m-guide" maxlength="1500" placeholder="Tips for reaching this goal quickly."></textarea>' +
+      '<label class="f">Video link <small>optional, YouTube links play on the page</small></label><input type="url" class="m-video" maxlength="500" placeholder="https://youtu.be/...">';
+    m = m || {};
+    d.querySelector('.m-t').value = m.t || '';
+    d.querySelector('.m-pts').value = m.pts || '';
+    d.querySelector('.m-limit').value = m.limit || '';
+    d.querySelector('.m-guide').value = m.guide || '';
+    d.querySelector('.m-video').value = m.video || '';
+    $('msList').appendChild(d);
+    numberMs();
+    return d;
+  }
+
+  function numberMs() {
+    var all = $('msList').querySelectorAll('.ms');
+    for (var i = 0; i < all.length; i++) {
+      all[i].querySelector('.ms-n').textContent = 'MILESTONE ' + (i + 1);
+      all[i].querySelector('[data-ms="up"]').disabled = i === 0;
+      all[i].querySelector('[data-ms="down"]').disabled = i === all.length - 1;
+    }
+    $('addMs').hidden = all.length >= 30;
+  }
+
+  function iconPreview() {
+    var v = $('gIcon').value.trim();
+    $('gIconPrev').hidden = !/^https:\\/\\//.test(v);
+    if (!$('gIconPrev').hidden) $('gIconPrev').src = v;
+  }
+
+  function openEdit(g) {
+    editing = g ? g.id : 0;
+    $('editKicker').textContent = g ? 'EDIT GAME' : 'ADD A GAME';
+    $('gName').value = g ? g.name : '';
+    $('gIcon').value = g ? g.icon : '';
+    $('gEnds').value = g ? g.ends : '';
+    $('gNote').value = g ? g.note : '';
+    $('msList').innerHTML = '';
+    (g && g.milestones.length ? g.milestones : [{}]).forEach(msBlock);
+    $('editErr').textContent = '';
+    iconPreview();
+    $('editView').hidden = false;
+    $('editView').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('gName').focus({ preventScroll: true });
+  }
+
+  function closeEdit() {
+    $('editView').hidden = true;
+    editing = 0;
+  }
+
+  function readGame() {
+    return {
+      name: $('gName').value.trim(),
+      icon: $('gIcon').value.trim(),
+      ends: $('gEnds').value,
+      note: $('gNote').value.trim(),
+      milestones: [].map.call($('msList').querySelectorAll('.ms'), function (d) {
+        return {
+          t: d.querySelector('.m-t').value.trim(),
+          pts: d.querySelector('.m-pts').value.trim(),
+          limit: d.querySelector('.m-limit').value.trim(),
+          guide: d.querySelector('.m-guide').value.trim(),
+          video: d.querySelector('.m-video').value.trim()
+        };
+      }).filter(function (m) { return m.t || m.guide || m.video; })
+    };
+  }
+
+  $('lockView').addEventListener('submit', function (e) {
+    e.preventDefault();
+    password = $('pw').value;
+    $('lockErr').textContent = '';
+    $('unlockBtn').disabled = true;
+    $('unlockBtn').textContent = 'Checking...';
+    api({ mode: 'list' }).then(function () {
+      $('pw').value = '';
+      $('lockView').hidden = true;
+      $('admin').hidden = false;
+    }).catch(function (err) {
+      password = '';
+      $('lockErr').textContent = errText(err);
+    }).then(function () {
+      $('unlockBtn').disabled = false;
+      $('unlockBtn').textContent = 'Unlock';
+    });
+  });
+
+  $('addBtn').addEventListener('click', function () { openEdit(null); });
+  $('cancelBtn').addEventListener('click', closeEdit);
+  $('addMs').addEventListener('click', function () { msBlock({}).querySelector('.m-t').focus(); });
+  $('gIcon').addEventListener('input', iconPreview);
+  $('gIconPrev').addEventListener('error', function () { $('gIconPrev').hidden = true; });
+
+  $('msList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ms]');
+    if (!b || b.disabled) return;
+    var d = b.closest('.ms'), a = b.getAttribute('data-ms');
+    if (a === 'del') d.remove();
+    else if (a === 'up' && d.previousElementSibling) d.parentNode.insertBefore(d, d.previousElementSibling);
+    else if (a === 'down' && d.nextElementSibling) d.parentNode.insertBefore(d.nextElementSibling, d);
+    numberMs();
+  });
+
+  $('list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b || b.disabled) return;
+    var id = Number(b.getAttribute('data-id')), go = b.getAttribute('data-go');
+    var g = games.filter(function (x) { return x.id === id; })[0];
+    $('listErr').textContent = '';
+    if (go === 'edit') { openEdit(g); return; }
+    if (go === 'del' && !b.classList.contains('sure')) {
+      b.classList.add('sure');
+      b.textContent = 'Tap again';
+      return;
+    }
+    var req = go === 'up' || go === 'down' ? { mode: 'move', id: id, dir: go === 'up' ? -1 : 1 }
+      : go === 'toggle' ? { mode: 'active', id: id, active: !g.active }
+      : { mode: 'delete', id: id };
+    b.disabled = true;
+    api(req).then(function () {
+      if (go === 'del' && editing === id) closeEdit();
+    }).catch(function (err) {
+      b.disabled = false;
+      $('listErr').textContent = errText(err);
+    });
+  });
+
+  $('editView').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var g = readGame();
+    $('editErr').textContent = '';
+    if (!g.name) { $('editErr').textContent = 'Give the game a name.'; return; }
+    for (var i = 0; i < g.milestones.length; i++) {
+      if (!g.milestones[i].t) { $('editErr').textContent = 'Milestone ' + (i + 1) + ' needs a goal.'; return; }
+    }
+    $('saveBtn').disabled = true;
+    $('saveBtn').textContent = 'Saving...';
+    api({ mode: 'save', id: editing, game: g }).then(function () {
+      closeEdit();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(function (err) {
+      $('editErr').textContent = errText(err);
+    }).then(function () {
+      $('saveBtn').disabled = false;
+      $('saveBtn').textContent = 'Save game';
+    });
+  });
+
+  $('pw').focus();
+})();
+<\/script>
+</body>
+</html>`;
+
 const POLL_ADMIN_PAGE = `<!doctype html>
 <html lang="en">
 <head>
@@ -6261,16 +6719,18 @@ export default {
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
     if (url.pathname === '/poll/image') return pollImageUpload(request, env);
+    if (url.pathname === '/fetch-api/games') return fetchGames(env, url);
+    if (url.pathname === '/fetch-api/admin') return fetchAdmin(request, env, url);
     if (url.pathname.indexOf('/poll/img/') === 0) return pollImageGet(env, url);
-    if (url.pathname === '/notify-send' || url.pathname === '/poll-admin') {
-      return new Response(url.pathname === '/notify-send' ? PUSH_SEND_PAGE : POLL_ADMIN_PAGE, {
+    if (url.pathname === '/notify-send' || url.pathname === '/poll-admin' || url.pathname === '/fetch-admin') {
+      return new Response(url.pathname === '/notify-send' ? PUSH_SEND_PAGE : url.pathname === '/fetch-admin' ? FETCH_ADMIN_PAGE : POLL_ADMIN_PAGE, {
         headers: {
           'content-type': 'text/html; charset=utf-8',
           'cache-control': 'no-store',
           'x-robots-tag': 'noindex, nofollow',
           'referrer-policy': 'no-referrer',
           'x-frame-options': 'DENY',
-          'content-security-policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+          'content-security-policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob: https:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
         }
       });
     }
@@ -6497,6 +6957,7 @@ export default {
       })
       .on('body', {
         element(el) {
+          if (fetchBarActive(url.pathname)) el.prepend(FETCH_BAR_HTML, { html: true });
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           el.append(noInfoPanel ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
