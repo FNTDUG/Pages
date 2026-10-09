@@ -3677,7 +3677,8 @@ async function pushSend(request, env) {
     return pushJson({ ok: true, counts, history: await pushHistory(env) });
   }
 
-  const games = pushCleanGames(body.games);
+  const everyone = Array.isArray(body.games) && body.games.indexOf('all') !== -1;
+  const games = everyone ? ['all'] : pushCleanGames(body.games);
   const title = String(body.title || '').trim() || 'FNTD User Guide';
   const text = String(body.body || '').trim();
   const link = pushCleanLink(body.url);
@@ -3692,7 +3693,7 @@ async function pushSend(request, env) {
     const m = k.metadata;
     if (!m || !m.e) return;
     const g = String(m.g || '').split(',');
-    if (!games.some(x => g.indexOf(x) !== -1)) return;
+    if (!everyone && !games.some(x => g.indexOf(x) !== -1)) return;
     try {
       const res = await pushSendOne(env, m, payload, jwts);
       if (res.status === 404 || res.status === 410) {
@@ -4474,8 +4475,9 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
           <option value="/bbn/survivor-terminal"></option>
           <option value="/patch-notes/bbn-patch-notes"></option>
         </datalist>
-        <label class="f">Send to people following</label>
+        <label class="f">Send to</label>
         <div class="games" id="games">
+          <label class="game"><input type="checkbox" value="all"><span>Whole site <em id="cAll"></em></span></label>
           <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD2 <em id="cFntd2"></em></span></label>
           <label class="game"><input type="checkbox" value="bbn"><span>Bite By Night <em id="cBbn"></em></span></label>
         </div>
@@ -4546,7 +4548,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   function reach() {
     var g = games();
-    if (g.length === 2) return counts.total;
+    if (g.indexOf('all') !== -1 || g.length === 2) return counts.total;
     if (g[0] === 'fntd2') return counts.fntd2;
     if (g[0] === 'bbn') return counts.bbn;
     return 0;
@@ -4554,11 +4556,12 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   function showCounts() {
     $('stats').innerHTML = '<b>' + counts.total + '</b> device' + (counts.total === 1 ? '' : 's') + ' signed up';
+    $('cAll').textContent = '(' + counts.total + ')';
     $('cFntd2').textContent = '(' + counts.fntd2 + ')';
     $('cBbn').textContent = '(' + counts.bbn + ')';
   }
 
-  var GAME_NAMES = { fntd2: 'FNTD2', bbn: 'Bite By Night' };
+  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'Bite By Night' };
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -4630,13 +4633,19 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   $('title').addEventListener('input', refreshPreview);
   $('msg').addEventListener('input', refreshPreview);
-  $('games').addEventListener('change', function () { $('sendErr').textContent = ''; });
+  $('games').addEventListener('change', function (e) {
+    $('sendErr').textContent = '';
+    if (!e.target.checked) return;
+    [].forEach.call(document.querySelectorAll('#games input'), function (i) {
+      if (e.target.value === 'all' ? i.value !== 'all' : i.value === 'all') i.checked = false;
+    });
+  });
 
   $('composeView').addEventListener('submit', function (e) {
     e.preventDefault();
     $('sendErr').textContent = '';
     if (!$('msg').value.trim()) { $('sendErr').textContent = 'Write a message first.'; return; }
-    if (!games().length) { $('sendErr').textContent = 'Pick at least one game.'; return; }
+    if (!games().length) { $('sendErr').textContent = 'Pick Whole site or at least one game.'; return; }
     var n = reach();
     $('confirmText').innerHTML = 'Send this to <b>' + n + '</b> device' + (n === 1 ? '' : 's') + '?';
     $('mainActions').hidden = true;
