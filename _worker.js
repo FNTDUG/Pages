@@ -2890,7 +2890,7 @@ html{scroll-padding-top:var(--ug-fetch-h)}
 #ug-fetch-bar:hover .ug-fb-go,#ug-fetch-bar:focus-visible .ug-fb-go{background:#ffa45b;color:#1d0630}
 #ug-fetch-bar:focus-visible{outline:2px solid #ffa45b;outline-offset:-4px}
 .ug-fb-tag{flex:none;font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:.5px;padding:5px 7px;border:1px solid rgba(255,164,91,.7);border-radius:4px;color:#ffa45b}
-.ug-fb-msg{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ug-fb-msg{min-width:0;overflow:hidden;text-overflow:ellipsis;line-height:1.5;padding:1px 0}
 .ug-fb-msg b{color:#ffa45b;font-weight:400}
 .ug-fb-short{display:none}
 .ug-fb-go{flex:none;padding:7px 12px;border-radius:16px;background:rgba(255,164,91,.14);border:1px solid rgba(255,164,91,.7);color:#ffa45b;font-size:11.5px;transition:background .15s,color .15s}
@@ -2899,7 +2899,7 @@ body #ug-hamburger,body #ug-info-btn,body #ug-sound-btn,body .ntf-bell{margin-to
 @media(max-width:340px){.ug-fb-tag{display:none}}
 @media print{#ug-fetch-bar{display:none}}
 </style>
-<a id="ug-fetch-bar" href="/fetch"><span class="ug-fb-tag">PARTNER</span><span class="ug-fb-msg"><span class="ug-fb-long">Earn rewards with <b>Fetch</b>: scan receipts, play games and redeem digital codes</span><span class="ug-fb-short">Earn rewards with <b>Fetch</b></span></span><span class="ug-fb-go"><span class="ug-fb-long">Read the guide</span><span class="ug-fb-short">Guide</span></span></a>`;
+<a id="ug-fetch-bar" href="/fetch"><span class="ug-fb-tag">PARTNER</span><span class="ug-fb-msg"><span class="ug-fb-long">Earn Robux with <b>Fetch</b>: Scan receipts, play games, and earn</span><span class="ug-fb-short">Earn Robux with <b>Fetch</b></span></span><span class="ug-fb-go"><span class="ug-fb-long">Read the guide</span><span class="ug-fb-short">Guide</span></span></a>`;
 const WIP_HTML = `
 <style>
 .wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
