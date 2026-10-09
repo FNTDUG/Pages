@@ -22,330 +22,273 @@
       <nav id="ug-topnav"><div class="ug-tn-inner"></div></nav>
     </header>
     <div id="ug-hero"><div id="ug-hero-inner">
-      <div class="ug-page-title-area"><div class="ug-page-title">Fetch Rewards Guide</div><p class="ug-page-desc">Scan receipts, play featured games and turn your points into digital gift card codes, safely and step by step.</p></div>
+      <div class="ug-page-title-area"><div class="ug-page-title">Fetch Rewards Guide</div><p class="ug-page-desc">Scan receipts, play featured games and turn your points into digital gift card codes.</p><p class="ug-page-desc" style="font-size:13px;color:rgba(255,255,255,.55);margin-top:2px">In partnership with Fetch</p></div>
       
     </div></div>
     <div id="ug-content">
 <style>
-.fq{--hex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='27.71' height='48' viewBox='0 0 13.856 24'%3E%3Cpath d='M0 4L6.93 0L13.86 4M0 4V12L6.93 16L13.86 12M6.93 16V24' fill='none' stroke='%23333' stroke-width='.7'/%3E%3C/svg%3E");--edge:#f69b55;--band:rgba(98,146,146,.82);--ink:#e9e4f2;--dim:rgba(233,228,242,.62);color:var(--ink);font-size:16px;line-height:1.6}
-.fq a{color:#ffa45b}
-.fq-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 30px}
-.fq-tile{display:flex;flex-direction:column;justify-content:center;text-decoration:none;border:3px solid var(--edge);border-radius:12px;overflow:hidden;background:#151515 var(--hex);box-shadow:0 0 15px rgba(64,18,83,.4);transition:box-shadow .3s,transform .3s}
-.fq-tile:hover,.fq-tile:focus-visible{box-shadow:0 0 25px 8px #401253;transform:scale(1.04)}
-.fq-tile:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.fq-tile-band{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin:22px 0;padding:14px 8px;background:var(--band)}
-.fq-tile-n{font-family:'Press Start 2P',monospace;font-size:9px;color:rgba(255,255,255,.85);letter-spacing:1px}
-.fq-glow{font-family:'Press Start 2P',monospace;color:var(--c);text-shadow:0 0 6px var(--c),0 0 16px var(--c),0 2px 0 rgba(0,0,0,.5);letter-spacing:1px}
-.fq-tile .fq-glow{font-size:20px}
-.fq-tile-done{font-family:'Press Start 2P',monospace;font-size:8px;color:#0d0d0d;background:#6be38a;padding:4px 6px;border-radius:3px;display:none}
-.fq-tile.done .fq-tile-done{display:inline-block}
-.scan{--c:#5ff07a}.play{--c:#ffe14d}.redeem{--c:#d58bff}.kit{--c:#7fd8ff}.help{--c:#ff7a7a}
+.fg{--acc:#ffa45b;--card:#17101f;--line:rgba(255,255,255,.08);--ink:#f3eff8;--mute:#a69eb4;color:var(--ink);font-size:16px;line-height:1.65;background:#0d0914;border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.fg a{color:var(--acc);text-underline-offset:3px}
+.fg h2{font-family:'Audiowide',sans-serif;font-weight:400;font-size:22px;line-height:1.3;color:#fff;margin:0}
+.fg h3{font-family:'Audiowide',sans-serif;font-weight:400;font-size:16px;line-height:1.35;color:#fff;margin:0}
+.fg p{margin:0}
+.fg b{color:#fff;font-weight:600}
 
-.fq-quest{border:3px solid var(--edge);border-radius:12px;overflow:hidden;margin:0 0 30px;background:rgba(12,6,20,.94);box-shadow:0 0 15px rgba(64,18,83,.4);scroll-margin-top:calc(var(--ug-fetch-h,0px) + 16px)}
-.fq-head{background:#151515 var(--hex);padding:18px 0}
-.fq-head-band{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:var(--band)}
-.fq-head h2{margin:0;font-size:19px;line-height:1.5;text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 8px var(--c)}
-.fq-head-n{display:block;font-family:'Press Start 2P',monospace;font-size:9px;color:rgba(255,255,255,.9);text-shadow:none;letter-spacing:1px;margin-bottom:4px}
-.fq-count{flex:none;font-family:'Press Start 2P',monospace;font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:8px 10px;border-radius:6px;white-space:nowrap}
-.fq-quest.done .fq-count{background:#6be38a;color:#0d0d0d}
-.fq-body{padding:20px 22px 22px}
-.fq-brief{margin:0 0 16px;color:var(--dim)}
-.fq-label{display:block;font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;color:var(--c);margin:0 0 10px}
+.fg-track{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 24px;padding:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.fg-track li+li{border-left:1px solid var(--line)}
+.fg-track a{display:flex;align-items:center;gap:14px;padding:18px 20px;color:var(--ink);text-decoration:none;transition:background .15s}
+.fg-track a:hover{background:rgba(255,164,91,.06)}
+.fg-track a:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.fg-num{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--acc);color:var(--acc);font-family:'Audiowide',sans-serif;font-size:14px}
+.fg-track span:last-child{font-family:'Audiowide',sans-serif;font-size:14.5px;line-height:1.3}
 
-.fq-objs{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px}
-.fq-obj label{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s,border-color .15s}
-.fq-obj label:hover{background:rgba(255,255,255,.07)}
-.fq-obj input{position:absolute;opacity:0;width:1px;height:1px}
-.fq-box{flex:none;width:22px;height:22px;margin-top:1px;border:3px solid var(--c);border-radius:3px;background:rgba(0,0,0,.4);position:relative}
-.fq-obj input:checked + .fq-box{background:var(--c);box-shadow:0 0 10px var(--c)}
-.fq-obj input:checked + .fq-box::after{content:"";position:absolute;left:4px;top:0;width:6px;height:11px;border:solid #0d0d0d;border-width:0 3px 3px 0;transform:rotate(45deg)}
-.fq-obj input:focus-visible + .fq-box{outline:2px solid #fff;outline-offset:3px}
-.fq-obj input:checked ~ .fq-obj-t{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--c)}
-.fq-obj-t b{color:#fff}
-.fq-obj input:checked ~ .fq-obj-t b{color:var(--dim)}
+.fg-intro{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:20px 24px;margin:0 0 48px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.fg-intro-t{flex:1;min-width:260px}
+.fg-intro-t p{color:var(--mute);font-size:15px;margin-top:4px}
+.fg-stores{display:flex;gap:10px;flex-wrap:wrap}
+.fg-store{display:inline-flex;align-items:center;padding:10px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.18);color:#fff!important;text-decoration:none;font-family:'Audiowide',sans-serif;font-size:12.5px;white-space:nowrap;transition:border-color .15s,background .15s}
+.fg-store:hover{border-color:var(--acc);background:rgba(255,164,91,.06)}
+.fg-store:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.fg-code{flex-basis:100%;display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:15px}
+.fg-code[hidden]{display:none}
+.fg-code b{font-family:'Audiowide',sans-serif;font-weight:400;font-size:17px;color:var(--acc);letter-spacing:1px}
 
-.fq-reward{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.35);border:1px dashed var(--c)}
-.fq-reward .fq-label{margin:0}
-.fq-chip{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.5;color:#0d0d0d;background:var(--c);padding:6px 9px;border-radius:4px}
+.fg-step{display:grid;grid-template-columns:200px minmax(0,1fr);gap:32px;padding:0 0 48px;margin:0 0 48px;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--ug-fetch-h,0px) + 24px)}
+.fg-step:last-of-type{border-bottom:0;margin-bottom:0}
+.fg-side{position:relative}
+.fg-side .fg-num{width:40px;height:40px;font-size:16px;margin-bottom:16px}
+.fg-side p{color:var(--mute);font-size:15px;margin-top:8px}
 
-.fq-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 0}
-.fq-item{padding:14px 16px;border-radius:8px;border:2px solid;background:rgba(0,0,0,.3)}
-.fq-item.ok{border-color:rgba(95,240,122,.55);--c:#5ff07a}
-.fq-item.no{border-color:rgba(255,122,122,.55);--c:#ff7a7a}
-.fq-item ul{list-style:none;margin:0;padding:0}
-.fq-item li{position:relative;padding:0 0 8px 24px;font-size:15px;line-height:1.5}
-.fq-item li::before{position:absolute;left:0;top:0;font-family:'Press Start 2P',monospace;font-size:11px;line-height:22px;color:var(--c)}
-.fq-item.ok li::before{content:"+"}
-.fq-item.no li::before{content:"x"}
+.fg-list{list-style:none;margin:0;padding:0;counter-reset:s}
+.fg-list li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.fg-list li:first-child{border-top:0;padding-top:0}
+.fg-list li::before{content:counter(s) ".";font-family:'Audiowide',sans-serif;font-size:14px;line-height:1.75;color:var(--mute)}
 
-.fq-warn{display:flex;gap:14px;align-items:flex-start;margin:18px 0 0;padding:14px 16px;border-radius:8px;border:2px solid #ff7a7a;background:rgba(255,80,80,.08)}
-.fq-warn-i{flex:none;font-family:'Press Start 2P',monospace;font-size:16px;color:#ff7a7a;text-shadow:0 0 8px #ff7a7a;line-height:1.3}
-.fq-warn p{margin:0;font-size:15px}
-.fq-warn b{color:#ff9a9a}
-.fq-tip{margin:16px 0 0;padding:12px 14px;border-radius:8px;border-left:4px solid var(--c);background:rgba(255,255,255,.04);font-size:15px}
+.fg-note{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;margin:24px 0 0;padding:16px 18px;border-radius:10px;background:rgba(255,164,91,.07);font-size:15px;line-height:1.6}
+.fg-note svg{width:20px;height:20px;margin-top:1px;color:var(--acc)}
 
-.fq-btns{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0}
-.fq-btn{display:inline-block;padding:13px 18px;border:3px solid var(--edge);border-radius:10px;background:#1c0a2a;color:#fff!important;text-decoration:none;font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.4;box-shadow:0 5px 0 #000;transition:transform .1s,box-shadow .1s}
-.fq-btn:hover{transform:translateY(2px);box-shadow:0 3px 0 #000}
-.fq-btn:active{transform:translateY(5px);box-shadow:none}
-.fq-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.fq-code{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:16px 0 0;padding:12px 14px;border-radius:8px;border:2px dashed var(--c);background:rgba(0,0,0,.35)}
-.fq-code[hidden]{display:none}
-.fq-code b{font-family:'Press Start 2P',monospace;font-size:15px;color:var(--c);text-shadow:0 0 8px var(--c);letter-spacing:2px}
+.fg-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:24px 0 0;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.fg-rules > div{padding:18px 20px}
+.fg-rules > div+div{border-left:1px solid var(--line)}
+.fg-rules h3{font-size:14px;margin-bottom:12px;color:var(--mute)}
+.fg-rules ul{list-style:none;margin:0;padding:0}
+.fg-rules li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;font-size:15px;line-height:1.55;padding:5px 0}
+.fg-rules svg{width:16px;height:16px;margin-top:3px}
+.fg-yes svg{color:#79d98f}
+.fg-no svg{color:#ff8f8f}
 
-.fq-side{margin:22px 0 0}
-.fq-wait,.fq-empty{padding:18px;border-radius:8px;border:1px dashed rgba(255,225,77,.4);text-align:center;color:var(--dim);font-size:15px}
-.fq-game{border:2px solid rgba(255,225,77,.55);border-radius:10px;background:rgba(0,0,0,.35);margin:0 0 14px;overflow:hidden}
-.fq-game-head{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,225,77,.06);border-bottom:1px solid rgba(255,225,77,.25)}
-#ug-content .fq-game-head img,.fq-game-ph{flex:none;width:56px;height:56px;border-radius:10px;object-fit:cover;margin:0;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08)}
-.fq-game-who{flex:1;min-width:0}
-.fq-game-name{font-family:'Audiowide',sans-serif;font-size:17px;line-height:1.3;color:#fff;overflow-wrap:anywhere}
-.fq-game-sub{font-size:13.5px;color:var(--dim)}
-.fq-ends{flex:none;font-family:'Press Start 2P',monospace;font-size:8px;line-height:1.5;color:#ffe14d;border:1px solid rgba(255,225,77,.6);border-radius:4px;padding:5px 7px;text-align:center}
-.fq-game-note{margin:0;padding:12px 16px 0;font-size:15px;color:var(--dim)}
-.fq-ms{list-style:none;margin:0;padding:8px 0}
-.fq-ms summary,.fq-ms-row{display:flex;align-items:center;gap:12px;padding:10px 16px;list-style:none}
-.fq-ms summary{cursor:pointer}
-.fq-ms summary::-webkit-details-marker{display:none}
-.fq-ms summary:hover{background:rgba(255,255,255,.04)}
-.fq-ms summary:focus-visible{outline:2px solid #ffe14d;outline-offset:-2px}
-.fq-gem{flex:none;width:12px;height:12px;background:#ffe14d;transform:rotate(45deg);box-shadow:0 0 8px #ffe14d}
-.fq-ms-t{flex:1;min-width:0;font-size:15.5px;line-height:1.45;color:#fff}
-.fq-ms-t small{display:block;font-size:13px;color:var(--dim)}
-.fq-ms-pts{flex:none;font-family:'Press Start 2P',monospace;font-size:9px;color:#0d0d0d;background:#5ff07a;padding:6px 8px;border-radius:4px;white-space:nowrap}
-.fq-ms-more{flex:none;font-family:'Press Start 2P',monospace;font-size:8px;color:#ffe14d;white-space:nowrap}
-.fq-ms details[open] .fq-ms-more{color:#fff}
-.fq-ms-body{padding:4px 16px 14px 40px;font-size:15px}
-.fq-ms-body p{margin:0 0 10px;white-space:pre-wrap}
-.fq-vid{position:relative;display:block;width:100%;max-width:560px;aspect-ratio:16/9;border:2px solid #ffe14d;border-radius:8px;overflow:hidden;background:#000;padding:0;cursor:pointer}
-#ug-content .fq-vid img{width:100%;height:100%;object-fit:cover;margin:0;opacity:.75}
-.fq-vid span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Press Start 2P',monospace;font-size:10px;color:#0d0d0d;background:#ffe14d;padding:10px 12px;border-radius:4px;box-shadow:0 4px 0 #000;white-space:nowrap}
-.fq-vid:focus-visible{outline:3px solid #fff;outline-offset:3px}
-iframe.fq-vid{cursor:auto}
+.fg-sub{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:40px 0 16px}
+.fg-sub small{color:var(--mute);font-size:14px}
+.fg-wait,.fg-empty{padding:28px 20px;border:1px dashed rgba(255,255,255,.14);border-radius:12px;text-align:center;color:var(--mute);font-size:15px}
+.fg-game{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
+.fg-game-top{display:flex;align-items:center;gap:16px;padding:18px 20px}
+#ug-content .fg-game-top img,.fg-game-ph{flex:none;width:52px;height:52px;border-radius:12px;object-fit:cover;margin:0;background:rgba(255,255,255,.06)}
+.fg-game-top div{flex:1;min-width:0}
+.fg-game-top h3{overflow-wrap:anywhere}
+.fg-game-top small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
+.fg-game-note{padding:0 20px 16px;color:var(--mute);font-size:15px}
+.fg-ms{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.fg-ms > li+li{border-top:1px solid var(--line)}
+.fg-ms summary,.fg-ms-row{display:grid;grid-template-columns:minmax(0,1fr) auto 20px;align-items:center;gap:16px;padding:14px 20px;list-style:none}
+.fg-ms summary{cursor:pointer;transition:background .15s}
+.fg-ms summary::-webkit-details-marker{display:none}
+.fg-ms summary:hover{background:rgba(255,255,255,.03)}
+.fg-ms summary:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.fg-ms-t{font-size:15.5px;line-height:1.45}
+.fg-ms-t small{display:block;color:var(--mute);font-size:13.5px;margin-top:2px}
+.fg-pts{font-family:'Audiowide',sans-serif;font-size:13.5px;color:var(--acc);white-space:nowrap}
+.fg-chev{width:20px;height:20px;color:var(--mute);transition:transform .2s}
+.fg-ms details[open] .fg-chev{transform:rotate(180deg);color:var(--acc)}
+.fg-ms-body{padding:0 20px 18px;font-size:15px;line-height:1.6;color:#ddd6e6}
+.fg-ms-body p{white-space:pre-wrap;margin:0 0 12px}
+.fg-vid{position:relative;display:block;width:100%;max-width:520px;aspect-ratio:16/9;border:0;border-radius:10px;overflow:hidden;background:#000;padding:0;cursor:pointer}
+#ug-content .fg-vid img{width:100%;height:100%;object-fit:cover;margin:0;opacity:.85;transition:opacity .15s}
+.fg-vid:hover img{opacity:1}
+.fg-play{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:rgba(0,0,0,.7);display:grid;place-items:center}
+.fg-play svg{width:22px;height:22px;color:#fff;margin-left:3px}
+.fg-vid:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+iframe.fg-vid{cursor:auto}
 
-.fq-faq details{border:2px solid rgba(255,122,122,.35);border-radius:8px;margin:0 0 10px;background:rgba(0,0,0,.3)}
-.fq-faq summary{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;list-style:none;font-family:'Audiowide',sans-serif;font-size:15px;line-height:1.4;color:#fff}
-.fq-faq summary::-webkit-details-marker{display:none}
-.fq-faq summary::before{content:"?";flex:none;width:24px;height:24px;border-radius:4px;background:#ff7a7a;color:#0d0d0d;font-family:'Press Start 2P',monospace;font-size:10px;line-height:24px;text-align:center}
-.fq-faq details[open] summary::before{content:"!"}
-.fq-faq summary:focus-visible{outline:2px solid #ff7a7a;outline-offset:2px}
-.fq-faq details p{margin:0;padding:0 16px 14px 52px;font-size:15px;color:var(--dim)}
-.fq-disclose{font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.5);text-align:center;margin:0}
-.fq-reset{display:block;margin:-14px auto 26px;background:none;border:0;color:rgba(255,255,255,.5);font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
-.fq-reset:hover{color:#ffa45b}
-.fq-reset:focus-visible{outline:2px solid #ffa45b;outline-offset:4px}
+.fg-faq{border-top:1px solid var(--line)}
+.fg-faq details{border-bottom:1px solid var(--line)}
+.fg-faq summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;cursor:pointer;list-style:none;font-size:16px;color:#fff}
+.fg-faq summary::-webkit-details-marker{display:none}
+.fg-faq summary:focus-visible{outline:2px solid var(--acc);outline-offset:4px}
+.fg-faq details[open] .fg-chev{transform:rotate(180deg);color:var(--acc)}
+.fg-faq details p{padding:0 36px 18px 0;color:var(--mute);font-size:15px}
+
 @media(max-width:720px){
-  .fq-board{grid-template-columns:1fr;gap:12px}
-  .fq-tile-band{margin:14px 0;padding:10px 8px}
-  .fq-tile .fq-glow{font-size:16px}
-  .fq-head{padding:12px 0}
-  .fq-head-band{padding:12px 14px;flex-wrap:wrap}
-  .fq-head h2{font-size:14px;text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 3px var(--c)}
-  .fq-tile .fq-glow{text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 6px var(--c)}
-  .fq-body{padding:16px 14px 18px}
-  .fq-items{grid-template-columns:1fr}
-  .fq-ms summary,.fq-ms-row{flex-wrap:wrap}
-  .fq-ms-t{flex-basis:calc(100% - 30px)}
-  .fq-ms-pts,.fq-ms-more{margin-left:24px}
-  .fq-ms-body{padding-left:16px}
-  .fq-game-head{flex-wrap:wrap}
-  .fq-faq details p{padding-left:16px}
+  .fg{padding:18px 16px;border-radius:14px}
+  .fg-track{grid-template-columns:1fr}
+  .fg-track li+li{border-left:0;border-top:1px solid var(--line)}
+  .fg-track a{padding:14px 16px}
+  .fg-intro{padding:18px;margin-bottom:36px}
+  .fg-step{grid-template-columns:1fr;gap:20px;padding-bottom:36px;margin-bottom:36px}
+  .fg-side{display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 14px;align-items:center}
+  .fg-side .fg-num{margin:0;grid-row:span 2}
+  .fg-side p{margin:0}
+  .fg-rules{grid-template-columns:1fr}
+  .fg-rules > div+div{border-left:0;border-top:1px solid var(--line)}
+  .fg-game-top{padding:16px}
+  .fg-ms summary,.fg-ms-row{padding:14px 16px;gap:12px}
+  .fg-game-note,.fg-ms-body{padding-left:16px;padding-right:16px}
 }
-@media(prefers-reduced-motion:reduce){.fq-tile,.fq-btn{transition:none}.fq-tile:hover,.fq-tile:focus-visible{transform:none}}
+@media(prefers-reduced-motion:reduce){.fg-chev,.fg-track a,.fg-store{transition:none}}
 </style>
 
-<div class="fq" id="fetchGuide">
-  <nav class="fq-board" aria-label="Quests">
-    <a class="fq-tile scan" href="#scan" data-tile="scan"><div class="fq-tile-band"><span class="fq-tile-n">QUEST 1</span><span class="fq-glow">SCAN</span><span class="fq-tile-done">COMPLETE</span></div></a>
-    <a class="fq-tile play" href="#games" data-tile="play"><div class="fq-tile-band"><span class="fq-tile-n">QUEST 2</span><span class="fq-glow">PLAY</span><span class="fq-tile-done">COMPLETE</span></div></a>
-    <a class="fq-tile redeem" href="#redeem" data-tile="redeem"><div class="fq-tile-band"><span class="fq-tile-n">QUEST 3</span><span class="fq-glow">REDEEM</span><span class="fq-tile-done">COMPLETE</span></div></a>
-  </nav>
-  <button class="fq-reset" type="button" id="fqReset" hidden>Reset my progress</button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="fgChev" viewBox="0 0 20 20"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="fgYes" viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="fgNo" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="fgInfo" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="fgPlay" viewBox="0 0 20 20"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></symbol>
+</svg>
 
-  <section class="fq-quest kit" id="start" aria-labelledby="fqKit">
-    <div class="fq-head"><div class="fq-head-band"><h2 id="fqKit" class="fq-glow"><span class="fq-head-n">TUTORIAL</span>STARTER KIT</h2></div></div>
-    <div class="fq-body">
-      <p class="fq-brief">Fetch is a free rewards app. You collect points and swap them for gift cards, delivered as digital codes.</p>
-      <div class="fq-warn"><span class="fq-warn-i" aria-hidden="true">!</span><p><b>Under 18?</b> Ask a parent or guardian first. Fetch has its own rules about who can make an account, so check them in the app, and have an adult help with sign-up and anything involving receipts or email.</p></div>
-      <p class="fq-tip" style="--c:#7fd8ff">Only get Fetch from the official app stores. Copies from anywhere else can steal your account.</p>
-      <div class="fq-btns">
-        <a class="fq-btn" href="https://apps.apple.com/us/app/fetch-americas-rewards-app/id1182474649" target="_blank" rel="noopener">APP STORE</a>
-        <a class="fq-btn" href="https://play.google.com/store/apps/details?id=com.fetchrewards.fetchrewards.hop" target="_blank" rel="noopener">GOOGLE PLAY</a>
-      </div>
-      <div class="fq-code" id="fqCode" hidden><span>Signing up? Enter our code in Fetch:</span><b id="fqCodeText"></b></div>
+<div class="fg" id="fetchGuide">
+  <ol class="fg-track" aria-label="Steps">
+    <li><a href="#scan"><span class="fg-num">1</span><span>Scan receipts</span></a></li>
+    <li><a href="#games"><span class="fg-num">2</span><span>Play featured games</span></a></li>
+    <li><a href="#redeem"><span class="fg-num">3</span><span>Redeem codes</span></a></li>
+  </ol>
+
+  <div class="fg-intro" id="start">
+    <div class="fg-intro-t">
+      <h3>Get the Fetch app</h3>
+      <p>Free on iPhone and Android. Only download it from the official stores.</p>
     </div>
-  </section>
-
-  <section class="fq-quest scan" id="scan" data-quest="scan" aria-labelledby="fqScan">
-    <div class="fq-head"><div class="fq-head-band"><h2 id="fqScan" class="fq-glow"><span class="fq-head-n">QUEST 1</span>SCAN RECEIPTS</h2><span class="fq-count" aria-live="polite"></span></div></div>
-    <div class="fq-body">
-      <p class="fq-brief">Almost any receipt earns points, from any store, even if you didn't buy a featured brand.</p>
-      <span class="fq-label">OBJECTIVES</span>
-      <ul class="fq-objs">
-        <li class="fq-obj"><label><input type="checkbox" data-obj="scan-1"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Open Fetch and tap the <b>scan button</b> at the bottom of the screen.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="scan-2"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Lay the receipt flat in good light with the <b>store name, date and total</b> all in the photo. Long receipts can be scanned in parts.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="scan-3"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Check the photo is sharp and <b>submit it</b>. Points usually land within a few minutes.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="scan-4"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Scan <b>soon after you shop</b>. Fetch only takes recent receipts, and the app shows the time limit.</span></label></li>
-      </ul>
-      <div class="fq-reward"><span class="fq-label">REWARD</span><span class="fq-chip">POINTS FOR EVERY RECEIPT</span></div>
-      <div class="fq-items">
-        <div class="fq-item ok"><span class="fq-label">DO</span><ul>
-          <li>Scan your own shopping, or your household's with permission.</li>
-          <li>Scan each receipt once, then bin it or keep it safe.</li>
-          <li>Watch the weekly receipt limit shown in the app.</li>
-        </ul></div>
-        <div class="fq-item no"><span class="fq-label">DON'T</span><ul>
-          <li>Scan receipts you found, were sent, or got from online groups.</li>
-          <li>Edit, crop out or fake anything on a receipt.</li>
-          <li>Scan a receipt twice or on two accounts. Fetch can take points back or ban you.</li>
-        </ul></div>
-      </div>
+    <div class="fg-stores">
+      <a class="fg-store" href="https://apps.apple.com/us/app/fetch-americas-rewards-app/id1182474649" target="_blank" rel="noopener">App Store</a>
+      <a class="fg-store" href="https://play.google.com/store/apps/details?id=com.fetchrewards.fetchrewards.hop" target="_blank" rel="noopener">Google Play</a>
     </div>
-  </section>
+    <div class="fg-code" id="fgCode" hidden><span>Signing up? Enter our code:</span><b id="fgCodeText"></b></div>
+  </div>
 
-  <section class="fq-quest play" id="games" data-quest="play" aria-labelledby="fqPlay">
-    <div class="fq-head"><div class="fq-head-band"><h2 id="fqPlay" class="fq-glow"><span class="fq-head-n">QUEST 2</span>PLAY FEATURED GAMES</h2><span class="fq-count" aria-live="polite"></span></div></div>
-    <div class="fq-body">
-      <p class="fq-brief">Fetch Play pays points for hitting milestones in games, like reaching a level. These are usually worth far more than a receipt.</p>
-      <span class="fq-label">OBJECTIVES</span>
-      <ul class="fq-objs">
-        <li class="fq-obj"><label><input type="checkbox" data-obj="play-1"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Open the <b>Play</b> tab in Fetch and pick a game.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="play-2"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Install it <b>from the link inside Fetch</b>. Any other way and your progress may not count.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="play-3"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Open the game once from Fetch, then play. <b>Each milestone has a time limit</b>, shown in the app.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="play-4"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Points arrive automatically. <b>Keep the game installed</b> until they do.</span></label></li>
-      </ul>
-      <div class="fq-reward"><span class="fq-label">REWARD</span><span class="fq-chip">BIG POINT DROPS</span></div>
-      <p class="fq-tip">You never have to spend money to reach a milestone. Points below are what we saw. Your app can show different games and amounts, and it always has the final say.</p>
-      <div class="fq-side">
-        <span class="fq-label">SIDE QUESTS: FEATURED GAMES</span>
-        <div id="fqGames" aria-live="polite"><p class="fq-wait">Loading the featured games...</p></div>
+  <section class="fg-step" id="scan" aria-labelledby="fgScan">
+    <div class="fg-side"><span class="fg-num" aria-hidden="true">1</span><h2 id="fgScan">Scan receipts</h2><p>Almost any receipt earns points, from any store.</p></div>
+    <div>
+      <ol class="fg-list">
+        <li><span>Open Fetch and tap the <b>scan button</b> at the bottom of the screen.</span></li>
+        <li><span>Lay the receipt flat in good light, with the <b>store name, date and total</b> all in the photo. Long receipts can be scanned in parts.</span></li>
+        <li><span>Check the photo is sharp, then <b>submit</b>. Points usually arrive within a few minutes.</span></li>
+        <li><span>Scan <b>soon after you shop</b>. Fetch only accepts recent receipts, and the app shows the time limit.</span></li>
+      </ol>
+      <div class="fg-rules">
+        <div class="fg-yes">
+          <h3>Do</h3>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#fgYes"/></svg><span>Scan your own shopping, or your household's with permission.</span></li>
+            <li><svg aria-hidden="true"><use href="#fgYes"/></svg><span>Scan each receipt once.</span></li>
+            <li><svg aria-hidden="true"><use href="#fgYes"/></svg><span>Stay within the weekly limit shown in the app.</span></li>
+          </ul>
+        </div>
+        <div class="fg-no">
+          <h3>Don't</h3>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#fgNo"/></svg><span>Scan receipts you found, were sent, or got online.</span></li>
+            <li><svg aria-hidden="true"><use href="#fgNo"/></svg><span>Edit or fake anything on a receipt.</span></li>
+            <li><svg aria-hidden="true"><use href="#fgNo"/></svg><span>Scan a receipt twice or on two accounts. Fetch can take points back or ban you.</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="fq-quest redeem" id="redeem" data-quest="redeem" aria-labelledby="fqRedeem">
-    <div class="fq-head"><div class="fq-head-band"><h2 id="fqRedeem" class="fq-glow"><span class="fq-head-n">QUEST 3</span>REDEEM YOUR CODES</h2><span class="fq-count" aria-live="polite"></span></div></div>
-    <div class="fq-body">
-      <p class="fq-brief">Got enough points? Swap them for a gift card. It arrives as a digital code.</p>
-      <span class="fq-label">OBJECTIVES</span>
-      <ul class="fq-objs">
-        <li class="fq-obj"><label><input type="checkbox" data-obj="redeem-1"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Open the <b>Rewards</b> tab in Fetch and pick a gift card, like Roblox.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="redeem-2"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Choose an amount and <b>confirm</b>. Fetch shows the points cost before you agree.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="redeem-3"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Your <b>code appears in Fetch</b>, usually within a few minutes, and stays saved there.</span></label></li>
-        <li class="fq-obj"><label><input type="checkbox" data-obj="redeem-4"><span class="fq-box" aria-hidden="true"></span><span class="fq-obj-t">Redeem it on the official site. For Roblox, sign in and go to <a href="https://www.roblox.com/redeem" target="_blank" rel="noopener">roblox.com/redeem</a>.</span></label></li>
-      </ul>
-      <div class="fq-reward"><span class="fq-label">REWARD</span><span class="fq-chip">DIGITAL GIFT CARD CODE</span></div>
-      <div class="fq-warn"><span class="fq-warn-i" aria-hidden="true">!</span><p><b>Keep your code secret.</b> Anyone who sees it can use it. No real staff member, YouTuber or Discord mod will ever ask for it, and "free Robux" sites are scams.</p></div>
+  <section class="fg-step" id="games" aria-labelledby="fgPlayH">
+    <div class="fg-side"><span class="fg-num" aria-hidden="true">2</span><h2 id="fgPlayH">Play featured games</h2><p>Reach milestones in games for bigger point drops.</p></div>
+    <div>
+      <ol class="fg-list">
+        <li><span>Open the <b>Play</b> tab in Fetch and pick a game.</span></li>
+        <li><span>Install it <b>from the link inside Fetch</b>, or your progress may not count.</span></li>
+        <li><span>Open it once from Fetch, then play. Each milestone has a <b>time limit</b> shown in the app.</span></li>
+        <li><span>Points arrive automatically. <b>Keep the game installed</b> until they do.</span></li>
+      </ol>
+      <div class="fg-note"><svg aria-hidden="true"><use href="#fgInfo"/></svg><p>You never need to spend money to reach a milestone. Games and points can differ in your app, and the app always has the final say.</p></div>
+      <div class="fg-sub"><h3>Featured games</h3><small id="fgCount"></small></div>
+      <div id="fgGames" aria-live="polite"><p class="fg-wait">Loading featured games...</p></div>
     </div>
   </section>
 
-  <section class="fq-quest help fq-faq" id="help" aria-labelledby="fqHelp">
-    <div class="fq-head"><div class="fq-head-band"><h2 id="fqHelp" class="fq-glow"><span class="fq-head-n">STUCK?</span>HELP DESK</h2></div></div>
-    <div class="fq-body">
-      <details><summary>My receipt was rejected</summary><p>Retake the photo in better light with the store name, date and total visible. If the receipt is older than the app allows, or was already scanned, it can't be accepted.</p></details>
-      <details><summary>I hit a game milestone but got no points</summary><p>Points can take a while. Close and reopen Fetch, keep the game installed, and wait at least a day. If they still haven't arrived, contact Fetch support from the help section in the app.</p></details>
-      <details><summary>My code doesn't work</summary><p>Check you're on the official redeem page, signed in to the right account, and that you copied the code exactly. If it still fails, contact Fetch support from the app. They handle all reward codes.</p></details>
-      <details><summary>Can the FNTD User Guide fix my Fetch account?</summary><p>No. We can't see or change Fetch accounts, points or codes. Fetch support is the only place that can help.</p></details>
+  <section class="fg-step" id="redeem" aria-labelledby="fgRedeem">
+    <div class="fg-side"><span class="fg-num" aria-hidden="true">3</span><h2 id="fgRedeem">Redeem codes</h2><p>Swap points for a gift card, delivered as a digital code.</p></div>
+    <div>
+      <ol class="fg-list">
+        <li><span>Open the <b>Rewards</b> tab in Fetch and pick a gift card, like Roblox.</span></li>
+        <li><span>Choose an amount and confirm. Fetch shows the <b>points cost</b> before you agree.</span></li>
+        <li><span>Your <b>code appears in Fetch</b>, usually within a few minutes, and stays saved there.</span></li>
+        <li><span>Redeem it on the official site. For Roblox, sign in at <a href="https://www.roblox.com/redeem" target="_blank" rel="noopener">roblox.com/redeem</a>.</span></li>
+      </ol>
+      <div class="fg-note"><svg aria-hidden="true"><use href="#fgInfo"/></svg><p><b>Keep your code private.</b> Anyone who sees it can use it. Nobody legitimate will ask for it, and "free Robux" sites are scams.</p></div>
     </div>
   </section>
 
-  <p class="fq-disclose">FNTD User Guide is a Fetch partner, and we may be rewarded when you sign up or take part. Fetch isn't made by or connected to Five Nights TD or Roblox. All trademarks belong to their owners.</p>
+  <section class="fg-step" id="help" aria-labelledby="fgHelp">
+    <div class="fg-side"><span class="fg-num" aria-hidden="true">?</span><h2 id="fgHelp">Help</h2><p>Under 18? Ask a parent or guardian before signing up.</p></div>
+    <div class="fg-faq">
+      <details><summary>My receipt was rejected<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg></summary><p>Retake the photo in better light with the store name, date and total visible. Receipts older than the app allows, or already scanned, can't be accepted.</p></details>
+      <details><summary>I reached a milestone but got no points<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg></summary><p>Points can take a while. Reopen Fetch, keep the game installed and wait a day. If they still haven't arrived, contact Fetch support from the help section in the app.</p></details>
+      <details><summary>My code doesn't work<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg></summary><p>Make sure you're on the official redeem page, signed in to the right account, and copied the code exactly. If it still fails, contact Fetch support from the app.</p></details>
+      <details><summary>Can the FNTD User Guide fix my Fetch account?<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg></summary><p>No. We can't see or change Fetch accounts, points or codes. Only Fetch support can help.</p></details>
+    </div>
+  </section>
 </div>
 
 <script>
 (function () {
   var REFERRAL_CODE = '';
-  var KEY = 'fetchGuide:done';
-  var root = document.getElementById('fetchGuide');
-  var mount = document.getElementById('fqGames');
-  if (!root) return;
+  var mount = document.getElementById('fgGames');
+  if (!mount) return;
   if (REFERRAL_CODE) {
-    document.getElementById('fqCodeText').textContent = REFERRAL_CODE;
-    document.getElementById('fqCode').hidden = false;
+    document.getElementById('fgCodeText').textContent = REFERRAL_CODE;
+    document.getElementById('fgCode').hidden = false;
   }
+  var CHEV = '<svg class="fg-chev" aria-hidden="true"><use href="#fgChev"/></svg>';
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
-  function save(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} }
-  var done = load();
-  var boxes = root.querySelectorAll('[data-obj]');
-  function tally() {
-    var any = false;
-    [].forEach.call(root.querySelectorAll('[data-quest]'), function (q) {
-      var all = q.querySelectorAll('[data-obj]'), n = 0;
-      for (var i = 0; i < all.length; i++) if (all[i].checked) n++;
-      if (n) any = true;
-      var full = n === all.length;
-      q.classList.toggle('done', full);
-      q.querySelector('.fq-count').textContent = full ? 'COMPLETE' : n + '/' + all.length;
-      var tile = root.querySelector('[data-tile="' + q.getAttribute('data-quest') + '"]');
-      if (tile) tile.classList.toggle('done', full);
-    });
-    document.getElementById('fqReset').hidden = !any;
-  }
-  for (var i = 0; i < boxes.length; i++) boxes[i].checked = !!done[boxes[i].getAttribute('data-obj')];
-  root.addEventListener('change', function (e) {
-    var k = e.target.getAttribute && e.target.getAttribute('data-obj');
-    if (!k) return;
-    if (e.target.checked) done[k] = 1; else delete done[k];
-    save(done);
-    tally();
-  });
-  document.getElementById('fqReset').addEventListener('click', function () {
-    done = {};
-    save(done);
-    for (var i = 0; i < boxes.length; i++) boxes[i].checked = false;
-    tally();
-  });
-  tally();
-
   function youtube(u) {
     var m = /^https:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(u || '');
     return m ? m[1] : '';
   }
   function until(d) {
     var p = d.split('-');
-    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase();
+    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
   function video(m) {
     if (!m.video) return '';
     var id = youtube(m.video);
     if (!id) return '<p><a href="' + esc(m.video) + '" target="_blank" rel="noopener">Watch the video guide</a></p>';
-    return '<button class="fq-vid" type="button" data-yt="' + id + '" aria-label="Play the video guide for ' + esc(m.t) + '"><img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><span>PLAY VIDEO</span></button>';
+    return '<button class="fg-vid" type="button" data-yt="' + id + '" aria-label="Play the video guide for ' + esc(m.t) + '"><img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><span class="fg-play"><svg aria-hidden="true"><use href="#fgPlay"/></svg></span></button>';
   }
   function render(games) {
     var t = new Date();
     var today = t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
     games = games.filter(function (g) { return !g.ends || g.ends >= today; });
+    document.getElementById('fgCount').textContent = games.length ? games.length + ' right now' : '';
     if (!games.length) {
-      mount.innerHTML = '<p class="fq-empty">No featured games right now. New ones show up in the Play tab in Fetch, and we add them here when they do.</p>';
+      mount.innerHTML = '<p class="fg-empty">No featured games right now. Check the Play tab in Fetch, and we\'ll add new ones here.</p>';
       return;
     }
     mount.innerHTML = games.map(function (g) {
-      var ms = g.milestones.map(function (m) {
-        var head = '<span class="fq-gem" aria-hidden="true"></span><span class="fq-ms-t">' + esc(m.t) + (m.limit ? '<small>' + esc(m.limit) + '</small>' : '') + '</span>' +
-          (m.pts ? '<span class="fq-ms-pts">' + esc(m.pts) + '</span>' : '');
-        if (!m.guide && !m.video) return '<li><div class="fq-ms-row">' + head + '</div></li>';
-        return '<li><details><summary>' + head + '<span class="fq-ms-more">' + (m.video ? 'VIDEO + TIPS' : 'TIPS') + '</span></summary><div class="fq-ms-body">' +
-          (m.guide ? '<p>' + esc(m.guide) + '</p>' : '') + video(m) + '</div></details></li>';
-      }).join('');
       var n = g.milestones.length;
-      return '<article class="fq-game"><div class="fq-game-head">' +
-        (g.icon ? '<img src="' + esc(g.icon) + '" alt="" loading="lazy">' : '<span class="fq-game-ph" aria-hidden="true"></span>') +
-        '<div class="fq-game-who"><div class="fq-game-name">' + esc(g.name) + '</div><div class="fq-game-sub">' + n + ' milestone' + (n === 1 ? '' : 's') + '</div></div>' +
-        (g.ends ? '<span class="fq-ends">ENDS<br>' + until(g.ends) + '</span>' : '') + '</div>' +
-        (g.note ? '<p class="fq-game-note">' + esc(g.note) + '</p>' : '') +
-        (ms ? '<ol class="fq-ms">' + ms + '</ol>' : '') + '</article>';
+      var ms = g.milestones.map(function (m) {
+        var main = '<span class="fg-ms-t">' + esc(m.t) + (m.limit ? '<small>' + esc(m.limit) + '</small>' : '') + '</span><span class="fg-pts">' + esc(m.pts || '') + '</span>';
+        if (!m.guide && !m.video) return '<li><div class="fg-ms-row">' + main + '<span aria-hidden="true"></span></div></li>';
+        return '<li><details><summary>' + main + CHEV + '</summary><div class="fg-ms-body">' + (m.guide ? '<p>' + esc(m.guide) + '</p>' : '') + video(m) + '</div></details></li>';
+      }).join('');
+      return '<article class="fg-game"><div class="fg-game-top">' +
+        (g.icon ? '<img src="' + esc(g.icon) + '" alt="" loading="lazy">' : '<span class="fg-game-ph" aria-hidden="true"></span>') +
+        '<div><h3>' + esc(g.name) + '</h3><small>' + n + ' milestone' + (n === 1 ? '' : 's') + (g.ends ? ' &middot; until ' + until(g.ends) : '') + '</small></div></div>' +
+        (g.note ? '<p class="fg-game-note">' + esc(g.note) + '</p>' : '') +
+        (ms ? '<ol class="fg-ms">' + ms + '</ol>' : '') + '</article>';
     }).join('');
   }
   mount.addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('[data-yt]') : null;
     if (!b) return;
     var f = document.createElement('iframe');
-    f.className = 'fq-vid';
+    f.className = 'fg-vid';
     f.src = 'https://www.youtube-nocookie.com/embed/' + b.getAttribute('data-yt') + '?autoplay=1&rel=0';
     f.title = b.getAttribute('aria-label').replace('Play the ', '');
     f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
@@ -355,7 +298,7 @@ iframe.fq-vid{cursor:auto}
   fetch('/fetch-api/games').then(function (r) { return r.json(); }).then(function (j) {
     render((j && j.games) || []);
   }).catch(function () {
-    mount.innerHTML = '<p class="fq-empty">The featured games couldn\'t load. Refresh to try again, or check the Play tab in Fetch.</p>';
+    mount.innerHTML = '<p class="fg-empty">Featured games couldn\'t load. Refresh to try again.</p>';
   });
 })();
 </script>
