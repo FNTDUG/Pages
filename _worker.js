@@ -5334,7 +5334,8 @@ function fetchCleanGame(g) {
   const icon = fetchUrl(g.icon);
   const ends = String(g.ends || '').trim();
   const note = String(g.note || '').trim();
-  if (!name || name.length > 80 || icon === null || note.length > 400 || (ends && !/^\d{4}-\d{2}-\d{2}$/.test(ends))) return null;
+  const link = fetchUrl(g.link);
+  if (!name || name.length > 80 || icon === null || link === null || note.length > 400 || (ends && !/^\d{4}-\d{2}-\d{2}$/.test(ends))) return null;
   const raw = Array.isArray(g.milestones) ? g.milestones : [];
   if (raw.length > 30) return null;
   const milestones = [];
@@ -5348,13 +5349,13 @@ function fetchCleanGame(g) {
     if (!t || t.length > 120 || pts.length > 40 || limit.length > 60 || guide.length > 1500 || video === null) return null;
     milestones.push({ t, pts, limit, guide, video });
   }
-  return { name, data: { icon, ends, note, milestones } };
+  return { name, data: { icon, link, ends, note, milestones } };
 }
 
 function fetchRow(r) {
   let d = {};
   try { d = JSON.parse(r.data) || {}; } catch (e) {}
-  return { id: r.id, name: r.name, active: !!r.active, updated: r.updated, icon: d.icon || '', ends: d.ends || '', note: d.note || '', milestones: Array.isArray(d.milestones) ? d.milestones : [] };
+  return { id: r.id, name: r.name, active: !!r.active, updated: r.updated, icon: d.icon || '', link: d.link || '', ends: d.ends || '', note: d.note || '', milestones: Array.isArray(d.milestones) ? d.milestones : [] };
 }
 
 const FETCH_PLAY_PAGE = 'https://fetch.com/fetch-play';
@@ -5575,6 +5576,8 @@ input:focus,textarea:focus{border-color:#ffa45b}
         <label class="f" for="gIcon">Icon image link <small>optional, https only</small></label>
         <input type="url" id="gIcon" maxlength="500" placeholder="https://...">
         <img class="icon-prev" id="gIconPrev" alt="" hidden>
+        <label class="f" for="gLink">Game link <small>optional, https only, shown as a button in the guide</small></label>
+        <input type="url" id="gLink" maxlength="500" placeholder="https://...">
         <label class="f" for="gEnds">Featured until <small>optional</small></label>
         <input type="date" id="gEnds">
         <label class="f" for="gNote">Note <small>optional, shown under the name</small></label>
@@ -5703,6 +5706,7 @@ input:focus,textarea:focus{border-color:#ffa45b}
     $('editKicker').textContent = g ? 'EDIT GAME' : 'ADD A GAME';
     $('gName').value = g ? g.name : '';
     $('gIcon').value = g ? g.icon : '';
+    $('gLink').value = g ? g.link : '';
     $('gEnds').value = g ? g.ends : '';
     $('gNote').value = g ? g.note : '';
     $('msList').innerHTML = '';
@@ -5723,6 +5727,7 @@ input:focus,textarea:focus{border-color:#ffa45b}
     return {
       name: $('gName').value.trim(),
       icon: $('gIcon').value.trim(),
+      link: $('gLink').value.trim(),
       ends: $('gEnds').value,
       note: $('gNote').value.trim(),
       milestones: [].map.call($('msList').querySelectorAll('.ms'), function (d) {
