@@ -309,6 +309,7 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 .ug-xd-btn::after{content:'';position:absolute;inset:-8px}
 .ug-xd-btn:hover{background:rgba(255,164,91,.15);color:#ffa45b}
 .ug-rail-in .ug-xd{margin:0 0 10px}
+#ug-info-panel .ug-xd{margin:0 0 4px}
 .ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
 @media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
