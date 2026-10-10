@@ -6,11 +6,50 @@
   h.setAttribute('data-theme', t);
   var font = document.createElement('link');
   font.rel = 'stylesheet';
-  font.href = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap';
+  font.href = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
   document.head.appendChild(font);
+  var homeCss = document.createElement('link');
+  homeCss.rel = 'stylesheet';
+  homeCss.href = '/overhaul/parvus-home.css';
+  document.head.appendChild(homeCss);
+
+  function pad(n) { return ('0' + n).slice(-2); }
+  function terminal() {
+    var hero = document.getElementById('ug-hero-inner');
+    if (!hero || document.querySelector('.ov-term')) return;
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var term = document.createElement('div');
+    term.className = 'ov-term';
+    term.innerHTML = '<div class="ov-term-bar"><span class="ov-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="ov-path">~' + path.replace(/[<>&]/g, '') + '</span><span class="ov-state"><i></i><span class="ov-state-text">booting</span></span><span class="ov-clock" aria-hidden="true"></span></div><div class="ov-term-screen" data-parvus-home></div>';
+    hero.insertBefore(term, hero.firstChild);
+    var stateEl = term.querySelector('.ov-state-text'), clock = term.querySelector('.ov-clock');
+    setInterval(function () {
+      var p = window.mascotPeek ? window.mascotPeek() : null;
+      if (p) stateEl.textContent = p.thinking ? 'thinking' : p.mood ? p.mood : p.state;
+      var d = new Date();
+      clock.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    }, 500);
+    var js = document.createElement('script');
+    js.src = '/overhaul/parvus-home.js';
+    document.body.appendChild(js);
+  }
+  function outline() {
+    Array.prototype.forEach.call(document.querySelectorAll('.ug-page-title'), function (t) {
+      if (t.querySelector('.ov-t')) return;
+      var text = t.textContent.trim();
+      var sp = document.createElement('span');
+      sp.className = 'ov-t';
+      sp.setAttribute('data-t', text);
+      sp.textContent = text;
+      t.textContent = '';
+      t.appendChild(sp);
+    });
+  }
 
   function ready() {
     if (document.getElementById('pv-theme')) return;
+    outline();
+    terminal();
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';
