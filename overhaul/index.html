@@ -187,14 +187,14 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
 .talk-veil{position:absolute;inset:0;background:var(--overlay)}
-.talk-box{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);width:min(920px,100%);height:min(560px,calc(100vh - 48px));background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:12px 12px 0 var(--ink)}
+.talk-box{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);width:min(1000px,100%);height:min(580px,calc(100vh - 48px));background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:12px 12px 0 var(--ink)}
 .talk-side{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px;background:var(--surface2);border-right:var(--bw) solid var(--ink)}
-.pt-view{position:relative;width:320px;height:320px;overflow:hidden;background:var(--stage);border:var(--bw) solid var(--ink);flex:none}
+.pt-view{position:relative;width:400px;height:340px;overflow:hidden;background:var(--stage);border:var(--bw) solid var(--ink);flex:none}
 .pt-view .stage-grid{background-size:48px 48px}
 .pt-zoom{position:absolute;inset:0;transform-origin:50% 40%}
 .pt-scene{position:absolute;left:0;top:0;width:366px;height:390px;transform-origin:0 0}
 .pt-name{font:400 16px/1 var(--font-head);text-transform:uppercase;letter-spacing:.04em}
-.pt-note{max-width:320px;font-size:14px;line-height:1.5;color:var(--mute);text-align:center}
+.pt-note{max-width:400px;font-size:14px;line-height:1.5;color:var(--mute);text-align:center}
 .talk-main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .talk-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 14px 22px;background:var(--acc);color:var(--acc-ink);border-bottom:var(--bw) solid var(--ink)}
 .talk-head h2{font:400 18px/1.2 var(--font-head);text-transform:uppercase}
@@ -204,7 +204,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .talk-log{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 22px 18px}
 .msg{max-width:88%;padding:12px 16px;font-size:15px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
 .msg-pv{align-self:flex-start;margin:3px;background:#151b2c;color:#e6edf3;border:3px solid #070b14;box-shadow:0 0 0 3px #fafafa;font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.msg-me{align-self:flex-end;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:500}
+.msg-me{align-self:flex-end;background:var(--bg);color:var(--text);border:2px solid var(--ink)}
 .msg-dots{display:inline-flex;gap:6px;padding:6px 0}
 .msg-dots i{width:8px;height:8px;background:#e6edf3;animation:pvDot 1s steps(2,jump-none) infinite}
 .msg-dots i:nth-child(2){animation-delay:.2s}
@@ -220,8 +220,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .talk{padding:0;align-items:stretch}
   .talk-box{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);width:100%;height:100%;border:0;box-shadow:none}
   .talk-side{flex-direction:row;align-items:center;gap:14px;padding:12px 64px 12px 12px;border-right:0;border-bottom:var(--bw) solid var(--ink)}
-  .pt-view{width:120px;height:120px}
-  .pt-view .stage-grid{background-size:24px 24px}
+  .pt-view{width:134px;height:114px}
+  .pt-view .stage-grid{background-size:16px 16px}
   .pt-side-text{display:flex;flex-direction:column;gap:6px;min-width:0}
   .pt-note{text-align:left;font-size:13px}
   .talk-head{position:absolute;top:12px;right:12px;padding:0;background:none;border:0}
@@ -750,7 +750,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
   var CW = 210, CH = 222;
-  var EYE = { blinkC: 6, blinkR: 7, blinkL: 8, pleased: 19 };
+  var EYE = { base: 0, blinkC: 6, blinkR: 7, blinkL: 8, pleased: 19 };
   var LOOK = [12, 14, 13, 15, 17, 16, 11, 18, 10];
   var BODY = { idle: 0 };
   var HELLO = "Hi! I'm Parvus, click me if you need assistance";
@@ -981,39 +981,29 @@ html.talk-on,html.talk-on body{overflow:hidden}
   var ptScene = document.getElementById('ptScene');
   var ptGrid = document.getElementById('ptGrid');
   var ptEyes = document.getElementById('ptEyes');
-  var talkTl = null, talkOpen = false, busy = false, ptBlink = 0, ptState = 'look', greeted = false;
+  var talkTl = null, talkOpen = false, busy = false, ptBlink = 0, greeted = false;
   var THINKING = "I can't answer questions just yet. My brain is still being built, but soon I'll be able to help you find guides, tier lists and patch notes.";
 
   window.parvusAsk = window.parvusAsk || function () {
     return new Promise(function (resolve) { setTimeout(function () { resolve(THINKING); }, 900); });
   };
 
-  function ptLook() {
-    var narrow = window.innerWidth <= 760;
-    return narrow ? eyeCol(0, 1) : eyeCol(1, 0);
-  }
   function ptDraw(col) { cell(ptEyes, col, 1); }
-  function ptSet(state) {
-    ptState = state;
-    ptDraw(state === 'happy' ? EYE.pleased : state === 'think' ? 13 : ptLook());
-  }
   function ptBlinkLoop() {
     clearTimeout(ptBlink);
     if (!talkOpen) return;
     ptBlink = setTimeout(function () {
-      if (ptState === 'look') {
-        ptDraw(blinkCol(window.innerWidth <= 760 ? 0 : 1));
-        setTimeout(function () { if (ptState === 'look') ptDraw(ptLook()); }, 130);
-      }
+      ptDraw(EYE.blinkC);
+      setTimeout(function () { ptDraw(EYE.base); }, 130);
       ptBlinkLoop();
     }, 3000 + Math.random() * 4000);
   }
 
   function ptFit() {
-    var v = ptView.clientWidth, S = v >= 300 ? 2 : 1, span = v / S;
+    var vw = ptView.clientWidth, vh = ptView.clientHeight, S = vw >= 300 ? 2 : 2 / 3;
     var r = ptView.getBoundingClientRect();
     var fx = (r.left + ptView.clientLeft) % 1, fy = (r.top + ptView.clientTop) % 1;
-    var left = -(189 - span / 2) * S - fx, top = -(184 - span / 2) * S - fy;
+    var left = Math.round(-(189 * S - vw / 2)) - fx, top = Math.round(-(183 * S - vh / 2)) - fy;
     ptScene.style.left = left + 'px';
     ptScene.style.top = top + 'px';
     ptScene.style.transform = S === 1 ? 'none' : 'scale(' + S + ')';
@@ -1060,7 +1050,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     talk.hidden = false;
     html.classList.add('talk-on');
     ptFit();
-    ptSet('happy');
+    ptDraw(EYE.base);
     var r = pv.getBoundingClientRect(), b = talkBox.getBoundingClientRect();
     var ox = Math.round(r.left + r.width / 2 - b.left), oy = Math.round(r.top + r.height * 0.3 - b.top);
     if (talkTl) talkTl.kill();
@@ -1085,8 +1075,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
     else document.getElementById('pvTalkX').focus();
     if (!greeted) {
       greeted = true;
-      pvLine('Hi! What can I help you with?').then(function () { ptSet('look'); });
-    } else ptSet('look');
+      pvLine('Hi! What can I help you with?');
+    }
   }
   function closeTalk() {
     if (!talkOpen || !talkTl) return;
@@ -1119,12 +1109,10 @@ html.talk-on,html.talk-on body{overflow:hidden}
     busy = true;
     talkInput.value = '';
     addMsg('me', q);
-    ptSet('think');
     var wait = thinking();
     var done = function (text) {
       wait.remove();
-      ptSet('happy');
-      return pvLine(text).then(function () { ptSet('look'); busy = false; });
+      return pvLine(text).then(function () { busy = false; });
     };
     Promise.resolve().then(function () { return window.parvusAsk(q); }).then(function (answer) {
       return done(String(answer || '...'));
