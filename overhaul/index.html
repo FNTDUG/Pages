@@ -281,6 +281,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .lede{font-size:17px}
   .cta .btn{flex:1 1 auto}
   .games{grid-template-columns:minmax(0,1fr)}
+  .games.is-loop{display:flex;gap:16px;margin:0 -16px;padding:4px 16px 20px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .games.is-loop::-webkit-scrollbar{display:none}
+  .games.is-loop .game{flex:0 0 min(280px,calc(100vw - 96px))}
   .band{margin:0 -16px}
   .band-item{font-size:18px;padding:14px 12px;gap:24px}
   .sec{padding:56px 0}
@@ -412,7 +415,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
               <div class="game-top"><img src="/game-thumb/5479908441" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD1</span></div></div>
               <div class="game-body">
                 <p>Explore all the data we've collected over FNTD1's life span.</p>
-                <dl class="game-stats"><div><dt>Players</dt><dd id="fntdPlayers">--</dd></div><div><dt>Visits</dt><dd id="fntdVisits">--</dd></div></dl>
+                <dl class="game-stats"><div><dt>Players</dt><dd data-stat="fntdPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="fntdVisits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
@@ -420,7 +423,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
               <div class="game-top"><img src="/game-thumb/7934320560" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&amp;crop=1.0048%3A1&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD2</span></div></div>
               <div class="game-body">
                 <p>Need help? Find the best guides, tips, and tricks for FNTD2.</p>
-                <dl class="game-stats"><div><dt>Players</dt><dd id="fntd2Players">--</dd></div><div><dt>Visits</dt><dd id="fntd2Visits">--</dd></div></dl>
+                <dl class="game-stats"><div><dt>Players</dt><dd data-stat="fntd2Players">--</dd></div><div><dt>Visits</dt><dd data-stat="fntd2Visits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
@@ -428,7 +431,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
               <div class="game-top"><img src="/game-thumb/8202280624" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-4-edited-high.png?enable-io=true&amp;crop=1%3A1&amp;width=1920'"><div class="gc-shade"></div><div class="gc-title gc-title--sm"><span>Bite By Night</span></div></div>
               <div class="game-body">
                 <p>An effective wiki for BBN, with info for Killers, Survivors, and TierLists.</p>
-                <dl class="game-stats"><div><dt>Players</dt><dd id="BBNPlayers">--</dd></div><div><dt>Visits</dt><dd id="BBNVisits">--</dd></div></dl>
+                <dl class="game-stats"><div><dt>Players</dt><dd data-stat="BBNPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="BBNVisits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
@@ -436,7 +439,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
               <div class="game-top"><img src="/game-thumb/7344880866" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://images.fntduserguide.com/gw-A-512.png'"><div class="gc-shade"></div><div class="gc-title gc-title--sm"><span>Grimworks</span></div></div>
               <div class="game-body">
                 <p>Stay tuned for what's to come.</p>
-                <dl class="game-stats"><div><dt>Players</dt><dd id="GWPlayers">--</dd></div><div><dt>Visits</dt><dd id="GWVisits">--</dd></div></dl>
+                <dl class="game-stats"><div><dt>Players</dt><dd data-stat="GWPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="GWVisits">--</dd></div></dl>
                 <span class="go">Play on Roblox <span class="arrow" aria-hidden="true">&nearr;</span></span>
               </div>
             </a>
@@ -478,15 +481,16 @@ html.talk-on,html.talk-on body{overflow:hidden}
 
   (function(){
     var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624,7344880866";
+    function put(k,n){var els=document.querySelectorAll('[data-stat="'+k+'"]');for(var i=0;i<els.length;i++)els[i].textContent=fmt(n||0)}
     function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1).replace('.0','')+'b';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'m';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'k';return n.toString()}
     function fetchStats(){
       fetch(workerURL).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(json){
         if(!json.data)return;
         json.data.forEach(function(g){
-          if(g.id===5479908441){var p=document.getElementById('fntdPlayers'),v=document.getElementById('fntdVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
-          if(g.id===7934320560){var p=document.getElementById('fntd2Players'),v=document.getElementById('fntd2Visits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
-          if(g.id===8202280624){var p=document.getElementById('BBNPlayers'),v=document.getElementById('BBNVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
-          if(g.id===7344880866){var p=document.getElementById('GWPlayers'),v=document.getElementById('GWVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
+          if(g.id===5479908441){put('fntdPlayers',g.playing);put('fntdVisits',g.visits)}
+          if(g.id===7934320560){put('fntd2Players',g.playing);put('fntd2Visits',g.visits)}
+          if(g.id===8202280624){put('BBNPlayers',g.playing);put('BBNVisits',g.visits)}
+          if(g.id===7344880866){put('GWPlayers',g.playing);put('GWVisits',g.visits)}
         });
       }).catch(function(){});
     }
@@ -1331,6 +1335,94 @@ html.talk-on,html.talk-on body{overflow:hidden}
     bg.style.height = Math.round(cap + pad * 2) + 'px';
   }
 
+  function loopGames() {
+    var box = document.querySelector('.games');
+    if (!box) return;
+    var mq = window.matchMedia('(max-width: 600px)');
+    var originals = Array.prototype.slice.call(box.children);
+    var COPIES = 2, SPEED = 22;
+    var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, settleT = 0, io = null;
+    function copy(el) {
+      var c = el.cloneNode(true);
+      c.removeAttribute('style');
+      c.classList.remove('reveal');
+      c.classList.add('is-clone');
+      c.setAttribute('aria-hidden', 'true');
+      if (c.tagName === 'A') c.tabIndex = -1;
+      return c;
+    }
+    function base() { return originals[0].offsetLeft - box.offsetLeft - parseFloat(getComputedStyle(box).paddingLeft); }
+    function setW() {
+      var after = originals[originals.length - 1].nextElementSibling;
+      return after ? after.offsetLeft - originals[0].offsetLeft : 0;
+    }
+    function wrap(x) {
+      var b = base(), w = setW();
+      if (!w) return x;
+      while (x < b - w / 2) x += w;
+      while (x > b + w / 2) x -= w;
+      return x;
+    }
+    function stopAuto() {
+      if (!auto) return;
+      auto = false;
+      cancelAnimationFrame(raf);
+    }
+    function tick(t) {
+      if (!on || !auto) return;
+      if (seen && !document.hidden) {
+        var dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+        pos = wrap(pos + SPEED * dt);
+        box.scrollLeft = Math.round(pos);
+      }
+      last = t;
+      raf = requestAnimationFrame(tick);
+    }
+    function onScroll() {
+      if (auto) return;
+      clearTimeout(settleT);
+      settleT = setTimeout(function () {
+        var x = box.scrollLeft, y = wrap(x);
+        if (Math.round(y) !== Math.round(x)) box.scrollLeft = Math.round(y);
+      }, 140);
+    }
+    function build() {
+      if (on) return;
+      on = true;
+      box.classList.add('is-loop');
+      originals.forEach(function (el) {
+        if (el.classList.contains('reveal')) { el.classList.remove('reveal'); box.classList.add('reveal'); }
+      });
+      for (var k = 0; k < COPIES; k++) {
+        originals.slice().reverse().forEach(function (el) { box.insertBefore(copy(el), box.firstChild); });
+        originals.forEach(function (el) { box.appendChild(copy(el)); });
+      }
+      pos = base();
+      box.scrollLeft = Math.round(pos);
+      if (auto) { last = 0; raf = requestAnimationFrame(tick); }
+    }
+    function teardown() {
+      if (!on) return;
+      on = false;
+      cancelAnimationFrame(raf);
+      Array.prototype.slice.call(box.querySelectorAll('.is-clone')).forEach(function (c) { c.parentNode.removeChild(c); });
+      box.classList.remove('is-loop');
+      box.scrollLeft = 0;
+    }
+    ['pointerdown', 'touchstart', 'wheel', 'keydown', 'focusin'].forEach(function (t) {
+      box.addEventListener(t, stopAuto, { passive: true });
+    });
+    box.addEventListener('scroll', onScroll, { passive: true });
+    if (window.IntersectionObserver) {
+      io = new IntersectionObserver(function (es) { seen = es[0].isIntersecting; last = 0; }, { threshold: 0.2 });
+      io.observe(box);
+    } else seen = true;
+    function sync() { if (mq.matches) build(); else teardown(); }
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+    sync();
+  }
+
   var started = false;
   function safe(name, fn) {
     try { fn(); } catch (e) {
@@ -1349,6 +1441,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     safe('rest', rest);
     safe('intro', intro);
     safe('band', marquee);
+    safe('games', loopGames);
     safe('reveals', reveals);
     html.classList.remove('pre');
   }
