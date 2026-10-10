@@ -47,7 +47,7 @@ html.ov[data-theme="dark"]{
   --stage:#203660;--grid:rgba(255,255,255,.07);--overlay:rgba(0,0,0,.6);
   color-scheme:dark;
 }
-html.pre .hero-in,html.pre .pv-head{visibility:hidden}
+html.pre .hero-in{visibility:hidden}
 html,body{min-height:100vh;background:var(--bg)}
 body{color:var(--text);font:400 17px/1.6 var(--font-body);-webkit-font-smoothing:antialiased;transition:background-color .3s,color .3s}
 a{color:inherit}
@@ -59,10 +59,7 @@ img{display:block}
 #ug-main{min-height:100vh;display:flex;flex-direction:column}
 #ug-content{flex:1;width:100%}
 #ug-topnav{display:none}
-#ug-header{background:var(--surface);border-bottom:var(--bw) solid var(--ink);transition:background-color .3s}
-.pv-head{display:flex;align-items:center;height:76px;padding-right:170px}
-.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font:400 18px/1 var(--font-head);text-transform:uppercase}
-.logo img{width:49px;height:44px}
+#ug-header{display:none}
 
 html.ov #ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:1200;align-items:center;gap:8px;padding:0 12px;height:32px;color:var(--text)!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow-sm)!important;font:700 13px/1 var(--font-body)!important;letter-spacing:.08em;cursor:pointer;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transition:transform .12s,box-shadow .12s}
 html.ov #ug-hamburger .hmb-icon{font-size:17px;line-height:1}
@@ -112,13 +109,13 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .arrow{display:inline-block;transition:transform .15s}
 a:hover>.arrow,.game:hover .arrow,.tool:hover .arrow{transform:translateX(3px)}
 
-.hero{padding:64px 0 72px}
+.hero{padding:80px 0 72px}
 .hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
-.kicker{display:inline-flex;align-items:center;gap:10px;padding:9px 12px;font:400 10px/1.2 var(--font-tag);letter-spacing:.04em;text-transform:uppercase;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
+.kicker{display:inline-flex;align-items:center;gap:10px;padding:9px 12px;font:400 10px/1.2 var(--font-tag);letter-spacing:.04em;text-transform:uppercase;background:var(--acc);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
 .kicker i{width:8px;height:8px;background:#1d2228}
 h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform:uppercase}
-.hl{position:relative;display:inline-block;isolation:isolate;padding:0 .1em;color:var(--acc-ink)}
-.hl-bg{position:absolute;left:0;right:0;top:.04em;bottom:-.04em;z-index:-1;background:var(--acc);border:var(--bw) solid var(--ink);transform-origin:0 50%}
+.hl{position:relative;display:inline-block;isolation:isolate;padding:0 .1em;color:#1d2228}
+.hl-bg{position:absolute;left:0;right:0;top:.04em;bottom:-.04em;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
 .lede{max-width:34em;font-size:19px;color:var(--mute)}
 .cta{display:flex;flex-wrap:wrap;gap:16px;margin-top:34px}
 
@@ -157,9 +154,7 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 
 .sec{padding:76px 0}
 .sec-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;margin-bottom:36px}
-.eyebrow{display:block;margin-bottom:14px;font:400 10px/1.2 var(--font-tag);color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 h2{font:400 clamp(30px,4vw,48px)/1.05 var(--font-head);text-transform:uppercase}
-.sec-head p{max-width:30em;color:var(--mute)}
 
 .games{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .game{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:inherit;overflow:hidden;transition:transform .15s,box-shadow .15s}
@@ -207,10 +202,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
 }
 @media (max-width:600px){
   .wrap{padding:0 16px}
-  .pv-head{height:64px;padding-right:120px}
-  .logo{font-size:15px}
-  .logo img{width:39px;height:35px}
-  .hero{padding:20px 0 48px}
+  .hero{padding:60px 0 48px}
   .hero-in{gap:28px}
   .stage{order:-1;height:370px}
   .bubble{font-size:13px;padding:10px 14px}
@@ -251,9 +243,6 @@ a.game:hover .game-top img{transform:scale(1.05)}
 
   <div id="ug-main">
     <header id="ug-header">
-      <div class="wrap pv-head">
-        <a class="logo" href="/"><img src="parvus_fntdug.png" alt="" width="49" height="44">FNTD User Guide</a>
-      </div>
       <nav id="ug-topnav" role="navigation" aria-label="Site navigation">
         <div class="ug-tn-inner"></div>
       </nav>
@@ -263,7 +252,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
       <div class="wrap hero-in">
         <div class="hero-copy">
           <span class="kicker"><i></i>Community guide hub</span>
-          <h1 id="heroTitle">Every guide, <span class="hl"><span class="hl-bg" aria-hidden="true"></span>one hub.</span></h1>
+          <h1 id="heroTitle">Many guides, <span class="hl"><span class="hl-bg" aria-hidden="true"></span>one hub.</span></h1>
           <p class="lede">Guides, tools and patch notes for the games we cover, made and kept up to date by the community. Pick a game to get started.</p>
           <div class="cta">
             <a class="btn btn-primary" href="#games">Pick a game <span class="arrow" aria-hidden="true">&darr;</span></a>
@@ -311,8 +300,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
       <section class="sec" id="games">
         <div class="wrap">
           <div class="sec-head reveal">
-            <div><span class="eyebrow">01 &middot; Games</span><h2>Pick your game</h2></div>
-            <p>Each game has its own home with everything for it.</p>
+            <h2>Pick your game</h2>
           </div>
           <div class="games">
             <a class="game blk reveal" href="/fntd1">
@@ -354,7 +342,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
       <section class="sec" id="site">
         <div class="wrap">
           <div class="sec-head reveal">
-            <div><span class="eyebrow">02 &middot; Around the site</span><h2>More on the site</h2></div>
+            <h2>More on the site</h2>
           </div>
           <div class="tools">
             <a class="tool blk reveal" href="/patch-notes" style="--c:var(--yellow)"><span class="tool-ic"><i></i></span><h3>Patch notes</h3><p>Every update for every game, in one place.</p><span class="go">Read patch notes <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
@@ -763,11 +751,47 @@ a.game:hover .game-top img{transform:scale(1.05)}
     return at;
   }
 
+  var SND = { text: 'https://sounds.fntduserguide.com/textsound1.m4a', close: 'https://sounds.fntduserguide.com/window-move.m4a' };
+  var VOLUME = 0.65, clips = {};
+  [SND.text, SND.close].forEach(function (url) {
+    var a = new Audio();
+    a.preload = 'auto';
+    a.src = url;
+    clips[url] = a;
+  });
+  function prime(a) {
+    if (a.primed) return;
+    try {
+      a.live = false;
+      a.volume = 0;
+      var settle = function (ok) {
+        if (!a.live) { try { a.pause(); a.currentTime = 0; } catch (e) {} }
+        a.volume = VOLUME;
+        if (ok) a.primed = true;
+      };
+      var r = a.play();
+      if (r && r.then) r.then(function () { settle(true); }, function () { settle(false); });
+      else settle(true);
+    } catch (e) { a.volume = VOLUME; }
+  }
+  function unlock() { for (var url in clips) prime(clips[url]); }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) {
+    window.addEventListener(t, unlock, { capture: true, passive: true });
+  });
+  function play(url) {
+    var a = clips[url];
+    if (!a) return;
+    a.live = true;
+    a.volume = VOLUME;
+    try { a.currentTime = 0; var r = a.play(); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+  }
+
   var hushT = 0;
   function hideBubble(now) {
     clearTimeout(hushT);
     if (!bubble.classList.contains('on')) return;
     if (now || !window.pxInk) { bubble.classList.remove('on'); return; }
+    play(SND.close);
     window.pxInk.unsplash(bubble, function () { bubble.classList.remove('on'); });
   }
   function placeInk(gap) {
@@ -798,6 +822,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
     bubble.style.top = Math.max(spot.top, spot.top - spot.room) + 'px';
     window.pxInk.point(bubble, 'b', spot.at);
     window.pxInk.splash(bubble);
+    play(SND.text);
     hushT = setTimeout(function () { hideBubble(false); }, 3800);
   }
 
@@ -890,8 +915,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
     layered(false);
     gsap.set(pv, { x: 0, y: -480 });
     tl = gsap.timeline({ defaults: { ease: 'back.out(1.6)' } });
-    tl.from('.pv-head > *', { y: -16, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0)
-      .from('.kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.08)
+    tl.from('.kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.08)
       .from(split.chars, { yPercent: 115, duration: 0.5, stagger: 0.02 }, 0.14)
       .from('.hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.5)
       .from(['.lede', '.cta > *'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.42)
