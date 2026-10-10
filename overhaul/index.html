@@ -196,6 +196,18 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .go{display:inline-flex;gap:8px;margin-top:auto;padding-top:14px;font-weight:700}
 
 .tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.games{--row-item:calc((min(100vw,1180px) - 48px - 72px) / 4.3)}
+.tools{--row-item:calc((min(100vw,1180px) - 48px - 48px) / 3.3)}
+.rowloop{--row-pad:24px;display:flex;gap:24px;margin:-8px calc(var(--row-pad) * -1) 0;padding:8px var(--row-pad) 22px;overflow-x:auto;overscroll-behavior-x:contain;scroll-padding:0 var(--row-pad);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rowloop::-webkit-scrollbar{display:none}
+.rowloop>*{flex:0 0 var(--row-item)}
+.rowloop.is-snap{scroll-snap-type:x mandatory}
+.rowloop.is-snap>*{scroll-snap-align:start}
+@media (hover:hover) and (pointer:fine){
+  .rowloop{scrollbar-width:thin;scrollbar-color:var(--ink) transparent}
+  .rowloop::-webkit-scrollbar{display:block;height:8px}
+  .rowloop::-webkit-scrollbar-thumb{background:var(--ink)}
+}
 .tool{display:flex;flex-direction:column;gap:10px;padding:24px;min-width:0;text-align:left;font:inherit;color:inherit;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .tool:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-hover)}
 .tool h3{margin-top:10px;font:400 20px/1.15 var(--font-head);text-transform:uppercase}
@@ -253,12 +265,12 @@ html.talk-on,html.talk-on body{overflow:hidden}
 }
 @media (prefers-reduced-motion:reduce){.msg-dots i{animation:none;opacity:.7}}
 @media (max-width:1100px){
-  .games{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .games{grid-template-columns:repeat(2,minmax(0,1fr));--row-item:calc((100vw - 48px - 24px) / 2.3)}
 }
 @media (max-width:960px){
   .hero{padding:40px 0 56px}
   .hero-in{grid-template-columns:minmax(0,1fr);gap:44px}
-  .tools{grid-template-columns:minmax(0,1fr)}
+  .tools{grid-template-columns:minmax(0,1fr);--row-item:calc((100vw - 48px - 24px) / 2.3)}
 }
 @media (max-width:768px){
   html.ov #ug-hamburger{display:flex}
@@ -281,9 +293,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .lede{font-size:17px}
   .cta .btn{flex:1 1 auto}
   .games{grid-template-columns:minmax(0,1fr)}
-  .games.is-loop{display:flex;gap:16px;margin:0 -16px;padding:4px 16px 20px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .games.is-loop::-webkit-scrollbar{display:none}
-  .games.is-loop .game{flex:0 0 min(280px,calc(100vw - 96px))}
+  .rowloop{--row-pad:16px;gap:16px}
+  .games{--row-item:min(280px,calc(100vw - 96px))}
+  .tools{--row-item:min(300px,calc(100vw - 80px))}
   .band{margin:0 -16px}
   .band-item{font-size:18px;padding:14px 12px;gap:24px}
   .sec{padding:56px 0}
@@ -1335,91 +1347,79 @@ html.talk-on,html.talk-on body{overflow:hidden}
     bg.style.height = Math.round(cap + pad * 2) + 'px';
   }
 
-  function loopGames() {
-    var box = document.querySelector('.games');
+  function rowLoop(box) {
     if (!box) return;
-    var mq = window.matchMedia('(max-width: 600px)');
-    var originals = Array.prototype.slice.call(box.children);
-    var COPIES = 2, SPEED = 22;
-    var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, settleT = 0, io = null;
-    function copy(el) {
-      var c = el.cloneNode(true);
-      c.removeAttribute('style');
-      c.classList.remove('reveal');
-      c.classList.add('is-clone');
-      c.setAttribute('aria-hidden', 'true');
-      if (c.tagName === 'A') c.tabIndex = -1;
-      return c;
-    }
-    function base() { return originals[0].offsetLeft - box.offsetLeft - parseFloat(getComputedStyle(box).paddingLeft); }
-    function setW() {
-      var after = originals[originals.length - 1].nextElementSibling;
-      return after ? after.offsetLeft - originals[0].offsetLeft : 0;
-    }
-    function wrap(x) {
-      var b = base(), w = setW();
-      if (!w) return x;
-      while (x < b - w / 2) x += w;
-      while (x > b + w / 2) x -= w;
-      return x;
+    var SPEED = 22, HOLD = 1500;
+    var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, holdUntil = 0, rewind = null, resizeT = 0;
+    function kids() { return Array.prototype.slice.call(box.children); }
+    function wraps() {
+      var had = box.classList.contains('rowloop');
+      box.classList.remove('rowloop', 'is-snap');
+      var k = kids(), res = k.length > 1 && k[k.length - 1].offsetTop > k[0].offsetTop + 2;
+      if (had && res) box.classList.add('rowloop');
+      if (had && res && !auto) box.classList.add('is-snap');
+      return res;
     }
     function stopAuto() {
       if (!auto) return;
       auto = false;
       cancelAnimationFrame(raf);
+      if (rewind) { rewind.kill(); rewind = null; }
+      if (on) box.classList.add('is-snap');
+    }
+    function back(t) {
+      var st = { x: box.scrollLeft };
+      rewind = gsap.to(st, {
+        x: 0,
+        duration: Math.min(2.4, 0.6 + st.x / 1500),
+        ease: 'power2.inOut',
+        onUpdate: function () { box.scrollLeft = Math.round(st.x); },
+        onComplete: function () { rewind = null; pos = 0; holdUntil = performance.now() + HOLD; }
+      });
     }
     function tick(t) {
       if (!on || !auto) return;
-      if (seen && !document.hidden) {
+      var max = box.scrollWidth - box.clientWidth;
+      if (seen && !document.hidden && !rewind && t >= holdUntil && max > 0) {
         var dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
-        pos = wrap(pos + SPEED * dt);
-        box.scrollLeft = Math.round(pos);
+        if (pos >= max) back(t);
+        else {
+          pos = Math.min(max, pos + SPEED * dt);
+          box.scrollLeft = Math.round(pos);
+          if (pos >= max) holdUntil = t + HOLD;
+        }
       }
       last = t;
       raf = requestAnimationFrame(tick);
     }
-    function onScroll() {
-      if (auto) return;
-      clearTimeout(settleT);
-      settleT = setTimeout(function () {
-        var x = box.scrollLeft, y = wrap(x);
-        if (Math.round(y) !== Math.round(x)) box.scrollLeft = Math.round(y);
-      }, 140);
-    }
-    function build() {
-      if (on) return;
-      on = true;
-      box.classList.add('is-loop');
-      originals.forEach(function (el) {
-        if (el.classList.contains('reveal')) { el.classList.remove('reveal'); box.classList.add('reveal'); }
-      });
-      for (var k = 0; k < COPIES; k++) {
-        originals.slice().reverse().forEach(function (el) { box.insertBefore(copy(el), box.firstChild); });
-        originals.forEach(function (el) { box.appendChild(copy(el)); });
+    function sync() {
+      if (wraps()) {
+        box.classList.add('rowloop');
+        if (!auto) box.classList.add('is-snap');
+        if (!on) {
+          on = true;
+          pos = 0;
+          box.scrollLeft = 0;
+          if (auto) { last = 0; holdUntil = performance.now() + HOLD; raf = requestAnimationFrame(tick); }
+        }
+      } else if (on) {
+        on = false;
+        cancelAnimationFrame(raf);
+        if (rewind) { rewind.kill(); rewind = null; }
+        box.classList.remove('rowloop', 'is-snap');
+        box.scrollLeft = 0;
       }
-      pos = base();
-      box.scrollLeft = Math.round(pos);
-      if (auto) { last = 0; raf = requestAnimationFrame(tick); }
-    }
-    function teardown() {
-      if (!on) return;
-      on = false;
-      cancelAnimationFrame(raf);
-      Array.prototype.slice.call(box.querySelectorAll('.is-clone')).forEach(function (c) { c.parentNode.removeChild(c); });
-      box.classList.remove('is-loop');
-      box.scrollLeft = 0;
     }
     ['pointerdown', 'touchstart', 'wheel', 'keydown', 'focusin'].forEach(function (t) {
       box.addEventListener(t, stopAuto, { passive: true });
     });
-    box.addEventListener('scroll', onScroll, { passive: true });
     if (window.IntersectionObserver) {
-      io = new IntersectionObserver(function (es) { seen = es[0].isIntersecting; last = 0; }, { threshold: 0.2 });
-      io.observe(box);
+      new IntersectionObserver(function (es) { seen = es[0].isIntersecting; last = 0; }, { threshold: 0.2 }).observe(box);
     } else seen = true;
-    function sync() { if (mq.matches) build(); else teardown(); }
-    if (mq.addEventListener) mq.addEventListener('change', sync);
-    else if (mq.addListener) mq.addListener(sync);
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(sync, 150);
+    }, { passive: true });
     sync();
   }
 
@@ -1441,7 +1441,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     safe('rest', rest);
     safe('intro', intro);
     safe('band', marquee);
-    safe('games', loopGames);
+    safe('rows', function () { rowLoop(document.querySelector('.games')); rowLoop(document.querySelector('.tools')); });
     safe('reveals', reveals);
     html.classList.remove('pre');
   }
