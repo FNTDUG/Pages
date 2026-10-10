@@ -5900,20 +5900,6 @@ export default {
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
     if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
-    if (url.pathname === '/overhaul/') {
-      const page = await env.ASSETS.fetch(request);
-      if (!(page.headers.get('content-type') || '').includes('text/html')) return page;
-      return new Response(page.body, {
-        status: page.status,
-        headers: {
-          'content-type': 'text/html; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-robots-tag': 'noindex, nofollow',
-          'referrer-policy': 'no-referrer',
-          'content-security-policy': "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
-        }
-      });
-    }
     if (url.pathname === '/wiki-edit') {
       const page = await env.ASSETS.fetch(request);
       if (!(page.headers.get('content-type') || '').includes('text/html')) return page;
