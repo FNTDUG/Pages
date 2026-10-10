@@ -157,7 +157,7 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 .pv-bob,.pv-body,.pv-eyes{position:absolute;inset:0}
 .pv-body,.pv-eyes{background-image:url('mascot-states.png');background-size:4410px 666px;background-repeat:no-repeat;image-rendering:pixelated}
 .pv-body{background-position:0 0}
-.pv-eyes{background-position:-3570px -222px}
+.pv-eyes{background-position:0 -222px}
 .pv-lids{position:absolute;left:84px;top:108px;width:210px;height:222px;z-index:5;background:url('mascot-states.png') no-repeat -1260px -222px/4410px 666px;image-rendering:pixelated;pointer-events:none;visibility:hidden}
 .pv-hit{position:absolute;left:84px;top:96px;width:210px;height:123px;z-index:6;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pv-hit:focus-visible{outline:6px solid var(--acc);outline-offset:0}
@@ -246,7 +246,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
 @media (max-width:760px){
   .talk{padding:0;align-items:stretch}
   .talk-box{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);width:100%;height:100%;border:0;box-shadow:none}
-  .talk-side{flex-direction:row;align-items:center;gap:14px;padding:12px 64px 12px 12px;border-right:0;border-bottom:var(--bw) solid var(--ink)}
+  .talk-side{flex-direction:row;align-items:center;gap:14px;padding:12px 64px 12px 12px;background:var(--acc);color:var(--acc-ink);border-right:0;border-bottom:var(--bw) solid var(--ink)}
+  .talk-side .pt-note{color:var(--acc-ink);opacity:.8}
   .pt-view{width:134px;height:114px}
   .pt-view .stage-grid{background-size:16px 16px}
   .pt-side-text{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -814,7 +815,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   var tl = null, idle = [], blinkTimer = 0, split = null, wake = 0;
 
   function cell(el, col, row) { el.style.backgroundPosition = (-col * CW) + 'px ' + (-row * CH) + 'px'; }
-  function eyeCol(dx, dy) { return LOOK[(dy + 1) * 3 + (dx + 1)]; }
+  function eyeCol(dx, dy) { return dx === 0 && dy === 0 ? EYE.base : LOOK[(dy + 1) * 3 + (dx + 1)]; }
   function blinkCol(dx) { return dx === 0 ? EYE.blinkC : (dx > 0 ? EYE.blinkR : EYE.blinkL); }
   function drawEyes() {
     cell(eyesEl, eyeLock !== null ? eyeLock : (blinking ? blinkCol(gaze.dx) : eyeCol(gaze.dx, gaze.dy)), 1);
