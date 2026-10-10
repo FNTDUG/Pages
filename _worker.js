@@ -1,9 +1,6 @@
 
 const MOBILE_NAV_BODY = `
 <a href="/" class="ug-mn-link" data-nav-href="/">Home</a>
-<!-- HIDDEN-NEWS
-<a href="/news" class="ug-mn-link" data-nav-href="/news">News</a>
--->
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD1 <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
@@ -56,9 +53,6 @@ const MOBILE_NAV_BODY = `
 
 const DESKTOP_NAV_INNER = `
 <a href="/" class="ug-tn-link" data-nav-href="/">Home</a>
-<!-- HIDDEN-NEWS
-<a href="/news" class="ug-tn-link" data-nav-href="/news">News</a>
--->
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD1 <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
@@ -309,6 +303,7 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 .ug-xd-btn::after{content:'';position:absolute;inset:-8px}
 .ug-xd-btn:hover{background:rgba(255,164,91,.15);color:#ffa45b}
 .ug-rail-in .ug-xd{margin:0 0 10px}
+#ug-info-panel .ug-xd{margin:0 0 4px}
 .ug-cad:has(ins[data-ad-status="unfilled"]),.inf-ad:has(ins[data-ad-status="unfilled"]),.ug-rail:has(ins[data-ad-status="unfilled"]){display:none!important}
 @media(min-width:1200px){.ug-cad{display:none!important}}
 .ug-rail{position:absolute;z-index:500;display:none;pointer-events:auto}
@@ -2868,8 +2863,7 @@ const WIP_PAGES = {
   '/fntd2/endless-index':       false,
   '/fntd2/boss-raids-index':    false,
   '/fntd2/event-story-endless': true,
-  '/fntd2/unit-engine':         false,
-  '/news':                      true
+  '/fntd2/unit-engine':         false
 };
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
@@ -3206,7 +3200,7 @@ const ANALYTICS =
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
-const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624'];
+const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624', '7344880866'];
 
 const EXTRA_ITEMS = {
   materials: {
@@ -3231,174 +3225,6 @@ const INF_PROXY = {
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
 const ROT_MIRROR = 'https://images.fntduserguide.com/rotations.json';
 const ROT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
-
-const X_SYNDICATION = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/';
-const X_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36';
-function xEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function xUser(u) {
-  if (!u) return null;
-  return {
-    name: u.name || '',
-    handle: u.screen_name || '',
-    avatar: (u.profile_image_url_https || '').replace('_normal.', '_200x200.'),
-    banner: u.profile_banner_url ? u.profile_banner_url + '/1500x500' : '',
-    followers: typeof u.followers_count === 'number' ? u.followers_count : null
-  };
-}
-function xText(t) {
-  let text = t.full_text || t.text || '';
-  const ent = t.entities || {};
-  const media = ent.media || [];
-  const urls = ent.urls || [];
-  const range = t.display_text_range;
-  if (Array.isArray(range) && range.length === 2) text = Array.from(text).slice(range[0], range[1]).join('');
-  text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-  media.forEach(m => { if (m.url) text = text.replace(m.url, ''); });
-  const cardUrl = t.card && t.card.url;
-  if (cardUrl && text.trim().endsWith(cardUrl)) text = text.trim().slice(0, -cardUrl.length);
-  let html = xEsc(text.trim());
-  urls.forEach(u => {
-    if (!u.url) return;
-    html = html.split(xEsc(u.url)).join('<a href="' + xEsc(u.expanded_url || u.url) + '" target="_blank" rel="noopener noreferrer">' + xEsc(u.display_url || u.expanded_url || u.url) + '</a>');
-  });
-  html = html
-    .replace(/(^|[^\w/])@([A-Za-z0-9_]{1,15})\b/g, '$1<a href="https://x.com/$2" target="_blank" rel="noopener noreferrer">@$2</a>')
-    .replace(/(^|\s)#([\p{L}\p{N}_]+)/gu, '$1<a href="https://x.com/hashtag/$2" target="_blank" rel="noopener noreferrer">#$2</a>')
-    .replace(/\n/g, '<br>');
-  return { text: text.trim(), html };
-}
-function xMedia(t) {
-  const list = (t.extended_entities && t.extended_entities.media) || (t.entities && t.entities.media) || [];
-  return list.map(m => {
-    const info = m.original_info || {};
-    const vi = m.video_info || {};
-    const ar = Array.isArray(vi.aspect_ratio) && vi.aspect_ratio.length === 2 ? vi.aspect_ratio : null;
-    const isVideo = m.type === 'video' || m.type === 'animated_gif';
-    const out = {
-      type: m.type === 'animated_gif' ? 'gif' : (isVideo ? 'video' : 'photo'),
-      w: info.width || (ar ? ar[0] : 0),
-      h: info.height || (ar ? ar[1] : 0),
-      thumb: m.media_url_https ? m.media_url_https + '?name=medium' : '',
-      alt: m.ext_alt_text || ''
-    };
-    if (isVideo) {
-      const vs = (vi.variants || []).filter(v => v.content_type === 'video/mp4' && v.url).sort((x, y) => (y.bitrate || 0) - (x.bitrate || 0));
-      const pick = vs.find(v => (v.bitrate || 0) <= 2200000) || vs[vs.length - 1];
-      out.src = pick ? pick.url : '';
-      out.duration = vi.duration_millis || 0;
-    } else {
-      out.src = m.media_url_https ? m.media_url_https + '?name=large' : '';
-    }
-    return out;
-  });
-}
-function xCard(t) {
-  const c = t.card;
-  if (!c || !c.binding_values) return null;
-  const b = c.binding_values;
-  const str = k => (b[k] && b[k].string_value) || '';
-  const img = keys => { for (const k of keys) if (b[k] && b[k].image_value && b[k].image_value.url) return b[k].image_value; return null; };
-  const name = c.name || '';
-  const large = /summary_large_image|player/.test(name);
-  const image = large
-    ? img(['photo_image_full_size_large', 'summary_photo_image_large', 'player_image_large', 'thumbnail_image_large'])
-    : img(['thumbnail_image_large', 'thumbnail_image', 'photo_image_full_size_large', 'player_image_large']);
-  const title = str('title');
-  if (!title && !image) return null;
-  const u = ((t.entities && t.entities.urls) || []).find(x => x.url === c.url);
-  return {
-    kind: large ? 'large' : 'small',
-    player: /player/.test(name),
-    url: (u && u.expanded_url) || str('card_url') || c.url || '',
-    title,
-    description: str('description'),
-    domain: str('vanity_url') || str('domain'),
-    image: image ? image.url : '',
-    w: image ? image.width || 0 : 0,
-    h: image ? image.height || 0 : 0
-  };
-}
-function xPost(t) {
-  const base = t.retweeted_status || t;
-  const user = xUser(base.user);
-  const txt = xText(base);
-  const post = {
-    id: base.id_str || '',
-    url: 'https://x.com/' + (user ? user.handle : '') + '/status/' + (base.id_str || ''),
-    date: new Date(base.created_at).toISOString(),
-    text: txt.text,
-    html: txt.html,
-    media: xMedia(base),
-    replies: base.reply_count || 0,
-    reposts: base.retweet_count || 0,
-    likes: base.favorite_count || 0
-  };
-  if (!post.media.length) { const card = xCard(base); if (card) post.card = card; }
-  if (t.retweeted_status && user) { post.user = user; post.repostOf = user.handle; }
-  if (base.quoted_status) {
-    const q = base.quoted_status, qu = q.user || {};
-    post.quote = { name: qu.name || '', handle: qu.screen_name || '', text: xText(q).text, url: 'https://x.com/' + (qu.screen_name || '') + '/status/' + (q.id_str || '') };
-  }
-  return post;
-}
-function xParse(html) {
-  const m = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
-  if (!m) return null;
-  const data = JSON.parse(m[1]);
-  const props = (data && data.props && data.props.pageProps) || {};
-  const entries = (props.timeline && props.timeline.entries) || [];
-  const tweets = entries.filter(e => e && e.type === 'tweet' && e.content && e.content.tweet).map(e => e.content.tweet);
-  const posts = tweets.map(xPost).filter(p => p.id);
-  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  const first = tweets.find(t => t.user && !t.retweeted_status) || tweets[0];
-  return { user: first ? xUser(first.user) : null, posts, hasResults: props.contextProvider ? props.contextProvider.hasResults !== false : posts.length > 0 };
-}
-async function xTimeline(handle) {
-  const up = await fetch(X_SYNDICATION + handle, {
-    headers: { 'user-agent': X_UA, 'accept': 'text/html,application/xhtml+xml' },
-    cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 600, '400-599': 0 } }
-  });
-  if (!up.ok) return null;
-  const feed = xParse(await up.text());
-  return feed && feed.posts.length ? feed : null;
-}
-const X_RESULT = 'https://cdn.syndication.twimg.com/tweet-result?lang=en&id=';
-function xToken(id) { return ((Number(id) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, ''); }
-function xFromResult(d) {
-  if (!d || d.__typename !== 'Tweet' || !d.id_str) return null;
-  const q = d.quoted_tweet;
-  const t = {
-    id_str: d.id_str,
-    created_at: d.created_at,
-    full_text: d.text || '',
-    display_text_range: d.display_text_range,
-    entities: d.entities || {},
-    extended_entities: { media: d.mediaDetails || [] },
-    user: d.user,
-    card: d.card,
-    reply_count: d.conversation_count || 0,
-    retweet_count: 0,
-    favorite_count: d.favorite_count || 0
-  };
-  if (q && q.id_str) t.quoted_status = { id_str: q.id_str, full_text: q.text || '', entities: q.entities || {}, user: q.user };
-  const post = xPost(t);
-  const user = xUser(d.user);
-  if (user) post.user = user;
-  return post;
-}
-const X_SNAPSHOT = 'https://images.fntduserguide.com/news/x/';
-async function xSnapshot(handle) {
-  try {
-    const r = await fetch(X_SNAPSHOT + handle + '.json', {
-      cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 60, '400-599': 0 } }
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    return j && Array.isArray(j.posts) && j.posts.length ? j : null;
-  } catch (e) {
-    return null;
-  }
-}
 
 const GH_PROBE = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/last-updated';
 async function ghRawOk() {
@@ -3676,7 +3502,8 @@ async function pushSend(request, env) {
     return pushJson({ ok: true, counts, history: await pushHistory(env) });
   }
 
-  const games = pushCleanGames(body.games);
+  const everyone = Array.isArray(body.games) && body.games.indexOf('all') !== -1;
+  const games = everyone ? ['all'] : pushCleanGames(body.games);
   const title = String(body.title || '').trim() || 'FNTD User Guide';
   const text = String(body.body || '').trim();
   const link = pushCleanLink(body.url);
@@ -3691,7 +3518,7 @@ async function pushSend(request, env) {
     const m = k.metadata;
     if (!m || !m.e) return;
     const g = String(m.g || '').split(',');
-    if (!games.some(x => g.indexOf(x) !== -1)) return;
+    if (!everyone && !games.some(x => g.indexOf(x) !== -1)) return;
     try {
       const res = await pushSendOne(env, m, payload, jwts);
       if (res.status === 404 || res.status === 410) {
@@ -4457,7 +4284,6 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
         <input type="text" id="link" list="pages" placeholder="/" value="/">
         <datalist id="pages">
           <option value="/"></option>
-          <option value="/news"></option>
           <option value="/patch-notes"></option>
           <option value="/fntd2/meta-teams"></option>
           <option value="/fntd2/tierlists-1"></option>
@@ -4473,8 +4299,9 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
           <option value="/bbn/survivor-terminal"></option>
           <option value="/patch-notes/bbn-patch-notes"></option>
         </datalist>
-        <label class="f">Send to people following</label>
+        <label class="f">Send to</label>
         <div class="games" id="games">
+          <label class="game"><input type="checkbox" value="all"><span>Whole site <em id="cAll"></em></span></label>
           <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD2 <em id="cFntd2"></em></span></label>
           <label class="game"><input type="checkbox" value="bbn"><span>Bite By Night <em id="cBbn"></em></span></label>
         </div>
@@ -4545,7 +4372,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   function reach() {
     var g = games();
-    if (g.length === 2) return counts.total;
+    if (g.indexOf('all') !== -1 || g.length === 2) return counts.total;
     if (g[0] === 'fntd2') return counts.fntd2;
     if (g[0] === 'bbn') return counts.bbn;
     return 0;
@@ -4553,11 +4380,12 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   function showCounts() {
     $('stats').innerHTML = '<b>' + counts.total + '</b> device' + (counts.total === 1 ? '' : 's') + ' signed up';
+    $('cAll').textContent = '(' + counts.total + ')';
     $('cFntd2').textContent = '(' + counts.fntd2 + ')';
     $('cBbn').textContent = '(' + counts.bbn + ')';
   }
 
-  var GAME_NAMES = { fntd2: 'FNTD2', bbn: 'Bite By Night' };
+  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'Bite By Night' };
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -4629,13 +4457,19 @@ textarea{min-height:96px;resize:vertical;line-height:1.5}
 
   $('title').addEventListener('input', refreshPreview);
   $('msg').addEventListener('input', refreshPreview);
-  $('games').addEventListener('change', function () { $('sendErr').textContent = ''; });
+  $('games').addEventListener('change', function (e) {
+    $('sendErr').textContent = '';
+    if (!e.target.checked) return;
+    [].forEach.call(document.querySelectorAll('#games input'), function (i) {
+      if (e.target.value === 'all' ? i.value !== 'all' : i.value === 'all') i.checked = false;
+    });
+  });
 
   $('composeView').addEventListener('submit', function (e) {
     e.preventDefault();
     $('sendErr').textContent = '';
     if (!$('msg').value.trim()) { $('sendErr').textContent = 'Write a message first.'; return; }
-    if (!games().length) { $('sendErr').textContent = 'Pick at least one game.'; return; }
+    if (!games().length) { $('sendErr').textContent = 'Pick Whole site or at least one game.'; return; }
     var n = reach();
     $('confirmText').innerHTML = 'Send this to <b>' + n + '</b> device' + (n === 1 ? '' : 's') + '?';
     $('mainActions').hidden = true;
@@ -4722,20 +4556,146 @@ const POLL_MAX_PER_IP = 3;
 const POLL_SCHEMA = [
   'CREATE TABLE IF NOT EXISTS polls (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT NOT NULL, options TEXT NOT NULL, created INTEGER NOT NULL, ends INTEGER NOT NULL, total INTEGER NOT NULL DEFAULT 0)',
   'CREATE TABLE IF NOT EXISTS poll_counts (poll_id INTEGER NOT NULL, opt INTEGER NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (poll_id, opt))',
-  'CREATE TABLE IF NOT EXISTS poll_voters (poll_id INTEGER NOT NULL, who TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (poll_id, who))'
+  'CREATE TABLE IF NOT EXISTS poll_voters (poll_id INTEGER NOT NULL, who TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (poll_id, who))',
+  'CREATE TABLE IF NOT EXISTS poll_images (id TEXT PRIMARY KEY, type TEXT NOT NULL, w INTEGER NOT NULL, h INTEGER NOT NULL, data BLOB NOT NULL, created INTEGER NOT NULL, poll_id INTEGER)'
 ];
 
 const POLL_COLUMNS = [
   ['multi', 'ALTER TABLE polls ADD COLUMN multi INTEGER NOT NULL DEFAULT 0'],
   ['note', "ALTER TABLE polls ADD COLUMN note TEXT NOT NULL DEFAULT ''"],
-  ['scope', "ALTER TABLE polls ADD COLUMN scope TEXT NOT NULL DEFAULT 'all'"]
+  ['scope', "ALTER TABLE polls ADD COLUMN scope TEXT NOT NULL DEFAULT 'all'"],
+  ['questions', "ALTER TABLE polls ADD COLUMN questions TEXT NOT NULL DEFAULT ''"],
+  ['img', "ALTER TABLE polls ADD COLUMN img TEXT NOT NULL DEFAULT ''"]
 ];
+const POLL_MAX_QUESTIONS = 50;
+const POLL_IMG_MAX = 1500000;
+const POLL_IMG_TYPES = { png: 'image/png', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' };
 const POLL_SCOPES = ['all', 'fntd2', 'bbn'];
 
 async function pollMigrate(db) {
   await db.batch(POLL_SCHEMA.map(q => db.prepare(q)));
   const have = ((await db.prepare('PRAGMA table_info(polls)').all()).results || []).map(c => c.name);
   for (const c of POLL_COLUMNS) if (have.indexOf(c[0]) === -1) await db.prepare(c[1]).run();
+}
+
+function pollQs(row) {
+  if (row.questions) {
+    try { return JSON.parse(row.questions); } catch (e) {}
+  }
+  return [{ q: row.question, opts: JSON.parse(row.options), multi: !!row.multi }];
+}
+
+function pollImg(row) {
+  if (!row.img) return null;
+  try { return JSON.parse(row.img); } catch (e) { return null; }
+}
+
+function pollNext(qs, qi, picks) {
+  const x = qs[qi];
+  const t = x.multi || !x.go ? (x.after === undefined ? null : x.after) : x.go[picks[0]];
+  if (t === -1) return -1;
+  if (Number.isInteger(t)) return t;
+  return qi + 1 < qs.length ? qi + 1 : -1;
+}
+
+function pollCleanTarget(t, qi, n) {
+  if (t === -1 || t === 'end') return -1;
+  t = Number(t);
+  return Number.isInteger(t) && t > qi + 1 && t < n ? t : null;
+}
+
+function pollImgType(bytes) {
+  const b = bytes;
+  if (b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'png';
+  if (b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'jpeg';
+  if (b.length > 6 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38) return 'gif';
+  if (b.length > 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return 'webp';
+  return '';
+}
+
+async function pollImageUpload(request, env) {
+  if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (!env.POLLS || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (!(await pushPasswordOk(request, env))) {
+    await new Promise(r => setTimeout(r, 1500));
+    return pushJson({ ok: false, error: 'password' }, 401);
+  }
+  const url = new URL(request.url);
+  const w = Math.round(Number(url.searchParams.get('w'))), h = Math.round(Number(url.searchParams.get('h')));
+  if (Number(request.headers.get('content-length') || 0) > POLL_IMG_MAX) return pushJson({ ok: false, error: 'too-big' }, 413);
+  const bytes = new Uint8Array(await request.arrayBuffer().catch(() => new ArrayBuffer(0)));
+  if (!bytes.length || bytes.length > POLL_IMG_MAX) return pushJson({ ok: false, error: 'too-big' }, 413);
+  const type = pollImgType(bytes);
+  if (!type || !(w > 0 && w <= 8000 && h > 0 && h <= 8000)) return pushJson({ ok: false, error: 'bad-image' }, 400);
+  const db = env.POLLS;
+  await pollMigrate(db);
+  const raw = crypto.getRandomValues(new Uint8Array(12));
+  let id = '';
+  for (let i = 0; i < raw.length; i++) id += raw[i].toString(16).padStart(2, '0');
+  const now = Date.now();
+  await db.batch([
+    db.prepare('DELETE FROM poll_images WHERE poll_id IS NULL AND created < ?1').bind(now - 86400000),
+    db.prepare('INSERT INTO poll_images (id, type, w, h, data, created) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(id, POLL_IMG_TYPES[type], w, h, bytes.buffer, now)
+  ]);
+  return pushJson({ ok: true, img: { id, w, h } });
+}
+
+async function pollImageGet(env, url) {
+  const id = url.pathname.slice('/poll/img/'.length);
+  if (!/^[0-9a-f]{24}$/.test(id) || !env.POLLS) return new Response('Not found', { status: 404 });
+  const key = new Request(url.origin + '/poll/img/' + id);
+  try {
+    const hit = await caches.default.match(key);
+    if (hit) return hit;
+  } catch (e) {}
+  let row = null;
+  try { row = await env.POLLS.prepare('SELECT type, data FROM poll_images WHERE id = ?1').bind(id).first(); } catch (e) { row = null; }
+  if (!row) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  const res = new Response(new Uint8Array(row.data), {
+    headers: {
+      'content-type': row.type,
+      'cache-control': 'public, max-age=31536000, immutable',
+      'x-content-type-options': 'nosniff',
+      'content-security-policy': "default-src 'none'; sandbox",
+      'x-robots-tag': 'noindex'
+    }
+  });
+  try { await caches.default.put(key, res.clone()); } catch (e) {}
+  return res;
+}
+
+async function pollClaimImages(db, id, imgs) {
+  const ids = imgs.filter(Boolean).map(x => x.id);
+  if (!ids.length) return {};
+  const rows = (await db.prepare('SELECT id, w, h FROM poll_images WHERE id IN (SELECT value FROM json_each(?1))').bind(JSON.stringify(ids)).all()).results || [];
+  await db.prepare('UPDATE poll_images SET poll_id = ?1 WHERE id IN (SELECT value FROM json_each(?2))').bind(id, JSON.stringify(ids)).run();
+  const out = {};
+  for (const r of rows) out[r.id] = { id: r.id, w: r.w, h: r.h };
+  return out;
+}
+
+function pollCleanImg(x) {
+  const id = x && typeof x === 'object' ? String(x.id || '') : '';
+  if (!/^[0-9a-f]{24}$/.test(id)) return null;
+  const alt = String(x.alt || '').trim().slice(0, 200);
+  return { id, alt };
+}
+
+async function pollFirst(db, sql, binds) {
+  try {
+    return await db.prepare(sql).bind(...binds).first();
+  } catch (e) {
+    await pollMigrate(db);
+    return await db.prepare(sql).bind(...binds).first();
+  }
+}
+
+async function pollReadBody(request) {
+  const len = Number(request.headers.get('content-length') || 0);
+  if (len > 65536) return null;
+  const text = await request.text().catch(() => '');
+  if (!text || text.length > 65536) return null;
+  try { return JSON.parse(text); } catch (e) { return null; }
 }
 
 function pollCacheKey(url) {
@@ -4752,11 +4712,14 @@ async function pollCurrent(env, url) {
   } catch (e) {}
   let row = null;
   try {
-    row = await env.POLLS.prepare('SELECT id, question, options, ends, total, multi, scope FROM polls WHERE ends > ?1 ORDER BY id DESC LIMIT 1').bind(Date.now()).first();
+    row = await pollFirst(env.POLLS, 'SELECT id, question, options, ends, total, multi, scope, questions, img FROM polls WHERE ends > ?1 ORDER BY id DESC LIMIT 1', [Date.now()]);
   } catch (e) {
     row = null;
   }
-  const body = JSON.stringify({ poll: row ? { id: row.id, q: row.question, opts: JSON.parse(row.options), ends: row.ends, total: row.total, multi: !!row.multi, scope: row.scope || 'all' } : null });
+  let out = null;
+  if (row && row.questions) out = { id: row.id, kind: 'survey', q: row.question, qs: pollQs(row), opts: [], ends: row.ends, total: row.total, multi: false, scope: row.scope || 'all' };
+  else if (row) out = { id: row.id, q: row.question, opts: JSON.parse(row.options), ends: row.ends, total: row.total, multi: !!row.multi, scope: row.scope || 'all', img: pollImg(row) };
+  const body = JSON.stringify({ poll: out });
   try {
     await caches.default.put(key, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=20' } }));
   } catch (e) {}
@@ -4768,24 +4731,39 @@ async function pollVote(request, env, url) {
   if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false }, 503);
   const body = await pushReadBody(request);
   const id = Number(body && body.id);
-  const picks = Array.isArray(body && body.opts) ? body.opts.map(Number) : [Number(body && body.opt)];
-  if (!Number.isInteger(id) || !picks.length || picks.some(n => !Number.isInteger(n))) return pushJson({ ok: false }, 400);
+  if (!Number.isInteger(id)) return pushJson({ ok: false }, 400);
   const now = Date.now();
   let poll;
-  try { poll = await env.POLLS.prepare('SELECT id, options, ends, total, multi, note FROM polls WHERE id = ?1').bind(id).first(); } catch (e) { return pushJson({ ok: false }, 503); }
+  try { poll = await pollFirst(env.POLLS, 'SELECT id, question, options, ends, total, multi, note, questions FROM polls WHERE id = ?1', [id]); } catch (e) { return pushJson({ ok: false }, 503); }
   if (!poll) return pushJson({ ok: false, error: 'missing' }, 404);
   if (poll.ends <= now) return pushJson({ ok: false, error: 'ended', total: poll.total }, 409);
-  const count = JSON.parse(poll.options).length;
-  const uniq = picks.filter((n, i) => picks.indexOf(n) === i);
-  if (uniq.length !== picks.length || uniq.some(n => n < 0 || n >= count) || (!poll.multi && uniq.length !== 1)) return pushJson({ ok: false }, 400);
+  const qs = pollQs(poll);
+  const answers = poll.questions ? body.answers : [Array.isArray(body.opts) ? body.opts : [body.opt]];
+  if (!Array.isArray(answers) || answers.length !== qs.length) return pushJson({ ok: false }, 400);
+  const keys = [];
+  let at = 0;
+  for (let qi = 0; qi < qs.length; qi++) {
+    const picks = Array.isArray(answers[qi]) ? answers[qi].map(Number) : [];
+    if (qi !== at) {
+      if (picks.length) return pushJson({ ok: false }, 400);
+      continue;
+    }
+    const uniq = picks.filter((n, i) => picks.indexOf(n) === i);
+    if (!picks.length || uniq.length !== picks.length || uniq.some(n => !Number.isInteger(n) || n < 0 || n >= qs[qi].opts.length) || (!qs[qi].multi && uniq.length !== 1)) return pushJson({ ok: false }, 400);
+    for (const n of uniq) keys.push(qi * 100 + n);
+    if (poll.questions) keys.push(qi * 100 + 99);
+    at = pollNext(qs, qi, uniq);
+  }
   const h = await pushSha256(env.POLL_SALT + '|' + id + '|' + (request.headers.get('cf-connecting-ip') || ''));
   let who = '';
   for (let i = 0; i < h.length; i++) who += h[i].toString(16).padStart(2, '0');
   try {
     const seat = await env.POLLS.prepare('INSERT INTO poll_voters (poll_id, who, n) VALUES (?1, ?2, 1) ON CONFLICT(poll_id, who) DO UPDATE SET n = n + 1 WHERE n < ?3 RETURNING n').bind(id, who, POLL_MAX_PER_IP).first();
     if (!seat) return pushJson({ ok: false, error: 'already', total: poll.total }, 409);
-    const res = await env.POLLS.batch(uniq.map(n => env.POLLS.prepare('UPDATE poll_counts SET n = n + 1 WHERE poll_id = ?1 AND opt = ?2').bind(id, n))
-      .concat([env.POLLS.prepare('UPDATE polls SET total = total + 1 WHERE id = ?1 RETURNING total').bind(id)]));
+    const res = await env.POLLS.batch([
+      env.POLLS.prepare('UPDATE poll_counts SET n = n + 1 WHERE poll_id = ?1 AND opt IN (SELECT value FROM json_each(?2))').bind(id, JSON.stringify(keys)),
+      env.POLLS.prepare('UPDATE polls SET total = total + 1 WHERE id = ?1 RETURNING total').bind(id)
+    ]);
     const last = res[res.length - 1];
     const row = last.results && last.results[0];
     return pushJson({ ok: true, total: row ? row.total : poll.total + 1, note: poll.note || '' });
@@ -4801,13 +4779,63 @@ async function pollAdmin(request, env, url) {
     await new Promise(r => setTimeout(r, 1500));
     return pushJson({ ok: false, error: 'password' }, 401);
   }
-  const body = await pushReadBody(request);
+  const body = await pollReadBody(request);
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
   const db = env.POLLS;
   const now = Date.now();
   await pollMigrate(db);
 
-  if (body.mode === 'create') {
+  if (body.mode === 'create' && body.kind === 'survey') {
+    const title = String(body.title || '').trim();
+    const raw = Array.isArray(body.questions) ? body.questions : [];
+    const qs = raw.map((x, qi) => {
+      const out = {
+        q: String((x && x.q) || '').trim(),
+        opts: (Array.isArray(x && x.opts) ? x.opts : []).map(o => String(o || '').trim()).filter(Boolean),
+        multi: !!(x && x.multi)
+      };
+      if (out.multi) {
+        const t = pollCleanTarget(x && x.after, qi, raw.length);
+        if (t !== null) out.after = t;
+      } else {
+        const go = (Array.isArray(x && x.go) ? x.go : []).slice(0, out.opts.length).map(t => pollCleanTarget(t, qi, raw.length));
+        if (go.some(t => t !== null)) {
+          while (go.length < out.opts.length) go.push(null);
+          out.go = go;
+        }
+      }
+      const img = pollCleanImg(x && x.img);
+      if (img) out.img = img;
+      return out;
+    });
+    const minutes = Math.round(Number(body.minutes));
+    const note = String(body.note || '').trim();
+    const scope = POLL_SCOPES.indexOf(body.scope) !== -1 ? body.scope : 'all';
+    if (!title || title.length > 140 || !qs.length || qs.length > POLL_MAX_QUESTIONS ||
+        qs.some(x => !x.q || x.q.length > 140 || x.opts.length < 2 || x.opts.length > 6 || x.opts.some(o => o.length > 60)) ||
+        note.length > 280 || !Number.isFinite(minutes) || minutes < 5 || minutes > 60 * 24 * 60) {
+      return pushJson({ ok: false, error: 'bad-request' }, 400);
+    }
+    const res = await db.batch([
+      db.prepare('UPDATE polls SET ends = ?1 WHERE ends > ?1').bind(now),
+      db.prepare('INSERT INTO polls (question, options, created, ends, total, multi, note, scope, questions) VALUES (?1, ?2, ?3, ?4, 0, 0, ?5, ?6, ?7)')
+        .bind(title, '[]', now, now + minutes * 60000, note, scope, JSON.stringify(qs))
+    ]);
+    const id = res[1].meta.last_row_id;
+    const keys = [];
+    qs.forEach((x, qi) => { x.opts.forEach((o, oi) => keys.push(qi * 100 + oi)); keys.push(qi * 100 + 99); });
+    await db.prepare('INSERT INTO poll_counts (poll_id, opt, n) SELECT ?1, value, 0 FROM json_each(?2)').bind(id, JSON.stringify(keys)).run();
+    const found = await pollClaimImages(db, id, qs.map(x => x.img));
+    let fixed = false;
+    qs.forEach(x => {
+      if (!x.img) return;
+      const f = found[x.img.id];
+      if (f) { x.img.w = f.w; x.img.h = f.h; } else delete x.img;
+      fixed = true;
+    });
+    if (fixed) await db.prepare('UPDATE polls SET questions = ?1 WHERE id = ?2').bind(JSON.stringify(qs), id).run();
+    try { await caches.default.delete(pollCacheKey(url)); } catch (e) {}
+  } else if (body.mode === 'create') {
     const question = String(body.question || '').trim();
     const opts = Array.isArray(body.options) ? body.options.map(o => String(o || '').trim()).filter(Boolean) : [];
     const minutes = Math.round(Number(body.minutes));
@@ -4824,6 +4852,11 @@ async function pollAdmin(request, env, url) {
     ]);
     const id = res[1].meta.last_row_id;
     await db.batch(opts.map((o, i) => db.prepare('INSERT INTO poll_counts (poll_id, opt, n) VALUES (?1, ?2, 0)').bind(id, i)));
+    const img = pollCleanImg(body.img);
+    if (img) {
+      const f = (await pollClaimImages(db, id, [img]))[img.id];
+      if (f) await db.prepare('UPDATE polls SET img = ?1 WHERE id = ?2').bind(JSON.stringify({ id: img.id, alt: img.alt, w: f.w, h: f.h }), id).run();
+    }
     try { await caches.default.delete(pollCacheKey(url)); } catch (e) {}
   } else if (body.mode === 'end') {
     await db.prepare('UPDATE polls SET ends = ?1 WHERE id = ?2 AND ends > ?1').bind(now, Number(body.id) || 0).run();
@@ -4831,21 +4864,37 @@ async function pollAdmin(request, env, url) {
   } else if (body.mode === 'delete') {
     const id = Number(body.id) || 0;
     const gone = await db.prepare('DELETE FROM polls WHERE id = ?1 AND ends <= ?2 RETURNING id').bind(id, now).first();
+    const pics = gone ? (await db.prepare('SELECT id FROM poll_images WHERE poll_id = ?1').bind(id).all()).results || [] : [];
+    for (const pic of pics) {
+      try { await caches.default.delete(new Request(url.origin + '/poll/img/' + pic.id)); } catch (e) {}
+    }
     if (gone) await db.batch([
       db.prepare('DELETE FROM poll_counts WHERE poll_id = ?1').bind(id),
-      db.prepare('DELETE FROM poll_voters WHERE poll_id = ?1').bind(id)
+      db.prepare('DELETE FROM poll_voters WHERE poll_id = ?1').bind(id),
+      db.prepare('DELETE FROM poll_images WHERE poll_id = ?1').bind(id)
     ]);
   }
 
   await db.prepare('DELETE FROM poll_voters WHERE poll_id IN (SELECT id FROM polls WHERE ends <= ?1)').bind(now).run();
-  const rows = (await db.prepare('SELECT id, question, options, created, ends, total, multi, note, scope FROM polls ORDER BY id DESC LIMIT 10').all()).results || [];
+  const rows = (await db.prepare('SELECT id, question, options, created, ends, total, multi, note, scope, questions, img FROM polls ORDER BY id DESC LIMIT 10').all()).results || [];
   const counts = (await db.prepare('SELECT poll_id, opt, n FROM poll_counts WHERE poll_id IN (SELECT id FROM polls ORDER BY id DESC LIMIT 10)').all()).results || [];
+  const tally = (id, key) => {
+    const c = counts.find(x => x.poll_id === id && x.opt === key);
+    return c ? c.n : 0;
+  };
   const polls = rows.map(r => {
-    const opts = JSON.parse(r.options).map((t, i) => {
-      const c = counts.find(x => x.poll_id === r.id && x.opt === i);
-      return { t, n: c ? c.n : 0 };
-    });
-    return { id: r.id, q: r.question, opts, created: r.created, ends: r.ends, total: r.total, multi: !!r.multi, note: r.note || '', scope: r.scope || 'all', active: r.ends > now };
+    const base = { id: r.id, q: r.question, created: r.created, ends: r.ends, total: r.total, note: r.note || '', scope: r.scope || 'all', active: r.ends > now };
+    if (r.questions) {
+      base.kind = 'survey';
+      base.multi = false;
+      base.opts = [];
+      base.qs = pollQs(r).map((x, qi) => ({ q: x.q, multi: !!x.multi, img: x.img || null, go: x.go || null, after: x.after === undefined ? null : x.after, seen: counts.some(c => c.poll_id === r.id && c.opt === qi * 100 + 99) ? tally(r.id, qi * 100 + 99) : r.total, opts: x.opts.map((t, oi) => ({ t, n: tally(r.id, qi * 100 + oi) })) }));
+      return base;
+    }
+    base.multi = !!r.multi;
+    base.img = pollImg(r);
+    base.opts = JSON.parse(r.options).map((t, i) => ({ t, n: tally(r.id, i) }));
+    return base;
   });
   return pushJson({ ok: true, now, polls });
 }
@@ -4872,6 +4921,12 @@ const POLL_HTML = `
 .ntf-veil .ntf-panel.tight .poll-note{margin-top:10px;padding:9px 12px}
 .ntf-veil .poll-final{flex-basis:100%;margin:0 0 2px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.5);text-align:center}
 .ntf-veil .ntf-panel.tight .poll-actions{flex-wrap:wrap;position:sticky;bottom:0;z-index:1;padding-top:18px;background:linear-gradient(180deg,rgba(28,5,40,0) 0,rgb(28,5,40) 12px)}
+.ntf-veil .poll-steps{display:flex;gap:4px;justify-content:center;max-width:280px;margin:0 auto 12px}
+.ntf-veil .poll-steps i{flex:1;max-width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)}
+.ntf-veil .poll-steps i.on{background:#ffa45b;box-shadow:0 0 6px rgba(255,164,91,.6)}
+.ntf-veil .poll-sub{margin-top:6px;font-size:12.5px;color:rgba(255,255,255,.5)}
+.ntf-veil .poll-img{display:block;max-width:100%;height:auto;margin:0 auto 14px;border-radius:10px;object-fit:contain;background:rgba(0,0,0,.25)}
+.ntf-veil .ntf-panel.tight .poll-img{width:auto!important;height:110px;margin-bottom:10px}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="pollArt" viewBox="0 0 11 12" shape-rendering="crispEdges">
@@ -4906,6 +4961,9 @@ const POLL_HTML = `
   var desktop = window.matchMedia('(min-width: 769px)');
   var poll = null;
   var picks = [];
+  var answers = [];
+  var step = 0;
+  var path = [];
   var note = '';
   var busy = false;
   var prevOverflow = '';
@@ -4918,7 +4976,53 @@ const POLL_HTML = `
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function people(n) { return '<b>' + n + '</b> ' + (n === 1 ? 'person has' : 'people have') + ' voted so far.'; }
+  function survey() { return !!(poll && poll.kind === 'survey' && poll.qs && poll.qs.length); }
+  function current() { return survey() ? poll.qs[step] : { q: poll.q, opts: poll.opts, multi: poll.multi, img: poll.img }; }
+  function target(qi, t) {
+    if (t === -1) return -1;
+    if (typeof t === 'number') return t;
+    return qi + 1 < poll.qs.length ? qi + 1 : -1;
+  }
+  function targets(qi) {
+    var x = poll.qs[qi];
+    if (x.multi || !x.go) return [target(qi, x.after)];
+    var out = [];
+    for (var i = 0; i < x.opts.length; i++) out.push(target(qi, x.go[i]));
+    return out;
+  }
+  function nextOf(qi, p) {
+    var x = poll.qs[qi];
+    if (x.multi || !x.go) return target(qi, x.after);
+    return target(qi, x.go[p[0]]);
+  }
+  function branched() {
+    return survey() && poll.qs.some(function (x) { return x.go || typeof x.after === 'number'; });
+  }
+  var depth = {};
+  function longest(qi) {
+    if (depth[qi]) return depth[qi];
+    var t = targets(qi), m = 0;
+    for (var i = 0; i < t.length; i++) if (t[i] !== -1) m = Math.max(m, longest(t[i]));
+    depth[qi] = 1 + m;
+    return depth[qi];
+  }
+  function isLast() {
+    if (!survey()) return true;
+    if (picks.length) return nextOf(step, picks) === -1;
+    return targets(step).every(function (t) { return t === -1; });
+  }
+  function imgTag(m) {
+    if (!m || !m.id || !m.w || !m.h) return '';
+    var w = Math.min(m.w, Math.round(200 * m.w / m.h));
+    return '<img class="poll-img" src="/poll/img/' + esc(m.id) + '" alt="' + esc(m.alt || '') + '" width="' + m.w + '" height="' + m.h + '" style="width:' + w + 'px;aspect-ratio:' + m.w + '/' + m.h + '" decoding="async">';
+  }
+  function actions() {
+    var many = survey(), last = isLast();
+    return (last ? '<p class="poll-final">' + (many ? 'Answers are final once submitted.' : 'Votes are final and can&#39;t be changed or undone.') + '</p>' : '') +
+      (many && path.length ? '<button class="ntf-btn secondary" type="button" data-go="back">Back</button>' : '') +
+      (last ? '<button class="ntf-btn" type="button" data-go="vote">' + (many ? 'Submit' : 'Vote') + '</button>' : '<button class="ntf-btn" type="button" data-go="next">Next</button>');
+  }
+  function people(n) { return '<b>' + n + '</b> ' + (n === 1 ? 'person has' : 'people have') + (survey() ? ' taken part so far.' : ' voted so far.'); }
   function left(ms) {
     var m = Math.max(1, Math.round(ms / 60000));
     if (m < 60) return m + ' min';
@@ -4930,34 +5034,39 @@ const POLL_HTML = `
 
   function screen(name, total) {
     if (name === 'ask') {
+      var n = survey() ? longest(0) : 0, upTo = branched() && n > 1;
       return { cls: '', html: '<div class="ntf-body">' + ICON +
-        '<div class="ntf-kicker" id="pollKicker">NEW POLL</div>' +
-        '<p class="ntf-msg">Would you like to vote in a Poll?</p>' +
+        '<div class="ntf-kicker" id="pollKicker">' + (n ? 'NEW SURVEY' : 'NEW POLL') + '</div>' +
+        '<p class="ntf-msg">' + (n ? 'Would you like to take a quick survey?' : 'Would you like to vote in a Poll?') + '</p>' +
+        (n ? '<p class="poll-sub">' + esc(poll.q) + ' &middot; ' + (upTo ? 'up to ' : '') + n + ' question' + (n === 1 ? '' : 's') + '</p>' : '') +
         '</div><div class="ntf-actions">' +
         '<button class="ntf-btn" type="button" data-go="yes">Yes</button>' +
         '<button class="ntf-btn secondary" type="button" data-go="no">No</button>' +
         '</div>' };
     }
     if (name === 'vote') {
-      var opts = '', role = poll.multi ? 'checkbox' : 'radio';
-      for (var i = 0; i < poll.opts.length; i++) {
-        opts += '<button class="poll-opt" type="button" role="' + role + '" aria-checked="' + (picks.indexOf(i) !== -1) + '" data-opt="' + i + '">' + esc(poll.opts[i]) + '</button>';
+      var cq = current(), opts = '', role = cq.multi ? 'checkbox' : 'radio';
+      var many = survey(), at = path.length + 1, of = many ? path.length + longest(step) : 1;
+      for (var i = 0; i < cq.opts.length; i++) {
+        opts += '<button class="poll-opt" type="button" role="' + role + '" aria-checked="' + (picks.indexOf(i) !== -1) + '" data-opt="' + i + '">' + esc(cq.opts[i]) + '</button>';
       }
+      var steps = '';
+      if (many) for (var s = 1; s <= of; s++) steps += '<i' + (s <= at ? ' class="on"' : '') + '></i>';
       return { cls: 'sure', html: '<div class="ntf-body">' +
-        '<div class="ntf-kicker" id="pollKicker">POLL</div>' +
-        '<p class="poll-q">' + esc(poll.q) + '</p>' +
-        (poll.multi ? '<p class="poll-hint">Pick all that apply.</p>' : '') +
-        '<div class="poll-opts" role="' + (poll.multi ? 'group' : 'radiogroup') + '" aria-labelledby="pollKicker">' + opts + '</div>' +
+        (many ? '<div class="poll-steps" aria-hidden="true">' + steps + '</div>' : '') +
+        '<div class="ntf-kicker" id="pollKicker">' + (many ? 'QUESTION ' + at + ' OF ' + of : 'POLL') + '</div>' +
+        imgTag(cq.img) +
+        '<p class="poll-q">' + esc(cq.q) + '</p>' +
+        (cq.multi ? '<p class="poll-hint">Pick all that apply.</p>' : '') +
+        '<div class="poll-opts" role="' + (cq.multi ? 'group' : 'radiogroup') + '" aria-labelledby="pollKicker">' + opts + '</div>' +
         '<p class="ntf-err" id="pollErr" role="alert" hidden></p>' +
-        '</div><div class="ntf-actions poll-actions">' +
-        '<p class="poll-final">Votes are final and can&#39;t be changed or undone.</p>' +
-        '<button class="ntf-btn" type="button" data-go="vote">Vote</button>' +
-        '</div>' };
+        '</div><div class="ntf-actions poll-actions">' + actions() + '</div>' };
     }
-    var head = name === 'thanks' ? 'THANKS FOR VOTING!' : name === 'already' ? 'ALREADY VOTED' : 'POLL ENDED';
-    var msg = name === 'thanks' ? 'Your vote has been counted.' : name === 'already' ? 'Votes from your connection have already been counted for this poll.' : 'This poll has already ended.';
+    var sv = survey();
+    var head = name === 'thanks' ? (sv ? 'THANKS FOR TAKING PART!' : 'THANKS FOR VOTING!') : name === 'already' ? (sv ? 'ALREADY ANSWERED' : 'ALREADY VOTED') : (sv ? 'SURVEY ENDED' : 'POLL ENDED');
+    var msg = name === 'thanks' ? (sv ? 'Your answers have been counted.' : 'Your vote has been counted.') : name === 'already' ? (sv ? 'Answers from your connection have already been counted for this survey.' : 'Votes from your connection have already been counted for this poll.') : (sv ? 'This survey has already ended.' : 'This poll has already ended.');
     var foot = name === 'ended' ? '' : '<p class="poll-count">' + people(total) + '</p>' +
-      (poll.ends > Date.now() ? '<p class="ntf-fine" style="padding:6px 0 0;margin:0">Poll ends in ' + left(poll.ends - Date.now()) + '.</p>' : '');
+      (poll.ends > Date.now() ? '<p class="ntf-fine" style="padding:6px 0 0;margin:0">' + (sv ? 'Survey' : 'Poll') + ' ends in ' + left(poll.ends - Date.now()) + '.</p>' : '');
     return { cls: name === 'thanks' ? 'ok' : 'sure', html: '<div class="ntf-body">' + ICON +
       '<div class="ntf-kicker" id="pollKicker">' + head + '</div>' +
       '<p class="ntf-msg">' + msg + '</p>' + foot +
@@ -5049,11 +5158,17 @@ const POLL_HTML = `
     }
     busy = true;
     btn.disabled = true;
-    btn.textContent = 'Voting...';
+    btn.textContent = survey() ? 'Sending...' : 'Voting...';
+    var sent = [];
+    if (survey()) {
+      answers[step] = picks.slice();
+      var walked = path.concat([step]);
+      for (var qi = 0; qi < poll.qs.length; qi++) sent.push(walked.indexOf(qi) !== -1 ? (answers[qi] || []).slice() : []);
+    }
     fetch('/poll/vote', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: poll.id, opts: picks })
+      body: JSON.stringify(survey() ? { id: poll.id, answers: sent } : { id: poll.id, opts: picks })
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
     }).then(function (res) {
@@ -5074,7 +5189,7 @@ const POLL_HTML = `
     }).catch(function () {
       busy = false;
       btn.disabled = false;
-      btn.textContent = 'Vote';
+      btn.textContent = survey() ? 'Submit' : 'Vote';
       err.textContent = 'Something went wrong. Please try again.';
       err.hidden = false;
     });
@@ -5085,7 +5200,7 @@ const POLL_HTML = `
     var o = e.target.closest ? e.target.closest('[data-opt]') : null;
     if (o) {
       var n = Number(o.getAttribute('data-opt'));
-      if (poll.multi) {
+      if (current().multi) {
         var at = picks.indexOf(n);
         if (at === -1) picks.push(n); else picks.splice(at, 1);
       } else {
@@ -5095,12 +5210,39 @@ const POLL_HTML = `
       for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-checked', String(picks.indexOf(Number(all[i].getAttribute('data-opt'))) !== -1));
       var err = document.getElementById('pollErr');
       if (err) err.hidden = true;
+      var bar = content.querySelector('.poll-actions');
+      if (bar && survey()) {
+        bar.innerHTML = actions();
+        fitAround();
+      }
       return;
     }
     var b = e.target.closest ? e.target.closest('[data-go]') : null;
     if (!b) return;
     var go = b.getAttribute('data-go');
-    if (go === 'yes') open('vote');
+    if (go === 'yes') { step = 0; path = []; answers = []; picks = []; open('vote'); }
+    else if (go === 'next') {
+      if (!picks.length) {
+        var ne = document.getElementById('pollErr');
+        ne.textContent = 'Pick an answer first.';
+        ne.hidden = false;
+        return;
+      }
+      answers[step] = picks.slice();
+      var to = nextOf(step, picks);
+      if (to === -1) return;
+      path.push(step);
+      step = to;
+      picks = (answers[step] || []).slice();
+      open('vote');
+    }
+    else if (go === 'back') {
+      if (!path.length) return;
+      answers[step] = picks.slice();
+      step = path.pop();
+      picks = (answers[step] || []).slice();
+      open('vote');
+    }
     else if (go === 'no') { finish('no'); close(); }
     else if (go === 'vote') vote(b);
     else if (go === 'close') close();
@@ -5131,7 +5273,10 @@ const POLL_HTML = `
   setTimeout(function () {
     fetch('/poll/current', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       poll = j && j.poll;
-      if (!poll || !poll.opts || load('poll:' + poll.id) || poll.ends <= Date.now() || !inScope(poll.scope)) return;
+      if (!poll || !(poll.opts && poll.opts.length || survey()) || load('poll:' + poll.id) || poll.ends <= Date.now() || !inScope(poll.scope)) return;
+      (survey() ? poll.qs.map(function (x) { return x.img; }) : [poll.img]).forEach(function (m) {
+        if (m && m.id) (new Image()).src = '/poll/img/' + m.id;
+      });
       (function wait() {
         if (!veil.hidden) return;
         if (blocked()) {
@@ -5224,6 +5369,41 @@ textarea:focus{border-color:#ffa45b}
 .tag{font-family:'Audiowide',sans-serif;font-size:10.5px;letter-spacing:.4px;padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
 .note{margin-top:14px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,164,91,.35);background:rgba(255,164,91,.06);font-size:13.5px;line-height:1.55;color:#e6e2ef;white-space:pre-wrap;overflow-wrap:anywhere}
 .note b{display:block;font-family:'Press Start 2P',monospace;font-size:8px;font-weight:400;color:#ffa45b;margin-bottom:6px}
+.kind{display:flex;padding:4px;border-radius:11px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);margin-bottom:10px}
+.kind button{flex:1;font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.5px;padding:10px;border:0;border-radius:8px;background:none;color:rgba(255,255,255,.55);cursor:pointer}
+.kind button.on{background:rgba(255,164,91,.16);color:#ffa45b}
+.kind button:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.sq{margin-top:14px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);border-left:3px solid #ffa45b;background:rgba(0,0,0,.22)}
+.sq-head{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.sq-head b{flex:1;font-family:'Press Start 2P',monospace;font-size:9px;font-weight:400;color:#ffa45b;letter-spacing:.5px}
+.sq-head .x{width:34px;height:32px;font-size:13px}
+.sq-head .x:disabled{opacity:.3;cursor:default}
+.sq > input{margin-bottom:10px}
+.sq .check{margin-top:10px}
+.sres{padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
+.sres:first-child{border-top:0;padding-top:0}
+.sres-q{font-size:14.5px;line-height:1.5;color:#fff;margin-bottom:8px}
+.sres-q span{color:rgba(255,255,255,.45);font-size:12px;margin-left:6px}
+.sq .opt-row{flex-wrap:wrap}
+.sq .opt-row input{min-width:0}
+.sq .opt-row .go{flex:0 0 190px;width:auto}
+.go{width:100%;font-size:13.5px;padding:9px 10px;color:rgba(255,255,255,.75)}
+.go.set{color:#ffa45b;border-color:rgba(255,164,91,.5)}
+.sq-after{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:#e6e2ef}
+.sq-after .go{flex:1;max-width:240px}
+.sq-from{margin:-4px 0 10px;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.55)}
+.sq-from.bad{color:#ff8a8a}
+.pic{margin-top:10px}
+.pic-box{display:flex;gap:12px;align-items:flex-start}
+.pic-img{flex:none;width:96px;height:96px;object-fit:contain;border-radius:9px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18)}
+.pic-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.pic-side input{font-size:14px;padding:9px 11px}
+.pic-msg{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.55);margin-top:6px}
+.pic-msg:empty{display:none}
+.pic-msg.bad{color:#ff8a8a}
+.res-top small{color:rgba(255,255,255,.45);font-size:12px;margin-left:6px;white-space:nowrap}
+.thumb{display:block;max-width:100%;max-height:140px;margin:0 auto 12px;border-radius:9px}
+@media (max-width:520px){.sq .opt-row .go{order:3;flex:1 0 100%}}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.stripe{animation:none}}
 </style>
@@ -5266,13 +5446,26 @@ textarea:focus{border-color:#ffa45b}
     <form class="card" id="newForm" autocomplete="off" style="margin-top:18px">
       <div class="stripe" aria-hidden="true"></div>
       <div class="body">
-        <h2 class="kicker">START A NEW POLL</h2>
-        <label class="f" for="question">Question</label>
-        <input type="text" id="question" maxlength="140" placeholder="Which unit should we cover next?" required>
-        <label class="f">Answers <small>2 to 6</small></label>
-        <div id="opts"></div>
-        <button class="btn secondary small" type="button" id="addOpt">+ Add answer</button>
-        <label class="check"><input type="checkbox" id="multi"> Let people pick more than one answer</label>
+        <h2 class="kicker" id="newKicker">START A NEW POLL</h2>
+        <div class="kind" id="kind"><button type="button" class="on" data-kind="poll">Poll</button><button type="button" data-kind="survey">Survey</button></div>
+        <p class="sub" id="kindSub" style="margin-bottom:0">One question that pops up for everyone.</p>
+        <div id="pollFields">
+          <label class="f" for="question">Question</label>
+          <input type="text" id="question" maxlength="140" placeholder="Which unit should we cover next?">
+          <label class="f">Image <small>optional, shown above the question</small></label>
+          <div class="pic" id="pollPic"></div>
+          <label class="f">Answers <small>2 to 6</small></label>
+          <div id="opts"></div>
+          <button class="btn secondary small" type="button" id="addOpt">+ Add answer</button>
+          <label class="check"><input type="checkbox" id="multi"> Let people pick more than one answer</label>
+        </div>
+        <div id="surveyFields" hidden>
+          <label class="f" for="sTitle">Survey title <small>shown when we ask people to take part</small></label>
+          <input type="text" id="sTitle" maxlength="140" placeholder="Help us plan the next update">
+          <p class="sub" style="margin:12px 0 0;text-align:left">Each answer can lead to the next question, skip ahead to a later one, or end the survey and show the thank-you screen.</p>
+          <div id="sQs"></div>
+          <div class="actions" style="margin-top:14px"><button class="btn secondary" type="button" id="addQ">+ Add question</button></div>
+        </div>
         <label class="f" for="scope">Show on</label>
         <select id="scope">
           <option value="all">Whole site</option>
@@ -5352,7 +5545,7 @@ textarea:focus{border-color:#ffa45b}
   function errText(e) {
     if (e && e.message === 'password') return 'Wrong password.';
     if (e && e.message === 'setup') return 'Polls are not set up yet.';
-    if (e && e.message === 'bad') return 'Check the question, answers and time.';
+    if (e && e.message === 'bad') return 'Check the questions, answers and time.';
     return 'Something went wrong. Please try again.';
   }
 
@@ -5373,21 +5566,40 @@ textarea:focus{border-color:#ffa45b}
   var SCOPES = { all: 'Whole site', fntd2: 'FNTD2 pages', bbn: 'Bite By Night pages' };
 
   function tags(p) {
-    return '<div class="tags"><span class="tag">' + (SCOPES[p.scope] || SCOPES.all) + '</span>' + (p.multi ? '<span class="tag">Multi-answer</span>' : '') + '</div>';
+    return '<div class="tags">' + (p.kind === 'survey' ? '<span class="tag">Survey &middot; ' + p.qs.length + ' question' + (p.qs.length === 1 ? '' : 's') + '</span>' : '') + '<span class="tag">' + (SCOPES[p.scope] || SCOPES.all) + '</span>' + (p.multi ? '<span class="tag">Multi-answer</span>' : '') + '</div>';
   }
 
   function noteBox(p) {
     return p.note ? '<div class="note"><b>A NOTE FROM US</b>' + esc(p.note) + '</div>' : '';
   }
 
-  function results(p) {
-    var max = 0;
-    p.opts.forEach(function (o) { if (o.n > max) max = o.n; });
-    return '<div class="res">' + p.opts.map(function (o) {
-      var pct = p.total ? Math.round(o.n / p.total * 100) : 0;
-      return '<div class="res-row"><div class="res-top"><span>' + esc(o.t) + '</span><b>' + o.n + ' (' + pct + '%)</b></div>' +
+  function bars(opts, total) {
+    return '<div class="res">' + opts.map(function (o) {
+      var pct = total ? Math.round(o.n / total * 100) : 0;
+      return '<div class="res-row"><div class="res-top"><span>' + esc(o.t) + (o.then ? '<small>' + o.then + '</small>' : '') + '</span><b>' + o.n + ' (' + pct + '%)</b></div>' +
         '<div class="bar"><i style="width:' + pct + '%"></i></div></div>';
     }).join('') + '</div>';
+  }
+
+  function thumb(m) {
+    return m && m.id ? '<img class="thumb" src="/poll/img/' + esc(m.id) + '" alt="' + esc(m.alt || '') + '">' : '';
+  }
+
+  function goText(t) {
+    return t === -1 ? 'then ends' : typeof t === 'number' ? 'then Q' + (t + 1) : '';
+  }
+
+  function results(p) {
+    if (p.kind !== 'survey') return thumb(p.img) + bars(p.opts, p.total);
+    var branchy = p.qs.some(function (x) { return x.go || typeof x.after === 'number'; });
+    return p.qs.map(function (x, i) {
+      var opts = x.opts.map(function (o, k) { return { t: o.t, n: o.n, then: x.go ? goText(x.go[k]) : '' }; });
+      return '<div class="sres"><p class="sres-q">' + (i + 1) + '. ' + esc(x.q) + (x.multi ? '<span>multi-answer</span>' : '') + (branchy ? '<span>' + x.seen + ' answered</span>' : '') + (goText(x.after) ? '<span>' + goText(x.after) + '</span>' : '') + '</p>' + thumb(x.img) + bars(opts, x.seen) + '</div>';
+    }).join('');
+  }
+
+  function voted(p) {
+    return p.total + ' ' + (p.total === 1 ? 'person' : 'people') + (p.kind === 'survey' ? ' took part' : ' voted');
   }
 
   function render() {
@@ -5398,33 +5610,295 @@ textarea:focus{border-color:#ffa45b}
     $('curActions').hidden = !cur;
     $('endConfirm').hidden = true;
     if (cur) {
+      var anyMulti = cur.multi || (cur.kind === 'survey' && cur.qs.some(function (x) { return x.multi; }));
+      $('curKicker').textContent = cur.kind === 'survey' ? 'SURVEY RUNNING' : 'POLL RUNNING';
       $('curBody').innerHTML = '<p class="q">' + esc(cur.q) + '</p>' + tags(cur) + results(cur) +
-        '<p class="meta"><b>' + cur.total + '</b> ' + (cur.total === 1 ? 'person' : 'people') + ' voted' + (cur.multi ? ' (they could pick more than one, so answers add up past 100%)' : '') + ' &middot; ends in ' + left(cur.ends - now) + ' (' + when(cur.ends) + ')</p>' + noteBox(cur);
+        '<p class="meta"><b>' + cur.total + '</b> ' + (cur.total === 1 ? 'person' : 'people') + (cur.kind === 'survey' ? ' took part' : ' voted') + (anyMulti ? ' (multi-answer questions can add up past 100%)' : '') + ' &middot; ends in ' + left(cur.ends - now) + ' (' + when(cur.ends) + ')</p>' + noteBox(cur);
       $('endBtn').setAttribute('data-id', cur.id);
+      $('endBtn').textContent = cur.kind === 'survey' ? 'End survey now' : 'End poll now';
+      $('endConfirm').querySelector('p').textContent = cur.kind === 'survey' ? 'End this survey now? People will stop seeing it.' : 'End this poll now? People will stop seeing it.';
     } else {
       $('curBody').innerHTML = '<p class="empty">Start a poll below and it will pop up for everyone on the site.</p>';
     }
     var past = state.polls.filter(function (p) { return p !== cur; });
     $('past').innerHTML = past.length ? past.map(function (p) {
-      return '<details><summary>' + esc(p.q) + '<small>' + p.total + ' ' + (p.total === 1 ? 'person' : 'people') + ' voted &middot; ' + (SCOPES[p.scope] || SCOPES.all) + (p.multi ? ' &middot; multi-answer' : '') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) + noteBox(p) +
+      return '<details><summary>' + esc(p.q) + '<small>' + (p.kind === 'survey' ? 'Survey &middot; ' + p.qs.length + ' questions &middot; ' : '') + voted(p) + ' &middot; ' + (SCOPES[p.scope] || SCOPES.all) + (p.multi ? ' &middot; multi-answer' : '') + ' &middot; ended ' + when(p.ends) + '</small></summary>' + results(p) + noteBox(p) +
         '<button class="del" type="button" data-del="' + p.id + '">Delete this poll</button></details>';
     }).join('') : '<p class="empty">No past polls yet.</p>';
   }
 
-  function optRows() {
-    var rows = $('opts').querySelectorAll('.opt-row');
-    $('addOpt').hidden = rows.length >= 6;
+  var kind = 'poll';
+
+  function rowsIn(box, btn) {
+    var rows = box.querySelectorAll('.opt-row');
+    btn.hidden = rows.length >= 6;
     for (var i = 0; i < rows.length; i++) rows[i].querySelector('.x').hidden = rows.length <= 2;
   }
 
-  function addOpt(value) {
+  function optRows() { rowsIn($('opts'), $('addOpt')); }
+
+  function addRow(box, btn, value) {
     var row = document.createElement('div');
     row.className = 'opt-row';
-    row.innerHTML = '<input type="text" maxlength="60" placeholder="Answer"><button class="x" type="button" aria-label="Remove answer">&#x2715;</button>';
+    row.innerHTML = '<input type="text" maxlength="60" placeholder="Answer">' + (box.closest('.sq') ? '<select class="go" aria-label="After this answer"></select>' : '') + '<button class="x" type="button" aria-label="Remove answer">&#x2715;</button>';
     row.querySelector('input').value = value || '';
-    $('opts').appendChild(row);
-    optRows();
+    box.appendChild(row);
+    rowsIn(box, btn);
     return row.querySelector('input');
+  }
+
+  var PIC_MAX = 1500000;
+
+  function picInit(pic) {
+    pic.innerHTML = '<input type="file" class="pic-file" accept="image/png,image/jpeg,image/gif,image/webp" hidden>' +
+      '<button class="btn secondary small pic-add" type="button">+ Add image</button>' +
+      '<div class="pic-box" hidden><img class="pic-img" alt=""><div class="pic-side">' +
+      '<input type="text" class="pic-alt" maxlength="200" aria-label="Image description" placeholder="Describe the image (optional, read out by screen readers)">' +
+      '<button class="btn secondary small pic-del" type="button">Remove image</button></div></div>' +
+      '<p class="pic-msg" role="status"></p>';
+    pic.removeAttribute('data-id');
+  }
+
+  function picClear(pic) {
+    var img = pic.querySelector('.pic-img');
+    if (img.src) URL.revokeObjectURL(img.src);
+    img.removeAttribute('src');
+    pic.removeAttribute('data-id');
+    pic.removeAttribute('data-busy');
+    pic.querySelector('.pic-alt').value = '';
+    pic.querySelector('.pic-box').hidden = true;
+    pic.querySelector('.pic-add').hidden = false;
+    pic.querySelector('.pic-add').disabled = false;
+    pic.querySelector('.pic-file').value = '';
+  }
+
+  function picMsg(pic, text, bad) {
+    var m = pic.querySelector('.pic-msg');
+    m.textContent = text;
+    m.classList.toggle('bad', !!bad);
+  }
+
+  function shrink(file) {
+    return new Promise(function (resolve, reject) {
+      if (!/^image\\/(png|jpeg|gif|webp)$/.test(file.type)) return reject(new Error('type'));
+      var src = URL.createObjectURL(file), img = new Image();
+      img.onerror = function () { URL.revokeObjectURL(src); reject(new Error('type')); };
+      img.onload = function () {
+        URL.revokeObjectURL(src);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (!w || !h) return reject(new Error('type'));
+        if (file.size <= PIC_MAX && (file.type === 'image/gif' || Math.max(w, h) <= 1600)) return resolve({ blob: file, w: w, h: h });
+        if (file.type === 'image/gif') return reject(new Error('big'));
+        var k = Math.min(1, 1200 / Math.max(w, h)), cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k));
+        var c = document.createElement('canvas');
+        c.width = cw; c.height = ch;
+        var g = c.getContext('2d');
+        g.imageSmoothingQuality = 'high';
+        g.drawImage(img, 0, 0, cw, ch);
+        c.toBlob(function (b) {
+          if (b && b.type === 'image/webp') return b.size <= PIC_MAX ? resolve({ blob: b, w: cw, h: ch }) : reject(new Error('big'));
+          g.globalCompositeOperation = 'destination-over';
+          g.fillStyle = '#1c0528';
+          g.fillRect(0, 0, cw, ch);
+          c.toBlob(function (j) {
+            if (!j) return reject(new Error('type'));
+            j.size <= PIC_MAX ? resolve({ blob: j, w: cw, h: ch }) : reject(new Error('big'));
+          }, 'image/jpeg', 0.86);
+        }, 'image/webp', 0.86);
+      };
+      img.src = src;
+    });
+  }
+
+  function picPick(pic, file) {
+    if (!file) return;
+    picClear(pic);
+    pic.setAttribute('data-busy', '1');
+    pic.querySelector('.pic-add').disabled = true;
+    picMsg(pic, 'Uploading...');
+    var shown = null;
+    shrink(file).then(function (r) {
+      shown = r;
+      return fetch('/poll/image?w=' + r.w + '&h=' + r.h, {
+        method: 'POST',
+        headers: { 'content-type': r.blob.type, 'authorization': 'Bearer ' + password },
+        body: r.blob
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (j) {
+          if (res.status === 413) throw new Error('big');
+          if (res.status === 401) throw new Error('password');
+          if (!res.ok || !j.ok) throw new Error('failed');
+          return j.img;
+        });
+      });
+    }).then(function (m) {
+      pic.removeAttribute('data-busy');
+      pic.setAttribute('data-id', m.id);
+      pic.querySelector('.pic-img').src = URL.createObjectURL(shown.blob);
+      pic.querySelector('.pic-box').hidden = false;
+      pic.querySelector('.pic-add').hidden = true;
+      picMsg(pic, '');
+    }).catch(function (e) {
+      pic.removeAttribute('data-busy');
+      pic.querySelector('.pic-add').disabled = false;
+      pic.querySelector('.pic-file').value = '';
+      picMsg(pic, e.message === 'type' ? 'Use a PNG, JPG, GIF or WebP image.' : e.message === 'big' ? 'That image is too big. Keep it under 1.5 MB.' : e.message === 'password' ? 'Wrong password. Reload the page and unlock again.' : "The image didn't upload. Try again.", true);
+    });
+  }
+
+  function picValue(pic) {
+    var id = pic.getAttribute('data-id');
+    return id ? { id: id, alt: pic.querySelector('.pic-alt').value.trim() } : null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var pic = e.target.closest('.pic');
+    if (!pic) return;
+    if (e.target.closest('.pic-add')) pic.querySelector('.pic-file').click();
+    else if (e.target.closest('.pic-del')) { picClear(pic); picMsg(pic, ''); pic.querySelector('.pic-add').focus(); }
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.classList && e.target.classList.contains('pic-file')) picPick(e.target.closest('.pic'), e.target.files[0]);
+  });
+
+  function addOpt(value) { return addRow($('opts'), $('addOpt'), value); }
+
+  function numberQs() {
+    var qs = $('sQs').querySelectorAll('.sq');
+    for (var i = 0; i < qs.length; i++) {
+      qs[i].querySelector('.sq-n').textContent = 'QUESTION ' + (i + 1);
+      qs[i].querySelector('[data-sq="up"]').disabled = i === 0;
+      qs[i].querySelector('[data-sq="down"]').disabled = i === qs.length - 1;
+      qs[i].querySelector('[data-sq="del"]').disabled = qs.length <= 1;
+    }
+    $('addQ').hidden = qs.length >= 50;
+    flow();
+  }
+
+  var qSeq = 0;
+
+  function fillGo(sel, qs, i) {
+    var keep = sel.value;
+    var html = '<option value="">' + (i === qs.length - 1 ? 'Then end survey' : 'Then next question') + '</option>';
+    for (var j = i + 2; j < qs.length; j++) html += '<option value="' + qs[j].getAttribute('data-key') + '">Then skip to question ' + (j + 1) + '</option>';
+    if (i < qs.length - 1) html += '<option value="end">Then end survey</option>';
+    sel.innerHTML = html;
+    sel.value = [].some.call(sel.options, function (o) { return o.value === keep; }) ? keep : '';
+    sel.classList.toggle('set', !!sel.value);
+  }
+
+  function goIndex(v, keys) {
+    if (v === 'end') return -1;
+    if (!v) return null;
+    var at = keys.indexOf(v);
+    return at === -1 ? null : at;
+  }
+
+  function graph() {
+    var qs = [].slice.call($('sQs').querySelectorAll('.sq'));
+    var keys = qs.map(function (q) { return q.getAttribute('data-key'); });
+    return qs.map(function (q, i) {
+      var multi = q.querySelector('.sq-multi').checked;
+      var after = goIndex(q.querySelector('.sq-after .go').value, keys);
+      var rows = [].slice.call(q.querySelectorAll('.sq-opts .opt-row'));
+      var go = rows.map(function (r) { return goIndex(r.querySelector('.go').value, keys); });
+      var dest = function (t) { return t === -1 ? -1 : t === null ? (i + 1 < qs.length ? i + 1 : -1) : t; };
+      return {
+        el: q,
+        multi: multi,
+        after: after,
+        go: go,
+        labels: rows.map(function (r, k) { return r.querySelector('input').value.trim() || 'answer ' + (k + 1); }),
+        next: multi ? [dest(after)] : go.map(dest)
+      };
+    });
+  }
+
+  function flow() {
+    var qs = [].slice.call($('sQs').querySelectorAll('.sq'));
+    qs.forEach(function (q, i) {
+      var multi = q.querySelector('.sq-multi').checked;
+      [].forEach.call(q.querySelectorAll('.sq-opts .go'), function (sel) { fillGo(sel, qs, i); sel.hidden = multi; });
+      fillGo(q.querySelector('.sq-after .go'), qs, i);
+      q.querySelector('.sq-after').hidden = !multi;
+    });
+    var g = graph();
+    var branchy = g.some(function (x) { return x.multi ? x.after !== null : x.go.some(function (t) { return t !== null; }); });
+    var from = g.map(function () { return []; }), seen = g.map(function () { return false; });
+    seen[0] = g.length > 0;
+    g.forEach(function (x, i) {
+      if (!seen[i]) return;
+      var by = {};
+      x.next.forEach(function (t, k) { if (t !== -1) (by[t] = by[t] || []).push(k); });
+      Object.keys(by).forEach(function (t) {
+        seen[t] = true;
+        var ks = by[t];
+        from[t].push('Q' + (i + 1) + (x.multi || ks.length === x.next.length ? ' (any answer)' : ' ' + ks.map(function (k) { return '\u201c' + x.labels[k] + '\u201d'; }).join(' or ')));
+      });
+    });
+    g.forEach(function (x, i) {
+      var line = x.el.querySelector('.sq-from');
+      line.classList.toggle('bad', !seen[i]);
+      line.hidden = !branchy || i === 0;
+      line.textContent = !seen[i] ? 'No answer leads here, so nobody will see this question. Point an answer at it or remove it.' : 'Shown after ' + from[i].join(', ') + '.';
+    });
+    return seen;
+  }
+
+  function addQ() {
+    var q = document.createElement('div');
+    q.className = 'sq';
+    q.setAttribute('data-key', 'q' + (++qSeq));
+    q.innerHTML = '<div class="sq-head"><b class="sq-n"></b>' +
+      '<button class="x" type="button" data-sq="up" aria-label="Move question up">&#8593;</button>' +
+      '<button class="x" type="button" data-sq="down" aria-label="Move question down">&#8595;</button>' +
+      '<button class="x" type="button" data-sq="del" aria-label="Remove question">&#x2715;</button></div>' +
+      '<p class="sq-from" hidden></p>' +
+      '<input type="text" class="sq-text" maxlength="140" placeholder="Question">' +
+      '<div class="pic sq-pic" style="margin:0 0 12px"></div>' +
+      '<div class="sq-opts"></div>' +
+      '<button class="btn secondary small sq-add" type="button">+ Add answer</button>' +
+      '<label class="check"><input type="checkbox" class="sq-multi"> Let people pick more than one answer</label>' +
+      '<div class="sq-after" hidden><span>After this question</span><select class="go" aria-label="After this question"></select></div>';
+    picInit(q.querySelector('.sq-pic'));
+    $('sQs').appendChild(q);
+    var box = q.querySelector('.sq-opts'), btn = q.querySelector('.sq-add');
+    addRow(box, btn, ''); addRow(box, btn, '');
+    numberQs();
+    return q.querySelector('.sq-text');
+  }
+
+  function surveyQs() {
+    var g = graph();
+    return g.map(function (x) {
+      var q = x.el, out = { q: q.querySelector('.sq-text').value.trim(), opts: [], multi: x.multi };
+      var rows = q.querySelectorAll('.sq-opts .opt-row'), go = [];
+      for (var k = 0; k < rows.length; k++) {
+        var t = rows[k].querySelector('input').value.trim();
+        if (!t) continue;
+        out.opts.push(t);
+        go.push(x.go[k] === null ? null : x.go[k]);
+      }
+      if (x.multi) { if (x.after !== null) out.after = x.after; }
+      else if (go.some(function (t) { return t !== null; })) out.go = go;
+      var img = picValue(q.querySelector('.sq-pic'));
+      if (img) out.img = img;
+      return out;
+    });
+  }
+
+  function setKind(k) {
+    kind = k;
+    [].forEach.call($('kind').querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-kind') === k); });
+    $('pollFields').hidden = k !== 'poll';
+    $('surveyFields').hidden = k !== 'survey';
+    $('newKicker').textContent = k === 'survey' ? 'START A NEW SURVEY' : 'START A NEW POLL';
+    $('kindSub').textContent = k === 'survey' ? 'Several questions in a row. People answer them one after another, then submit.' : 'One question that pops up for everyone.';
+    $('startBtn').textContent = k === 'survey' ? 'Start survey' : 'Start poll';
+    $('startConfirm').hidden = true;
+    $('startActions').hidden = false;
+    $('newErr').textContent = '';
+    if (k === 'survey' && !$('sQs').children.length) addQ();
   }
 
   function minutes() {
@@ -5469,17 +5943,55 @@ textarea:focus{border-color:#ffa45b}
     });
   });
 
+  $('kind').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-kind]');
+    if (b) setKind(b.getAttribute('data-kind'));
+  });
+  $('addQ').addEventListener('click', function () { addQ().focus(); });
+  $('sQs').addEventListener('click', function (e) {
+    var q = e.target.closest('.sq');
+    if (!q) return;
+    var x = e.target.closest('.opt-row .x');
+    if (x) { x.parentNode.remove(); rowsIn(q.querySelector('.sq-opts'), q.querySelector('.sq-add')); flow(); return; }
+    if (e.target.closest('.sq-add')) { var added = addRow(q.querySelector('.sq-opts'), q.querySelector('.sq-add'), ''); flow(); added.focus(); return; }
+    var act = e.target.closest('[data-sq]');
+    if (!act || act.disabled) return;
+    var a = act.getAttribute('data-sq');
+    if (a === 'del') q.remove();
+    else if (a === 'up' && q.previousElementSibling) q.parentNode.insertBefore(q, q.previousElementSibling);
+    else if (a === 'down' && q.nextElementSibling) q.parentNode.insertBefore(q.nextElementSibling, q);
+    numberQs();
+  });
+  $('sQs').addEventListener('change', function (e) {
+    if (e.target.classList.contains('go') || e.target.classList.contains('sq-multi')) flow();
+  });
+  $('sQs').addEventListener('input', function (e) {
+    if (e.target.closest('.sq-opts')) flow();
+  });
+
   $('newForm').addEventListener('submit', function (e) {
     e.preventDefault();
     $('newErr').textContent = '';
-    var q = $('question').value.trim(), o = options(), m = minutes();
-    if (!q) { $('newErr').textContent = 'Write a question first.'; return; }
-    if (o.length < 2) { $('newErr').textContent = 'Add at least two answers.'; return; }
+    var q = kind === 'survey' ? $('sTitle').value.trim() : $('question').value.trim(), o = options(), m = minutes();
+    if (kind === 'survey') {
+      if (!q) { $('newErr').textContent = 'Give the survey a title first.'; return; }
+      var sq = surveyQs(), reach = flow();
+      for (var si = 0; si < sq.length; si++) {
+        if (!sq[si].q) { $('newErr').textContent = 'Question ' + (si + 1) + ' needs a question.'; return; }
+        if (sq[si].opts.length < 2) { $('newErr').textContent = 'Question ' + (si + 1) + ' needs at least two answers.'; return; }
+        if (!reach[si]) { $('newErr').textContent = 'No answer leads to question ' + (si + 1) + '. Point an answer at it or remove it.'; return; }
+      }
+    } else {
+      if (!q) { $('newErr').textContent = 'Write a question first.'; return; }
+      if (o.length < 2) { $('newErr').textContent = 'Add at least two answers.'; return; }
+    }
+    if (document.querySelector('#newForm .pic[data-busy]')) { $('newErr').textContent = 'Wait for the image to finish uploading.'; return; }
     if (!(m >= 5)) { $('newErr').textContent = 'A poll has to run for at least 5 minutes.'; return; }
     if (m > 86400) { $('newErr').textContent = 'A poll can run for at most 60 days.'; return; }
     var now = Date.now() + state.skew;
     var running = state.polls.some(function (p) { return p.active && p.ends > now; });
-    $('startText').innerHTML = 'Start this poll on <b>' + SCOPES[$('scope').value].toLowerCase().replace('fntd2', 'FNTD2').replace('bite by night', 'Bite By Night') + '</b> for <b>' + left(m * 60000) + '</b>?' + ($('multi').checked ? '<br>People can pick more than one answer.' : '') + (running ? '<br>The poll that is running now will end.' : '');
+    var sqn = kind === 'survey' ? surveyQs().length : 0;
+    $('startText').innerHTML = 'Start this ' + (sqn ? 'survey (' + sqn + ' question' + (sqn === 1 ? '' : 's') + ')' : 'poll') + ' on <b>' + SCOPES[$('scope').value].toLowerCase().replace('fntd2', 'FNTD2').replace('bite by night', 'Bite By Night') + '</b> for <b>' + left(m * 60000) + '</b>?' + (!sqn && $('multi').checked ? '<br>People can pick more than one answer.' : '') + (running ? '<br>The poll or survey that is running now will end.' : '');
     $('startActions').hidden = true;
     $('startConfirm').hidden = false;
     $('startNo').focus();
@@ -5490,14 +6002,21 @@ textarea:focus{border-color:#ffa45b}
   });
   $('startYes').addEventListener('click', function () {
     $('startYes').disabled = true;
-    api({ mode: 'create', question: $('question').value.trim(), options: options(), minutes: minutes(), multi: $('multi').checked, scope: $('scope').value, note: $('note').value.trim() }).then(function () {
+    var req = kind === 'survey'
+      ? { mode: 'create', kind: 'survey', title: $('sTitle').value.trim(), questions: surveyQs(), minutes: minutes(), scope: $('scope').value, note: $('note').value.trim() }
+      : { mode: 'create', question: $('question').value.trim(), options: options(), minutes: minutes(), multi: $('multi').checked, scope: $('scope').value, note: $('note').value.trim(), img: picValue($('pollPic')) };
+    api(req).then(function () {
       $('question').value = '';
+      $('sTitle').value = '';
+      $('sQs').innerHTML = '';
+      if (kind === 'survey') addQ();
       $('note').value = '';
       $('noteCount').textContent = '0';
       $('multi').checked = false;
       $('scope').value = 'all';
       $('opts').innerHTML = '';
       addOpt(''); addOpt('');
+      picClear($('pollPic'));
       $('startConfirm').hidden = true;
       $('startActions').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5546,6 +6065,7 @@ textarea:focus{border-color:#ffa45b}
   setInterval(function () { if (password && !$('admin').hidden && $('endConfirm').hidden) render(); }, 30000);
 
   $('note').addEventListener('input', function () { $('noteCount').textContent = $('note').value.length; });
+  picInit($('pollPic'));
   addOpt(''); addOpt('');
   $('pw').focus();
 })();
@@ -5898,6 +6418,8 @@ export default {
     if (url.pathname === '/poll/current') return pollCurrent(env, url);
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
+    if (url.pathname === '/poll/image') return pollImageUpload(request, env);
+    if (url.pathname.indexOf('/poll/img/') === 0) return pollImageGet(env, url);
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
     if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
     if (url.pathname === '/wiki-edit') {
@@ -5923,7 +6445,7 @@ export default {
           'x-robots-tag': 'noindex, nofollow',
           'referrer-policy': 'no-referrer',
           'x-frame-options': 'DENY',
-          'content-security-policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+          'content-security-policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
         }
       });
     }
@@ -5978,78 +6500,6 @@ export default {
       return new Response(JSON.stringify({ error: 'rotations unavailable' }), {
         status: 502,
         headers: Object.assign({ 'cache-control': 'no-store' }, rotHeaders)
-      });
-    }
-
-    if (url.pathname === '/news-posts') {
-      const ids = (url.searchParams.get('ids') || '').split(',').map(v => v.trim()).filter(v => /^\d{5,25}$/.test(v)).slice(0, 40);
-      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
-      const results = await Promise.all(ids.map(async id => {
-        try {
-          const r = await fetch(X_RESULT + id + '&token=' + xToken(id), {
-            headers: { 'user-agent': X_UA },
-            cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 3600, '400-599': -1 } }
-          });
-          if (!r.ok) return null;
-          return xFromResult(await r.json());
-        } catch (e) {
-          return null;
-        }
-      }));
-      const posts = results.filter(Boolean).sort((a, b) => new Date(b.date) - new Date(a.date));
-      return new Response(JSON.stringify({ posts }), {
-        headers: Object.assign({ 'cache-control': posts.length ? 'public, max-age=600' : 'no-store' }, jsonHeaders)
-      });
-    }
-
-    if (url.pathname === '/news-media') {
-      let target;
-      try { target = new URL(url.searchParams.get('u') || ''); } catch (e) { return new Response('Bad request', { status: 400 }); }
-      if (target.protocol !== 'https:' || target.hostname !== 'video.twimg.com') return new Response('Not found', { status: 404 });
-      const upHeaders = { 'user-agent': X_UA };
-      const range = request.headers.get('range');
-      if (range) upHeaders.range = range;
-      const up = await fetch(target.toString(), { headers: upHeaders, cf: { cacheTtlByStatus: { '100-599': -1 } } });
-      const out = new Headers();
-      ['content-type', 'content-length', 'content-range', 'accept-ranges', 'last-modified', 'etag'].forEach(h => { const v = up.headers.get(h); if (v) out.set(h, v); });
-      if (!out.has('accept-ranges')) out.set('accept-ranges', 'bytes');
-      out.set('cache-control', 'public, max-age=86400');
-      out.set('access-control-allow-origin', '*');
-      return new Response(up.body, { status: up.status, headers: out });
-    }
-
-    if (url.pathname.startsWith('/news-x/')) {
-      const handle = url.pathname.slice('/news-x/'.length);
-      if (!/^[A-Za-z0-9_]{1,15}$/.test(handle)) return new Response('Not found', { status: 404 });
-      const jsonHeaders = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' };
-      const cacheKey = new Request('https://www.fntduserguide.com/_news-x-cache/' + handle.toLowerCase());
-      let feed = await xSnapshot(handle);
-      if (feed) {
-        feed.source = 'snapshot';
-      } else {
-        try { feed = await xTimeline(handle); } catch (e) { feed = null; }
-        if (feed) {
-          feed.fetchedAt = new Date().toISOString();
-          feed.source = 'live';
-          try {
-            await caches.default.put(cacheKey, new Response(JSON.stringify(feed), {
-              headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' }
-            }));
-          } catch (e) {}
-        } else {
-          try {
-            const hit = await caches.default.match(cacheKey);
-            if (hit) { feed = await hit.json(); feed.source = 'cache'; feed.stale = true; }
-          } catch (e) { feed = null; }
-        }
-      }
-      if (!feed) {
-        return new Response(JSON.stringify({ user: null, posts: [], unavailable: true }), {
-          headers: Object.assign({ 'cache-control': 'no-store' }, jsonHeaders)
-        });
-      }
-      return new Response(JSON.stringify(feed), {
-        headers: Object.assign({ 'cache-control': feed.stale ? 'public, max-age=60' : 'public, max-age=300, stale-while-revalidate=3600' }, jsonHeaders)
       });
     }
 

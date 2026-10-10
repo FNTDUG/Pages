@@ -88,6 +88,7 @@
   .gc-shade{position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
   .gc-title{position:absolute;left:0;right:0;top:0;bottom:63px;display:flex;align-items:center;justify-content:center;padding:0 14px;text-align:center;font-family:'Press Start 2P',cursive;color:#fff;line-height:1.5;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6);transform:translateY(20px);pointer-events:none}
   .gc-title span{font-size:38px}
+  .gc-title--fit span{font-size:min(30px,calc((var(--ug-card-w,320px) - 28px) / 9))}
   .gc-title--sm span{font-size:30px}  
   .stats-wrapper{position:absolute;bottom:15px;left:50%;transform:translateX(-50%);width:90%;display:flex;justify-content:space-between;gap:10px}
   .stat-box{flex:1;background:rgba(0,0,0,0.85);border:2px solid #f69b55;border-radius:8px;padding:8px 6px;text-align:center;box-shadow:0 0 10px rgba(64,18,83,0.7)}
@@ -222,13 +223,24 @@
 
         <div>
           <div style="font-family:'Audiowide',sans-serif;font-size:24px;color:#fff;text-align:center;margin-bottom:10px;letter-spacing:.5px">Grimworks</div>
-          <div class="game-info-btn is-soon">
+          <a href="https://www.roblox.com/games/71470141854754/GRIMWORKS" target="_blank" rel="noopener noreferrer" class="game-info-btn">
             <div class="glow-card">
-              <img src="https://images.fntduserguide.com/gw-A-512.png" alt="Grimworks" loading="lazy">
+              <img src="/game-thumb/7344880866" alt="Grimworks" loading="lazy"
+                   onerror="this.onerror=null;this.src='https://images.fntduserguide.com/gw-A-512.png'">
               <div class="gc-shade"></div>
-              <div class="gc-title"><span>Coming<br>Soon?</span></div>
+              <div class="gc-title gc-title--fit"><span>Grimworks</span></div>
+              <div class="stats-wrapper">
+                <div class="stat-box">
+                  <div class="stat-label">Players</div>
+                  <div id="GWPlayers" class="stat-value">--</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Visits</div>
+                  <div id="GWVisits" class="stat-value">--</div>
+                </div>
+              </div>
             </div>
-          </div>
+          </a>
           <div class="home-info-card"><div class="info-card-section"><p>Stay tuned for whats to come</p></div></div>
         </div>
 
@@ -261,7 +273,7 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
 
   (function(){
-    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624";
+    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624,7344880866";
     function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1).replace('.0','')+'b';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'m';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'k';return n.toString()}
     function fetchStats(){
       fetch(workerURL).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(json){
@@ -270,6 +282,7 @@
           if(g.id===5479908441){var p=document.getElementById('fntdPlayers'),v=document.getElementById('fntdVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
           if(g.id===7934320560){var p=document.getElementById('fntd2Players'),v=document.getElementById('fntd2Visits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
           if(g.id===8202280624){var p=document.getElementById('BBNPlayers'),v=document.getElementById('BBNVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
+          if(g.id===7344880866){var p=document.getElementById('GWPlayers'),v=document.getElementById('GWVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
         });
       }).catch(function(){});
     }
