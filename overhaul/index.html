@@ -177,8 +177,6 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .game-stats dt{font:400 8px/1.4 var(--font-tag);color:var(--mute);text-transform:uppercase}
 .game-stats dd{margin-top:4px;font:400 18px/1 var(--font-head)}
 .go{display:inline-flex;gap:8px;margin-top:auto;padding-top:14px;font-weight:700}
-.game-soon{border-style:dashed;box-shadow:none}
-.game-soon .go{color:var(--mute)}
 
 .tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
 .tool{display:flex;flex-direction:column;gap:10px;padding:24px;min-width:0;text-align:left;font:inherit;color:inherit;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
@@ -341,12 +339,14 @@ a.game:hover .game-top img{transform:scale(1.05)}
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
-            <div class="game game-soon blk reveal">
-              <div class="game-top"><img src="https://images.fntduserguide.com/gw-A-512.png" alt="" width="512" height="512" loading="lazy"><div class="gc-shade"></div><div class="gc-title"><span>Coming<br>Soon?</span></div></div>
+            <a class="game blk reveal" href="https://www.roblox.com/games/71470141854754/GRIMWORKS" target="_blank" rel="noopener noreferrer">
+              <div class="game-top"><img src="/game-thumb/7344880866" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://images.fntduserguide.com/gw-A-512.png'"><div class="gc-shade"></div><div class="gc-title gc-title--sm"><span>Grimworks</span></div></div>
               <div class="game-body">
                 <p>Stay tuned for what's to come.</p>
+                <dl class="game-stats"><div><dt>Players</dt><dd id="GWPlayers">--</dd></div><div><dt>Visits</dt><dd id="GWVisits">--</dd></div></dl>
+                <span class="go">Play on Roblox <span class="arrow" aria-hidden="true">&nearr;</span></span>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </section>
@@ -384,7 +384,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
 
   (function(){
-    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624";
+    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624,7344880866";
     function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1).replace('.0','')+'b';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'m';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'k';return n.toString()}
     function fetchStats(){
       fetch(workerURL).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(json){
@@ -393,6 +393,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
           if(g.id===5479908441){var p=document.getElementById('fntdPlayers'),v=document.getElementById('fntdVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
           if(g.id===7934320560){var p=document.getElementById('fntd2Players'),v=document.getElementById('fntd2Visits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
           if(g.id===8202280624){var p=document.getElementById('BBNPlayers'),v=document.getElementById('BBNVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
+          if(g.id===7344880866){var p=document.getElementById('GWPlayers'),v=document.getElementById('GWVisits');if(p)p.textContent=fmt(g.playing||0);if(v)v.textContent=fmt(g.visits||0)}
         });
       }).catch(function(){});
     }
