@@ -8,6 +8,26 @@
 <link rel="icon" type="image/png" href="/favicon-192.png">
 <script>
 (function () {
+  var errs = window.__pvErr = [];
+  window.addEventListener('error', function (e) { errs.push((e.message || 'error') + ' @ ' + String(e.filename || '').split('/').pop() + ':' + (e.lineno || 0)); });
+  window.addEventListener('unhandledrejection', function (e) { errs.push('promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
+  if (location.hash === '#debug') {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var box = document.createElement('pre');
+        box.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:45vh;overflow:auto;margin:0;padding:10px;background:#000;color:#0f0;font:12px/1.4 ui-monospace,Menlo,monospace;white-space:pre-wrap;border:2px solid #0f0';
+        box.textContent = [
+          'UA: ' + navigator.userAgent,
+          'reduce motion: ' + window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+          'fonts: ' + (document.fonts ? document.fonts.status : 'n/a'),
+          'gsap: ' + (window.gsap ? gsap.version : 'missing') + ', SplitText: ' + !!window.SplitText + ', ScrollTrigger: ' + !!window.ScrollTrigger,
+          'started: ' + !!window.__pvStarted,
+          'errors: ' + (errs.length ? '\n  ' + errs.join('\n  ') : 'none')
+        ].join('\n');
+        document.body.appendChild(box);
+      }, 4000);
+    });
+  }
   var h = document.documentElement, t;
   try { t = localStorage.getItem('pv-theme'); } catch (e) {}
   if (t !== 'dark' && t !== 'light') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
@@ -1185,7 +1205,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     gsap.set(pv, { x: 0, y: -480 });
     tl = gsap.timeline({ defaults: { ease: 'back.out(1.6)' } });
     tl.from('.kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.08)
-      .from(split.chars, { yPercent: 115, duration: 0.5, stagger: 0.02 }, 0.14)
+      .from(split ? split.chars : [], { yPercent: 115, duration: 0.5, stagger: 0.02 }, 0.14)
       .from('.hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.5)
       .from(['.lede', '.cta > *'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.42)
       .from('.stage', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0.3)
@@ -1284,6 +1304,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       fit();
+      placeHl();
       if (stage.clientWidth !== lastW) {
         lastW = stage.clientWidth;
         twinkle(makeStars());
@@ -1291,17 +1312,48 @@ html.talk-on,html.talk-on body{overflow:hidden}
     }, 120);
   });
 
-  function start() {
-    fit();
-    split = SplitText.create('#heroTitle', { type: 'words,chars', mask: 'words' });
-    twinkle(makeStars());
-    rest();
-    intro();
-    marquee();
-    reveals();
+  function placeHl() {
+    var h = document.querySelector('.hl'), bg = h && h.querySelector('.hl-bg');
+    if (!bg) return;
+    var cs = getComputedStyle(h), fs = parseFloat(cs.fontSize);
+    var host = split ? split.chars.filter(function (c) { return h.contains(c); })[0] : h;
+    var probe = document.createElement('span');
+    probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+    host.appendChild(probe);
+    var base = probe.getBoundingClientRect().top - h.getBoundingClientRect().top;
+    host.removeChild(probe);
+    var ctx = document.createElement('canvas').getContext('2d');
+    ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+    var cap = ctx.measureText('H').actualBoundingBoxAscent || fs * 0.7;
+    var pad = fs * 0.15;
+    bg.style.top = Math.round(base - cap - pad) + 'px';
+    bg.style.bottom = 'auto';
+    bg.style.height = Math.round(cap + pad * 2) + 'px';
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start);
-  else start();
+
+  var started = false;
+  function safe(name, fn) {
+    try { fn(); } catch (e) {
+      if (window.__pvErr) window.__pvErr.push(name + ': ' + (e && e.message ? e.message : e));
+      if (window.console) console.error(e);
+    }
+  }
+  function start() {
+    if (started) return;
+    started = true;
+    window.__pvStarted = true;
+    safe('fit', fit);
+    safe('split', function () { split = SplitText.create('#heroTitle', { type: 'words,chars', mask: 'words' }); });
+    safe('highlight', placeHl);
+    safe('stars', function () { twinkle(makeStars()); });
+    safe('rest', rest);
+    safe('intro', intro);
+    safe('band', marquee);
+    safe('reveals', reveals);
+    html.classList.remove('pre');
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start, start);
+  setTimeout(start, document.fonts && document.fonts.ready ? 1200 : 0);
 })();
 </script>
 </body>
