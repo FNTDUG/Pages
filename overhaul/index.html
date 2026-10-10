@@ -161,16 +161,13 @@ h2{font:400 clamp(30px,4vw,48px)/1.05 var(--font-head);text-transform:uppercase}
 .games{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .game{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:inherit;overflow:hidden;transition:transform .15s,box-shadow .15s}
 a.game:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-hover)}
-.game-top{position:relative;height:150px;overflow:hidden;background:var(--c);border-bottom:var(--bw) solid var(--ink)}
-.game-ic{position:absolute;left:16px;top:16px;width:60px;height:60px;object-fit:cover;background:#0b0a16;border:var(--bw) solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
-.mini{position:absolute;right:18px;bottom:-30px;width:105px;height:111px;transition:transform .24s steps(3,jump-none)}
-a.game:hover .mini{transform:translateY(-18px)}
-.mini i{position:absolute;inset:0;background:url('mascot-states.png') no-repeat;background-size:2205px 333px;image-rendering:pixelated}
-.mini .mb{background-position:calc(var(--col) * -105px) 0}
-.mini .me{background-position:-1785px -111px}
-a.game:hover .me{background-position:-1995px -111px}
+.game-top{position:relative;aspect-ratio:1/1;overflow:hidden;background:#0b0a16;border-bottom:var(--bw) solid var(--ink);container-type:inline-size}
+.game-top img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .3s}
+a.game:hover .game-top img{transform:scale(1.05)}
+.gc-shade{position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
+.gc-title{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 7cqw;text-align:center;font:400 11.9cqw/1.5 'Press Start 2P',monospace;color:#fff;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6);pointer-events:none}
+.gc-title--sm{font-size:9.4cqw}
 .game-body{display:flex;flex:1;flex-direction:column;gap:8px;padding:20px 20px 22px}
-.game-body h3{font:400 21px/1.1 var(--font-head);text-transform:uppercase}
 .game-body p{color:var(--mute);font-size:15px}
 .game-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .game-stats div{padding:8px 10px;background:var(--bg);border:2px solid var(--ink)}
@@ -178,7 +175,6 @@ a.game:hover .me{background-position:-1995px -111px}
 .game-stats dd{margin-top:4px;font:400 18px/1 var(--font-head)}
 .go{display:inline-flex;gap:8px;margin-top:auto;padding-top:14px;font-weight:700}
 .game-soon{border-style:dashed;box-shadow:none}
-.game-soon .game-top{background:repeating-linear-gradient(-45deg,var(--surface2) 0 12px,var(--surface) 12px 24px)}
 .game-soon .go{color:var(--mute)}
 
 .tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
@@ -226,7 +222,7 @@ a.game:hover .me{background-position:-1995px -111px}
   .sec{padding:56px 0}
 }
 @media (prefers-reduced-motion:reduce){
-  .btn,.game,.tool,.mini,.arrow,html.ov #ug-mobile-nav{transition:none}
+  .btn,.game,.tool,.game-top img,.arrow,html.ov #ug-mobile-nav{transition:none}
 }
 </style>
 </head>
@@ -316,39 +312,34 @@ a.game:hover .me{background-position:-1995px -111px}
             <p>Each game has its own home with everything for it.</p>
           </div>
           <div class="games">
-            <a class="game blk reveal" href="/fntd1" style="--c:var(--blue)">
-              <div class="game-top"><img class="game-ic" src="/game-thumb/5479908441" alt="" width="60" height="60" loading="lazy" onerror="this.remove()"><span class="mini" style="--col:2" aria-hidden="true"><i class="mb"></i><i class="me"></i></span></div>
+            <a class="game blk reveal" href="/fntd1">
+              <div class="game-top"><img src="/game-thumb/5479908441" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD1</span></div></div>
               <div class="game-body">
-                <h3>FNTD1</h3>
                 <p>Explore all the data we've collected over FNTD1's life span.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd id="fntdPlayers">--</dd></div><div><dt>Visits</dt><dd id="fntdVisits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
-            <a class="game blk reveal" href="/fntd2/fntd2-directory" style="--c:var(--yellow)">
-              <div class="game-top"><img class="game-ic" src="/game-thumb/7934320560" alt="" width="60" height="60" loading="lazy" onerror="this.remove()"><span class="mini" style="--col:0" aria-hidden="true"><i class="mb"></i><i class="me"></i></span></div>
+            <a class="game blk reveal" href="/fntd2/fntd2-directory">
+              <div class="game-top"><img src="/game-thumb/7934320560" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&amp;crop=1.0048%3A1&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD2</span></div></div>
               <div class="game-body">
-                <h3>FNTD2</h3>
                 <p>Need help? Find the best guides, tips, and tricks for FNTD2.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd id="fntd2Players">--</dd></div><div><dt>Visits</dt><dd id="fntd2Visits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
-            <a class="game blk reveal" href="/bbn/bite-by-night-directory" style="--c:var(--green)">
-              <div class="game-top"><img class="game-ic" src="/game-thumb/8202280624" alt="" width="60" height="60" loading="lazy" onerror="this.remove()"><span class="mini" style="--col:1" aria-hidden="true"><i class="mb"></i><i class="me"></i></span></div>
+            <a class="game blk reveal" href="/bbn/bite-by-night-directory">
+              <div class="game-top"><img src="/game-thumb/8202280624" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-4-edited-high.png?enable-io=true&amp;crop=1%3A1&amp;width=1920'"><div class="gc-shade"></div><div class="gc-title gc-title--sm"><span>Bite By Night</span></div></div>
               <div class="game-body">
-                <h3>Bite By Night</h3>
                 <p>An effective wiki for BBN, with info for Killers, Survivors, and TierLists.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd id="BBNPlayers">--</dd></div><div><dt>Visits</dt><dd id="BBNVisits">--</dd></div></dl>
                 <span class="go">Open guide <span class="arrow" aria-hidden="true">&rarr;</span></span>
               </div>
             </a>
             <div class="game game-soon blk reveal">
-              <div class="game-top"><img class="game-ic" src="https://images.fntduserguide.com/gw-A-512.png" alt="" width="60" height="60" loading="lazy" onerror="this.remove()"><span class="mini" style="--col:5" aria-hidden="true"><i class="mb"></i><i class="me"></i></span></div>
+              <div class="game-top"><img src="https://images.fntduserguide.com/gw-A-512.png" alt="" width="512" height="512" loading="lazy"><div class="gc-shade"></div><div class="gc-title"><span>Coming<br>Soon?</span></div></div>
               <div class="game-body">
-                <h3>Grimworks</h3>
                 <p>Stay tuned for what's to come.</p>
-                <span class="go">Coming soon?</span>
               </div>
             </div>
           </div>
@@ -628,9 +619,30 @@ a.game:hover .me{background-position:-1995px -111px}
     gsap.to(stars, { opacity: 0.15, duration: 0.7, ease: 'steps(2)', stagger: { each: 0.3, from: 'random', repeat: -1, yoyo: true } });
   }
 
+  function fillBand() {
+    var track = document.getElementById('bandTrack');
+    var sets = track.querySelectorAll('.band-set');
+    if (!fillBand.base) {
+      fillBand.base = sets[0].innerHTML;
+      fillBand.unit = sets[0].getBoundingClientRect().width;
+    }
+    var need = track.parentNode.getBoundingClientRect().width + 120;
+    var copies = Math.max(1, Math.ceil(need / fillBand.unit));
+    if (copies === fillBand.copies) return;
+    fillBand.copies = copies;
+    var html = '';
+    for (var i = 0; i < copies; i++) html += fillBand.base;
+    sets[0].innerHTML = html;
+    sets[1].innerHTML = html;
+    if (fillBand.loop) fillBand.loop.duration(32 * copies);
+  }
+
   function marquee() {
+    fillBand();
+    window.addEventListener('resize', fillBand, { passive: true });
     if (reduced) return;
-    var loop = gsap.to('#bandTrack', { xPercent: -50, duration: 32, ease: 'none', repeat: -1 });
+    var loop = gsap.to('#bandTrack', { xPercent: -50, duration: 32 * fillBand.copies, ease: 'none', repeat: -1 });
+    fillBand.loop = loop;
     loop.totalTime(loop.duration() * 100);
     ScrollTrigger.create({
       onUpdate: function (self) {
