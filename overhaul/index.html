@@ -93,6 +93,7 @@ html.ov .ntf-bell{color:var(--red)!important}
 html.ov .ntf-bell.on{color:var(--green-ink)!important}
 html.ov[data-theme="dark"] .ntf-bell.on{color:var(--green)!important}
 #pv-theme{display:flex;align-items:center;justify-content:center;position:fixed;right:12px;top:123px;z-index:1047;width:32px;height:32px;padding:0;cursor:pointer}
+#pv-theme.is-cooling{opacity:.55;cursor:default}
 #pv-theme svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:square}
 html[data-theme="dark"] #pv-theme .pv-moon,html[data-theme="light"] #pv-theme .pv-sun{display:none}
 #ug-overlay{display:none;position:fixed;inset:0;z-index:1099;background:var(--overlay)}
@@ -127,6 +128,8 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
 .btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink);transition-duration:.05s}
 .btn-primary{background:var(--acc);color:var(--acc-ink)}
+.btn-discord{background:#5865f2;color:#fff}
+.btn-discord:hover{background:#4752c4;color:#fff}
 .arrow{display:inline-block;transition:transform .15s}
 a:hover>.arrow,.game:hover .arrow,.tool:hover .arrow{transform:translateX(3px)}
 
@@ -371,7 +374,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           <p class="lede">Guides, tools and patch notes for the games we cover, made and kept up to date by the community. Pick a game to get started.</p>
           <div class="cta">
             <a class="btn btn-primary" href="#games">Pick a game <span class="arrow" aria-hidden="true">&darr;</span></a>
-            <a class="btn" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+            <a class="btn btn-discord" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Join the Discord</a>
           </div>
         </div>
         <div class="stage" id="stage">
@@ -463,7 +466,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           <div class="tools">
             <a class="tool blk reveal" href="/patch-notes" style="--c:var(--yellow)"><span class="tool-ic"><i></i></span><h3>Patch notes</h3><p>Every update for every game, in one place.</p><span class="go">Read patch notes <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
             <button class="tool blk reveal" id="pvNotify" type="button" style="--c:var(--blue)"><span class="tool-ic"><i></i></span><h3>Notifications</h3><p>Get a ping when a game you follow updates.</p><span class="go">Turn them on <span class="arrow" aria-hidden="true">&rarr;</span></span></button>
-            <a class="tool blk reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="tool-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
+            <a class="tool blk reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="tool-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
           </div>
         </div>
       </section>
@@ -1284,7 +1287,14 @@ html.talk-on,html.talk-on body{overflow:hidden}
     var dark = html.getAttribute('data-theme') === 'dark';
     themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
   }
+  var themeLock = 0;
   themeBtn.addEventListener('click', function () {
+    var now = Date.now();
+    if (now < themeLock) return;
+    themeLock = now + 800;
+    themeBtn.classList.add('is-cooling');
+    themeBtn.setAttribute('aria-disabled', 'true');
+    setTimeout(function () { themeBtn.classList.remove('is-cooling'); themeBtn.removeAttribute('aria-disabled'); }, 800);
     var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
     try { localStorage.setItem('pv-theme', next); } catch (e) {}
