@@ -201,10 +201,11 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .talk-x{display:grid;place-items:center;width:40px;height:40px;flex:none;padding:0;font:700 18px/1 var(--font-body);color:var(--text);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:transform .12s,box-shadow .12s}
 .talk-x:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
 .talk-x:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
-.talk-log{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 22px 18px}
+.talk-log{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:18px 22px}
 .msg{max-width:88%;padding:12px 16px;font-size:15px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
-.msg-pv{align-self:flex-start;margin:3px;background:#151b2c;color:#e6edf3;border:3px solid #070b14;box-shadow:0 0 0 3px #fafafa;font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.msg-me{align-self:flex-end;background:var(--bg);color:var(--text);border:2px solid var(--ink)}
+.msg-pv{--ink-u:8px;align-self:flex-start;max-width:min(520px,calc(100% - 110px));font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.msg-pv .rest{color:transparent}
+.msg-me{align-self:flex-end;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:500}
 .msg-dots{display:inline-flex;gap:6px;padding:6px 0}
 .msg-dots i{width:8px;height:8px;background:#e6edf3;animation:pvDot 1s steps(2,jump-none) infinite}
 .msg-dots i:nth-child(2){animation-delay:.2s}
@@ -226,7 +227,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .pt-note{text-align:left;font-size:13px}
   .talk-head{position:absolute;top:12px;right:12px;padding:0;background:none;border:0}
   .talk-head h2{display:none}
-  .talk-log{padding:18px 14px 14px}
+  .talk-log{padding:14px}
+  .msg-pv{max-width:calc(100% - 80px)}
   .talk-form{padding:12px}
 }
 @media (prefers-reduced-motion:reduce){.msg-dots i{animation:none;opacity:.7}}
@@ -734,6 +736,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
       ink.arrow = a;
       if (!ink.timer) { ink.quiet = true; draw(el, SETTLED); ink.quiet = false; }
     },
+    attach: function (el) { if (!el._ink) setup(el, Math.floor(Math.random() * 100000)); },
     redraw: function (el) { draw(el, SETTLED); },
     reshape: function (el) {
       if (!el._ink) return;
@@ -1013,31 +1016,59 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function scrollLog() { talkLog.scrollTop = talkLog.scrollHeight; }
   function addMsg(who, text) {
     var m = document.createElement('div');
-    m.className = 'msg ' + (who === 'me' ? 'msg-me' : 'msg-pv');
+    m.className = 'msg ' + (who === 'me' ? 'msg-me' : 'msg-pv px-ink');
     if (text) m.textContent = text;
     talkLog.appendChild(m);
     scrollLog();
     return m;
   }
+  function inkMsg(m) {
+    if (!window.pxInk) return;
+    window.pxInk.attach(m);
+    var side = window.innerWidth > 760;
+    var cs = getComputedStyle(talkLog);
+    var avail = talkLog.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var e, h, left;
+    for (var k = 0; k < 5; k++) {
+      window.pxInk.reshape(m);
+      e = m._ink.ext;
+      h = m.offsetHeight;
+      if (side) window.pxInk.point(m, 'l', Math.round(h / 2));
+      left = side ? Math.max(e.l, window.pxInk.tip(m, 'l', Math.round(h / 2))) : e.l;
+      if (m.offsetWidth + left + e.r <= avail) break;
+      m.style.maxWidth = Math.floor(avail - left - e.r) + 'px';
+    }
+    m.style.margin = Math.round(e.t) + 'px 0 ' + Math.round(e.b) + 'px ' + Math.round(left) + 'px';
+    scrollLog();
+    window.pxInk.splash(m);
+  }
   function pvLine(text) {
     var m = addMsg('pv', '');
+    var shown = document.createElement('span'), rest = document.createElement('span');
+    rest.className = 'rest';
+    rest.setAttribute('aria-hidden', 'true');
+    rest.textContent = text;
+    m.appendChild(shown);
+    m.appendChild(rest);
+    inkMsg(m);
     play(SND.text);
-    if (reduced) { m.textContent = text; scrollLog(); return Promise.resolve(); }
+    if (reduced) { shown.textContent = text; rest.textContent = ''; return Promise.resolve(); }
     return new Promise(function (resolve) {
       var i = 0;
-      (function step() {
+      setTimeout(function step() {
         i = Math.min(text.length, i + 2);
-        m.textContent = text.slice(0, i);
-        scrollLog();
+        shown.textContent = text.slice(0, i);
+        rest.textContent = text.slice(i);
         if (i < text.length) setTimeout(step, 22);
         else resolve();
-      })();
+      }, 200);
     });
   }
   function thinking() {
     var m = addMsg('pv', '');
     m.setAttribute('aria-label', 'Parvus is thinking');
     m.innerHTML = '<span class="msg-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+    inkMsg(m);
     return m;
   }
 
@@ -1050,7 +1081,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     talk.hidden = false;
     html.classList.add('talk-on');
     ptFit();
-    ptDraw(EYE.base);
+    ptDraw(EYE.pleased);
     var r = pv.getBoundingClientRect(), b = talkBox.getBoundingClientRect();
     var ox = Math.round(r.left + r.width / 2 - b.left), oy = Math.round(r.top + r.height * 0.3 - b.top);
     if (talkTl) talkTl.kill();
@@ -1070,6 +1101,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function afterOpen() {
     gsap.set([talkBox, ptZoom], { clearProps: 'transform' });
     ptFit();
+    ptDraw(EYE.base);
     ptBlinkLoop();
     if (window.matchMedia('(pointer: fine)').matches) talkInput.focus();
     else document.getElementById('pvTalkX').focus();
@@ -1111,8 +1143,13 @@ html.talk-on,html.talk-on body{overflow:hidden}
     addMsg('me', q);
     var wait = thinking();
     var done = function (text) {
-      wait.remove();
-      return pvLine(text).then(function () { busy = false; });
+      return new Promise(function (resolve) {
+        if (!window.pxInk || reduced) { resolve(); return; }
+        window.pxInk.unsplash(wait, resolve);
+      }).then(function () {
+        wait.remove();
+        return pvLine(text);
+      }).then(function () { busy = false; });
     };
     Promise.resolve().then(function () { return window.parvusAsk(q); }).then(function (answer) {
       return done(String(answer || '...'));
