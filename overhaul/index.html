@@ -97,7 +97,7 @@ html.ov[data-theme="dark"] .ntf-bell.on{color:var(--green)!important}
 html[data-theme="dark"] #pv-theme .pv-moon,html[data-theme="light"] #pv-theme .pv-sun{display:none}
 #ug-overlay{display:none;position:fixed;inset:0;z-index:1099;background:var(--overlay)}
 #ug-overlay.open{display:block}
-html.ov #ug-mobile-nav{position:fixed;top:0;right:0;width:min(290px,88vw);height:100vh;z-index:1100;display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);border-left:var(--bw) solid var(--ink);box-shadow:-6px 0 0 var(--ink);transform:translateX(calc(100% + 8px));transition:transform .16s cubic-bezier(.3,.8,.3,1)}
+html.ov #ug-mobile-nav{position:fixed;top:0;right:0;bottom:0;width:min(290px,88vw);height:auto!important;padding-bottom:env(safe-area-inset-bottom);z-index:1100;display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);border-left:var(--bw) solid var(--ink);box-shadow:-6px 0 0 var(--ink);transform:translateX(calc(100% + 8px));transition:transform .16s cubic-bezier(.3,.8,.3,1)}
 html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
@@ -168,7 +168,7 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 .bubble.on{opacity:1}
 
 .band-wrap{overflow:hidden;padding:30px 0}
-.band{margin:0 -24px;background:var(--acc);color:var(--acc-ink);border-block:var(--bw) solid var(--ink);transform:rotate(-1.4deg)}
+.band{margin:0 -40px;background:var(--acc);background-clip:padding-box;color:var(--acc-ink);border-block:5px solid var(--ink);transform:rotate(-1.4deg)}
 .band-track{display:flex;width:max-content}
 .band-set{display:flex;flex:none}
 .band-item{display:flex;align-items:center;gap:30px;padding:17px 15px;white-space:nowrap;font:400 22px/1 var(--font-head);text-transform:uppercase}
@@ -290,8 +290,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .rowloop{--row-pad:16px;gap:16px}
   .games{--row-item:min(280px,calc(100vw - 96px))}
   .tools{--row-item:min(300px,calc(100vw - 80px))}
-  .band{margin:0 -16px}
-  .band-item{font-size:18px;padding:14px 12px;gap:24px}
+  .band{margin:0 -32px;border-block-width:4px}
+  .band-item{font-size:14px;padding:12px 10px;gap:20px}
+  .band-item::after{width:9px;height:9px}
   .sec{padding:56px 0}
 }
 @media (prefers-reduced-motion:reduce){
