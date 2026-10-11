@@ -2867,7 +2867,7 @@ const WIP_PAGES = {
 };
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
-  return p === '/fntd2' || p.indexOf('/fntd2/') === 0;
+  return p === '/fntd2' || p.indexOf('/fntd2/') === 0 || p.indexOf('/overhaul/') === 0;
 }
 function wipActive(pathname) {
   let p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');

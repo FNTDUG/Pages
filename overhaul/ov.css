@@ -24,6 +24,10 @@ html.ov #ug-hamburger{display:none;position:fixed;top:11px;right:12px;z-index:12
 html.ov #ug-hamburger .hmb-icon{font-size:17px;line-height:1}
 html.ov #ug-hamburger:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)!important}
 html.ov #ug-hamburger:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)!important}
+html.ov #ug-info-btn{color:var(--text)!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow-sm)!important;font:700 12px/1 var(--font-body)!important;letter-spacing:.08em;transition:transform .12s,box-shadow .12s}
+html.ov #ug-info-panel:not(.open){box-shadow:none}
+html.ov #ug-info-btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)!important}
+html.ov .metaMount,html.ov #unitEngine,html.ov #ue-last-updated-loader,html.ov #ug-info-panel{font-family:"Franklin Gothic Medium","Franklin Gothic","ITC Franklin Gothic",Arial,sans-serif;color:#fff}
 html.ov #ug-sound-btn,html.ov .ntf-bell,#pv-theme{color:var(--text)!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow-sm)!important;transition:transform .12s,box-shadow .12s}
 html.ov #ug-sound-btn:hover,html.ov .ntf-bell:hover,#pv-theme:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)!important}
 html.ov #ug-sound-btn.muted{color:var(--red)!important;background:var(--surface)!important;border-color:var(--ink)!important}

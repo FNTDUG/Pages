@@ -132,11 +132,20 @@
     layer.className = 'ov-float';
     layer.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(layer, document.body.firstChild);
-    var vw = window.innerWidth, phone = vw <= 600, n = phone ? 5 : Math.min(16, Math.max(8, Math.round(vw / 120)));
+    var vw = window.innerWidth, span = window.innerHeight + 240, phone = vw <= 600, n = phone ? 4 : Math.min(14, Math.max(7, Math.round(vw / 140)));
     for (var i = 0; i < n; i++) {
-      var u = phone ? 4 : 4 + Math.floor(Math.random() * 3), el = sticker(pick(), u, 'ov-sticker');
-      layer.appendChild(el);
-      floats.push({ el: el, u: u, fx: Math.random(), fy: Math.random(), d: rnd(0.15, 0.6), w: parseFloat(el.style.width), cyc: null });
+      var f = { u: phone ? 4 : 4 + Math.floor(Math.random() * 3), d: rnd(0.15, 0.6), cyc: null, name: free(null) };
+      f.el = sticker(f.name, f.u, 'ov-sticker');
+      f.w = parseFloat(f.el.style.width);
+      layer.appendChild(f.el);
+      var best = -1;
+      for (var c = 0; c < 20; c++) {
+        var cx = Math.random(), cy = Math.random(), dist = far(cx * vw, cy * span - 120, f);
+        if (dist > best) { best = dist; f.fx = cx; f.fy = cy; }
+      }
+      f.x = f.fx * vw - f.w / 2;
+      f.y = f.fy * span - 120;
+      floats.push(f);
     }
     float();
     if (!reduced) window.addEventListener('scroll', float, { passive: true });
@@ -145,25 +154,45 @@
   function float() {
     var vw = window.innerWidth, span = window.innerHeight + 240, sy = reduced ? 0 : window.scrollY;
     floats.forEach(function (f) {
-      var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span);
-      if (f.cyc !== null && cyc !== f.cyc) reroll(f);
+      var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span), y = Math.round(pos - cyc * span - 120);
+      if (f.cyc !== null && cyc !== f.cyc) reroll(f, y, vw);
       f.cyc = cyc;
-      var x = Math.round(f.fx * vw - f.w / 2), y = Math.round(pos - cyc * span - 120);
-      f.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      f.x = Math.round(f.fx * vw - f.w / 2);
+      f.y = y;
+      f.el.style.transform = 'translate(' + f.x + 'px,' + y + 'px)';
     });
   }
   function pick() {
     var names = Object.keys(SPRITES);
     return names[Math.floor(Math.random() * names.length)];
   }
-  function reroll(f) {
-    var a = art(SPRITES[pick()]);
+  function free(self) {
+    var used = {}, open = [];
+    floats.forEach(function (o) { if (o !== self) used[o.name] = 1; });
+    Object.keys(SPRITES).forEach(function (n) { if (!used[n]) open.push(n); });
+    return open.length ? open[Math.floor(Math.random() * open.length)] : pick();
+  }
+  function far(x, y, self) {
+    var best = Infinity;
+    floats.forEach(function (o) {
+      if (o === self) return;
+      var dx = x - (o.x + o.w / 2), dy = y - o.y;
+      best = Math.min(best, dx * dx + dy * dy);
+    });
+    return best;
+  }
+  function reroll(f, y, vw) {
+    f.name = free(f);
+    var a = art(SPRITES[f.name]);
     f.w = a.w * f.u;
     f.el.style.width = f.w + 'px';
     f.el.style.height = a.h * f.u + 'px';
     f.el.querySelector('.ov-bob').innerHTML = a.svg;
-    f.fx = Math.random();
-    f.d = rnd(0.15, 0.6);
+    var best = -1;
+    for (var c = 0; c < 16; c++) {
+      var cx = Math.random(), dist = far(cx * vw, y, f);
+      if (dist > best) { best = dist; f.fx = cx; }
+    }
   }
   function pins(card) {
     var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
