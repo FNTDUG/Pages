@@ -364,9 +364,9 @@
       if (d > total / 2) d -= total;
       return pos + d;
     }
-    function glideTo(target) {
+    function glideTo(target, dur) {
       slide.x = pos;
-      g.to(slide, { x: target, duration: 0.45, ease: 'power3.out', overwrite: true, onUpdate: function () { pos = slide.x; render(); } });
+      g.to(slide, { x: target, duration: dur || 0.45, ease: 'power3.out', overwrite: true, onUpdate: function () { pos = slide.x; render(); } });
     }
     function settle() {
       var target = nearest(Math.round(pos / step) * step);
@@ -442,6 +442,22 @@
       if (i >= 0) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
     });
     box.addEventListener('keydown', stopAuto);
+    var outsideAt = -1e9, wheelTo = null, wheelT = 0;
+    window.addEventListener('wheel', function (e) { if (!box.contains(e.target)) outsideAt = e.timeStamp; }, { passive: true });
+    box.addEventListener('wheel', function (e) {
+      if (!on || e.ctrlKey) return;
+      var across = Math.abs(e.deltaX) > Math.abs(e.deltaY), d = across ? e.deltaX : e.deltaY;
+      if (!across && e.timeStamp - outsideAt < 300) { outsideAt = e.timeStamp; return; }
+      d *= e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? box.clientWidth : 1;
+      if (!d) return;
+      e.preventDefault();
+      stopAuto();
+      g.killTweensOf(proxy);
+      wheelTo = pos + (wheelTo === null ? 0 : wheelTo - slide.x) + d;
+      glideTo(wheelTo, 0.3);
+      clearTimeout(wheelT);
+      wheelT = setTimeout(function () { wheelTo = null; settle(); }, 180);
+    }, { passive: false });
     if (window.IntersectionObserver) {
       new IntersectionObserver(function (es) { seen = es[0].isIntersecting; last = 0; }, { threshold: 0.2 }).observe(box);
     } else seen = true;
