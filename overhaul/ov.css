@@ -1,7 +1,6 @@
 html.ov{
   --font-head:'Archivo Black',system-ui,sans-serif;
   --font-body:'Space Grotesk',system-ui,sans-serif;
-  --font-tag:'Press Start 2P',monospace;
   --bw:3px;
   --shadow:6px 6px 0 var(--ink);
   --shadow-hover:10px 10px 0 var(--ink);
@@ -69,42 +68,53 @@ html.ov body{color:var(--text);font-family:var(--font-body);-webkit-font-smoothi
 html.ov #ug-main{background:none!important}
 html.ov #ug-header{display:none}
 
+html.ov{--game:var(--acc);--game-ink:var(--acc-ink)}
+html.ov[data-game="fntd1"]{--game:var(--blue);--game-ink:#0d1a29}
+html.ov[data-game="bbn"]{--game:#b48cff;--game-ink:#160d29}
+html.ov[data-game="wiki"]{--game:var(--pink);--game-ink:#2a0f1c}
+
 html.ov #ug-hero{background:none!important;padding:72px 0 0}
 html.ov #ug-hero::before{display:none}
 html.ov #ug-hero-inner{padding:0 24px;max-width:1180px}
-.ov-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:52px;align-items:center;margin-bottom:8px}
-.ov-copy{min-width:0}
-.ov-kicker{display:inline-flex;align-items:center;gap:10px;padding:9px 12px;font:400 11px/1.2 var(--font-tag);letter-spacing:.04em;text-transform:uppercase;color:#1d2228;background:var(--acc);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
-.ov-kicker i{width:8px;height:8px;background:#1d2228}
-.ov-stage{position:relative;overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+.ov-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+.ov-copy{min-width:0;align-self:center;padding:40px 44px}
+.ov-kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 11px;font:400 12px/1.2 var(--font-head);letter-spacing:.06em;text-transform:uppercase;color:var(--game-ink);background:var(--game);border:var(--bw) solid var(--ink)}
+.ov-kicker i{width:8px;height:8px;background:currentColor}
+.ov-stage{display:flex;flex-direction:column;padding:18px 18px 0;background:var(--game);border-left:var(--bw) solid var(--ink)}
+.ov-screen{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink)}
+.ov-screen>[data-parvus-home]{zoom:.75}
+.ov-lip{display:flex;align-items:center;justify-content:flex-end;height:34px}
+.ov-lip i{width:12px;height:12px;background:var(--green);border:2px solid var(--ink)}
 
-html.ov .ug-page-title-area{text-align:left;margin:0}
-html.ov .ug-page-title{margin:22px 0 20px;font:400 clamp(40px,5vw,66px)/1.02 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}
+html.ov .ug-page-title-area{text-align:left;margin:0;padding:0}
+html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}
 .ov-hl{display:inline-block;padding:.1em .12em .07em;line-height:1;color:#1d2228;background:var(--yellow);border:var(--bw) solid var(--ink)}
-html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:7px 11px;font:700 13px/1.2 var(--font-body);color:#0e2a16;background:var(--green);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm)}
-html.ov .ug-page-desc{max-width:36em;margin:0 0 8px;font-size:18px;line-height:1.65;color:var(--mute);text-align:left!important}
-html.ov .ug-page-desc a,html.ov #ug-hero a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-thickness:2px!important;text-underline-offset:3px}
+html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 10px;font:700 13px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none}
+html.ov .ug-status-badge::before{content:'';width:9px;height:9px;flex:none;background:var(--green);border:2px solid var(--ink)}
+html.ov .ov-copy .ug-page-desc{max-width:34em;margin:0!important;font-size:17px;line-height:1.6;color:var(--mute);text-align:left!important}
+html.ov #ug-hero a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-color:var(--game)!important;text-decoration-thickness:3px!important;text-underline-offset:3px}
+html.ov #ug-hero a:hover{color:var(--game-ink)!important;background:var(--game);text-decoration-color:var(--ink)!important}
+html.ov a:focus-visible,html.ov button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 
-html.ov .ug-page-title-area>div:not(.ug-page-title):not(.ug-status-badge),html.ov #ug-hero-inner>div[style*="text-align"]:not(.ad-slot){margin:24px 0 0!important;padding:18px 20px!important;text-align:left!important;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+.ov-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:28px}
+html.ov .ov-notes>*{max-width:none!important;margin:0!important;padding:18px 22px 20px!important;text-align:left!important;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
+html.ov .ov-notes [style*="Audiowide"]{display:flex;align-items:center;gap:10px;margin:0 0 8px!important;font:400 15px/1.25 var(--font-head)!important;color:var(--text)!important;text-transform:uppercase;letter-spacing:.02em;text-align:left!important}
+html.ov .ov-notes [style*="Audiowide"]::before{content:'';width:10px;height:10px;flex:none;background:var(--game);border:2px solid var(--ink)}
+html.ov .ov-notes p:not([style*="Audiowide"]){max-width:62ch!important;margin:0!important;font:400 16px/1.6 var(--font-body)!important;color:var(--mute)!important;text-align:left!important}
+html.ov .ov-notes p:not([style*="Audiowide"])+p{margin-top:6px!important}
+html.ov .ov-notes .ug-status-inline-text{max-width:none!important;font:500 15px/1.7 var(--font-body);color:var(--mute)}
+html.ov .ov-notes .ug-status-inline-text span{font-weight:700}
 html.ov #ug-hero-inner>div[style*="text-align"]:has(#cleanModeToggle){display:none!important}
-html.ov #ug-hero [style*="Audiowide"]{display:flex;align-items:center;gap:10px;margin:0 0 8px!important;font:400 16px/1.2 var(--font-head)!important;color:var(--text)!important;text-transform:uppercase;text-align:left!important}
-html.ov #ug-hero [style*="Audiowide"]::before{content:'';width:12px;height:12px;flex:none;background:var(--acc);border:var(--bw) solid var(--ink)}
-html.ov #ug-hero p[style]:not([style*="Audiowide"]),html.ov #ug-hero div[style*="text-align"]>p:not([style*="Audiowide"]){font-family:var(--font-body)!important;font-size:16px!important;color:var(--mute)!important;line-height:1.7!important;max-width:none!important;margin:0!important;text-align:left!important}
-html.ov .ug-status-inline-text{margin:24px 0 0;padding:16px 20px;font:500 15px/1.8 var(--font-body);color:var(--mute);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
-html.ov .ug-status-inline-text span{font-weight:700}
 
 html.ov #ug-content{max-width:1180px;padding:8px 24px 70px}
 html.ov .info-card{max-width:none!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px!important;margin-top:44px!important}
-html.ov .info-card-section{padding:22px 22px 24px!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow)!important;transition:transform .15s,box-shadow .15s}
-html.ov .info-card-section:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-hover)!important}
+html.ov .info-card-section{padding:22px 22px 24px!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow)!important}
 html.ov .info-card-section::before{display:none!important}
-html.ov .info-card-section h4{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin:0 0 10px!important;font:400 20px/1.15 var(--font-head)!important;color:var(--text)!important;text-transform:uppercase;letter-spacing:0!important}
-html.ov .info-card-section h4::before{content:'';width:40px;height:40px;background:var(--c,var(--acc));border:var(--bw) solid var(--ink);box-shadow:inset 0 0 0 11px var(--c,var(--acc)),inset 0 0 0 30px #1d2228}
-html.ov .info-card-section:nth-child(4n+2){--c:var(--yellow)}
-html.ov .info-card-section:nth-child(4n+3){--c:var(--blue)}
-html.ov .info-card-section:nth-child(4n+4){--c:var(--pink)}
-html.ov .info-card-section p{color:var(--mute)!important;font-size:16px!important;line-height:1.7!important}
-html.ov .info-card-section a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-thickness:2px!important;text-underline-offset:3px}
+html.ov .info-card-section h4{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin:0 0 10px!important;font:400 20px/1.25 var(--font-head)!important;color:var(--text)!important;text-transform:uppercase;letter-spacing:0!important}
+html.ov .info-card-section h4::before{content:'';width:40px;height:40px;background:var(--game);border:var(--bw) solid var(--ink);box-shadow:inset 0 0 0 11px var(--game),inset 0 0 0 30px var(--game-ink)}
+html.ov .info-card-section p{color:var(--mute)!important;font-size:16px!important;line-height:1.6!important}
+html.ov .info-card-section a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-color:var(--game)!important;text-decoration-thickness:3px!important;text-underline-offset:3px}
+html.ov .info-card-section a:hover{color:var(--game-ink)!important;background:var(--game)}
 
 html.ov .metaMount{margin-top:36px!important}
 html.ov .seamlessRoot,html.ov .metaRoot,html.ov #unitEngine{border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow)!important}
@@ -113,12 +123,12 @@ html.ov .ad-slot{border-radius:0}
 html.ov #ug-content>.ad-slot,html.ov #ug-hero .ad-slot{padding:10px;background:var(--surface);border:2px dashed rgba(127,127,127,.4)}
 
 .ov-band-wrap{overflow:hidden;padding:30px 0 4px}
-.ov-band{margin:0 -40px;background:var(--acc);background-clip:padding-box;color:var(--acc-ink);border-block:5px solid var(--ink);transform:rotate(-1.4deg)}
+.ov-band{margin:0 -40px;background:var(--game);background-clip:padding-box;color:var(--game-ink);border-block:5px solid var(--ink);transform:rotate(-1.4deg)}
 .ov-band-track{display:flex;width:max-content}
 .ov-band-set{display:flex;flex:none}
 .ov-band-item{display:flex;align-items:center;gap:30px;padding:17px 15px;white-space:nowrap;font:400 22px/1 var(--font-head);text-transform:uppercase}
 .ov-band-item::after{content:'';width:12px;height:12px;background:currentColor;transform:rotate(45deg)}
-html.ov.ov-pre .ov-hero{visibility:hidden}
+html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
 @media (max-width:768px){
   html.ov #ug-hamburger{display:flex}
 }
@@ -130,22 +140,26 @@ html.ov.ov-pre .ov-hero{visibility:hidden}
   html.ov .ug-mn-header{min-height:72px;padding-right:150px}
 }
 @media (max-width:960px){
-  .ov-hero{grid-template-columns:minmax(0,1fr);gap:30px}
-  .ov-stage{order:-1}
-}
-@media (max-width:768px){
-  html.ov .ug-page-title-area{padding-right:0}
+  .ov-hero{grid-template-columns:minmax(0,1fr)}
+  .ov-stage{order:-1;border-left:0;border-bottom:var(--bw) solid var(--ink)}
+  .ov-copy{padding:30px 28px 32px}
 }
 @media (max-width:600px){
   html.ov #ug-hero{padding-top:62px}
   html.ov #ug-hero-inner{padding:0 16px}
   html.ov #ug-content{padding:8px 16px 60px}
-  .ov-stage>[data-parvus-home]{zoom:.5}
+  .ov-stage{padding:12px 12px 0}
+  .ov-screen>[data-parvus-home]{zoom:.5}
+  .ov-lip{height:26px}
+  .ov-lip i{width:10px;height:10px}
+  .ov-copy{padding:22px 18px 24px}
   .ov-kicker{font-size:11px;white-space:nowrap}
-  html.ov .ug-page-desc{font-size:17px}
+  html.ov .ug-page-title{margin:16px 0 14px}
+  html.ov .ov-copy .ug-page-desc{font-size:16px}
+  .ov-notes{grid-template-columns:minmax(0,1fr);gap:18px;margin-top:22px}
+  html.ov .ov-notes>*{padding:16px 18px 18px!important}
   html.ov .info-card{grid-template-columns:minmax(0,1fr)}
   .ov-band{margin:0 -32px;border-block-width:4px}
   .ov-band-item{font-size:14px;padding:12px 10px;gap:20px}
   .ov-band-item::after{width:9px;height:9px}
 }
-@media (prefers-reduced-motion:reduce){html.ov .info-card-section{transition:none}}

@@ -22,12 +22,16 @@
   var SECTIONS = { fntd2: 'FNTD2', fntd1: 'FNTD1', bbn: 'Bite By Night', 'patch-notes': 'Patch notes', wiki: 'Community wiki' };
   var title = '';
   function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function section() {
+  function gameKey() {
+    var q = /[?&]game=([a-z0-9-]+)/.exec(location.search);
+    if (q && SECTIONS[q[1]]) return q[1];
     var m = document.querySelector('meta[name="ov-section"]');
-    if (m && m.content) return m.content;
-    var first = location.pathname.split('/').filter(Boolean)[0] || '';
-    return SECTIONS[first] || 'FNTD User Guide';
+    if (m && m.content) return m.content.toLowerCase().replace(/\s+/g, '');
+    return location.pathname.split('/').filter(Boolean)[0] || '';
   }
+  var game = gameKey();
+  if (SECTIONS[game]) h.setAttribute('data-game', game);
+  function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
   function hero() {
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
@@ -40,9 +44,16 @@
     }
     var wrap = document.createElement('div');
     wrap.className = 'ov-hero';
-    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage"><div data-parvus-home></div></div>';
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage"><div class="ov-screen"><div data-parvus-home></div></div><div class="ov-lip"><i></i></div></div>';
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
+    var notes = document.createElement('div');
+    notes.className = 'ov-notes';
+    Array.prototype.slice.call(area.children).concat(Array.prototype.slice.call(inner.children)).forEach(function (el) {
+      if (el === wrap || el.classList.contains('ug-page-title') || el.classList.contains('ug-status-badge') || el.classList.contains('ug-page-desc') || el.classList.contains('ad-slot') || el.querySelector('#cleanModeToggle')) return;
+      if (el.classList.contains('ug-status-inline-text') || (el.tagName === 'DIV' && el.querySelector('[style*="Audiowide"]'))) notes.appendChild(el);
+    });
+    if (notes.children.length) inner.insertBefore(notes, wrap.nextSibling);
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
     document.body.appendChild(js);
@@ -99,12 +110,14 @@
     var keep = 'transform,opacity,visibility';
     var ink = getComputedStyle(h).getPropertyValue('--ink').trim() || '#000';
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
-    tl.from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.05)
-      .from('.ov-copy .ug-page-title', { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.12)
-      .from('.ov-hl', { clipPath: 'inset(0 100% 0 0)', duration: 0.42, ease: 'steps(6)', clearProps: 'clipPath' }, 0.45)
-      .from('.ov-stage', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0.25)
-      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc', '.ov-copy .ug-page-title-area > div:not(.ug-page-title):not(.ug-status-badge)', '#ug-hero-inner > *:not(.ov-hero):not(.ad-slot)'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.4)
-      .call(greet, null, 1.1);
+    tl.from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0)
+      .from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35)
+      .from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.3)
+      .from('.ov-copy .ug-page-title', { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.38)
+      .from('.ov-hl', { clipPath: 'inset(0 100% 0 0)', duration: 0.42, ease: 'steps(6)', clearProps: 'clipPath' }, 0.7)
+      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.6)
+      .from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75)
+      .call(greet, null, 1.2);
     if (b && window.ScrollTrigger) {
       var loop = g.to(b.track, { xPercent: -50, duration: 30 * b.copies, ease: 'none', repeat: -1 });
       window.ScrollTrigger.create({ onUpdate: function (self) {
