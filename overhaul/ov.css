@@ -81,17 +81,20 @@ html.ov #ug-hero-inner{padding:0 24px;max-width:1180px}
 .ov-copy{min-width:0;align-self:center;padding:40px 44px}
 .ov-kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 11px;font:400 12px/1.2 var(--font-head);letter-spacing:.06em;text-transform:uppercase;color:var(--game-ink);background:var(--game);border:var(--bw) solid var(--ink)}
 .ov-kicker i{width:8px;height:8px;background:currentColor}
-.ov-stage{display:flex;flex-direction:column;padding:18px 18px 0;background:var(--game);border-left:var(--bw) solid var(--ink)}
+.ov-stage{display:flex;flex-direction:column;padding:10px;background:var(--game);border-left:var(--bw) solid var(--ink)}
 .ov-screen{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink)}
 .ov-screen>[data-parvus-home]{zoom:.75}
 .ov-screen .parvus-home{--ph-sky:96px}
 .ov-screen .mascot{--m-bubble-size:16px;--m-bubble-w:400px}
-.ov-lip{display:flex;align-items:center;justify-content:flex-end;height:34px}
-.ov-lip i{width:12px;height:12px;background:var(--green);border:2px solid var(--ink)}
+.ov-screen .parvus-home .mascot-disco-room{clip-path:inset(calc(var(--ph-sky,0px) * -1) -100vw 0)}
+.ov-screen .mascot-disco-drop{transform:translateY(calc(-100% - 4px - var(--ph-sky,0px)))}
+.ov-wait #mascot{visibility:hidden}
 
 html.ov .ug-page-title-area{text-align:left;margin:0;padding:0}
 html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}
-.ov-hl{display:inline-block;padding:.1em .12em .07em;line-height:1;color:#1d2228;background:var(--yellow);border:var(--bw) solid var(--ink)}
+.ov-hl{position:relative;display:inline-block;isolation:isolate;padding:calc(.1em + var(--bw)) calc(.12em + var(--bw)) calc(.07em + var(--bw));line-height:1;color:#1d2228}
+.ov-hl-bg{position:absolute;inset:0;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
+.ov-copy .ug-page-title .ov-line-mask{padding:.16em 0;margin:-.16em 0}
 html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 10px;font:700 13px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none}
 html.ov .ug-status-badge::before{content:'';width:9px;height:9px;flex:none;background:var(--green);border:2px solid var(--ink)}
 html.ov .ov-copy .ug-page-desc{max-width:34em;margin:0!important;font-size:17px;line-height:1.6;color:var(--mute);text-align:left!important}
@@ -143,12 +146,8 @@ html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
   html.ov #ug-hero{padding-top:62px}
   html.ov #ug-hero-inner{padding:0 16px}
   html.ov #ug-content{padding:8px 16px 60px}
-  .ov-stage{padding:12px 12px 0}
-  .ov-screen>[data-parvus-home]{zoom:.5}
-  .ov-screen .parvus-home{--ph-sky:144px}
-  .ov-screen .mascot{--m-bubble-size:24px;--m-bubble-w:560px}
-  .ov-lip{height:26px}
-  .ov-lip i{width:10px;height:10px}
+  .ov-stage{padding:6px}
+  .ov-screen .mascot{--m-bubble-w:360px}
   .ov-copy{padding:22px 18px 24px}
   .ov-kicker{font-size:11px;white-space:nowrap}
   html.ov .ug-page-title{margin:16px 0 14px}

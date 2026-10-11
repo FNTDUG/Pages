@@ -40,11 +40,11 @@
     if (t) {
       title = t.textContent.trim();
       var words = title.split(' '), last = words.pop();
-      t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl">' + esc(last) + '</span>';
+      t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
     }
     var wrap = document.createElement('div');
     wrap.className = 'ov-hero';
-    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage"><div class="ov-screen"><div data-parvus-home></div></div><div class="ov-lip"><i></i></div></div>';
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>';
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
     var notes = document.createElement('div');
@@ -97,22 +97,45 @@
     }, 400);
   }
 
+  function unwait() {
+    var st = document.querySelector('.ov-stage');
+    if (st) st.classList.remove('ov-wait');
+  }
+  function drop(g, tries) {
+    var m = document.getElementById('mascot'), home = document.getElementById('parvusHome');
+    if (!m || !home) {
+      if ((tries || 0) < 30) setTimeout(function () { drop(g, (tries || 0) + 1); }, 100);
+      else { unwait(); greet(); }
+      return;
+    }
+    if (window.mascotRainbow) window.mascotRainbow(false);
+    g.set(m, { y: -(home.offsetHeight + 60) });
+    unwait();
+    g.timeline({ onComplete: function () { g.set(m, { clearProps: 'transform' }); if (window.mascotWiggle) window.mascotWiggle(); greet(); } })
+      .to(m, { y: 0, duration: 0.42, ease: 'power2.in', snap: { y: 12 } })
+      .to(m, { y: -36, duration: 0.14, ease: 'steps(3)' })
+      .to(m, { y: 0, duration: 0.16, ease: 'steps(3)' });
+  }
+
   function animate() {
     var g = window.gsap;
     h.classList.remove('ov-pre');
-    if (!g || reduced) { greet(); return; }
+    if (!g || reduced) { unwait(); greet(); return; }
     if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
     var keep = 'transform,opacity,visibility';
     var ink = getComputedStyle(h).getPropertyValue('--ink').trim() || '#000';
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
+    var split = null;
+    try { if (window.SplitText) split = window.SplitText.create('.ov-copy .ug-page-title', { type: 'lines,words,chars', mask: 'lines', linesClass: 'ov-line' }); } catch (e) { split = null; }
     tl.from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0)
       .from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35)
-      .from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.3)
-      .from('.ov-copy .ug-page-title', { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.38)
-      .from('.ov-hl', { clipPath: 'inset(0 100% 0 0)', duration: 0.42, ease: 'steps(6)', clearProps: 'clipPath' }, 0.7)
-      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.6)
+      .from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25)
+      .from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 130, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3)
+      .from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66)
+      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58)
       .from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75)
-      .call(greet, null, 1.2);
+      .call(function () { if (split) split.revert(); }, null, 1.3)
+      .call(function () { drop(g); }, null, 0.9);
     if (window.ScrollTrigger) {
       var items = g.utils.toArray('.info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
       g.set(items, { autoAlpha: 0, y: 36 });
@@ -126,7 +149,9 @@
     if (document.getElementById('pv-theme')) return;
     hero();
     load('/overhaul/gsap/gsap.min.js', function () {
-      load('/overhaul/gsap/ScrollTrigger.min.js', animate);
+      load('/overhaul/gsap/ScrollTrigger.min.js', function () {
+        load('/overhaul/gsap/SplitText.min.js', animate);
+      });
     });
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
