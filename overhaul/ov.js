@@ -63,7 +63,6 @@
       var home = document.getElementById('parvusHome');
       sizeScreen();
       if (home && window.ResizeObserver) new ResizeObserver(sizeScreen).observe(home);
-      sky();
     };
     document.body.appendChild(js);
   }
@@ -128,12 +127,11 @@
     layer.className = 'ov-float';
     layer.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(layer, document.body.firstChild);
-    var names = Object.keys(SPRITES).sort(function () { return Math.random() - 0.5; });
-    var phone = window.innerWidth <= 600, n = phone ? 5 : 9, u = phone ? 4 : 5;
+    var vw = window.innerWidth, phone = vw <= 600, n = phone ? 5 : Math.min(16, Math.max(8, Math.round(vw / 120)));
     for (var i = 0; i < n; i++) {
-      var el = sticker(names[i % names.length], u, 'ov-sticker');
+      var u = phone ? 4 : 4 + Math.floor(Math.random() * 3), el = sticker(pick(), u, 'ov-sticker');
       layer.appendChild(el);
-      floats.push({ el: el, fx: (i + rnd(0.15, 0.85)) / n, fy: (i * 0.618 + rnd(0, 0.2)) % 1, d: rnd(0.15, 0.6), w: parseFloat(el.style.width) });
+      floats.push({ el: el, u: u, fx: Math.random(), fy: Math.random(), d: rnd(0.15, 0.6), w: parseFloat(el.style.width), cyc: null });
     }
     float();
     if (!reduced) window.addEventListener('scroll', float, { passive: true });
@@ -142,13 +140,32 @@
   function float() {
     var vw = window.innerWidth, span = window.innerHeight + 240, sy = reduced ? 0 : window.scrollY;
     floats.forEach(function (f) {
-      var x = Math.round(f.fx * vw - f.w / 2), y = Math.round(((f.fy * span - sy * f.d) % span + span) % span - 120);
+      var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span);
+      if (f.cyc !== null && cyc !== f.cyc) reroll(f);
+      f.cyc = cyc;
+      var x = Math.round(f.fx * vw - f.w / 2), y = Math.round(pos - cyc * span - 120);
       f.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
     });
   }
+  function pick() {
+    var names = Object.keys(SPRITES);
+    return names[Math.floor(Math.random() * names.length)];
+  }
+  function reroll(f) {
+    var a = art(SPRITES[pick()]);
+    f.w = a.w * f.u;
+    f.el.style.width = f.w + 'px';
+    f.el.style.height = a.h * f.u + 'px';
+    f.el.querySelector('.ov-bob').innerHTML = a.svg;
+    f.fx = Math.random();
+    f.d = rnd(0.15, 0.6);
+  }
   function pins(card) {
     var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
-    [['sparkle', 'ov-pin ov-pin-tl'], ['coin', 'ov-pin ov-pin-br']].forEach(function (p) { card.appendChild(sticker(p[0], u, p[1])); });
+    var a = pick(), b = pick();
+    while (b === a) b = pick();
+    card.appendChild(sticker(a, u, 'ov-pin ov-pin-tl'));
+    card.appendChild(sticker(b, u, 'ov-pin ov-pin-br'));
   }
   function wiggle(g) {
     if (reduced) return;
@@ -174,23 +191,6 @@
     var hh = home.offsetHeight * SCALE, edge = getComputedStyle(sc).boxSizing === 'border-box' ? sc.offsetHeight - sc.clientHeight : 0;
     sc.style.minHeight = Math.ceil(hh) + edge + 'px';
     host.style.top = Math.max(0, Math.round((sc.clientHeight - hh) / 2)) + 'px';
-  }
-
-  var stars = null;
-  function skyLook() {
-    var cs = getComputedStyle(h), v = function (n) { return cs.getPropertyValue(n).trim(); };
-    if (h.getAttribute('data-theme') === 'light') return { tints: [v('--ink'), v('--ink'), v('--mute'), v('--game'), v('--game')], hot: [v('--ink'), v('--game')], fade: 0.3 };
-    return { tints: [v('--text'), v('--text'), v('--mute'), v('--mute'), v('--game'), v('--yellow')], hot: [v('--text'), v('--game')], fade: 0.55 };
-  }
-  function sky() {
-    if (!window.ParvusStars) return;
-    var look = skyLook();
-    if (!stars) { stars = window.ParvusStars.mount({ startAt: 0, bg: null, tints: look.tints, hot: look.hot, fade: look.fade }); return; }
-    stars.tints = look.tints;
-    stars.hot = look.hot;
-    stars.fade = look.fade;
-    stars.tiles = {};
-    stars.draw();
   }
 
   function load(src, done) {
@@ -291,7 +291,6 @@
       h.setAttribute('data-theme', next);
       try { localStorage.setItem('pv-theme', next); } catch (e) {}
       label();
-      sky();
     });
     function place() {
       var bell = document.getElementById('ntfBell');
