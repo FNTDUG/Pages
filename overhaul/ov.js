@@ -344,10 +344,12 @@
       return n > 1 && n > (vw <= 600 ? 1 : vw <= 960 ? 2 : 3);
     }
     function copy(el) {
-      var c = el.cloneNode(true);
+      var c = el.cloneNode(true), tint = el.style.getPropertyValue('--c');
       c.removeAttribute('style');
+      if (tint) c.style.setProperty('--c', tint);
       c.classList.add('is-copy');
       c.setAttribute('aria-hidden', 'true');
+      if (c.tagName === 'A' || c.tagName === 'BUTTON') c.tabIndex = -1;
       Array.prototype.forEach.call(c.querySelectorAll('a,button'), function (a) { a.tabIndex = -1; });
       return c;
     }

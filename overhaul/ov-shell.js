@@ -85,7 +85,7 @@
     return a;
   }
   var dc = document.querySelector('.ug-mn-discord');
-  if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', CUP + 'Support us on Ko-fi'), dc.nextSibling);
+  if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', 'Support us on Ko-fi' + CUP), dc.nextSibling);
   var fd = document.querySelector('#ug-footer a[href*="discord.gg"]');
   if (fd && !document.querySelector('#ug-footer a[href*="ko-fi.com"]')) {
     var k = link('', 'Ko-fi');
