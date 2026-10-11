@@ -152,7 +152,7 @@ html.ov #ug-hero-inner>div[style*="text-align"]:has(#cleanModeToggle){display:no
 html.ov #ug-content{max-width:var(--ov-col);padding:8px 24px 70px}
 html.ov .info-card{max-width:none!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;justify-content:center!important;align-items:stretch;gap:24px!important;margin-top:44px!important}
 html.ov .info-card>.info-card-section{flex:0 1 calc((100% - 48px) / 3);min-width:240px;box-sizing:border-box}
-html.ov .info-card.rowloop{flex-wrap:nowrap!important;justify-content:flex-start!important;gap:16px!important;margin:36px -16px 0!important;padding:8px 16px 22px!important;overflow:hidden;cursor:grab;-webkit-user-select:none;user-select:none}
+html.ov .info-card.rowloop{flex-wrap:nowrap!important;justify-content:flex-start!important;gap:16px!important;margin:36px -16px 0!important;padding:8px 16px 22px!important;overflow:hidden;clip-path:inset(0 0 0 8px);cursor:grab;-webkit-user-select:none;user-select:none}
 html.ov .info-card.rowloop.is-dragging{cursor:grabbing}
 @media (min-width:601px){html.ov .info-card.rowloop{gap:24px!important;margin:36px -24px 0!important;padding:8px 24px 22px!important}}
 html.ov .info-card.rowloop>.info-card-section{flex:0 0 min(300px,calc(100vw - 80px));min-width:0}
