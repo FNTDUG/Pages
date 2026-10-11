@@ -9,75 +9,60 @@
   try { t = localStorage.getItem('pv-theme'); } catch (e) {}
   if (t !== 'dark' && t !== 'light') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   h.setAttribute('data-theme', t);
-  var font = document.createElement('link');
-  font.rel = 'stylesheet';
-  font.href = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700;800&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
-  document.head.appendChild(font);
-  var homeCss = document.createElement('link');
-  homeCss.rel = 'stylesheet';
-  homeCss.href = '/overhaul/parvus-home.css';
-  document.head.appendChild(homeCss);
+  [
+    'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
+    '/overhaul/parvus-home.css'
+  ].forEach(function (href) {
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = href;
+    document.head.appendChild(l);
+  });
 
-  function pad(n) { return ('0' + n).slice(-2); }
-  function terminal() {
-    var hero = document.getElementById('ug-hero-inner');
-    if (!hero || document.querySelector('.ov-term')) return;
-    var path = location.pathname.replace(/\/+$/, '') || '/';
-    var term = document.createElement('div');
-    term.className = 'ov-term';
-    term.innerHTML = '<div class="ov-term-bar"><span class="ov-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="ov-path">~' + path.replace(/[<>&]/g, '') + '</span><span class="ov-state"><i></i><span class="ov-state-text">booting</span></span><span class="ov-clock" aria-hidden="true"></span></div><div class="ov-term-screen" data-parvus-home></div>';
-    hero.insertBefore(term, hero.firstChild);
-    var stateEl = term.querySelector('.ov-state-text'), clock = term.querySelector('.ov-clock');
-    setInterval(function () {
-      var p = window.mascotPeek ? window.mascotPeek() : null;
-      if (p) stateEl.textContent = p.thinking ? 'thinking' : p.mood ? p.mood : p.state;
-      var d = new Date();
-      clock.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-    }, 500);
+  var SECTIONS = { fntd2: 'FNTD2', fntd1: 'FNTD1', bbn: 'Bite By Night', 'patch-notes': 'Patch notes', wiki: 'Community wiki' };
+  var title = '';
+  function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function section() {
+    var m = document.querySelector('meta[name="ov-section"]');
+    if (m && m.content) return m.content;
+    var first = location.pathname.split('/').filter(Boolean)[0] || '';
+    return SECTIONS[first] || 'FNTD User Guide';
+  }
+
+  function hero() {
+    var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
+    if (!inner || !area || document.querySelector('.ov-hero')) return;
+    var t = area.querySelector('.ug-page-title');
+    if (t) {
+      title = t.textContent.trim();
+      var words = title.split(' '), last = words.pop();
+      t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl">' + esc(last) + '</span>';
+    }
+    var wrap = document.createElement('div');
+    wrap.className = 'ov-hero';
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage"><div data-parvus-home></div></div>';
+    inner.insertBefore(wrap, inner.firstChild);
+    wrap.firstChild.appendChild(area);
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
     document.body.appendChild(js);
   }
-  var title = '';
-  function outline() {
-    Array.prototype.forEach.call(document.querySelectorAll('.ug-page-title'), function (t) {
-      if (t.querySelector('.ov-t')) return;
-      var text = t.textContent.trim();
-      if (!title) title = text;
-      t.setAttribute('aria-label', text);
-      t.textContent = '';
-      text.split(' ').forEach(function (word, w) {
-        var wd = document.createElement('span');
-        wd.className = 'ov-w';
-        wd.setAttribute('aria-hidden', 'true');
-        word.split('').forEach(function (ch) {
-          var sp = document.createElement('span');
-          sp.className = 'ov-t';
-          sp.setAttribute('data-t', ch);
-          sp.textContent = ch;
-          wd.appendChild(sp);
-        });
-        if (w) t.appendChild(document.createTextNode(' '));
-        t.appendChild(wd);
-      });
-    });
-  }
 
-  function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function band() {
-    var hero = document.getElementById('ug-hero');
-    if (!hero || document.querySelector('.ov-band-wrap')) return null;
+    var heroEl = document.getElementById('ug-hero');
+    if (!heroEl || document.querySelector('.ov-band-wrap')) return null;
     var words = [];
     if (title) words.push(title);
     Array.prototype.forEach.call(document.querySelectorAll('.info-card-section h4'), function (h4) { words.push(h4.textContent.trim()); });
-    ['Guides', 'Tierlists', 'Metas', 'Stats', 'Patch notes', 'FNTD User Guide'].forEach(function (w) { if (words.length < 9 && words.indexOf(w) < 0) words.push(w); });
+    ['Guides', 'Tierlists', 'Metas', 'Stats', 'Patch notes', 'Community'].forEach(function (w) { if (words.length < 9 && words.indexOf(w) < 0) words.push(w); });
     var set = words.map(function (w) { return '<span class="ov-band-item">' + esc(w) + '</span>'; }).join('');
     var wrap = document.createElement('div');
     wrap.className = 'ov-band-wrap';
     wrap.setAttribute('aria-hidden', 'true');
     wrap.innerHTML = '<div class="ov-band"><div class="ov-band-track"><div class="ov-band-set">' + set + '</div><div class="ov-band-set">' + set + '</div></div></div>';
-    hero.parentNode.insertBefore(wrap, hero.nextSibling);
-    var track = wrap.querySelector('.ov-band-track'), sets = track.children, unit = sets[0].getBoundingClientRect().width, base = sets[0].innerHTML;
+    heroEl.parentNode.insertBefore(wrap, heroEl.nextSibling);
+    var track = wrap.querySelector('.ov-band-track'), sets = track.children, base = sets[0].innerHTML;
+    var unit = sets[0].getBoundingClientRect().width;
     var copies = Math.max(1, Math.ceil((wrap.getBoundingClientRect().width + 160) / Math.max(unit, 1)));
     var html = '';
     for (var i = 0; i < copies; i++) html += base;
@@ -96,13 +81,13 @@
 
   function greet() {
     var tries = 0;
-    var t = setInterval(function () {
+    var iv = setInterval(function () {
       tries++;
       var p = window.mascotPeek && window.mascotPeek();
       if (p && window.mascotSay && !p.thinking) {
-        clearInterval(t);
+        clearInterval(iv);
         if (title) window.mascotSay('Welcome to ' + title + '!');
-      } else if (tries > 20) clearInterval(t);
+      } else if (tries > 20) clearInterval(iv);
     }, 400);
   }
 
@@ -112,12 +97,14 @@
     if (!g || reduced) { greet(); return; }
     if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
     var keep = 'transform,opacity,visibility';
-    var tl = g.timeline();
-    tl.from('.ov-term', { scaleY: 0.02, scaleX: 0.7, autoAlpha: 0, duration: 0.5, ease: 'steps(6)', transformOrigin: '50% 50%', clearProps: keep }, 0)
-      .from('.ov-term-screen', { filter: 'brightness(4) saturate(0)', duration: 0.6, ease: 'power2.out', clearProps: 'filter' }, 0.45)
-      .from('.ug-page-title .ov-t', { yPercent: -130, rotation: function () { return g.utils.random(-18, 18); }, autoAlpha: 0, duration: 0.5, stagger: 0.04, ease: 'bounce.out', clearProps: keep }, 0.35)
-      .from(['.ug-status-badge', '.ug-page-title-area > .ug-page-desc', '.ug-page-title-area > div:not(.ug-page-title):not(.ug-status-badge)', '#ug-hero-inner > *:not(.ov-term):not(.ug-page-title-area):not(.ad-slot)'], { x: -24, autoAlpha: 0, duration: 0.45, stagger: 0.07, ease: 'back.out(1.8)', clearProps: keep }, 0.7)
-      .call(greet, null, 1.2);
+    var ink = getComputedStyle(h).getPropertyValue('--ink').trim() || '#000';
+    var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
+    tl.from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.05)
+      .from('.ov-copy .ug-page-title', { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.12)
+      .from('.ov-hl', { clipPath: 'inset(0 100% 0 0)', duration: 0.42, ease: 'steps(6)', clearProps: 'clipPath' }, 0.45)
+      .from('.ov-stage', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0.25)
+      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc', '.ov-copy .ug-page-title-area > div:not(.ug-page-title):not(.ug-status-badge)', '#ug-hero-inner > *:not(.ov-hero):not(.ad-slot)'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.4)
+      .call(greet, null, 1.1);
     if (b && window.ScrollTrigger) {
       var loop = g.to(b.track, { xPercent: -50, duration: 30 * b.copies, ease: 'none', repeat: -1 });
       window.ScrollTrigger.create({ onUpdate: function (self) {
@@ -126,18 +113,17 @@
       } });
     }
     if (window.ScrollTrigger) {
-      var items = g.utils.toArray('.info-card-section, .metaMount, #unitEngine, .ug-status-inline-text, #ue-last-updated-loader');
-      g.set(items, { autoAlpha: 0, y: 40 });
+      var items = g.utils.toArray('.info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
+      g.set(items, { autoAlpha: 0, y: 36 });
       window.ScrollTrigger.batch(items, { start: 'top 92%', once: true, onEnter: function (els) {
-        g.to(els, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'back.out(1.6)', clearProps: keep });
+        g.to(els, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'back.out(1.7)', clearProps: keep });
       } });
     }
   }
 
   function ready() {
     if (document.getElementById('pv-theme')) return;
-    outline();
-    terminal();
+    hero();
     var b = band();
     load('/overhaul/gsap/gsap.min.js', function () {
       load('/overhaul/gsap/ScrollTrigger.min.js', function () { animate(b); });
