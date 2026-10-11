@@ -1,0 +1,99 @@
+html.ov .ntf-veil{--k:var(--game,var(--acc));--bad:#ff8a8a;background:var(--overlay);-webkit-backdrop-filter:none;backdrop-filter:none}
+html.ov[data-theme="light"] .ntf-veil{--bad:#c62f35}
+html.ov .ntf-panel{border-radius:0;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:8px 8px 0 var(--ink);font-family:var(--font-body);color:var(--text);text-align:left;scrollbar-color:var(--mute) transparent;animation:ovPop .4s cubic-bezier(.34,1.56,.64,1) both}
+html.ov .ntf-panel.ok{--k:var(--green)}
+html.ov .ntf-panel.bad{--k:#ff6b6b}
+@keyframes ovPop{from{opacity:0;transform:translate(-12px,-12px);box-shadow:20px 20px 0 var(--ink)}}
+html.ov .ntf-stripe{display:none}
+
+html.ov .ntf-veil .ntf-body{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center;padding:24px 24px 4px;text-align:left}
+html.ov .ntf-veil .ntf-body>*{grid-column:1/-1;min-width:0}
+html.ov .ntf-veil .ntf-body>.ntf-icon{grid-column:1}
+html.ov .ntf-veil .ntf-body>.ntf-icon+.ntf-kicker{grid-column:2}
+html.ov .ntf-veil .ntf-icon{width:44px;height:44px;margin:0;padding:7px 8px;fill:#1d2228;background:var(--k);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);filter:none;animation:none}
+
+html.ov .ntf-veil .ntf-kicker{margin:0;font:400 22px/1.15 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text);text-shadow:none}
+html.ov .ntf-veil .ntf-body>.ntf-kicker:first-child,html.ov .ntf-veil .poll-steps+.ntf-kicker{justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:7px 11px;font-size:12px;line-height:1.2;letter-spacing:.06em;color:#1d2228;background:var(--k);border:var(--bw) solid var(--ink)}
+html.ov .ntf-veil .ntf-body>.ntf-kicker:first-child::before,html.ov .ntf-veil .poll-steps+.ntf-kicker::before{content:'';width:8px;height:8px;background:currentColor}
+
+html.ov .ntf-veil .ntf-msg{max-width:none;margin:16px 0 0;font:400 16px/1.55 var(--font-body);color:var(--mute)}
+html.ov .ntf-veil .ntf-msg b{color:var(--text);font-weight:700}
+html.ov .ntf-veil .ntf-steps{max-width:none;margin:16px 0 0}
+html.ov .ntf-veil .ntf-steps li{padding-left:36px;margin-bottom:10px;font:400 15px/1.55 var(--font-body);color:var(--mute)}
+html.ov .ntf-veil .ntf-steps li b{color:var(--text)}
+html.ov .ntf-veil .ntf-steps li::before{top:0;width:24px;height:24px;border-radius:0;background:var(--k);border:2px solid var(--ink);color:#1d2228;font:400 11px/20px var(--font-head)}
+html.ov .ntf-veil .ntf-share path{stroke:var(--text)}
+
+html.ov .ntf-veil .ntf-topics{justify-content:flex-start;gap:12px;margin-top:18px}
+html.ov .ntf-veil .ntf-topic span{gap:9px;padding:10px 14px;border-radius:0;border:var(--bw) solid var(--ink);background:var(--surface2);color:var(--text);font:700 14px/1 var(--font-body);letter-spacing:0;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,background-color .12s}
+html.ov .ntf-veil .ntf-topic span::before{width:14px;height:14px;border-radius:0;border:2px solid var(--ink);background:var(--surface)}
+html.ov .ntf-veil .ntf-topic:hover span{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
+html.ov .ntf-veil .ntf-topic input:checked+span{color:#1d2228;border-color:var(--ink);background:var(--k)}
+html.ov .ntf-veil .ntf-topic input:checked+span::before{background:var(--ink);border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--k)}
+html.ov .ntf-veil .ntf-topic input:focus-visible+span{outline:3px solid var(--text);outline-offset:3px}
+
+html.ov .ntf-veil .ntf-err{margin-top:14px;font:700 14px/1.45 var(--font-body);color:var(--bad);text-shadow:none}
+html.ov .ntf-veil .ntf-actions{justify-content:flex-start;gap:12px;padding:20px 24px 24px}
+html.ov .ntf-veil .ntf-btn{padding:13px 20px;font:700 15px/1 var(--font-body);letter-spacing:0;border-radius:0;border:var(--bw) solid var(--ink);background:var(--k);color:#1d2228;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,background-color .12s}
+html.ov .ntf-veil .ntf-btn:hover{border-color:var(--ink);background:var(--k);transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
+html.ov .ntf-veil .ntf-btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+html.ov .ntf-veil .ntf-btn.secondary,html.ov .ntf-veil .ntf-btn.secondary:hover{color:var(--text);background:var(--surface)}
+html.ov .ntf-veil .ntf-btn.danger,html.ov .ntf-veil .ntf-btn.danger:hover{color:#1d2228;background:#ff6b6b}
+html.ov .ntf-veil .ntf-btn.saved,html.ov .ntf-veil .ntf-btn.saved:hover{color:#1d2228;background:var(--green)}
+html.ov .ntf-veil .ntf-btn:disabled{opacity:.6;transform:none;box-shadow:var(--shadow-sm)}
+html.ov .ntf-veil .ntf-btn:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+html.ov .ntf-veil .ntf-fine{margin-top:-8px;padding:0 24px 22px;font:400 13px/1.5 var(--font-body);color:var(--mute);text-align:left}
+
+html.ov .ntf-veil .poll-q{max-width:none;margin:14px 0 0;font:400 20px/1.25 var(--font-head);color:var(--text)}
+html.ov .ntf-veil .poll-img{margin:16px 0 0;border-radius:0;border:var(--bw) solid var(--ink);background:var(--surface2)}
+html.ov .ntf-veil .poll-hint,html.ov .ntf-veil .poll-sub{margin-top:8px;font:400 14px/1.45 var(--font-body);color:var(--mute)}
+html.ov .ntf-veil .poll-opts{max-width:none;margin:18px 0 0;gap:12px}
+html.ov .ntf-veil .poll-opt{gap:12px;padding:12px 14px;border-radius:0;border:var(--bw) solid var(--ink);background:var(--surface2);color:var(--text);font:500 15px/1.35 var(--font-body);box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,background-color .12s}
+html.ov .ntf-veil .poll-opt::before{width:16px;height:16px;border:2px solid var(--text);background:none}
+html.ov .ntf-veil .poll-opt[role="checkbox"]::before{border-radius:0}
+html.ov .ntf-veil .poll-opt:hover{border-color:var(--ink);color:var(--text);transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
+html.ov .ntf-veil .poll-opt[aria-checked="true"]{color:#1d2228;border-color:var(--ink);background:var(--k)}
+html.ov .ntf-veil .poll-opt[aria-checked="true"]::before{background:var(--ink);border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--k)}
+html.ov .ntf-veil .poll-opt:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+html.ov .ntf-veil .poll-steps{justify-content:flex-start;gap:6px;max-width:none;margin:0 0 14px}
+html.ov .ntf-veil .poll-steps i{max-width:36px;height:10px;border-radius:0;background:var(--surface2);border:2px solid var(--ink)}
+html.ov .ntf-veil .poll-steps i.on{background:var(--k);box-shadow:none}
+html.ov .ntf-veil .poll-count{margin-top:12px;font:400 14px/1.5 var(--font-body);color:var(--mute)}
+html.ov .ntf-veil .poll-count b{font:400 15px/1 var(--font-head);color:var(--text)}
+html.ov .ntf-veil .poll-note{max-width:none;margin:18px 0 0;padding:14px 16px;border-radius:0;border:var(--bw) solid var(--ink);background:var(--surface2);box-shadow:var(--shadow-sm)}
+html.ov .ntf-veil .poll-note-head{display:inline-block;margin-bottom:10px;padding:4px 8px;font:400 11px/1.2 var(--font-head);letter-spacing:.06em;color:#1d2228;background:var(--yellow);border:2px solid var(--ink)}
+html.ov .ntf-veil .poll-note-text{font:400 15px/1.55 var(--font-body);color:var(--text)}
+html.ov .ntf-veil .poll-final{margin:0 0 4px;font:400 13px/1.5 var(--font-body);color:var(--mute);text-align:left}
+
+html.ov .ntf-veil .ntf-panel.tight .ntf-body{padding:16px 18px 2px}
+html.ov .ntf-veil .ntf-panel.tight .ntf-kicker{font-size:18px}
+html.ov .ntf-veil .ntf-panel.tight .ntf-body>.ntf-kicker:first-child,html.ov .ntf-veil .ntf-panel.tight .poll-steps+.ntf-kicker{font-size:11px}
+html.ov .ntf-veil .ntf-panel.tight .ntf-msg{margin-top:8px}
+html.ov .ntf-veil .ntf-panel.tight .poll-q{margin-top:10px;font-size:17px}
+html.ov .ntf-veil .ntf-panel.tight .poll-img{margin-top:10px}
+html.ov .ntf-veil .ntf-panel.tight .poll-opts{gap:8px;margin-top:12px}
+html.ov .ntf-veil .ntf-panel.tight .poll-opt{padding:8px 12px;font-size:14px}
+html.ov .ntf-veil .ntf-panel.tight .ntf-actions{padding:12px 18px 16px}
+html.ov .ntf-veil .ntf-panel.tight .poll-actions{padding-top:12px;background:var(--surface);border-top:var(--bw) solid var(--ink)}
+
+@media (max-width:520px){
+  html.ov .ntf-veil .ntf-body{padding:20px 20px 2px}
+  html.ov .ntf-veil .ntf-kicker{font-size:20px}
+  html.ov .ntf-veil .ntf-msg{font-size:15px}
+  html.ov .ntf-veil .ntf-actions{padding:18px 20px 22px}
+  html.ov .ntf-veil .ntf-fine{padding:0 20px 20px}
+}
+@media (min-width:769px){
+  html.ov .ntf-veil{background:none}
+  html.ov .ntf-veil .ntf-panel{width:380px}
+  html.ov .ntf-veil .ntf-body{padding:20px 20px 2px}
+  html.ov .ntf-veil .ntf-icon{width:40px;height:40px;padding:5px 6px}
+  html.ov .ntf-veil .ntf-kicker{font-size:19px}
+  html.ov .ntf-veil .ntf-msg{margin-top:14px;font-size:15px}
+  html.ov .ntf-veil .ntf-actions{padding:18px 20px 20px}
+  html.ov .ntf-veil .ntf-fine{padding:0 20px 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  html.ov .ntf-panel,html.ov .ntf-veil .ntf-panel{animation:none}
+  html.ov .ntf-veil .ntf-btn,html.ov .ntf-veil .ntf-topic span,html.ov .ntf-veil .poll-opt{transition:none}
+}

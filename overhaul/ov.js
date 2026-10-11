@@ -11,7 +11,8 @@
   h.setAttribute('data-theme', t);
   [
     'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
-    '/overhaul/parvus-home.css'
+    '/overhaul/parvus-home.css',
+    '/overhaul/ov-pop.css'
   ].forEach(function (href) {
     var l = document.createElement('link');
     l.rel = 'stylesheet';
