@@ -131,12 +131,15 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .btn-primary{background:var(--acc);color:var(--acc-ink)}
 .btn-discord{background:#5865f2;color:#fff}
 .btn-discord:hover{background:#4752c4;color:#fff}
+.btn-kofi{background:var(--pink);color:#2a0f1c}
+.btn-kofi:hover{background:#ff8fbd;color:#2a0f1c}
+.kofi-cup{width:24px;height:14px;flex:none;fill:currentColor}
 .arrow{display:inline-block;transition:transform .15s}
 a:hover>.arrow,.game:hover .arrow,.tool:hover .arrow{transform:translateX(3px)}
 
-.hero{padding:80px 0 72px}
+.hero{padding:80px 0 72px;overflow-x:clip}
 .hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
-.kicker{display:inline-flex;align-items:center;gap:10px;padding:9px 12px;font:400 10px/1.2 var(--font-tag);letter-spacing:.04em;text-transform:uppercase;background:var(--acc);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
+.kicker{display:inline-flex;align-items:center;gap:10px;padding:9px 12px;font:400 11px/1.2 var(--font-tag);letter-spacing:.04em;text-transform:uppercase;background:var(--acc);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
 .kicker i{width:8px;height:8px;background:#1d2228}
 h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform:uppercase}
 .hl{position:relative;display:inline-block;isolation:isolate;padding:0 .1em;color:#1d2228}
@@ -199,9 +202,9 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .game-stats dd{margin-top:4px;font:400 18px/1 var(--font-head)}
 .go{display:inline-flex;gap:8px;margin-top:auto;padding-top:14px;font-weight:700}
 
-.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .games{--row-item:calc((min(100vw,1180px) - 48px - 72px) / 4.3)}
-.tools{--row-item:calc((min(100vw,1180px) - 48px - 48px) / 3.3)}
+.tools{--row-item:calc((min(100vw,1180px) - 48px - 72px) / 4.3)}
 .rowloop{--row-pad:24px;display:flex;gap:24px;margin:-8px calc(var(--row-pad) * -1) 0;padding:8px var(--row-pad) 22px;overflow:hidden;cursor:grab;-webkit-user-select:none;user-select:none}
 .rowloop.is-dragging{cursor:grabbing}
 .rowloop>*{flex:0 0 var(--row-item)}
@@ -287,7 +290,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .hero-in{gap:28px}
   .stage{order:-1;height:370px}
   .bubble{font-size:13px;padding:10px 14px}
-  .kicker{font-size:10px;white-space:nowrap}
+  .kicker{font-size:11px;white-space:nowrap}
   h1{margin:18px 0}
   .lede{font-size:17px}
   .cta .btn{flex:1 1 auto}
@@ -376,6 +379,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           <div class="cta">
             <a class="btn btn-primary" href="#games">Pick a game <span class="arrow" aria-hidden="true">&darr;</span></a>
             <a class="btn btn-discord" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Join the Discord</a>
+            <a class="btn btn-kofi" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer"><svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg>Support us</a>
           </div>
         </div>
         <div class="stage" id="stage">
@@ -468,6 +472,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <a class="tool blk reveal" href="/patch-notes" style="--c:var(--yellow)"><span class="tool-ic"><i></i></span><h3>Patch notes</h3><p>Every update for every game, in one place.</p><span class="go">Read patch notes <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
             <button class="tool blk reveal" id="pvNotify" type="button" style="--c:var(--blue)"><span class="tool-ic"><i></i></span><h3>Notifications</h3><p>Get a ping when a game you follow updates.</p><span class="go">Turn them on <span class="arrow" aria-hidden="true">&rarr;</span></span></button>
             <a class="tool blk reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="tool-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
+            <a class="tool blk reveal" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="tool-ic"><i></i></span><h3>Support us</h3><p>Help keep the guide free and up to date.</p><span class="go">Support on Ko-fi <span class="arrow" aria-hidden="true">&nearr;</span></span></a>
           </div>
         </div>
       </section>
@@ -1372,7 +1377,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
     }
     function copy(el) {
       var c = el.cloneNode(true);
+      var tint = el.style.getPropertyValue('--c');
       c.removeAttribute('style');
+      if (tint) c.style.setProperty('--c', tint);
       c.classList.remove('reveal');
       c.classList.add('is-copy');
       c.setAttribute('aria-hidden', 'true');
@@ -1534,6 +1541,6 @@ html.talk-on,html.talk-on body{overflow:hidden}
   setTimeout(start, document.fonts && document.fonts.ready ? 1200 : 0);
 })();
 </script>
-<script src="/overhaul/ov-gear.js" defer></script>
+<script src="/overhaul/ov-shell.js" defer></script>
 </body>
 </html>

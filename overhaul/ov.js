@@ -86,7 +86,7 @@
     bell: ['.....y.....', '...yyyyy...', '..yyyyyyy..', '..ycyyyyy..', '..ycyyyyy..', '.yycyyyyyy.', '.yyyyyyyyy.', 'yyyyyyyyyyy', '...........', '....yyy....'],
     pie: ['..bbkgg..', '.bbbkggg.', 'bbbbkgggg', 'bbbbkgggg', 'bbbbkkkkk', 'bbbbkyyyy', 'bbbbkyyyy', '.bbbkyyy.', '..bbkyy..'],
     trash: ['...mmm...', 'mmmmmmmmm', '.........', '.bbbbbbb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bbbbbbb.', '..bbbbb..'],
-    gear: ['....ccc....', '.cc.ccc.cc.', '.ccccccccc.', '..ccccccc..', 'cccc...cccc', 'cccc...cccc', 'cccc...cccc', '..ccccccc..', '.ccccccccc.', '.cc.ccc.cc.', '....ccc....'],
+    gear: ['......mmmm......', '......mcmm......', '..mmm.mmmm.mmm..', '..mcmmmmmmmmmm..', '..mmmmcccmmmmm..', '...mmcmmmmmmm...', 'mmmmcmm..mmmmmmm', 'mcmmcm....mmmmmm', 'mcmmmm....mmmmmm', 'mmmmmmm..mmmmmmm', '...mmmmmmmmmm...', '..mmmmmmmmmmmm..', '..mmmmmmmmmmmm..', '..mmm.mmmm.mmm..', '......mmmm......', '......mmmm......'],
     lens: ['..cccc....', '.cbbbbc...', 'cbcbbbbc..', 'cbbbbbbc..', 'cbbbbbbc..', '.cbbbbc...', '..ccccgg..', '......ggg.', '.......ggg', '........gg'],
     bookmark: ['ggggggg', 'gcggggg', 'gcggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggg.ggg', 'gg...gg', 'g.....g'],
     joystick: ['..rrr.......', '.rcrrr......', '.rrrrr......', '..rrr.......', '...m........', '...m....yyy.', 'gggggggggggg', 'gggggggggggg', 'gggggggggggg'],
@@ -582,7 +582,7 @@
     var bell = document.getElementById('ntfBell');
     if (bell && window.MutationObserver) new MutationObserver(place).observe(bell, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
     window.addEventListener('resize', place, { passive: true });
-    load('/overhaul/ov-gear.js');
+    load('/overhaul/ov-shell.js');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();
