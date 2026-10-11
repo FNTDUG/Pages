@@ -6,6 +6,14 @@ html.ov .ntf-panel.bad{--k:#ff6b6b}
 @keyframes ovPop{from{opacity:0;transform:translate(-12px,-12px);box-shadow:20px 20px 0 var(--ink)}}
 html.ov .ntf-stripe{display:none}
 html.pv-pop-on #ug-hamburger,html.pv-pop-on #ug-info-btn,html.pv-pop-on #ug-sound-btn,html.pv-pop-on .ntf-bell,html.pv-pop-on #pv-theme{visibility:hidden}
+html.ov .pv-pop-host .px-overlay{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:32px 20px}
+html.ov .pv-pop-host .px-pop{margin:auto;flex-shrink:0}
+@media (max-width:600px){
+  html.ov .pv-pop-host .px-overlay{padding:28px 16px calc(28px + env(safe-area-inset-bottom))}
+  html.ov .pv-pop-host .px-inner{padding:20px;gap:20px}
+  html.ov .pv-pop-host .px-stage{zoom:.5;margin:20px;padding:24px;box-shadow:0 0 0 14px var(--n-kick),0 0 0 20px var(--n-ink)}
+  html.ov .pv-pop-host .px-stage::after{box-shadow:inset 0 0 0 6px var(--n-ink)}
+}
 
 html.ov .ntf-veil .ntf-body{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center;padding:24px 24px 4px;text-align:left}
 html.ov .ntf-veil .ntf-body>*{grid-column:1/-1;min-width:0}
@@ -82,6 +90,7 @@ html.ov .ntf-veil .ntf-panel.tight .poll-actions{padding-top:12px;background:var
   html.ov .ntf-veil .ntf-panel{width:min(380px,calc(100vw - 32px));max-width:none}
   html.ov .ntf-veil .ntf-btn{width:auto;flex:1}
 }
+html.ov .ntf-veil[hidden]{display:none}
 @media (max-width:520px){
   html.ov .ntf-veil .ntf-body{padding:20px 20px 2px}
   html.ov .ntf-veil .ntf-kicker{font-size:20px}
