@@ -194,6 +194,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .gc-shade{position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
 .gc-title{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 7cqw;text-align:center;font:400 11.9cqw/1.5 'Press Start 2P',monospace;color:#fff;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6);pointer-events:none}
 .gc-title--sm{font-size:9.4cqw}
+.gc-title--xs{font-size:7.4cqw}
 .game-body{display:flex;flex:1;flex-direction:column;gap:8px;padding:20px 20px 22px}
 .game-body p{color:var(--mute);font-size:15px}
 .game-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
@@ -428,7 +429,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           </div>
           <div class="games">
             <a class="game blk reveal" href="/fntd1">
-              <div class="game-top"><img src="/game-thumb/5479908441" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD1</span></div></div>
+              <div class="game-top"><img src="/game-thumb/5479908441" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/add-a-subheading-2-edited-high-npxt29.png?enable-io=true&amp;width=532'"><div class="gc-shade"></div><div class="gc-title gc-title--xs"><span>Five Nights TD</span></div></div>
               <div class="game-body">
                 <p>Explore all the data we've collected over FNTD1's life span.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd data-stat="fntdPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="fntdVisits">--</dd></div></dl>
@@ -436,7 +437,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
               </div>
             </a>
             <a class="game blk reveal" href="/fntd2/fntd2-directory">
-              <div class="game-top"><img src="/game-thumb/7934320560" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&amp;crop=1.0048%3A1&amp;width=532'"><div class="gc-shade"></div><div class="gc-title"><span>FNTD2</span></div></div>
+              <div class="game-top"><img src="/game-thumb/7934320560" alt="" width="512" height="512" loading="lazy" onerror="this.onerror=null;this.src='https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/0357202c-27f3-4ebb-91a6-db26277ec8d2-high.png?enable-io=true&amp;crop=1.0048%3A1&amp;width=532'"><div class="gc-shade"></div><div class="gc-title gc-title--xs"><span>Five Nights TD 2</span></div></div>
               <div class="game-body">
                 <p>Need help? Find the best guides, tips, and tricks for FNTD2.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd data-stat="fntd2Players">--</dd></div><div><dt>Visits</dt><dd data-stat="fntd2Visits">--</dd></div></dl>
@@ -456,6 +457,14 @@ html.talk-on,html.talk-on body{overflow:hidden}
               <div class="game-body">
                 <p>Stay tuned for what's to come.</p>
                 <dl class="game-stats"><div><dt>Players</dt><dd data-stat="GWPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="GWVisits">--</dd></div></dl>
+                <span class="go">Play on Roblox <span class="arrow" aria-hidden="true">&nearr;</span></span>
+              </div>
+            </a>
+            <a class="game blk reveal" href="https://www.roblox.com/games/116192088324578/FNaF-World-Multiplayer" target="_blank" rel="noopener noreferrer">
+              <div class="game-top"><img src="/game-thumb/10743048214" alt="" width="512" height="512" loading="lazy"><div class="gc-shade"></div><div class="gc-title gc-title--xs"><span>FNaF World Multiplayer</span></div></div>
+              <div class="game-body">
+                <p>Stay tuned for what's to come.</p>
+                <dl class="game-stats"><div><dt>Players</dt><dd data-stat="FWMPlayers">--</dd></div><div><dt>Visits</dt><dd data-stat="FWMVisits">--</dd></div></dl>
                 <span class="go">Play on Roblox <span class="arrow" aria-hidden="true">&nearr;</span></span>
               </div>
             </a>
@@ -497,7 +506,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){ugCloseAll();ugMobileClose()}});
 
   (function(){
-    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624,7344880866";
+    var workerURL="https://roblox-stats.fntduserguidecom.workers.dev/?ids=5479908441,7934320560,8202280624,7344880866,10743048214";
     function put(k,n){var els=document.querySelectorAll('[data-stat="'+k+'"]');for(var i=0;i<els.length;i++)els[i].textContent=fmt(n||0)}
     function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1).replace('.0','')+'b';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'m';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'k';return n.toString()}
     function fetchStats(){
@@ -508,6 +517,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           if(g.id===7934320560){put('fntd2Players',g.playing);put('fntd2Visits',g.visits)}
           if(g.id===8202280624){put('BBNPlayers',g.playing);put('BBNVisits',g.visits)}
           if(g.id===7344880866){put('GWPlayers',g.playing);put('GWVisits',g.visits)}
+          if(g.id===10743048214){put('FWMPlayers',g.playing);put('FWMVisits',g.visits)}
         });
       }).catch(function(){});
     }
