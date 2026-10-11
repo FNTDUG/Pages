@@ -56,30 +56,25 @@
     if (notes.children.length) inner.insertBefore(notes, wrap.nextSibling);
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
+    js.onload = sky;
     document.body.appendChild(js);
   }
 
-  function band() {
-    var heroEl = document.getElementById('ug-hero');
-    if (!heroEl || document.querySelector('.ov-band-wrap')) return null;
-    var words = [];
-    if (title) words.push(title);
-    Array.prototype.forEach.call(document.querySelectorAll('.info-card-section h4'), function (h4) { words.push(h4.textContent.trim()); });
-    ['Guides', 'Tierlists', 'Metas', 'Stats', 'Patch notes', 'Community'].forEach(function (w) { if (words.length < 9 && words.indexOf(w) < 0) words.push(w); });
-    var set = words.map(function (w) { return '<span class="ov-band-item">' + esc(w) + '</span>'; }).join('');
-    var wrap = document.createElement('div');
-    wrap.className = 'ov-band-wrap';
-    wrap.setAttribute('aria-hidden', 'true');
-    wrap.innerHTML = '<div class="ov-band"><div class="ov-band-track"><div class="ov-band-set">' + set + '</div><div class="ov-band-set">' + set + '</div></div></div>';
-    heroEl.parentNode.insertBefore(wrap, heroEl.nextSibling);
-    var track = wrap.querySelector('.ov-band-track'), sets = track.children, base = sets[0].innerHTML;
-    var unit = sets[0].getBoundingClientRect().width;
-    var copies = Math.max(1, Math.ceil((wrap.getBoundingClientRect().width + 160) / Math.max(unit, 1)));
-    var html = '';
-    for (var i = 0; i < copies; i++) html += base;
-    sets[0].innerHTML = html;
-    sets[1].innerHTML = html;
-    return { track: track, copies: copies };
+  var stars = null;
+  function skyLook() {
+    var cs = getComputedStyle(h), v = function (n) { return cs.getPropertyValue(n).trim(); };
+    if (h.getAttribute('data-theme') === 'light') return { tints: [v('--ink'), v('--ink'), v('--mute'), v('--game'), v('--game')], hot: [v('--ink'), v('--game')], fade: 0.45 };
+    return { tints: [v('--text'), v('--text'), v('--mute'), v('--mute'), v('--game'), v('--yellow')], hot: [v('--text'), v('--game')], fade: 0.8 };
+  }
+  function sky() {
+    if (!window.ParvusStars) return;
+    var look = skyLook();
+    if (!stars) { stars = window.ParvusStars.mount({ startAt: 0, bg: null, tints: look.tints, hot: look.hot, fade: look.fade }); return; }
+    stars.tints = look.tints;
+    stars.hot = look.hot;
+    stars.fade = look.fade;
+    stars.tiles = {};
+    stars.draw();
   }
 
   function load(src, done) {
@@ -102,7 +97,7 @@
     }, 400);
   }
 
-  function animate(b) {
+  function animate() {
     var g = window.gsap;
     h.classList.remove('ov-pre');
     if (!g || reduced) { greet(); return; }
@@ -118,13 +113,6 @@
       .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.6)
       .from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75)
       .call(greet, null, 1.2);
-    if (b && window.ScrollTrigger) {
-      var loop = g.to(b.track, { xPercent: -50, duration: 30 * b.copies, ease: 'none', repeat: -1 });
-      window.ScrollTrigger.create({ onUpdate: function (self) {
-        g.to(loop, { timeScale: self.direction * Math.min(5, 1 + Math.abs(self.getVelocity()) / 300), duration: 0.15, overwrite: true });
-        g.to(loop, { timeScale: self.direction, duration: 1, delay: 0.2 });
-      } });
-    }
     if (window.ScrollTrigger) {
       var items = g.utils.toArray('.info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
       g.set(items, { autoAlpha: 0, y: 36 });
@@ -137,9 +125,8 @@
   function ready() {
     if (document.getElementById('pv-theme')) return;
     hero();
-    var b = band();
     load('/overhaul/gsap/gsap.min.js', function () {
-      load('/overhaul/gsap/ScrollTrigger.min.js', function () { animate(b); });
+      load('/overhaul/gsap/ScrollTrigger.min.js', animate);
     });
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
@@ -161,6 +148,7 @@
       h.setAttribute('data-theme', next);
       try { localStorage.setItem('pv-theme', next); } catch (e) {}
       label();
+      sky();
     });
     function place() {
       var bell = document.getElementById('ntfBell');

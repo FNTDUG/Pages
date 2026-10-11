@@ -932,20 +932,22 @@ if (document.querySelector("[data-parvus-home]")) {
   function inkSpill() { return (bubble._ink && bubble._ink.ext) || { l: 0, t: 0, r: 0, b: 0 }; }
   function inkTip(dir, at) { return window.pxInk && window.pxInk.tip ? window.pxInk.tip(bubble, dir, at) : 0; }
   function point(dir, at) { if (window.pxInk && window.pxInk.point) window.pxInk.point(bubble, dir, at); }
-  function room() { return ((root.closest && root.closest('.parvus-home')) || root).getBoundingClientRect(); }
+  function zk() { var h = (root.closest && root.closest('.parvus-home')) || root; return h.offsetWidth ? h.getBoundingClientRect().width / h.offsetWidth : 1; }
+  function box(el) { var r = el.getBoundingClientRect(), k = zk(); return { left: r.left / k, right: r.right / k, top: r.top / k, bottom: r.bottom / k, width: r.width / k, height: r.height / k }; }
+  function room() { return box((root.closest && root.closest('.parvus-home')) || root); }
   function fits(ext, rm) {
     bubble.classList.remove('below', 'side');
     bubble.style.setProperty('--m-bubble-nudge', '0px');
-    var b = bubble.getBoundingClientRect(), s = sprite.getBoundingClientRect();
+    var b = box(bubble), s = box(sprite);
     var off = 0;
     if (b.left - ext.l < rm.left + 6) off = (rm.left + 6) - (b.left - ext.l);
     else if (b.right + ext.r > rm.right - 6) off = (rm.right - 6) - (b.right + ext.r);
     var at = s.left + s.width / 2 - (b.left + off);
     bubble.style.setProperty('--m-bubble-spill-b', Math.max(ext.b, inkTip('b', at)) + 'px');
     bubble.style.setProperty('--m-bubble-spill-t', Math.max(ext.t, inkTip('t', at)) + 'px');
-    b = bubble.getBoundingClientRect();
+    b = box(bubble);
     if (b.top - ext.t >= rm.top + 4) return { off: off, at: at, dir: 'b' };
-    bubble.classList.add('below'); b = bubble.getBoundingClientRect();
+    bubble.classList.add('below'); b = box(bubble);
     if (b.bottom + ext.b <= rm.bottom - 4) return { off: off, at: at, dir: 't' };
     bubble.classList.remove('below');
     return null;
@@ -966,14 +968,14 @@ if (document.querySelector("[data-parvus-home]")) {
     point(f.dir, f.at);
   }
   function sideways(ext, rm) {
-    var s = sprite.getBoundingClientRect(), p = travel.getBoundingClientRect();
+    var s = box(sprite), p = box(travel);
     var gap = parseFloat(getComputedStyle(root).getPropertyValue('--m-bubble-gap')) || 0;
     var B = window.pxInk ? window.pxInk.reach : 87;
     var roomR = rm.right - 6 - (s.right + gap) - 2 * B;
     var roomL = (s.left - gap) - (rm.left + 6) - 2 * B;
     bubble.style.setProperty('--m-bubble-side-w', Math.floor(Math.max(roomR, roomL, 120)) + 'px');
     bubble.classList.add('side');
-    var b = bubble.getBoundingClientRect(), right = roomR >= roomL;
+    var b = box(bubble), right = roomR >= roomL;
     var top = s.top + s.height * 0.3 - b.height / 2;
     top = Math.max(rm.top + 4 + ext.t, Math.min(top, rm.bottom - 4 - ext.b - b.height));
     var at = s.top + s.height * 0.3 - top;
@@ -1533,6 +1535,10 @@ if (document.querySelector("[data-parvus-home]")) {
     document.body.insertBefore(this.canvas, document.body.firstChild);
     this.ctx = this.canvas.getContext('2d');
     this.startAt = opts.startAt || 0;
+    this.bg = opts.bg === undefined ? BG : opts.bg;
+    this.tints = opts.tints || TINTS;
+    this.hot = opts.hot || ['#ffffff', '#a5d6ff'];
+    this.fade = opts.fade || 1;
     this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.tiles = {};
     this.event = null;
@@ -1563,7 +1569,7 @@ if (document.querySelector("[data-parvus-home]")) {
     for (var i = 0; i < L.count; i++) {
       out.push({
         x: snap(r() * TILE, L.px), y: snap(r() * TILE, L.px),
-        c: TINTS[Math.floor(r() * TINTS.length)],
+        c: this.tints[Math.floor(r() * this.tints.length)],
         a: L.lo + r() * (L.hi - L.lo),
         tw: r() < 0.3 ? 0.6 + r() * 1.8 : 0,
         ph: r() * 6.283,
@@ -1589,6 +1595,7 @@ if (document.querySelector("[data-parvus-home]")) {
             if (y < top - L.px * 3 || y > vh) return;
             var a = s.a;
             if (s.tw && !self.reduced) a *= 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * s.tw + s.ph));
+            a *= self.fade;
             ctx.globalAlpha = a;
             ctx.fillStyle = s.c;
             ctx.fillRect(x, y, L.px, L.px);
@@ -1601,8 +1608,8 @@ if (document.querySelector("[data-parvus-home]")) {
               var g = (t + s.gl.off) % s.gl.per;
               if (g < GLIMMER_S) {
                 var f = Math.sin(Math.PI * g / GLIMMER_S), q = L.px, reach = L.big ? 3 : 2;
-                ctx.fillStyle = '#ffffff';
-                ctx.globalAlpha = Math.min(1, a + f * 0.6);
+                ctx.fillStyle = self.hot[0];
+                ctx.globalAlpha = Math.min(1, a + f * 0.6 * self.fade);
                 ctx.fillRect(x, y, q, q);
                 for (var k = 1; k <= reach; k++) {
                   ctx.globalAlpha = f * (0.85 - (k - 1) * 0.3);
@@ -1655,14 +1662,15 @@ if (document.querySelector("[data-parvus-home]")) {
       this.nextShot = now + rand(SHOT_GAP[0], SHOT_GAP[1]);
     }
     this.shots = this.shots.filter(function (sh) { return now - sh.t0 < sh.dur; });
+    var hot = this.hot, fd = this.fade;
     this.shots.forEach(function (sh) {
       var p = (now - sh.t0) / sh.dur, dist = p * sh.len;
       var hx = sh.x + sh.dx * dist * 0.87, hy = top + sh.y * room + dist * 0.5;
       var fade = p > 0.7 ? (1 - p) / 0.3 : 1;
       for (var i = 0; i < sh.tail; i++) {
         var tx = snap(hx - sh.dx * i * 9 * 0.87, 3), ty = snap(hy - i * 9 * 0.5, 3);
-        ctx.globalAlpha = fade * (1 - i / sh.tail) * (i ? 0.6 : 1);
-        ctx.fillStyle = i ? '#a5d6ff' : '#ffffff';
+        ctx.globalAlpha = fd * fade * (1 - i / sh.tail) * (i ? 0.6 : 1);
+        ctx.fillStyle = i ? hot[1] : hot[0];
         ctx.fillRect(tx, ty, i ? 3 : 6, i ? 3 : 6);
       }
     });
@@ -1674,8 +1682,7 @@ if (document.querySelector("[data-parvus-home]")) {
     var now = performance.now(), t = now / 1000;
     ctx.clearRect(0, 0, vw, vh);
     if (top >= vh) return;
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, top, vw, vh - top);
+    if (this.bg) { ctx.fillStyle = this.bg; ctx.fillRect(0, top, vw, vh - top); }
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, top, vw, vh - top);
@@ -1713,7 +1720,7 @@ if (document.querySelector("[data-parvus-home]")) {
   function fit() {
     var left0 = Math.round((home.clientWidth - m.offsetWidth) / 2);
     var left = left0 - mod(left0 + t.offsetLeft + 3);
-    var top = mod(U - 3 - t.offsetTop);
+    var top = mod(U - 3 - t.offsetTop) + (parseInt(getComputedStyle(home).getPropertyValue('--ph-sky'), 10) || 0);
     m.style.left = left + 'px';
     m.style.top = top + 'px';
     home.style.height = Math.ceil((top + m.offsetHeight) / G) * G + 'px';
