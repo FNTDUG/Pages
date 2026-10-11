@@ -267,9 +267,146 @@
       .to(m, { y: 0, duration: 0.16, ease: 'steps(3)' });
   }
 
+  function rowLoop(box) {
+    if (!box || !window.Draggable) return;
+    var g = window.gsap, SPEED = 22;
+    g.registerPlugin(window.Draggable);
+    if (window.InertiaPlugin) g.registerPlugin(window.InertiaPlugin);
+    var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
+    var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
+    function kids() { return Array.prototype.slice.call(box.children); }
+    function wants() { return window.innerWidth <= 600 && kids().filter(function (el) { return !el.classList.contains('is-copy'); }).length > 1; }
+    function copy(el) {
+      var c = el.cloneNode(true);
+      c.removeAttribute('style');
+      c.classList.add('is-copy');
+      c.setAttribute('aria-hidden', 'true');
+      Array.prototype.forEach.call(c.querySelectorAll('a,button'), function (a) { a.tabIndex = -1; });
+      return c;
+    }
+    function measure() {
+      extra.forEach(function (c) { c.parentNode.removeChild(c); });
+      extra = [];
+      var base = kids();
+      step = base[1].offsetLeft - base[0].offsetLeft;
+      total = step * base.length;
+      var need = box.clientWidth + step;
+      while (total < need) {
+        base.forEach(function (el) { var c = copy(el); box.appendChild(c); extra.push(c); });
+        total += step * base.length;
+      }
+      items = kids();
+      items.forEach(function (el) {
+        el.setAttribute('draggable', 'false');
+        Array.prototype.forEach.call(el.querySelectorAll('a,img'), function (a) { a.setAttribute('draggable', 'false'); });
+      });
+    }
+    function norm(v) { return ((v % total) + total) % total; }
+    function render() {
+      pos = norm(pos);
+      var lo = -step;
+      items.forEach(function (el, i) {
+        var x = norm(i * step - pos - lo) + lo;
+        el.style.translate = Math.round(x - i * step) + 'px 0';
+      });
+    }
+    function nearest(target) {
+      var d = norm(target - pos);
+      if (d > total / 2) d -= total;
+      return pos + d;
+    }
+    function glideTo(target) {
+      slide.x = pos;
+      g.to(slide, { x: target, duration: 0.45, ease: 'power3.out', overwrite: true, onUpdate: function () { pos = slide.x; render(); } });
+    }
+    function settle() {
+      var target = nearest(Math.round(pos / step) * step);
+      if (Math.abs(target - pos) > 0.5) glideTo(target);
+    }
+    function stopAuto() {
+      if (!auto) return;
+      auto = false;
+      cancelAnimationFrame(raf);
+    }
+    function tick(t) {
+      if (!on || !auto) return;
+      if (seen && !document.hidden) {
+        var dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+        pos += SPEED * dt;
+        render();
+      }
+      last = t;
+      raf = requestAnimationFrame(tick);
+    }
+    function build() {
+      on = true;
+      box.classList.add('rowloop');
+      measure();
+      pos = 0;
+      render();
+      drag = window.Draggable.create(proxy, {
+        type: 'x',
+        trigger: box,
+        inertia: !!window.InertiaPlugin,
+        dragClickables: true,
+        minimumMovement: 6,
+        onPress: function () {
+          stopAuto();
+          g.killTweensOf(slide);
+          g.set(proxy, { x: -pos });
+          this.update();
+        },
+        onDragStart: function () { box.classList.add('is-dragging'); },
+        onDrag: function () { pos = -this.x; render(); },
+        onThrowUpdate: function () { pos = -this.x; render(); },
+        onRelease: function () {
+          box.classList.remove('is-dragging');
+          var self = this;
+          setTimeout(function () { if (!self.isThrowing) settle(); }, 0);
+        },
+        onThrowComplete: settle,
+        snap: function (v) { return Math.round(v / step) * step; }
+      })[0];
+      if (auto) { last = 0; raf = requestAnimationFrame(tick); }
+    }
+    function teardown() {
+      on = false;
+      cancelAnimationFrame(raf);
+      if (drag) { drag.kill(); drag = null; }
+      g.killTweensOf(slide);
+      extra.forEach(function (c) { c.parentNode.removeChild(c); });
+      extra = [];
+      kids().forEach(function (el) { el.style.translate = ''; });
+      box.classList.remove('rowloop', 'is-dragging');
+    }
+    function sync() {
+      var want = wants();
+      if (want && !on) build();
+      else if (!want && on) teardown();
+      else if (on) { measure(); render(); }
+    }
+    box.addEventListener('focusin', function (e) {
+      if (!on) return;
+      stopAuto();
+      var el = e.target.closest ? e.target.closest('.rowloop > *') : null;
+      var i = items.indexOf(el);
+      if (i >= 0) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
+    });
+    box.addEventListener('keydown', stopAuto);
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) { seen = es[0].isIntersecting; last = 0; }, { threshold: 0.2 }).observe(box);
+    } else seen = true;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(sync, 150);
+    }, { passive: true });
+    sync();
+  }
+
   function animate() {
     var g = window.gsap;
     h.classList.remove('ov-pre');
+    if (g) try { rowLoop(document.querySelector('.info-card')); } catch (e) {}
     if (!g || reduced) { unwait(); greet(); return; }
     wiggle(g);
     if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
@@ -288,7 +425,7 @@
       .call(function () { if (split) split.revert(); }, null, 1.3)
       .call(function () { drop(g); }, null, 0.9);
     if (window.ScrollTrigger) {
-      var items = g.utils.toArray('.info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
+      var items = g.utils.toArray((document.querySelector('.info-card.rowloop') ? '.info-card' : '.info-card-section') + ', .metaMount, #unitEngine, #ue-last-updated-loader');
       g.set(items, { autoAlpha: 0, y: 36 });
       window.ScrollTrigger.batch(items, { start: 'top 92%', once: true, onEnter: function (els) {
         g.to(els, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'back.out(1.7)', clearProps: keep });
@@ -302,7 +439,11 @@
     floaters();
     load('/overhaul/gsap/gsap.min.js', function () {
       load('/overhaul/gsap/ScrollTrigger.min.js', function () {
-        load('/overhaul/gsap/SplitText.min.js', animate);
+        load('/overhaul/gsap/SplitText.min.js', function () {
+          load('/overhaul/gsap/Draggable.min.js', function () {
+            load('/overhaul/gsap/InertiaPlugin.min.js', animate);
+          });
+        });
       });
     });
     var btn = document.createElement('button');

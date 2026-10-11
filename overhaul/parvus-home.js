@@ -610,44 +610,28 @@ if (document.querySelector("[data-parvus-home]")) {
     a.src = url;
     clips[url] = a;
   });
-  /* Browsers want a clip's first play to happen inside a real gesture, and he
-     speaks from the animation loop rather than from a click. So on the first
-     interaction every clip is played muted and stopped again, which leaves them
-     all unlocked for later. Without this only the angry sound, the one that does
-     fire straight from a click, would ever be heard. */
-  function prime(a) {
-    if (a.primed) return;
-    try {
-      /* played for real, not muted: a muted play is allowed everywhere and so
-         unlocks nothing. volume 0 keeps it silent instead. */
-      a.volume = 0;
-      var settle = function (ok) {
-        try { a.pause(); a.currentTime = 0; } catch (e) {}
-        a.volume = CFG.volume;
-        if (ok) a.primed = true;
-      };
-      var r = a.play();
-      if (r && r.then) r.then(function () { settle(true); }, function () { settle(false); });
-      else settle(true);
-    } catch (e) { a.volume = CFG.volume; }
+  var SILENT = 'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+  var voices = [new Audio(), new Audio(), new Audio()], turn = 0;
+  function unlock() {
+    voices.forEach(function (a) {
+      if (a.primed || a.priming) return;
+      a.priming = true;
+      a.src = SILENT;
+      var done = function (ok) { a.priming = false; if (ok) a.primed = true; };
+      try { var r = a.play(); if (r && r.then) r.then(function () { done(true); }, function () { done(false); }); else done(true); } catch (e) { done(false); }
+    });
   }
-  /* older iOS only frees one clip per gesture, so the stragglers get another go
-     on the next one rather than being written off after the first */
-  function unlock() { for (var url in clips) prime(clips[url]); }
-  /* capture, so this runs before the click handlers that want to make a noise */
   ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) {
     window.addEventListener(t, unlock, { capture: true, passive: true });
   });
   function play(what) {
     if (!CFG.sound) return;
     var url = what.length && typeof what !== 'string' ? what[Math.floor(Math.random() * what.length)] : what;
-    var a = clips[url];
-    if (!a) return;
+    if (!clips[url]) return;
+    var a = voices[turn++ % voices.length];
+    a.src = url;
     a.volume = CFG.volume;
-    /* no gesture check of our own: the browser is the one that decides, and it
-       lets a site the visitor uses often play straight away. a refusal just
-       rejects, which is nothing to worry about. */
-    try { a.currentTime = 0; var r = a.play(); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+    try { var r = a.play(); if (r && r.catch) r.catch(function () {}); } catch (e) {}
   }
 
   /* row 0 holds the bodies and the hats, row 1 the eyes, so any body can wear
