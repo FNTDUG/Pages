@@ -505,8 +505,38 @@
     }
   }
 
+  function fold(box) {
+    if (box.children.length === 1 && box.firstElementChild.classList.contains('ov-fold')) return box.firstElementChild;
+    var w = document.createElement('div');
+    w.className = 'ov-fold';
+    while (box.firstChild) w.appendChild(box.firstChild);
+    box.appendChild(w);
+    return w;
+  }
+  function drops() {
+    Array.prototype.forEach.call(document.querySelectorAll('.ug-mn-section-items'), fold);
+    var exp = window.infToggleExp;
+    if (typeof exp !== 'function' || exp.ov) return;
+    window.infToggleExp = function (row, body, arr) {
+      if (body && !body.getAttribute('data-ads')) {
+        var w = fold(body);
+        if (typeof window._infAdSpot === 'function') {
+          body.setAttribute('data-ads', '1');
+          window._infAdSpot(w, null, 'inf-ad-sub');
+        }
+      }
+      exp(row, body, arr);
+      Array.prototype.forEach.call(document.querySelectorAll('.inf-exp-body.ov-open'), function (b) {
+        if (b.style.maxHeight !== '2000px') b.classList.remove('ov-open');
+      });
+      if (body && body.style.maxHeight === '2000px') body.classList.add('ov-open');
+    };
+    window.infToggleExp.ov = true;
+  }
+
   function ready() {
     if (document.getElementById('pv-theme')) return;
+    drops();
     hero();
     floaters();
     load('/overhaul/gsap/gsap.min.js', function () {
