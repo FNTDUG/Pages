@@ -321,7 +321,10 @@
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
     function kids() { return Array.prototype.slice.call(box.children); }
-    function wants() { return window.innerWidth <= 600 && kids().filter(function (el) { return !el.classList.contains('is-copy'); }).length > 1; }
+    function wants() {
+      var n = kids().filter(function (el) { return !el.classList.contains('is-copy'); }).length, vw = window.innerWidth;
+      return n > 1 && n > (vw <= 600 ? 1 : vw <= 960 ? 2 : 3);
+    }
     function copy(el) {
       var c = el.cloneNode(true);
       c.removeAttribute('style');
