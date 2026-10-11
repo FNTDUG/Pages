@@ -42,6 +42,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/overhaul/ov-pop.css">
+<link rel="stylesheet" href="/overhaul/ov-kit.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word}
 html{font-size:10px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -135,7 +136,7 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .btn-kofi:hover{background:#ff8fbd;color:#2a0f1c}
 .kofi-cup{width:24px;height:14px;flex:none;fill:currentColor}
 .arrow{display:inline-block;transition:transform .15s}
-a:hover>.arrow,.game:hover .arrow,.tool:hover .arrow{transform:translateX(3px)}
+a:hover>.arrow,.game:hover .arrow{transform:translateX(3px)}
 
 .hero{padding:80px 0 72px;overflow-x:clip}
 .hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
@@ -210,13 +211,6 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .rowloop.is-dragging{cursor:grabbing}
 .rowloop>*{flex:0 0 var(--row-item)}
 .rowloop img{-webkit-user-drag:none;pointer-events:none}
-.tool{display:flex;flex-direction:column;gap:10px;padding:24px;min-width:0;text-align:left;font:inherit;color:inherit;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
-.tool:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-hover)}
-.tool h3{margin-top:10px;font:400 20px/1.15 var(--font-head);text-transform:uppercase}
-.tool p{font-size:15px;color:var(--mute)}
-.tool .go{padding-top:6px}
-.tool-ic{width:44px;height:44px;display:grid;place-items:center;background:var(--c);border:var(--bw) solid var(--ink)}
-.tool-ic i{width:14px;height:14px;background:#1d2228}
 
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
@@ -305,7 +299,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .sec{padding:56px 0}
 }
 @media (prefers-reduced-motion:reduce){
-  .btn,.game,.tool,.game-top img,.arrow,html.ov #ug-mobile-nav{transition:none}
+  .btn,.game,.game-top img,.arrow,html.ov #ug-mobile-nav{transition:none}
 }
 </style>
 </head>
@@ -478,10 +472,10 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <h2>More on the site</h2>
           </div>
           <div class="tools">
-            <a class="tool blk reveal" href="/patch-notes" style="--c:var(--yellow)"><span class="tool-ic"><i></i></span><h3>Patch notes</h3><p>Every update for every game, in one place.</p><span class="go">Read patch notes <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
-            <button class="tool blk reveal" id="pvNotify" type="button" style="--c:var(--blue)"><span class="tool-ic"><i></i></span><h3>Notifications</h3><p>Get a ping when a game you follow updates.</p><span class="go">Turn them on <span class="arrow" aria-hidden="true">&rarr;</span></span></button>
-            <a class="tool blk reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="tool-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
-            <a class="tool blk reveal" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="tool-ic"><i></i></span><h3>Support us</h3><p>Help keep the guide free and up to date.</p><span class="go">Support on Ko-fi <span class="arrow" aria-hidden="true">&nearr;</span></span></a>
+            <a class="ov-card reveal" href="/patch-notes" style="--c:var(--yellow)"><span class="ov-card-ic"><i></i></span><h3>Patch notes</h3><p>Every update for every game, in one place.</p><span class="ov-card-go">Read patch notes <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
+            <button class="ov-card reveal" id="pvNotify" type="button" style="--c:var(--blue)"><span class="ov-card-ic"><i></i></span><h3>Notifications</h3><p>Get a ping when a game you follow updates.</p><span class="ov-card-go">Turn them on <span class="arrow" aria-hidden="true">&rarr;</span></span></button>
+            <a class="ov-card reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="ov-card-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="ov-card-go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
+            <a class="ov-card reveal" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="ov-card-ic"><i></i></span><h3>Support us</h3><p>Help keep the guide free and up to date.</p><span class="ov-card-go">Support on Ko-fi <span class="arrow" aria-hidden="true">&nearr;</span></span></a>
           </div>
         </div>
       </section>

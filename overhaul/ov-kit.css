@@ -1,0 +1,11 @@
+html.ov .ov-card{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;box-sizing:border-box;padding:24px;font:inherit;text-align:left;color:var(--text);text-decoration:none;background:var(--surface);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s,background-color .3s}
+html.ov .ov-card:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-hover)}
+html.ov .ov-card:focus-visible{outline:3px solid var(--text);outline-offset:4px}
+html.ov .ov-card-ic{display:grid;place-items:center;flex:none;width:44px;height:44px;box-sizing:border-box;background:var(--c,var(--game,var(--acc)));border:var(--bw) solid var(--ink)}
+html.ov .ov-card-ic i{width:14px;height:14px;background:#1d2228}
+html.ov .ov-card h3{margin:10px 0 0;font:400 20px/1.15 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text)}
+html.ov .ov-card p{margin:0;font:400 15px/1.6 var(--font-body);color:var(--mute)}
+html.ov .ov-card-go{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:6px;font:700 15px/1.2 var(--font-body);color:var(--text)}
+html.ov .ov-card .arrow{display:inline-block;transition:transform .15s}
+html.ov .ov-card:hover .arrow{transform:translateX(3px)}
+@media (prefers-reduced-motion:reduce){html.ov .ov-card,html.ov .ov-card .arrow{transition:none}}
