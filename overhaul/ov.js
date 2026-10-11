@@ -55,9 +55,16 @@
       if (el.classList.contains('ug-status-inline-text') || (el.tagName === 'DIV' && el.querySelector('[style*="Audiowide"]'))) notes.appendChild(el);
     });
     if (notes.children.length) inner.insertBefore(notes, wrap.nextSibling);
+    sizeScreen();
+    window.addEventListener('resize', sizeScreen, { passive: true });
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
-    js.onload = sky;
+    js.onload = function () {
+      var home = document.getElementById('parvusHome');
+      sizeScreen();
+      if (home && window.ResizeObserver) new ResizeObserver(sizeScreen).observe(home);
+      sky();
+    };
     document.body.appendChild(js);
   }
 
@@ -155,6 +162,18 @@
       if (list.length) g.to(list[Math.floor(Math.random() * list.length)], { rotation: '+=360', duration: 0.6, ease: 'steps(4)' });
       setTimeout(spin, rnd(3500, 6500));
     })();
+  }
+
+  var SCALE = 0.75;
+  function sizeScreen() {
+    var sc = document.querySelector('.ov-screen'), host = sc && sc.querySelector('[data-parvus-home]');
+    if (!host) return;
+    host.style.width = sc.clientWidth / SCALE + 'px';
+    var home = document.getElementById('parvusHome');
+    if (!home) return;
+    var hh = home.offsetHeight * SCALE, edge = getComputedStyle(sc).boxSizing === 'border-box' ? sc.offsetHeight - sc.clientHeight : 0;
+    sc.style.minHeight = Math.ceil(hh) + edge + 'px';
+    host.style.top = Math.max(0, Math.round((sc.clientHeight - hh) / 2)) + 'px';
   }
 
   var stars = null;
