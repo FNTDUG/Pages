@@ -179,9 +179,16 @@ html.ov[data-theme="light"] .ov-far{opacity:.32}
 .ov-sticker .c,.ov-pin .c{fill:var(--c-hi)}
 .ov-sticker .b,.ov-pin .b{fill:var(--blue)}
 .ov-sticker .m,.ov-pin .m{fill:var(--mute)}
+.ov-sticker .r,.ov-pin .r{fill:var(--red)}
+.ov-sticker .n,.ov-pin .n{fill:var(--green)}
 .ov-pin{position:absolute;z-index:3;pointer-events:none}
 .ov-pin-tl{left:0;top:0;transform:translate(-45%,-45%)}
 .ov-pin-br{right:0;bottom:0;transform:translate(40%,40%)}
+.ov-pin{--gut:24px}
+@media (max-width:1099px){
+  .ov-pin-tl{transform:translate(max(-45%,calc(var(--u) + 2px - var(--gut))),-45%)}
+  .ov-pin-br{transform:translate(min(40%,calc(var(--gut) - var(--u) * 2 - 2px)),40%)}
+}
 .ovt{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .ovt[hidden]{display:none}
 .ovt-veil{position:absolute;inset:0;background:var(--overlay)}
@@ -241,13 +248,29 @@ html.ovt-on #ug-hamburger,html.ovt-on #ug-info-btn,html.ovt-on #ug-sound-btn,htm
 html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
 @media (max-width:768px){
   html.ov #ug-hamburger{display:flex}
-  html.ov .inf-modes{padding-top:26px!important}
+  html.ov .inf-modes{gap:8px;padding:34px 14px 0!important}
+  html.ov #ug-info-panel{width:min(290px,88vw)}
+  html.ov .ug-mn-header{min-height:58px;padding:9px 100px 9px 14px}
+  html.ov .pv-mn-logo{width:34px;height:30px}
+  html.ov .ug-mn-brand{gap:8px}
+  html.ov .ug-mn-brand-name{font-size:12px!important}
+  html.ov .ug-mn-body{padding:6px 0 12px}
+  html.ov .ug-mn-link,html.ov .ug-mn-section-btn{padding:10px 18px!important;font-size:14px!important}
+  html.ov .ug-mn-child{padding:7px 18px 7px 28px!important;font-size:13px!important}
+  html.ov .ug-mn-child.active{padding-left:22px!important}
+  html.ov .ug-mn-discord-wrap{padding:14px 14px 4px}
+  html.ov .ug-mn-discord{padding:10px 12px;font-size:13px}
+  html.ov .inf-mode{padding:8px 6px;font-size:11px}
+  html.ov .inf-search{padding:11px 14px}
+  html.ov .inf-sfield{padding:8px 10px}
+  html.ov .inf-drop-btn{padding:12px 16px;font-size:14px}
 }
 @media (min-width:769px){
   html.ov #ug-hamburger{top:14px;height:44px;padding:0 18px;font-size:14px}
   #pv-theme{top:171px;width:46px;height:46px}
   #pv-theme svg{width:22px;height:22px}
   html.ov #ug-mobile-nav{width:350px}
+  html.ov #ug-info-panel{width:420px}
   html.ov .ug-mn-header{min-height:72px;padding-right:150px}
 }
 @media (max-width:960px){
@@ -261,8 +284,7 @@ html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
   html.ov #ug-hero-inner{padding:0 16px}
   html.ov #ug-content{padding:8px 16px 60px}
   .ov-stage{padding:6px}
-  .ov-pin-tl{transform:translate(-30%,-45%)}
-  .ov-pin-br{transform:translate(25%,40%)}
+  .ov-pin{--gut:16px}
   .ov-screen .mascot{--m-bubble-w:360px}
   .ov-copy{padding:22px 18px 24px}
   .ov-kicker{font-size:11px;white-space:nowrap}

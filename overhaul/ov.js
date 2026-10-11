@@ -87,7 +87,13 @@
     trash: ['...mmm...', 'mmmmmmmmm', '.........', '.bbbbbbb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bbbbbbb.', '..bbbbb..'],
     gear: ['....ccc....', '.cc.ccc.cc.', '.ccccccccc.', '..ccccccc..', 'cccc...cccc', 'cccc...cccc', 'cccc...cccc', '..ccccccc..', '.ccccccccc.', '.cc.ccc.cc.', '....ccc....'],
     lens: ['..cccc....', '.cbbbbc...', 'cbcbbbbc..', 'cbbbbbbc..', 'cbbbbbbc..', '.cbbbbc...', '..ccccgg..', '......ggg.', '.......ggg', '........gg'],
-    bookmark: ['ggggggg', 'gcggggg', 'gcggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggg.ggg', 'gg...gg', 'g.....g']
+    bookmark: ['ggggggg', 'gcggggg', 'gcggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggg.ggg', 'gg...gg', 'g.....g'],
+    joystick: ['..rrr.......', '.rcrrr......', '.rrrrr......', '..rrr.......', '...m........', '...m....yyy.', 'gggggggggggg', 'gggggggggggg', 'gggggggggggg'],
+    arcade: ['.gggggggggg.', '.gyyyyyyyyg.', '.gggggggggg.', '.gkkkkkkkkg.', '.gckkkkkkkg.', '.gckkykkkcg.', '.gkkkkkkkcg.', '.gkkkkkkkkg.', '.gggggggggg.', 'ggrggggygbgg', 'gggggggggggg', '.gggggggggg.', '.ggggkkgggg.', '.gggggggggg.', '.gggggggggg.'],
+    trophy: ['..yyyyyyyy..', 'yyycyyyyyyyy', 'y.ycyyyyyy.y', 'y.yyyyyyyy.y', '.yyyyyyyyyy.', '..yyyyyyyy..', '...yyyyyy...', '....yyyy....', '.....yy.....', '.....yy.....', '...yyyyyy...', '..gggggggg..', '..gggggggg..'],
+    gg: ['.yyyyyyyyyyyyy.', 'yyyyyyyyyyyyyyy', 'yyyykkkyykkkyyy', 'yyykyyyykyyyyyy', 'yyykykkykykkyyy', 'yyykyykykyykyyy', 'yyyykkkyykkkyyy', 'yyyyyyyyyyyyyyy', '.yyyyyyyyyyyyy.'],
+    levelup: ['.nnnnnnnnnnnnnnn.', 'nnnnnnnnnnnnnnnnn', 'nnnnknnnknknkknnn', 'nnnkkknnknknknknn', 'nnkkkkknknknkknnn', 'nnnnknnnknknknnnn', 'nnnnknnnkkknknnnn', 'nnnnnnnnnnnnnnnnn', '.nnnnnnnnnnnnnnn.'],
+    drink: ['.mmmmmm.', 'mmmkmmmm', 'nnnnnnnn', 'ncnnnyyn', 'ncnnyynn', 'ncnyynnn', 'nnyyyyyn', 'nnnnyynn', 'nnnyynnn', 'nnyynnnn', 'nnnnnnnn', 'mmmmmmmm', '.mmmmmm.']
   };
   function art(rows) {
     var w = rows[0].length + 2, ht = rows.length + 2, grid = [], out = [], x, y, i, j;
