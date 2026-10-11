@@ -167,6 +167,9 @@ html.ov .info-card-section a:hover{color:var(--game-ink)!important;background:va
 html.ov .metaMount{max-width:824px;margin-left:auto!important;margin-right:auto!important}
 html.ov .ad-slot{border-radius:0}
 html.ov #ug-content>.ad-slot,html.ov #ug-hero .ad-slot{padding:10px;background:var(--surface);border:2px dashed rgba(127,127,127,.4)}
+html.ov #ug-main .ad-slot:not(.ug-rail):has(ins[data-ad-status="unfilled"]){display:none!important}
+html.ov #ug-main .ad-slot:not(.ug-rail):not(:has(ins[data-ad-status="filled"])){margin-top:0!important;margin-bottom:0!important;padding:0!important;background:none!important;border:0!important}
+html.ov #ug-main .ad-slot:not(.ug-rail):not(:has(ins[data-ad-status="filled"])) .ug-xd{display:none}
 
 html.ov[data-theme="light"]{--c-hi:#ffffff}
 html.ov[data-theme="dark"]{--c-hi:#f7f0e4}

@@ -10,10 +10,11 @@
   if (t !== 'dark' && t !== 'light') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   h.setAttribute('data-theme', t);
   [
-    'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
+    'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
     '/overhaul/parvus-home.css',
     '/overhaul/ov-pop.css'
   ].forEach(function (href) {
+    if (href.indexOf('fonts.googleapis') !== -1 && document.querySelector('link[href*="family=Archivo+Black"]')) return;
     var l = document.createElement('link');
     l.rel = 'stylesheet';
     l.href = href;
@@ -287,6 +288,16 @@
     s.onerror = done;
     document.body.appendChild(s);
   }
+  function loadAll(list, done) {
+    var left = list.length;
+    list.forEach(function (src) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = false;
+      s.onload = s.onerror = function () { if (--left === 0) done(); };
+      document.body.appendChild(s);
+    });
+  }
 
   function greet() {
     var tries = 0;
@@ -539,15 +550,7 @@
     drops();
     hero();
     floaters();
-    load('/overhaul/gsap/gsap.min.js', function () {
-      load('/overhaul/gsap/ScrollTrigger.min.js', function () {
-        load('/overhaul/gsap/SplitText.min.js', function () {
-          load('/overhaul/gsap/Draggable.min.js', function () {
-            load('/overhaul/gsap/InertiaPlugin.min.js', animate);
-          });
-        });
-      });
-    });
+    loadAll(['gsap', 'ScrollTrigger', 'SplitText', 'Draggable', 'InertiaPlugin'].map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';
@@ -579,6 +582,7 @@
     var bell = document.getElementById('ntfBell');
     if (bell && window.MutationObserver) new MutationObserver(place).observe(bell, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
     window.addEventListener('resize', place, { passive: true });
+    load('/overhaul/ov-gear.js');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();
