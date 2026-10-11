@@ -80,13 +80,14 @@ html.ov[data-game="wiki"]{--game:var(--pink);--game-ink:#2a0f1c}
 
 html.ov #ug-hero{background:none!important;padding:72px 0 0}
 html.ov #ug-hero::before{display:none}
-html.ov #ug-hero-inner{padding:0 24px;max-width:1180px}
+html.ov{--ov-col:980px}
+html.ov #ug-hero-inner{padding:0 24px;max-width:var(--ov-col)}
 .ov-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
 .ov-copy{min-width:0;align-self:center;padding:40px 44px}
 .ov-kicker{display:inline-flex;align-items:center;gap:9px;padding:7px 11px;font:400 12px/1.2 var(--font-head);letter-spacing:.06em;text-transform:uppercase;color:var(--game-ink);background:var(--game);border:var(--bw) solid var(--ink)}
 .ov-kicker i{width:8px;height:8px;background:currentColor}
 .ov-stage{display:flex;flex-direction:column;padding:10px;background:var(--game);border-left:var(--bw) solid var(--ink)}
-.ov-screen{position:relative;flex:1;overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink)}
+.ov-screen{position:relative;flex:1;min-height:calc(576px * .75 + var(--bw) * 2);overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink)}
 .ov-screen>[data-parvus-home]{position:absolute;left:0;top:0;transform:scale(.75);transform-origin:0 0}
 .ov-screen .parvus-home{--ph-sky:96px}
 .ov-screen .mascot{--m-bubble-size:16px;--m-bubble-w:400px}
@@ -98,7 +99,6 @@ html.ov .ug-page-title-area{text-align:left;margin:0;padding:0}
 html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}
 .ov-hl{position:relative;display:inline-block;isolation:isolate;padding:calc(.1em + var(--bw)) calc(.12em + var(--bw)) calc(.07em + var(--bw));line-height:1;color:#1d2228}
 .ov-hl-bg{position:absolute;inset:0;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
-.ov-copy .ug-page-title .ov-line-mask{padding:.16em 0;margin:-.16em 0}
 html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 10px;font:700 13px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none}
 html.ov .ug-status-badge::before{content:'';width:9px;height:9px;flex:none;background:var(--green);border:2px solid var(--ink)}
 html.ov .ov-copy .ug-page-desc{max-width:34em;margin:0!important;font-size:17px;line-height:1.6;color:var(--mute);text-align:left!important}
@@ -116,7 +116,7 @@ html.ov .ov-notes .ug-status-inline-text{max-width:none!important;font:500 15px/
 html.ov .ov-notes .ug-status-inline-text span{font-weight:700}
 html.ov #ug-hero-inner>div[style*="text-align"]:has(#cleanModeToggle){display:none!important}
 
-html.ov #ug-content{max-width:1180px;padding:8px 24px 70px}
+html.ov #ug-content{max-width:var(--ov-col);padding:8px 24px 70px}
 html.ov .info-card{max-width:none!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px!important;margin-top:44px!important}
 html.ov .info-card-section{padding:22px 22px 24px!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow)!important}
 html.ov .info-card-section::before{display:none!important}
