@@ -119,9 +119,7 @@ html.ov .info-card-section p{color:var(--mute)!important;font-size:16px!importan
 html.ov .info-card-section a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-color:var(--game)!important;text-decoration-thickness:3px!important;text-underline-offset:3px}
 html.ov .info-card-section a:hover{color:var(--game-ink)!important;background:var(--game)}
 
-html.ov .metaMount{margin-top:36px!important}
-html.ov .seamlessRoot,html.ov .metaRoot{border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow)!important}
-html.ov .updated-panel{border-radius:0!important}
+html.ov .metaMount{max-width:824px;margin-left:auto!important;margin-right:auto!important}
 html.ov .ad-slot{border-radius:0}
 html.ov #ug-content>.ad-slot,html.ov #ug-hero .ad-slot{padding:10px;background:var(--surface);border:2px dashed rgba(127,127,127,.4)}
 
