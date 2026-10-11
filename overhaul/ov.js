@@ -128,7 +128,7 @@
 
   var floats = [], aim = { x: 0, y: 0 }, cam = { x: 0, y: 0 }, camOn = false;
   var TIERS = {
-    near: { u: [5, 6], up: 4, d: [0.65, 0.9], cam: 36 },
+    near: { u: [5, 6], up: 4, d: [0.45, 0.65], cam: 16 },
     far: { u: [3, 3], up: 3, d: [0.12, 0.22], cam: 6 }
   };
   function floaters() {
