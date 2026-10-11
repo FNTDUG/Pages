@@ -65,7 +65,7 @@
   function fit() {
     var vw = view.clientWidth, vh = view.clientHeight, S = vw >= 300 ? 2 : 2 / 3;
     sprite.style.left = Math.round(vw / 2 - 105 * S) + 'px';
-    sprite.style.top = Math.round(vh / 2 - 92 * S) + 'px';
+    sprite.style.top = Math.round(vh / 2 - 72 * S) + 'px';
     sprite.style.transform = 'scale(' + S + ')';
   }
 

@@ -25,6 +25,9 @@ html.ov #ug-hamburger .hmb-icon{font-size:17px;line-height:1}
 html.ov #ug-hamburger:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)!important}
 html.ov #ug-hamburger:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)!important}
 html.ov #ug-info-btn{color:var(--text)!important;background:var(--surface)!important;border:var(--bw) solid var(--ink)!important;border-radius:0!important;box-shadow:var(--shadow-sm)!important;font:700 12px/1 var(--font-body)!important;letter-spacing:.08em;transition:transform .12s,box-shadow .12s}
+html.ov .ug-xd-btn{width:30px;height:30px;padding:0;color:var(--text);background:var(--surface);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:3px 3px 0 var(--ink);font:700 13px/1 var(--font-body);transition:transform .12s,box-shadow .12s,background-color .12s}
+html.ov .ug-xd-btn:hover{color:var(--game-ink);background:var(--game);transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+html.ov .ug-xd-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
 html.ov #ug-info-overlay{background:var(--overlay)}
 html.ov #ug-info-panel{width:min(380px,92vw);background:var(--surface);border-left:var(--bw) solid var(--ink);box-shadow:-6px 0 0 var(--ink);scrollbar-color:var(--mute) transparent}
 html.ov #ug-info-panel .ug-mn-header{background:var(--game)}
