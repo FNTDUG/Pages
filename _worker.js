@@ -3000,6 +3000,7 @@ const OUTAGE_SCRIPT = `<script>
 
   function show(){
     if(fired)return;
+    if(window.pvPopup){ fired=true; window.pvPopup('outage'); return; }
     var veil=document.getElementById('ghoVeil');
     if(!veil)return;
     fired=true;
@@ -3537,6 +3538,136 @@ async function pushSend(request, env) {
   return pushJson({ ok: true, sent: out.sent, removed: out.removed, failed: out.failed, cursor: list.list_complete ? null : list.cursor });
 }
 
+const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
+const PV_OV_PAGES = ['/overhaul', '/overhaul/meta-teams', '/overhaul/unit-engine'];
+const PV_UPDATE = {
+  version: '2026-10-11',
+  items: [
+    'A brand new look for the whole site',
+    'Light and dark mode: switch with the sun and moon button',
+    'Meet Parvus, our new mascot'
+  ]
+};
+const PV_TIP_DAYS = 3;
+const PV_TIPS = [
+  'Tap the bell to get a notification when Metas, TierLists or Patch Notes are updated.',
+  'Switch between light and dark mode with the sun and moon button under the bell.',
+  'The speaker button mutes every sound on the site.',
+  'On FNTD2 pages, the INFO button opens a panel you can search.',
+  'Click or tap Parvus to open his chat window.'
+];
+function pvDev(pathname) { return pathname === '/overhaul' || pathname.indexOf('/overhaul/') === 0; }
+function pvPopupHtml(first) {
+  const cfg = { first: first || '', files: PV_POP_FILES, update: PV_UPDATE, tips: PV_TIPS, tipDays: PV_TIP_DAYS };
+  return '<script>window.PV_POP=' + JSON.stringify(cfg).replace(/</g, '\\u003c') + ';<\/script>' + PV_POPUP_SCRIPT;
+}
+const PV_POPUP_SCRIPT = `<script>
+(function () {
+  var cfg = window.PV_POP;
+  if (!cfg || window.pvPopup) return;
+  var host = null, prevOverflow = '';
+  function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
+  function remove() {
+    if (!host) return;
+    if (host.parentNode) host.parentNode.removeChild(host);
+    host = null;
+    document.documentElement.classList.remove('pv-pop-on');
+    document.body.style.overflow = prevOverflow;
+    document.removeEventListener('keydown', onKey);
+  }
+  function onKey(e) {
+    if (e.key !== 'Escape' || !host) return;
+    var x = host.querySelector('[data-px-close]');
+    if (x) x.click();
+  }
+  function fill(name, root, opts) {
+    var text = root.querySelector('.px-text');
+    if (!text) return;
+    if (name === 'tip' && opts.tip) {
+      var p = text.querySelector('p');
+      if (p) p.textContent = opts.tip;
+    }
+    if (name === 'update' && cfg.update) {
+      var ul = text.querySelector('ul');
+      if (ul) {
+        ul.innerHTML = '';
+        cfg.update.items.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+      }
+    }
+    if (name === '404') {
+      var ov = root.querySelector('.px-overlay');
+      if (ov) ov.setAttribute('data-close-to', '/overhaul/');
+      Array.prototype.forEach.call(text.querySelectorAll('a.px-btn[href="/"]'), function (a) { a.setAttribute('href', '/overhaul/'); });
+    }
+  }
+  function mount(name, html, opts) {
+    remove();
+    var tpl = document.createElement('template');
+    tpl.innerHTML = html;
+    fill(name, tpl.content, opts);
+    if (!tpl.content.querySelector('.px-overlay')) return false;
+    var box = document.createElement('div');
+    box.className = 'pv-pop-host';
+    box.setAttribute('data-pop', name);
+    document.body.appendChild(box);
+    host = box;
+    document.documentElement.classList.add('pv-pop-on');
+    prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    Array.prototype.slice.call(tpl.content.childNodes).forEach(function (n) {
+      if (n.nodeName === 'SCRIPT') {
+        var sc = document.createElement('script');
+        sc.textContent = n.textContent;
+        box.appendChild(sc);
+      } else box.appendChild(n);
+    });
+    var overlay = box.querySelector('.px-overlay');
+    new MutationObserver(function () { if (overlay.hidden && host === box) remove(); }).observe(overlay, { attributes: true, attributeFilter: ['hidden'] });
+    var btns = overlay.querySelectorAll('.px-text .px-btn'), f = btns[btns.length - 1] || overlay.querySelector('[data-px-close]');
+    if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    return true;
+  }
+  window.pvPopup = function (name, opts) {
+    var file = cfg.files[name];
+    if (!file) return Promise.resolve(false);
+    return fetch('/overhaul/popups/' + file, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error('popup');
+      return r.text();
+    }).then(function (html) { return mount(name, html, opts || {}); }).catch(function () { return false; });
+  };
+  function busy() {
+    if (host || document.hidden) return true;
+    var v = document.querySelectorAll('.ntf-veil, .gho-veil, #wipVeil');
+    for (var i = 0; i < v.length; i++) if (!v[i].hidden) return true;
+    return !!document.querySelector('#ug-mobile-nav.open, #ug-info-panel.open, html.ovt-on');
+  }
+  function later(name, opts, tries) {
+    setTimeout(function () {
+      if (busy()) { if ((tries || 0) < 40) later(name, opts, (tries || 0) + 1); return; }
+      if (name === 'update') store('pv:update', cfg.update.version);
+      if (name === 'tip') { store('pv:tipAt', Date.now()); store('pv:tip', opts.index); }
+      window.pvPopup(name, opts);
+    }, tries ? 1500 : 2500);
+  }
+  function tipAt(i) { return { tip: cfg.tips[i], index: i }; }
+  var q = /[?&]popup=([a-z0-9]+)/.exec(location.search), forced = q && cfg.files[q[1]] ? q[1] : '';
+  if (forced) window.pvPopup(forced, forced === 'tip' ? tipAt(Math.floor(Math.random() * cfg.tips.length)) : {});
+  else if (cfg.first) window.pvPopup(cfg.first);
+  else if (cfg.update && cfg.update.version && load('pv:update') !== cfg.update.version) later('update');
+  else if (cfg.tips.length) {
+    var at = +load('pv:tipAt') || 0;
+    if (!at) store('pv:tipAt', Date.now());
+    else if (Date.now() - at > cfg.tipDays * 864e5) {
+      var last = +load('pv:tip'), i = Math.floor(Math.random() * cfg.tips.length);
+      if (cfg.tips.length > 1 && i === last) i = (i + 1) % cfg.tips.length;
+      later('tip', tipAt(i));
+    }
+  }
+})();
+<\/script>`;
+
 const NOTIFY_HTML = `
 <style>
 .ntf-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);box-sizing:border-box}
@@ -3670,7 +3801,7 @@ const NOTIFY_HTML = `
   var panel = document.getElementById('ntfPanel');
   var content = document.getElementById('ntfContent');
   var bell = document.getElementById('ntfBell');
-  var desktop = window.matchMedia('(min-width: 769px)');
+  var desktop = window.matchMedia(location.pathname === '/overhaul' || location.pathname.indexOf('/overhaul/') === 0 ? 'all' : '(min-width: 769px)');
   var auto = veil.getAttribute('data-auto') === '1';
   var state = '';
   var prevOverflow = '';
@@ -4122,7 +4253,7 @@ const NOTIFY_HTML = `
   });
 
   function blocked() {
-    if (document.hidden || document.getElementById('wipVeil')) return true;
+    if (document.hidden || document.getElementById('wipVeil') || document.querySelector('.pv-pop-host')) return true;
     var pv = document.getElementById('pollVeil');
     if (pv && !pv.hidden) return true;
     var g = document.querySelector('.gho-veil');
@@ -4958,7 +5089,7 @@ const POLL_HTML = `
   var DELAY = 2;
   var panel = document.getElementById('pollPanel');
   var content = document.getElementById('pollContent');
-  var desktop = window.matchMedia('(min-width: 769px)');
+  var desktop = window.matchMedia(location.pathname === '/overhaul' || location.pathname.indexOf('/overhaul/') === 0 ? 'all' : '(min-width: 769px)');
   var poll = null;
   var picks = [];
   var answers = [];
@@ -5261,7 +5392,7 @@ const POLL_HTML = `
   }
 
   function blocked() {
-    if (document.hidden || document.getElementById('wipVeil')) return true;
+    if (document.hidden || document.getElementById('wipVeil') || document.querySelector('.pv-pop-host')) return true;
     var n = document.getElementById('ntfVeil');
     if (n && !n.hidden) return true;
     var g = document.querySelector('.gho-veil');
@@ -6556,6 +6687,14 @@ export default {
       });
     }
 
+    if (url.pathname.indexOf('/overhaul/popups/') === 0) {
+      const pop = await env.ASSETS.fetch(request);
+      const popHeaders = new Headers(pop.headers);
+      popHeaders.set('x-robots-tag', 'noindex');
+      return new Response(pop.body, { status: pop.status, headers: popHeaders });
+    }
+    const pvMissing = pvDev(url.pathname) && !/\.[a-z0-9]+$/i.test(url.pathname) && PV_OV_PAGES.indexOf(url.pathname.replace(/\/+$/, '')) === -1;
+
     let assetReq = request;
     const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
@@ -6564,6 +6703,7 @@ export default {
         break;
       }
     }
+    if (pvMissing) assetReq = new Request(new URL('/overhaul/', url).toString(), request);
 
     const response = await env.ASSETS.fetch(assetReq);
     const ct = response.headers.get('content-type') || '';
@@ -6572,7 +6712,8 @@ export default {
     const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
     const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
     const hasInfo = !noInfoPanel && infoPanelActive(url.pathname);
-    return new HTMLRewriter()
+    const pvOn = pvDev(url.pathname);
+    const out = new HTMLRewriter()
       .on('head', {
         element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
       })
@@ -6605,7 +6746,7 @@ export default {
           el.append(noInfoPanel ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
           if (!hasInfo) el.append('<style>.ntf-bell{top:85px}@media(min-width:769px){.ntf-bell{top:117px}}</style>', { html: true });
           el.append(noInfoPanel ? POLL_HTML.replace('data-auto="1"', 'data-auto="0"') : POLL_HTML, { html: true });
-          el.append(OUTAGE_HTML, { html: true });
+          if (!pvOn) el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
@@ -6613,11 +6754,13 @@ export default {
           if (hasInfo) el.append(INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append(ACTIVE_SCRIPT, { html: true });
-            if (wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
+            if (!pvOn && wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
           }
+          if (pvOn) el.append(pvPopupHtml(pvMissing ? '404' : wipActive(url.pathname.replace(/^\/overhaul/, '/fntd2')) ? 'wip' : ''), { html: true });
           if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
         }
       })
       .transform(response);
+    return pvMissing ? new Response(out.body, { status: 404, headers: out.headers }) : out;
   }
 };
