@@ -47,6 +47,7 @@
     wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>';
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
+    pins(wrap);
     var notes = document.createElement('div');
     notes.className = 'ov-notes';
     Array.prototype.slice.call(area.children).concat(Array.prototype.slice.call(inner.children)).forEach(function (el) {
@@ -60,11 +61,107 @@
     document.body.appendChild(js);
   }
 
+  var SPRITES = {
+    pad: ['.gggggggggggg.', 'ggkggggggggygg', 'gkkkggggggbgcg', 'ggkggggggggygg', 'gggggggggggggg', 'ggggg....ggggg', 'gggg......gggg'],
+    cursor: ['c.......', 'cc......', 'ccc.....', 'cccc....', 'ccccc...', 'cccccc..', 'ccccccc.', 'cccccccc', 'cccc....', 'cc.cc...', 'c..cc...', '....cc..', '....cc..'],
+    heart: ['.gg...gg.', 'gcgg.gggg', 'gcggggggg', 'ggggggggg', '.ggggggg.', '..ggggg..', '...ggg...', '....g....'],
+    coin: ['..yyyy..', '.yyyyyy.', 'yycyykyy', 'ycyyykyy', 'yyyyykyy', 'yyyyykyy', '.yyyyyy.', '..yyyy..'],
+    floppy: ['bbcccckcb.', 'bbcccckcbb', 'bbccccccbb', 'bbbbbbbbbb', 'bbbbbbbbbb', 'bccccccccb', 'bckkkkkkcb', 'bccccccccb', 'bckkkkkccb', 'bccccccccb'],
+    chat: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cckkckkckkcc', 'cckkckkckkcc', 'cccccccccccc', '.cccccccccc.', '..ccc.......', '..cc........', '..c.........'],
+    signal: ['.........cc', '.........cc', '......gg.cc', '......gg.cc', '...gg.gg.cc', '...gg.gg.cc', 'gg.gg.gg.cc', 'gg.gg.gg.cc'],
+    play: ['y.......', 'yyy.....', 'yyyyy...', 'yyyyyyy.', 'yyyyyyyy', 'yyyyyyy.', 'yyyyy...', 'yyy.....', 'y.......'],
+    sparkle: ['....y....', '...yyy...', '...yyy...', '.yyyyyyy.', 'yyyyyyyyy', '.yyyyyyy.', '...yyy...', '...yyy...', '....y....'],
+    bolt: ['...gggg', '..gggg.', '..ggg..', '.ggg...', 'gggggg.', '..gggg.', '..ggg..', '.ggg...', '.gg....', 'gg.....'],
+    key: ['ccccccccc', 'ckccccckc', 'ckccccckc', 'ckcckcckc', 'ckckckckc', 'cckccckcc', 'ccccccccc', 'mmmmmmmmm', 'mmmmmmmmm'],
+    smile: ['..yyyyy..', '.yyyyyyy.', 'yykyyykyy', 'yykyyykyy', 'yyyyyyyyy', 'ykyyyyyky', '.ykkkkky.', '..yyyyy..'],
+    loading: ['gg.gg.gg.cc.cc', 'gg.gg.gg.cc.cc', 'gg.gg.gg.cc.cc']
+  };
+  function art(rows) {
+    var w = rows[0].length + 2, ht = rows.length + 2, grid = [], out = [], x, y, i, j;
+    for (y = 0; y < ht; y++) {
+      grid.push([]);
+      for (x = 0; x < w; x++) grid[y].push(rows[y - 1] && x > 0 && x <= rows[y - 1].length ? rows[y - 1].charAt(x - 1) : '.');
+    }
+    for (y = 0; y < ht; y++) {
+      out.push(grid[y].slice());
+      for (x = 0; x < w; x++) {
+        if (grid[y][x] !== '.') continue;
+        for (i = -1; i <= 1; i++) for (j = -1; j <= 1; j++) {
+          if (grid[y + i] && grid[y + i][x + j] && grid[y + i][x + j] !== '.') out[y][x] = 'k';
+        }
+      }
+    }
+    var rects = '';
+    for (y = 0; y < ht; y++) {
+      for (x = 0; x < w;) {
+        var ch = out[y][x], run = 1;
+        if (ch === '.') { x++; continue; }
+        while (x + run < w && out[y][x + run] === ch) run++;
+        rects += '<rect class="' + ch + '" x="' + x + '" y="' + y + '" width="' + run + '" height="1"/>';
+        x += run;
+      }
+    }
+    return { w: w, h: ht, svg: '<svg viewBox="0 0 ' + w + ' ' + ht + '" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>' };
+  }
+  function sticker(name, u, cls) {
+    var a = art(SPRITES[name]), el = document.createElement('div');
+    el.className = cls;
+    el.style.width = a.w * u + 'px';
+    el.style.height = a.h * u + 'px';
+    el.style.setProperty('--u', u + 'px');
+    el.innerHTML = '<div class="ov-spin"><div class="ov-bob">' + a.svg + '</div></div>';
+    return el;
+  }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  var floats = [];
+  function floaters() {
+    if (/[?&]float=0/.test(location.search) || document.querySelector('.ov-float')) return;
+    var layer = document.createElement('div');
+    layer.className = 'ov-float';
+    layer.setAttribute('aria-hidden', 'true');
+    document.body.insertBefore(layer, document.body.firstChild);
+    var names = Object.keys(SPRITES).sort(function () { return Math.random() - 0.5; });
+    var phone = window.innerWidth <= 600, n = phone ? 5 : 9, u = phone ? 4 : 5;
+    for (var i = 0; i < n; i++) {
+      var el = sticker(names[i % names.length], u, 'ov-sticker');
+      layer.appendChild(el);
+      floats.push({ el: el, fx: (i + rnd(0.15, 0.85)) / n, fy: (i * 0.618 + rnd(0, 0.2)) % 1, d: rnd(0.15, 0.6), w: parseFloat(el.style.width) });
+    }
+    float();
+    if (!reduced) window.addEventListener('scroll', float, { passive: true });
+    window.addEventListener('resize', float, { passive: true });
+  }
+  function float() {
+    var vw = window.innerWidth, span = window.innerHeight + 240, sy = reduced ? 0 : window.scrollY;
+    floats.forEach(function (f) {
+      var x = Math.round(f.fx * vw - f.w / 2), y = Math.round(((f.fy * span - sy * f.d) % span + span) % span - 120);
+      f.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    });
+  }
+  function pins(card) {
+    var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
+    [['sparkle', 'ov-pin ov-pin-tl'], ['coin', 'ov-pin ov-pin-br']].forEach(function (p) { card.appendChild(sticker(p[0], u, p[1])); });
+  }
+  function wiggle(g) {
+    if (reduced) return;
+    g.utils.toArray('.ov-sticker .ov-bob, .ov-pin .ov-bob').forEach(function (b) {
+      var u = parseFloat(getComputedStyle(b.closest('[style*="--u"]')).getPropertyValue('--u')) || 5;
+      g.to(b, { y: -u * 2, duration: rnd(1.4, 2.6), ease: 'steps(2)', yoyo: true, repeat: -1, delay: rnd(0, 1.5) });
+      g.to(b, { x: u * (Math.random() < 0.5 ? -1 : 1), duration: rnd(2.2, 3.8), ease: 'steps(1)', yoyo: true, repeat: -1, delay: rnd(0, 2) });
+    });
+    (function spin() {
+      var list = g.utils.toArray('.ov-sticker .ov-spin');
+      if (list.length) g.to(list[Math.floor(Math.random() * list.length)], { rotation: '+=360', duration: 0.6, ease: 'steps(4)' });
+      setTimeout(spin, rnd(3500, 6500));
+    })();
+  }
+
   var stars = null;
   function skyLook() {
     var cs = getComputedStyle(h), v = function (n) { return cs.getPropertyValue(n).trim(); };
-    if (h.getAttribute('data-theme') === 'light') return { tints: [v('--ink'), v('--ink'), v('--mute'), v('--game'), v('--game')], hot: [v('--ink'), v('--game')], fade: 0.45 };
-    return { tints: [v('--text'), v('--text'), v('--mute'), v('--mute'), v('--game'), v('--yellow')], hot: [v('--text'), v('--game')], fade: 0.8 };
+    if (h.getAttribute('data-theme') === 'light') return { tints: [v('--ink'), v('--ink'), v('--mute'), v('--game'), v('--game')], hot: [v('--ink'), v('--game')], fade: 0.3 };
+    return { tints: [v('--text'), v('--text'), v('--mute'), v('--mute'), v('--game'), v('--yellow')], hot: [v('--text'), v('--game')], fade: 0.55 };
   }
   function sky() {
     if (!window.ParvusStars) return;
@@ -121,6 +218,7 @@
     var g = window.gsap;
     h.classList.remove('ov-pre');
     if (!g || reduced) { unwait(); greet(); return; }
+    wiggle(g);
     if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
     var keep = 'transform,opacity,visibility';
     var ink = getComputedStyle(h).getPropertyValue('--ink').trim() || '#000';
@@ -148,6 +246,7 @@
   function ready() {
     if (document.getElementById('pv-theme')) return;
     hero();
+    floaters();
     load('/overhaul/gsap/gsap.min.js', function () {
       load('/overhaul/gsap/ScrollTrigger.min.js', function () {
         load('/overhaul/gsap/SplitText.min.js', animate);
