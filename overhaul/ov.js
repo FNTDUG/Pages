@@ -63,6 +63,7 @@
       var home = document.getElementById('parvusHome');
       sizeScreen();
       if (home && window.ResizeObserver) new ResizeObserver(sizeScreen).observe(home);
+      chat();
     };
     document.body.appendChild(js);
   }
@@ -227,6 +228,21 @@
     host.style.top = Math.max(0, Math.round((sc.clientHeight - hh) / 2)) + 'px';
   }
 
+  function chat() {
+    var sp = document.getElementById('mascotSprite');
+    if (!sp || sp.getAttribute('data-ov-chat')) return;
+    sp.setAttribute('data-ov-chat', '1');
+    sp.setAttribute('role', 'button');
+    sp.setAttribute('tabindex', '0');
+    sp.setAttribute('aria-label', 'Ask Parvus');
+    function go() { if (window.ovTalkOpen) window.ovTalkOpen(sp); }
+    sp.addEventListener('click', go);
+    sp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+    });
+    load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
+  }
+
   function load(src, done) {
     var s = document.createElement('script');
     s.src = src;
@@ -242,7 +258,7 @@
       var p = window.mascotPeek && window.mascotPeek();
       if (p && window.mascotSay && !p.thinking) {
         clearInterval(iv);
-        if (title) window.mascotSay('Welcome to ' + title + '!');
+        if (title) window.mascotSay('Welcome to ' + title + '! ' + (window.matchMedia && window.matchMedia('(pointer: fine)').matches ? 'Click' : 'Tap') + ' me if you need help.');
       } else if (tries > 20) clearInterval(iv);
     }, 400);
   }
