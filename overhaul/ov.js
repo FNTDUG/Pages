@@ -77,10 +77,15 @@
     signal: ['.........cc', '.........cc', '......gg.cc', '......gg.cc', '...gg.gg.cc', '...gg.gg.cc', 'gg.gg.gg.cc', 'gg.gg.gg.cc'],
     play: ['y.......', 'yyy.....', 'yyyyy...', 'yyyyyyy.', 'yyyyyyyy', 'yyyyyyy.', 'yyyyy...', 'yyy.....', 'y.......'],
     sparkle: ['....y....', '...yyy...', '...yyy...', '.yyyyyyy.', 'yyyyyyyyy', '.yyyyyyy.', '...yyy...', '...yyy...', '....y....'],
-    bolt: ['...gggg', '..gggg.', '..ggg..', '.ggg...', 'gggggg.', '..gggg.', '..ggg..', '.ggg...', '.gg....', 'gg.....'],
     key: ['ccccccccc', 'ckccccckc', 'ckccccckc', 'ckcckcckc', 'ckckckckc', 'cckccckcc', 'ccccccccc', 'mmmmmmmmm', 'mmmmmmmmm'],
     smile: ['..yyyyy..', '.yyyyyyy.', 'yykyyykyy', 'yykyyykyy', 'yyyyyyyyy', 'ykyyyyyky', '.ykkkkky.', '..yyyyy..'],
-    loading: ['gg.gg.gg.cc.cc', 'gg.gg.gg.cc.cc', 'gg.gg.gg.cc.cc']
+    file: ['ccccccm..', 'ccccccmm.', 'ccccccmmm', 'ccccccccc', 'cgggggccc', 'ccccccccc', 'ckkkkkkkc', 'ccccccccc', 'ckkkkkkcc', 'ccccccccc', 'ckkkkcccc', 'ccccccccc'],
+    bell: ['.....y.....', '...yyyyy...', '..yyyyyyy..', '..ycyyyyy..', '..ycyyyyy..', '.yycyyyyyy.', '.yyyyyyyyy.', 'yyyyyyyyyyy', '...........', '....yyy....'],
+    pie: ['..bbkgg..', '.bbbkggg.', 'bbbbkgggg', 'bbbbkgggg', 'bbbbkkkkk', 'bbbbkyyyy', 'bbbbkyyyy', '.bbbkyyy.', '..bbkyy..'],
+    trash: ['...mmm...', 'mmmmmmmmm', '.........', '.bbbbbbb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bkbkbkb.', '.bbbbbbb.', '..bbbbb..'],
+    gear: ['....ccc....', '.cc.ccc.cc.', '.ccccccccc.', '..ccccccc..', 'cccc...cccc', 'cccc...cccc', 'cccc...cccc', '..ccccccc..', '.ccccccccc.', '.cc.ccc.cc.', '....ccc....'],
+    lens: ['..cccc....', '.cbbbbc...', 'cbcbbbbc..', 'cbbbbbbc..', 'cbbbbbbc..', '.cbbbbc...', '..ccccgg..', '......ggg.', '.......ggg', '........gg'],
+    bookmark: ['ggggggg', 'gcggggg', 'gcggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggggggg', 'ggg.ggg', 'gg...gg', 'g.....g']
   };
   function art(rows) {
     var w = rows[0].length + 2, ht = rows.length + 2, grid = [], out = [], x, y, i, j;
