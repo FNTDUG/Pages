@@ -206,7 +206,8 @@ a.game:hover .game-top img{transform:scale(1.05)}
 
 .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .games,.tools{--row-item:calc((min(100vw,1180px) - 48px - 72px) / 4)}
-.rowloop{--row-pad:24px;display:flex;gap:24px;margin:-8px calc(var(--row-pad) * -1) 0;padding:8px var(--row-pad) 22px;overflow:hidden;clip-path:inset(0 0 0 8px);cursor:grab;-webkit-user-select:none;user-select:none}
+.rowloop{--row-pad:24px;display:flex;gap:24px;margin:-8px calc(var(--row-pad) * -1) 0;padding:8px var(--row-pad) 22px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none}
+.rowloop.can-drag{cursor:grab}
 .rowloop.is-dragging{cursor:grabbing}
 .rowloop>*{flex:0 0 var(--row-item)}
 .rowloop img{-webkit-user-drag:none;pointer-events:none}
@@ -1379,6 +1380,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     var SPEED = 22;
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0, wheelT = 0, wheelTo = null, outsideAt = -1e9;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
+    var fine = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     function kids() { return Array.prototype.slice.call(box.children); }
     function wraps() {
       var had = box.classList.contains('rowloop');
@@ -1486,7 +1488,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
       measure();
       pos = 0;
       render();
-      drag = Draggable.create(proxy, {
+      if (fine) box.classList.remove('can-drag');
+      else box.classList.add('can-drag');
+      drag = fine ? null : Draggable.create(proxy, {
         type: 'x',
         trigger: box,
         inertia: true,
@@ -1522,7 +1526,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
       extra.forEach(function (c) { c.parentNode.removeChild(c); });
       extra = [];
       kids().forEach(function (el) { el.style.translate = ''; });
-      box.classList.remove('rowloop', 'is-dragging');
+      box.classList.remove('rowloop', 'is-dragging', 'can-drag');
     }
     function sync() {
       var want = wraps();

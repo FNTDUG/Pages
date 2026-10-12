@@ -37,6 +37,8 @@
   if (SECTIONS[game]) h.setAttribute('data-game', game);
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
+  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index'];
+  var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1;
   function hero() {
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
     if (!inner || !area || document.querySelector('.ov-hero')) return;
@@ -48,8 +50,8 @@
       t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
     }
     var wrap = document.createElement('div');
-    wrap.className = 'ov-hero';
-    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div><div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>';
+    wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '');
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
     pins(wrap);
@@ -76,6 +78,7 @@
     fitTitle();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
     window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
+    if (bare) return;
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
     js.onload = function () {
@@ -379,6 +382,7 @@
     if (window.InertiaPlugin) g.registerPlugin(window.InertiaPlugin);
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
+    var fine = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     function kids() { return Array.prototype.slice.call(box.children); }
     function wants() {
       var n = kids().filter(function (el) { return !el.classList.contains('is-copy'); }).length, vw = window.innerWidth;
@@ -481,7 +485,9 @@
       measure();
       pos = 0;
       render();
-      drag = window.Draggable.create(proxy, {
+      if (fine) box.classList.remove('can-drag');
+      else box.classList.add('can-drag');
+      drag = fine ? null : window.Draggable.create(proxy, {
         type: 'x',
         trigger: box,
         inertia: !!window.InertiaPlugin,
@@ -517,7 +523,7 @@
       extra.forEach(function (c) { c.parentNode.removeChild(c); });
       extra = [];
       kids().forEach(function (el) { el.style.translate = ''; });
-      box.classList.remove('rowloop', 'is-dragging');
+      box.classList.remove('rowloop', 'is-dragging', 'can-drag');
     }
     function sync() {
       var want = wants();
@@ -569,7 +575,7 @@
     var g = window.gsap;
     h.classList.remove('ov-pre');
     if (g) Array.prototype.forEach.call(document.querySelectorAll('.info-card'), function (row) { try { rowLoop(row); } catch (e) {} });
-    if (!g || reduced) { unwait(); greet(); return; }
+    if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
     wiggle(g);
     if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
     var keep = 'transform,opacity,visibility';
@@ -578,14 +584,14 @@
     var split = null;
     try { if (window.SplitText) split = window.SplitText.create('.ov-copy .ug-page-title', { type: 'words,chars' }); } catch (e) { split = null; }
     tl.from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0)
-      .from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35)
       .from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25)
       .from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 60, autoAlpha: 0, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3)
       .from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66)
       .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58)
       .from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75)
       .call(function () { if (split) split.revert(); fitTitle(); }, null, 1.3)
-      .call(function () { drop(g); }, null, 0.9);
+      .call(function () { if (!bare) drop(g); }, null, 0.9);
+    if (!bare) tl.from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35);
     if (window.ScrollTrigger) {
       var items = g.utils.toArray('.info-card.rowloop, .info-card:not(.rowloop) > .info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
       g.set(items, { autoAlpha: 0, y: 36 });

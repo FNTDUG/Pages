@@ -27,9 +27,18 @@
     'html.ov .ug-mn-discord{transition:transform .12s,box-shadow .12s,background-color .13s,color .13s}' +
     'html.ov .inf-mode:active,html.ov #ug-info-btn:active,html.ov .ug-mn-discord:active,html.ov .ug-mn-kofi:active,html.ov #ug-sound-btn:active,html.ov .ntf-bell:active,html.ov #pv-theme:active,html.ov #pv-gear:active,html.ov .ug-home-discord:active,html.ov .pp-home:active{transform:translate(4px,4px)!important;box-shadow:0 0 0 var(--ink)!important}' +
     'html.ov .inf-mode.on,html.ov .inf-mode.on:hover{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
-    '@media (prefers-reduced-motion:reduce){html.ov .inf-mode,html.ov .ug-mn-discord,html.ov .ug-mn-kofi{transition:none}}';
+    'html.ov .ug-mn-section-arrow,html.ov .inf-drop-arrow{display:inline-block;flex:none;width:8px;height:14px;font-size:0!important;line-height:0;color:inherit;opacity:.75;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 4 7%27 shape-rendering=%27crispEdges%27%3E%3Cpath d=%27M0 0h1v1H0zM0 1h2v1H0zM1 2h2v1H1zM2 3h2v1H2zM1 4h2v1H1zM0 5h2v1H0zM0 6h1v1H0z%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 4 7%27 shape-rendering=%27crispEdges%27%3E%3Cpath d=%27M0 0h1v1H0zM0 1h2v1H0zM1 2h2v1H1zM2 3h2v1H2zM1 4h2v1H1zM0 5h2v1H0zM0 6h1v1H0z%27/%3E%3C/svg%3E") center/contain no-repeat;rotate:0deg;transition:rotate .24s steps(3,end)}' +
+    'html.ov .ug-mn-section.open>.ug-mn-section-btn .ug-mn-section-arrow,html.ov .inf-drop.open>.inf-drop-btn .inf-drop-arrow{rotate:90deg;opacity:1}' +
+    '@media (prefers-reduced-motion:reduce){html.ov .inf-mode,html.ov .ug-mn-discord,html.ov .ug-mn-kofi,html.ov .ug-mn-section-arrow,html.ov .inf-drop-arrow{transition:none}}';
   document.head.appendChild(css);
   document.addEventListener('touchstart', function () {}, { passive: true });
+  function calm() {
+    if (typeof window.ugMnSpinStop === 'function') Array.prototype.forEach.call(document.querySelectorAll('.ug-mn-section-btn'), function (b) { try { window.ugMnSpinStop(b); } catch (e) {} });
+    if (typeof window._infStop === 'function') Array.prototype.forEach.call(document.querySelectorAll('.inf-drop-btn'), function (b) { try { window._infStop(b); } catch (e) {} });
+    window.ugMnSpinStart = function () {};
+    window._infSpin = function () {};
+  }
+  calm();
 
   var g = document.createElement('button');
   g.id = 'pv-gear';
