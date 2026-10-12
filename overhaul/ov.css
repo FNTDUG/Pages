@@ -395,3 +395,11 @@ html.ov .ov-copy div:has(>.ug-home-discord){text-align:left!important;margin-top
 html.ov #ug-hero a.ug-home-discord{display:inline-flex;align-items:center;padding:11px 16px;color:#fff!important;background:#5865f2;border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none!important;transition:transform .15s,box-shadow .15s}
 html.ov #ug-hero a.ug-home-discord:hover{color:#fff!important;background:#4752c4;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
 html.ov body>main p,html.ov body>main ul{max-width:68ch}
+html.ov #ug-content{color-scheme:light}
+html.ov-noads #ug-main .ad-slot:not(.ug-rail){height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
+html.ov .ov-copy .ug-page-title div{white-space:nowrap}
+.ov-screen .parvus-home{overflow:visible}
+.ov-screen .parvus-home .ph-layer{top:-1152px;bottom:-1152px}
+html.ov .ov-note-card [style*="Audiowide"]{text-align:left!important}
+html.ov .ov-notes .ov-note-card p{font:400 16px/1.6 var(--font-body)!important;color:var(--mute)!important;text-align:left!important;margin:0!important;max-width:none!important}
+html.ov .ov-notes .ov-note-card p+p{margin-top:8px!important}

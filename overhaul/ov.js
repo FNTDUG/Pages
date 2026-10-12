@@ -2,6 +2,7 @@
   var h = document.documentElement, t;
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   h.classList.add('ov');
+  if (!/(^|\.)fntduserguide\.com$/.test(location.hostname)) h.classList.add('ov-noads');
   if (!reduced) {
     h.classList.add('ov-pre');
     setTimeout(function () { h.classList.remove('ov-pre'); }, 3000);
@@ -56,6 +57,18 @@
       if (el === wrap || el.classList.contains('ug-page-title') || el.classList.contains('ug-status-badge') || el.classList.contains('ug-page-desc') || el.classList.contains('ad-slot') || el.querySelector('#cleanModeToggle')) return;
       if (el.classList.contains('ug-status-inline-text') || (el.tagName === 'DIV' && el.querySelector('[style*="Audiowide"]'))) notes.appendChild(el);
     });
+    var head = Array.prototype.filter.call(area.children, function (el) { return /Audiowide/.test(el.getAttribute('style') || '') && /^notes:?$/i.test(el.textContent.trim()); })[0];
+    if (head) {
+      var card = document.createElement('div');
+      card.className = 'ov-note-card';
+      var el = head;
+      while (el && (el === head || (el.tagName === 'P' && !/discord/i.test(el.textContent)))) {
+        var next = el.nextElementSibling;
+        card.appendChild(el);
+        el = next;
+      }
+      notes.insertBefore(card, notes.firstChild);
+    }
     if (notes.children.length) inner.insertBefore(notes, wrap.nextSibling);
     sizeScreen();
     fitTitle();
@@ -515,6 +528,12 @@
   }
 
   function animate() {
+    var go = false;
+    function run() { if (go) return; go = true; fitTitle(); intro(); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+    setTimeout(run, 1200);
+  }
+  function intro() {
     var g = window.gsap;
     h.classList.remove('ov-pre');
     if (g) Array.prototype.forEach.call(document.querySelectorAll('.info-card'), function (row) { try { rowLoop(row); } catch (e) {} });
