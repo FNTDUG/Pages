@@ -1427,12 +1427,37 @@ html.talk-on,html.talk-on body{overflow:hidden}
     function settle() {
       var target = nearest(Math.round(pos / step) * step);
       if (Math.abs(target - pos) > 0.5) glideTo(target);
+      idle();
     }
     function stopAuto() {
+      idle();
       if (!auto) return;
       auto = false;
       cancelAnimationFrame(raf);
+      idle();
     }
+    var nudgeT = 0, hover = false, pressing = false, nt = null;
+    function idle() {
+      clearTimeout(nudgeT);
+      if (!on || auto || reduced) return;
+      nudgeT = setTimeout(nudge, 2500 + Math.random() * 500);
+    }
+    function nudge() {
+      if (!on || auto) return;
+      if (hover || pressing || !seen || document.hidden || box.querySelector(':focus-visible') || (drag && (drag.isDragging || drag.isThrowing)) || gsap.isTweening(slide)) { idle(); return; }
+      var base = nearest(Math.round(pos / step) * step), d = Math.max(14, Math.min(30, step * 0.09));
+      var move = function () { pos = slide.x; render(); };
+      slide.x = pos;
+      nt = gsap.timeline({ onComplete: function () { nt = null; idle(); } })
+        .to(slide, { x: base + d, duration: 0.42, ease: 'power2.inOut', onUpdate: move })
+        .to(slide, { x: base, duration: 0.62, ease: 'power2.inOut', onUpdate: move });
+    }
+    box.addEventListener('pointerenter', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      hover = true;
+      if (nt) { nt.kill(); nt = null; settle(); }
+    });
+    box.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { hover = false; idle(); } });
     function tick(t) {
       if (!on || !auto) return;
       if (seen && !document.hidden) {
@@ -1456,6 +1481,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
         dragClickables: true,
         minimumMovement: 6,
         onPress: function () {
+          pressing = true;
           stopAuto();
           gsap.killTweensOf(slide);
           gsap.set(proxy, { x: -pos });
@@ -1465,6 +1491,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
         onDrag: function () { pos = -this.x; render(); },
         onThrowUpdate: function () { pos = -this.x; render(); },
         onRelease: function () {
+          pressing = false;
           box.classList.remove('is-dragging');
           var self = this;
           setTimeout(function () { if (!self.isThrowing) settle(); }, 0);
@@ -1477,6 +1504,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     function teardown() {
       on = false;
       cancelAnimationFrame(raf);
+      clearTimeout(nudgeT);
       if (drag) { drag.kill(); drag = null; }
       gsap.killTweensOf(slide);
       extra.forEach(function (c) { c.parentNode.removeChild(c); });
