@@ -455,5 +455,6 @@ html.ov .ov-card.ov-card--term>.ov-card-go{padding:14px 24px 22px}
 @media (prefers-reduced-motion:no-preference){.ov-card--term:hover .ov-term-c,.ov-card--term:focus-visible .ov-term-c{animation:ovTermBlink 1.05s steps(1,end) infinite}}
 @keyframes ovTermBlink{50%{opacity:0}}
 @media (max-width:760px){.ov-term{min-height:120px;padding:20px 18px}}
-.ov-term-r{visibility:hidden}
-.ov-card--term.is-typing .ov-term-c{animation:none!important;opacity:1}
+.ov-term-type{position:absolute;inset:0;z-index:0;pointer-events:none}
+.ov-sq{position:absolute;display:block}
+html.ov .ov-card.ov-card--term .ov-term h3{z-index:1}

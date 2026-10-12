@@ -164,38 +164,101 @@
       card.className = 'ov-card ov-card--term';
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
-      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ovt-sr"></span><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t" aria-hidden="true"></span><span class="ov-term-c" aria-hidden="true"></span><span class="ov-term-r" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
-      card.querySelector('.ovt-sr').textContent = name;
-      card.querySelector(reduced ? '.ov-term-t' : '.ov-term-r').textContent = name;
-      card.setAttribute('data-type', name);
+      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-c" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      card.querySelector('.ov-term-t').textContent = name;
       if (desc) card.querySelector('p').textContent = desc.textContent.trim();
       out.appendChild(card);
     });
     grid.parentNode.replaceChild(out, grid);
-    if (reduced) return;
-    var cards = Array.prototype.slice.call(out.querySelectorAll('[data-type]'));
-    function type(card, delay) {
-      var name = card.getAttribute('data-type'), t = card.querySelector('.ov-term-t'), r = card.querySelector('.ov-term-r'), i = 0;
-      card.removeAttribute('data-type');
-      card.classList.add('is-typing');
-      setTimeout(function step() {
-        i++;
-        t.textContent = name.slice(0, i);
-        r.textContent = name.slice(i);
-        if (i < name.length) setTimeout(step, name.charAt(i) === ' ' ? 30 : 70);
-        else card.classList.remove('is-typing');
-      }, delay);
+    if (!reduced) Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
+  }
+  function typer(el, U) {
+    var TILE = 24, FREE = [2, 8, 12, 18], COLORS = ['#8b949e', '#8b949e', '#8b949e', '#79c0ff', '#d2a8ff', '#ffa657'];
+    var layer = document.createElement('span'), lanes = [], cols = 0, tick = 0, timer = null, seen = false;
+    layer.className = 'ov-term-type';
+    layer.setAttribute('aria-hidden', 'true');
+    el.insertBefore(layer, el.firstChild);
+    function rand(n) { return Math.floor(Math.random() * n); }
+    function sq(color, op) {
+      var d = document.createElement('span');
+      d.className = 'ov-sq';
+      d.style.background = color;
+      d.style.opacity = op;
+      d.style.height = U + 'px';
+      layer.appendChild(d);
+      return d;
     }
-    if (!window.IntersectionObserver) { cards.forEach(function (c, k) { type(c, 300 + k * 450); }); return; }
-    var queue = 0;
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (!e.isIntersecting || !e.target.hasAttribute('data-type')) return;
-        io.unobserve(e.target);
-        type(e.target, 250 + queue++ * 450);
+    function layout() {
+      cols = Math.floor(el.clientWidth / U);
+      var rows = Math.floor(el.clientHeight / U), free = [], base, i;
+      for (base = 0; base < rows; base += TILE) FREE.forEach(function (r) { if (base + r < rows) free.push(base + r); });
+      var n = Math.max(1, Math.round(el.clientWidth / (640 * U / 12)));
+      layer.innerHTML = '';
+      lanes = [];
+      for (i = 0; i < n; i++) {
+        var lane = { x0: Math.floor(cols / n * i), span: Math.floor(cols / n), free: free, nodes: [], cursor: sq('#c9d1d9', 0.55), phase: 'pause', t: 8 + i * 17, pos: 0, line: null };
+        lane.cursor.style.display = 'none';
+        lanes.push(lane);
+      }
+    }
+    function newLine(lane) {
+      if (!lane.free.length) return null;
+      var row = lane.free[rand(lane.free.length)], start = lane.x0 + 2 + rand(Math.max(1, lane.span - 44)), segs = [], n = 3 + rand(4), len = -1, k;
+      for (k = 0; k < n; k++) { var w = 2 + rand(5); segs.push([w, COLORS[rand(COLORS.length)]]); len += w + 1; }
+      lane.nodes.forEach(function (d) { d.remove(); });
+      lane.nodes = segs.map(function (sg) { return sq(sg[1], 0.24); });
+      return { row: row, start: start, segs: segs, len: len };
+    }
+    function draw(lane, blinkOn) {
+      var L = lane.line;
+      if (!L) return;
+      var x = L.start, left = lane.pos;
+      L.segs.forEach(function (sg, k) {
+        var d = lane.nodes[k], vis = Math.max(0, Math.min(sg[0], left));
+        d.style.display = vis ? 'block' : 'none';
+        d.style.left = x * U + 'px';
+        d.style.top = L.row * U + 'px';
+        d.style.width = vis * U + 'px';
+        left -= sg[0] + 1;
+        x += sg[0] + 1;
       });
-    }, { threshold: 0.6 });
-    setTimeout(function () { cards.forEach(function (c) { io.observe(c); }); }, 1200);
+      var show = lane.phase === 'type' || lane.phase === 'erase' || (lane.phase === 'hold' && blinkOn);
+      lane.cursor.style.display = show ? 'block' : 'none';
+      lane.cursor.style.left = (L.start + lane.pos) * U + 'px';
+      lane.cursor.style.top = L.row * U + 'px';
+      lane.cursor.style.width = U + 'px';
+    }
+    function step() {
+      tick++;
+      var blinkOn = tick % 8 < 4;
+      lanes.forEach(function (lane) {
+        if (lane.phase === 'type') {
+          if (lane.t > 0) lane.t--;
+          else { lane.pos++; lane.t = Math.random() < 0.15 ? 3 : 0; if (lane.pos >= lane.line.len) { lane.phase = 'hold'; lane.t = 36; } }
+        } else if (lane.phase === 'hold') {
+          if (--lane.t <= 0) lane.phase = 'erase';
+        } else if (lane.phase === 'erase') {
+          lane.pos = Math.max(0, lane.pos - 2);
+          if (lane.pos === 0) { lane.phase = 'pause'; lane.t = 14; }
+        } else if (--lane.t <= 0) {
+          lane.line = newLine(lane);
+          lane.pos = 0;
+          lane.t = lane.line ? 0 : 30;
+          lane.phase = lane.line ? 'type' : 'pause';
+        }
+        draw(lane, blinkOn);
+      });
+    }
+    function run() {
+      var go = seen && !document.hidden;
+      if (go && !timer) timer = setInterval(step, 70);
+      else if (!go && timer) { clearInterval(timer); timer = null; }
+    }
+    layout();
+    if (window.ResizeObserver) new ResizeObserver(layout).observe(el);
+    document.addEventListener('visibilitychange', run);
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; run(); }).observe(el);
+    else { seen = true; run(); }
   }
   var QUICK = {
     '/fntd1/charts-tierlists': ['pie', 'Top units for every role'],
