@@ -105,16 +105,6 @@ html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
 html.ov .pv-mn-logo{width:46px;height:41px}
-@media (prefers-reduced-motion:no-preference){
-  @view-transition{navigation:auto}
-  ::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal;animation-duration:.36s;animation-fill-mode:both}
-  ::view-transition-old(root){animation-name:ovVtOld;animation-timing-function:linear}
-  ::view-transition-new(root){animation-name:ovVtNew;animation-timing-function:steps(6,end)}
-  #ug-hamburger{view-transition-name:ov-menu-btn}
-  #ug-info-btn{view-transition-name:ov-info-btn}
-}
-@keyframes ovVtNew{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-@keyframes ovVtOld{to{filter:brightness(.72)}}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}
@@ -146,6 +136,9 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .btn-kofi{background:var(--pink);color:#2a0f1c}
 .btn-kofi:hover{background:#ff8fbd;color:#2a0f1c}
 .kofi-cup{width:24px;height:14px;flex:none;fill:currentColor}
+.btn-sponsor{background:var(--green);color:#10260f;cursor:pointer}
+.btn-sponsor:hover{background:#9be59f;color:#10260f}
+.sponsor-case{width:21px;height:16px;flex:none;fill:currentColor}
 .arrow{display:inline-block;transition:transform .15s}
 a:hover>.arrow,.game:hover .arrow{transform:translateX(3px)}
 
@@ -158,6 +151,7 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 .hl-bg{position:absolute;left:0;right:0;top:.04em;bottom:-.04em;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
 .lede{max-width:34em;font-size:19px;color:var(--mute)}
 .cta{display:flex;flex-wrap:wrap;gap:16px;margin-top:34px}
+@media (min-width:601px){.cta{display:grid;grid-template-columns:repeat(2,max-content)}}
 
 .stage{position:relative;height:540px;background:var(--stage);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
 .stage-clip{position:absolute;inset:0;overflow:hidden}
@@ -396,6 +390,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <a class="btn btn-primary" href="#games">Pick a game <span class="arrow" aria-hidden="true">&darr;</span></a>
             <a class="btn btn-discord" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Join the Discord</a>
             <a class="btn btn-kofi" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer">Support us<svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg></a>
+            <button class="btn btn-sponsor" type="button" title="Sponsorship info coming soon">Sponsor<svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg></button>
           </div>
         </div>
         <div class="stage" id="stage">

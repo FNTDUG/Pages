@@ -3,6 +3,7 @@
   var h = document.documentElement, KOFI = 'https://ko-fi.com/fntdug';
   var ROWS = ['......cccc......', '......cccc......', '..ccc.cccc.ccc..', '..cccccccccccc..', '..cccccccccccc..', '...cccccccccc...', 'ccccccc..ccccccc', 'cccccc....cccccc', 'cccccc....cccccc', 'ccccccc..ccccccc', '...cccccccccc...', '..cccccccccccc..', '..cccccccccccc..', '..ccc.cccc.ccc..', '......cccc......', '......cccc......'];
   var CUP = '<svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg>';
+  var CASE = '<svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg>';
   var tray = 'translate .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),scale .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),opacity .2s calc(var(--i) * 40ms)';
   var css = document.createElement('style');
   css.textContent =
@@ -24,6 +25,17 @@
     'html.ov .ug-mn-kofi{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;color:#2a0f1c;background:var(--pink);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none;transition:transform .12s,box-shadow .12s}' +
     'html.ov .ug-mn-kofi:hover{color:#2a0f1c;background:#ff8fbd;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
     '@media (max-width:768px){html.ov .ug-mn-kofi{margin-top:10px;padding:10px 12px;font-size:13px}}' +
+    'html.ov .ov-cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}' +
+    '.sponsor-case{width:21px;height:16px;flex:none;fill:currentColor}' +
+    'html.ov .ug-mn-sponsor{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;margin-top:12px;padding:12px 14px;color:#10260f;background:var(--green);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-align:left;cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .13s}' +
+    'html.ov .ug-mn-sponsor:hover{background:#9be59f;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
+    'html.ov .ug-mn-sponsor:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
+    'html.ov .ug-mn-sponsor .sponsor-case{width:18px;height:14px}' +
+    '@media (max-width:768px){html.ov .ug-mn-sponsor{margin-top:10px;padding:10px 12px;font-size:13px}}' +
+    'html.ov #ug-hero a.ug-home-kofi{display:inline-flex;align-items:center;gap:10px;padding:11px 16px;color:#2a0f1c!important;background:var(--pink);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none!important;transition:transform .15s,box-shadow .15s}' +
+    'html.ov #ug-hero a.ug-home-kofi:hover{color:#2a0f1c!important;background:#ff8fbd;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
+    'html.ov #ug-hero a.ug-home-kofi:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
+    'html.ov #ug-hero a.ug-home-kofi .kofi-cup{width:21px;height:12px}' +
     'html.ov .ug-mn-discord{transition:transform .12s,box-shadow .12s,background-color .13s,color .13s}' +
     'html.ov .inf-mode:active,html.ov #ug-info-btn:active,html.ov .ug-mn-discord:active,html.ov .ug-mn-kofi:active,html.ov #ug-sound-btn:active,html.ov .ntf-bell:active,html.ov #pv-theme:active,html.ov #pv-gear:active,html.ov .ug-home-discord:active,html.ov .pp-home:active{transform:translate(4px,4px)!important;box-shadow:0 0 0 var(--ink)!important}' +
     'html.ov .inf-mode.on,html.ov .inf-mode.on:hover{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
@@ -105,6 +117,20 @@
   }
   var dc = document.querySelector('.ug-mn-discord');
   if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', 'Support us on Ko-fi' + CUP), dc.nextSibling);
+  var kf = document.querySelector('.ug-mn-kofi');
+  if (kf && !document.querySelector('.ug-mn-sponsor')) {
+    var sp = document.createElement('button');
+    sp.type = 'button';
+    sp.className = 'ug-mn-sponsor';
+    sp.title = 'Sponsorship info coming soon';
+    sp.innerHTML = 'Sponsor' + CASE;
+    kf.parentNode.insertBefore(sp, kf.nextSibling);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('a.ug-home-discord'), function (d) {
+    if (d.parentNode.querySelector('.ug-home-kofi')) return;
+    d.parentNode.classList.add('ov-cta-row');
+    d.parentNode.insertBefore(link('ug-home-kofi', 'Support us' + CUP), d.nextSibling);
+  });
   var fd = document.querySelector('#ug-footer a[href*="discord.gg"]');
   if (fd && !document.querySelector('#ug-footer a[href*="ko-fi.com"]')) {
     var k = link('', 'Ko-fi');
