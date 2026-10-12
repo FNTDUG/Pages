@@ -164,12 +164,38 @@
       card.className = 'ov-card ov-card--term';
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
-      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-c" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
-      card.querySelector('.ov-term-t').textContent = name;
+      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ovt-sr"></span><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t" aria-hidden="true"></span><span class="ov-term-c" aria-hidden="true"></span><span class="ov-term-r" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      card.querySelector('.ovt-sr').textContent = name;
+      card.querySelector(reduced ? '.ov-term-t' : '.ov-term-r').textContent = name;
+      card.setAttribute('data-type', name);
       if (desc) card.querySelector('p').textContent = desc.textContent.trim();
       out.appendChild(card);
     });
     grid.parentNode.replaceChild(out, grid);
+    if (reduced) return;
+    var cards = Array.prototype.slice.call(out.querySelectorAll('[data-type]'));
+    function type(card, delay) {
+      var name = card.getAttribute('data-type'), t = card.querySelector('.ov-term-t'), r = card.querySelector('.ov-term-r'), i = 0;
+      card.removeAttribute('data-type');
+      card.classList.add('is-typing');
+      setTimeout(function step() {
+        i++;
+        t.textContent = name.slice(0, i);
+        r.textContent = name.slice(i);
+        if (i < name.length) setTimeout(step, name.charAt(i) === ' ' ? 30 : 70);
+        else card.classList.remove('is-typing');
+      }, delay);
+    }
+    if (!window.IntersectionObserver) { cards.forEach(function (c, k) { type(c, 300 + k * 450); }); return; }
+    var queue = 0;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting || !e.target.hasAttribute('data-type')) return;
+        io.unobserve(e.target);
+        type(e.target, 250 + queue++ * 450);
+      });
+    }, { threshold: 0.6 });
+    setTimeout(function () { cards.forEach(function (c) { io.observe(c); }); }, 1200);
   }
   var QUICK = {
     '/fntd1/charts-tierlists': ['pie', 'Top units for every role'],
