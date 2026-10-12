@@ -12,7 +12,7 @@
     '#pv-gear:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
     '#pv-gear:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}' +
     '#pv-gear:focus-visible{outline:3px solid var(--yellow,#ffd23f);outline-offset:3px}' +
-    '#pv-gear svg{width:var(--gear-icon);height:var(--gear-icon);fill:currentColor;transition:rotate .5s cubic-bezier(.3,.8,.3,1)}' +
+    '#pv-gear svg{pointer-events:none;width:var(--gear-icon);height:var(--gear-icon);fill:currentColor;transition:rotate .5s cubic-bezier(.3,.8,.3,1)}' +
     'html.pv-gear-open #pv-gear{color:var(--game-ink,#1d2228);background:var(--game,var(--acc))}' +
     'html.pv-gear-open #pv-gear svg{rotate:45deg}' +
     'html.ov .pv-tray{top:calc(var(--gear-top,116px) + (var(--i) + 1) * var(--gear-step))!important;translate:0 calc((var(--i) + 1) * var(--gear-step) * -1);scale:.4;opacity:0;visibility:hidden;' +
@@ -23,8 +23,13 @@
     '.kofi-cup{width:24px;height:14px;flex:none;fill:currentColor}' +
     'html.ov .ug-mn-kofi{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;color:#2a0f1c;background:var(--pink);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none;transition:transform .12s,box-shadow .12s}' +
     'html.ov .ug-mn-kofi:hover{color:#2a0f1c;background:#ff8fbd;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
-    '@media (max-width:768px){html.ov .ug-mn-kofi{margin-top:10px;padding:10px 12px;font-size:13px}}';
+    '@media (max-width:768px){html.ov .ug-mn-kofi{margin-top:10px;padding:10px 12px;font-size:13px}}' +
+    'html.ov .ug-mn-discord{transition:transform .12s,box-shadow .12s,background-color .13s,color .13s}' +
+    'html.ov .inf-mode:active,html.ov #ug-info-btn:active,html.ov .ug-mn-discord:active,html.ov .ug-mn-kofi:active,html.ov #ug-sound-btn:active,html.ov .ntf-bell:active,html.ov #pv-theme:active,html.ov #pv-gear:active,html.ov .ug-home-discord:active,html.ov .pp-home:active{transform:translate(4px,4px)!important;box-shadow:0 0 0 var(--ink)!important}' +
+    'html.ov .inf-mode.on,html.ov .inf-mode.on:hover{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
+    '@media (prefers-reduced-motion:reduce){html.ov .inf-mode,html.ov .ug-mn-discord,html.ov .ug-mn-kofi{transition:none}}';
   document.head.appendChild(css);
+  document.addEventListener('touchstart', function () {}, { passive: true });
 
   var g = document.createElement('button');
   g.id = 'pv-gear';
