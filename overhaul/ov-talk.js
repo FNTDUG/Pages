@@ -41,6 +41,7 @@
       '<div class="ovt-main">' +
         '<div class="ovt-head"><h2 id="ovtTitle">Ask Parvus</h2><button class="ovt-x" type="button" aria-label="Close">&#x2715;</button></div>' +
         '<div class="ovt-log" aria-live="polite"></div>' +
+        '<div class="ovt-left" aria-live="polite"></div>' +
         '<form class="ovt-form" autocomplete="off"><label class="ovt-sr" for="ovtInput">Message Parvus</label><input id="ovtInput" type="text" maxlength="300" placeholder="Ask Parvus something..."><button class="ovt-send" type="submit">Send</button></form>' +
       '</div>' +
     '</div>';
@@ -50,15 +51,39 @@
   var zoom = talk.querySelector('.ovt-zoom'), sprite = talk.querySelector('.ovt-sprite'), eyes = talk.querySelector('.ovt-eyes');
   var log = talk.querySelector('.ovt-log'), form = talk.querySelector('.ovt-form'), input = talk.querySelector('#ovtInput'), closeBtn = talk.querySelector('.ovt-x');
   var tl = null, open = false, busy = false, blinkT = 0, greeted = false, opener = null;
+  var bodyL = talk.querySelector('.ovt-body'), leftEl = talk.querySelector('.ovt-left'), sendBtn = talk.querySelector('.ovt-send'), PLACE = input.placeholder, tickT = 0;
+  var TIRED = { body: 3, eyes: 9 };
+  var TIRED_HELLO = "zzz. i'm out of answers for now. come back when the timer runs out.";
 
   function cell(el, col, row) { el.style.backgroundPosition = (-col * CW) + 'px ' + (-row * CH) + 'px'; }
   function eyesAt(col) { cell(eyes, col, 1); }
+  function limit() { return window.parvusLimit ? window.parvusLimit() : { tired: false, left: null, until: 0 }; }
+  function baseEye() { return limit().tired ? TIRED.eyes : EYE.base; }
+  function wait(ms) {
+    var m = Math.max(1, Math.ceil(ms / 60000));
+    return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
+  }
+  function paint() {
+    var st = limit();
+    cell(bodyL, st.tired ? TIRED.body : 0, 0);
+    if (open) eyesAt(baseEye());
+    talk.classList.toggle('is-tired', st.tired);
+    input.disabled = st.tired;
+    sendBtn.disabled = st.tired;
+    input.placeholder = st.tired ? 'Parvus is resting...' : PLACE;
+    if (st.tired) leftEl.textContent = 'Parvus is tired. Back in ' + wait(st.until - Date.now()) + '.';
+    else if (typeof st.left === 'number') leftEl.textContent = st.left + (st.left === 1 ? ' message left' : ' messages left');
+    else leftEl.textContent = '';
+    clearTimeout(tickT);
+    if (open && st.tired) tickT = setTimeout(paint, 30000);
+  }
+  document.addEventListener('parvus:limit', paint);
   function blinkLoop() {
     clearTimeout(blinkT);
     if (!open) return;
     blinkT = setTimeout(function () {
       eyesAt(EYE.blinkC);
-      setTimeout(function () { eyesAt(EYE.base); }, 130);
+      setTimeout(function () { eyesAt(baseEye()); }, 130);
       blinkLoop();
     }, 3000 + Math.random() * 4000);
   }
@@ -133,17 +158,18 @@
     var g = window.gsap;
     if (g) g.set([box, zoom], { clearProps: 'transform' });
     fit();
-    eyesAt(EYE.base);
+    eyesAt(baseEye());
     blinkLoop();
-    if (window.matchMedia('(pointer: fine)').matches) input.focus();
+    if (window.matchMedia('(pointer: fine)').matches && !input.disabled) input.focus();
     else closeBtn.focus();
     if (!greeted) {
       greeted = true;
-      pvLine('Hi! What can I help you with?');
+      pvLine(limit().tired ? TIRED_HELLO : 'Hi! What can I help you with?');
     }
   }
   function afterClose() {
     talk.hidden = true;
+    clearTimeout(tickT);
     h.classList.remove('ovt-on');
     if (tl) tl.timeScale(1);
     if (opener && opener.focus) opener.focus({ preventScroll: true });
@@ -156,7 +182,9 @@
     talk.hidden = false;
     h.classList.add('ovt-on');
     fit();
-    eyesAt(EYE.pleased);
+    paint();
+    if (window.parvusStatus) window.parvusStatus();
+    eyesAt(limit().tired ? TIRED.eyes : EYE.pleased);
     var g = window.gsap;
     if (!g || reduced) { afterOpen(); return; }
     var b = box.getBoundingClientRect(), r = from && from.getBoundingClientRect ? from.getBoundingClientRect() : null;
@@ -188,7 +216,7 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var q = input.value.trim();
-    if (!q || busy) return;
+    if (!q || busy || limit().tired) return;
     busy = true;
     input.value = '';
     addMsg('me', q);

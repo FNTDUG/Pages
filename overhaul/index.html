@@ -164,6 +164,7 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 .tub-in{position:absolute;inset:0}
 .tb-back,.tb-front,.tb-anim{position:absolute;left:0;top:0;width:366px;height:390px;image-rendering:pixelated;pointer-events:none}
 .tb-back,.tb-anim{background:url('/overhaul/parvus-jump-strip.png') no-repeat 0 0/4392px 390px}
+html.pv-tired .tb-back,html.pv-tired .tb-anim{background-image:url('/overhaul/parvus-jump-strip-tired.png')}
 .tb-back{z-index:1;clip-path:inset(0 0 0 2px)}
 .tb-front{z-index:3}
 .tb-anim{z-index:5}
@@ -247,7 +248,13 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .msg-dots i:nth-child(2){animation-delay:.2s}
 .msg-dots i:nth-child(3){animation-delay:.4s}
 @keyframes pvDot{0%,100%{opacity:.25}50%{opacity:1}}
+.talk-left{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0 22px 10px;font:700 13px/1.3 var(--font-body);color:var(--mute);text-align:right}
+.talk-left:empty{display:none}
+.talk.is-tired .talk-left{color:var(--text)}
+.talk.is-tired .talk-left::before{content:'';width:10px;height:10px;flex:none;background:var(--blue);border:2px solid var(--ink)}
 .talk-form{display:flex;gap:12px;padding:16px;border-top:var(--bw) solid var(--ink)}
+.talk-form input:disabled{opacity:.6;cursor:not-allowed}
+.talk-form .btn:disabled,.talk-form .btn:disabled:hover{opacity:.55;cursor:not-allowed;transform:none;box-shadow:var(--shadow-sm)}
 .talk-form input{flex:1;min-width:0;height:52px;padding:0 16px;color:var(--text);background:var(--bg);border:var(--bw) solid var(--ink);border-radius:0;font:500 16px/1 var(--font-body)}
 .talk-form input::placeholder{color:var(--mute)}
 .talk-form input:focus-visible{outline:3px solid var(--acc);outline-offset:0}
@@ -367,6 +374,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
           <button class="talk-x" id="pvTalkX" type="button" aria-label="Close">&#x2715;</button>
         </div>
         <div class="talk-log" id="pvLog" aria-live="polite"></div>
+        <div class="talk-left" id="pvLeft" aria-live="polite"></div>
         <form class="talk-form" id="pvForm" autocomplete="off">
           <label class="sr" for="pvInput">Message Parvus</label>
           <input id="pvInput" type="text" maxlength="300" placeholder="Ask Parvus something...">
@@ -586,8 +594,21 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function cell(el, col, row) { el.style.backgroundPosition = (-col * CW) + 'px ' + (-row * CH) + 'px'; }
   function eyeCol(dx, dy) { return dx === 0 && dy === 0 ? EYE.base : LOOK[(dy + 1) * 3 + (dx + 1)]; }
   function blinkCol(dx) { return dx === 0 ? EYE.blinkC : (dx > 0 ? EYE.blinkR : EYE.blinkL); }
+  var TIRED = { body: 3, eyes: 9 };
+  var TIRED_HELLO = "zzz. i'm out of answers for now. come back when the timer runs out.";
+  function tiredNow() { return !!(window.parvusLimit && window.parvusLimit().tired); }
   function drawEyes() {
+    if (tiredNow()) { cell(eyesEl, blinking ? blinkCol(0) : TIRED.eyes, 1); return; }
     cell(eyesEl, eyeLock !== null ? eyeLock : (blinking ? blinkCol(gaze.dx) : eyeCol(gaze.dx, gaze.dy)), 1);
+  }
+  function paintBody() {
+    var t = tiredNow();
+    cell(bodyEl, t ? TIRED.body : BODY.idle, 0);
+    html.classList.toggle('pv-tired', t);
+    Array.prototype.forEach.call(document.querySelectorAll('img.tb-front'), function (img) {
+      var src = t ? '/overhaul/parvus-tub-front-tired.png' : '/overhaul/parvus-tub-front.png';
+      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    });
   }
 
   function fit() {
@@ -746,7 +767,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   }
   function rest() {
     gsap.set(pv, { x: 0, y: 0 });
-    cell(bodyEl, BODY.idle, 0);
+    paintBody();
     show(pv, true);
     show(eyesEl, true);
     layered(true);
@@ -795,12 +816,35 @@ html.talk-on,html.talk-on body{overflow:hidden}
   };
 
   function ptDraw(col) { cell(ptEyes, col, 1); }
+  var ptBody = talk.querySelector('.pt-scene .pv-body'), leftEl = document.getElementById('pvLeft'), sendBtn = talkForm.querySelector('button[type="submit"]'), PLACE = talkInput.placeholder, leftT = 0;
+  function ptBase() { return tiredNow() ? TIRED.eyes : EYE.base; }
+  function waitText(ms) {
+    var m = Math.max(1, Math.ceil(ms / 60000));
+    return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
+  }
+  function paintLimit() {
+    var st = window.parvusLimit ? window.parvusLimit() : { tired: false, left: null, until: 0 };
+    paintBody();
+    drawEyes();
+    cell(ptBody, st.tired ? TIRED.body : BODY.idle, 0);
+    if (talkOpen) ptDraw(st.tired ? TIRED.eyes : EYE.base);
+    talk.classList.toggle('is-tired', st.tired);
+    talkInput.disabled = st.tired;
+    sendBtn.disabled = st.tired;
+    talkInput.placeholder = st.tired ? 'Parvus is resting...' : PLACE;
+    if (st.tired) leftEl.textContent = 'Parvus is tired. Back in ' + waitText(st.until - Date.now()) + '.';
+    else if (typeof st.left === 'number') leftEl.textContent = st.left + (st.left === 1 ? ' message left' : ' messages left');
+    else leftEl.textContent = '';
+    clearTimeout(leftT);
+    if (talkOpen && st.tired) leftT = setTimeout(paintLimit, 30000);
+  }
+  document.addEventListener('parvus:limit', paintLimit);
   function ptBlinkLoop() {
     clearTimeout(ptBlink);
     if (!talkOpen) return;
     ptBlink = setTimeout(function () {
       ptDraw(EYE.blinkC);
-      setTimeout(function () { ptDraw(EYE.base); }, 130);
+      setTimeout(function () { ptDraw(ptBase()); }, 130);
       ptBlinkLoop();
     }, 3000 + Math.random() * 4000);
   }
@@ -884,7 +928,9 @@ html.talk-on,html.talk-on body{overflow:hidden}
     talk.hidden = false;
     html.classList.add('talk-on');
     ptFit();
-    ptDraw(EYE.pleased);
+    paintLimit();
+    if (window.parvusStatus) window.parvusStatus();
+    ptDraw(tiredNow() ? TIRED.eyes : EYE.pleased);
     var r = pv.getBoundingClientRect(), b = talkBox.getBoundingClientRect();
     var ox = Math.round(r.left + r.width / 2 - b.left), oy = Math.round(r.top + r.height * 0.3 - b.top);
     if (talkTl) talkTl.kill();
@@ -904,13 +950,13 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function afterOpen() {
     gsap.set([talkBox, ptZoom], { clearProps: 'transform' });
     ptFit();
-    ptDraw(EYE.base);
+    ptDraw(ptBase());
     ptBlinkLoop();
-    if (window.matchMedia('(pointer: fine)').matches) talkInput.focus();
+    if (window.matchMedia('(pointer: fine)').matches && !talkInput.disabled) talkInput.focus();
     else document.getElementById('pvTalkX').focus();
     if (!greeted) {
       greeted = true;
-      pvLine('Hi! What can I help you with?');
+      pvLine(tiredNow() ? TIRED_HELLO : 'Hi! What can I help you with?');
     }
   }
   function closeTalk() {
@@ -924,6 +970,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function afterClose() {
     talk.hidden = true;
     html.classList.remove('talk-on');
+    clearTimeout(leftT);
     if (talkTl) talkTl.timeScale(1);
     eyeLock = null;
     drawEyes();
@@ -940,7 +987,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   talkForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var q = talkInput.value.trim();
-    if (!q || busy) return;
+    if (!q || busy || tiredNow()) return;
     busy = true;
     talkInput.value = '';
     addMsg('me', q);
@@ -963,7 +1010,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
 
   function jumpIn() {
     var t = gsap.timeline();
-    t.call(function () { frame(0); layered(false); eyeLock = EYE.blinkC; drawEyes(); show(eyesEl, true); show(pv, true); cell(bodyEl, BODY.idle, 0); }, null, 0)
+    t.call(function () { frame(0); layered(false); eyeLock = EYE.blinkC; drawEyes(); show(eyesEl, true); show(pv, true); paintBody(); }, null, 0)
       .fromTo(pv, { y: -480 }, { y: -36, duration: 0.36, ease: 'power2.in', snap: { y: 12 } }, 0);
     var end = splashIn(t, 0.36);
     t.call(openEyes, null, end + 0.08);
@@ -978,7 +1025,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     if (reduced) {
       rest();
       startIdle();
-      say(HELLO, 7000);
+      say(tiredNow() ? TIRED_HELLO : HELLO, 7000);
       return;
     }
     var ink = getComputedStyle(html).getPropertyValue('--ink').trim();
@@ -993,7 +1040,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
       .from(['.lede', '.cta > *'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.42)
       .from('.stage', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0.3)
       .add(jumpIn(), 0.9)
-      .call(function () { say(HELLO, 7000); startIdle(); }, null, '+=0.1');
+      .call(function () { say(tiredNow() ? TIRED_HELLO : HELLO, 7000); startIdle(); }, null, '+=0.1');
     html.classList.remove('pre');
   }
 

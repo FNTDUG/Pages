@@ -648,6 +648,11 @@ if (document.querySelector("[data-parvus-home]")) {
   var HAT_BOX = { buildersclub: [0, 88], party: [0, 83], pith: [0, 80] };
   var EYE  = { base: 0, squint: 1, angry: 4, blinkC: 6, blinkR: 7, blinkL: 8, think: 13, pleased: 19 };
   var LOOK = [12, 14, 13, 15, 17, 16, 11, 18, 10];
+  var TIRED_EYES = 9;
+  var tired = (function () {
+    if (window.parvusLimit) return window.parvusLimit().tired;
+    try { return Date.now() < (+localStorage.getItem('pv:tiredUntil') || 0); } catch (e) { return false; }
+  })();
   var body = document.getElementById('mascotBody');
   var bodyLow = document.getElementById('mascotBodyLow');
   var hatEl = document.getElementById('mascotHat');
@@ -710,6 +715,10 @@ if (document.querySelector("[data-parvus-home]")) {
     }
   }
   function show(bodyCol, eyeCol) {
+    if (tired) {
+      bodyCol = state === 'move' || state === 'ready' || bodyCol === BODY.dash ? BODY.moveSad : BODY.idleSad;
+      if (eyeCol !== EYE.blinkC && eyeCol !== EYE.blinkR && eyeCol !== EYE.blinkL) eyeCol = TIRED_EYES;
+    }
     var bodyRow = 0, rainbowBody = bodyCol === BODY.rainbow;
     if (typeof bodyCol === 'string') {
       bodyRow = RAINBOW[bodyCol];
@@ -883,7 +892,7 @@ if (document.querySelector("[data-parvus-home]")) {
     return mood === 'angry' ? EYE.angry : EYE.pleased;
   }
   function startMood(now, kind) {
-    if (thinking) return;
+    if (thinking || tired) return;
     mood = kind; state = 'tell'; started = now; until = now + CFG.tellMs;
     frenzyFor = 0; frenzy = 0; clicks.length = 0;
     stopRainbow(now);
@@ -1101,8 +1110,8 @@ if (document.querySelector("[data-parvus-home]")) {
 
   function next(now) {
     var watching = cursorAim(now) !== null;
-    if (rainbowReady(now) && Math.random() < CFG.chanceRainbow) startRainbow(now);
-    if (screenReady(now) && Math.random() < CFG.chanceScreen) { startScreen(now); return; }
+    if (!tired && rainbowReady(now) && Math.random() < CFG.chanceRainbow) startRainbow(now);
+    if (!tired && screenReady(now) && Math.random() < CFG.chanceScreen) { startScreen(now); return; }
     var roll = Math.random();
     /* he does not glance about on his own while he is watching the pointer */
     if (watching && roll >= CFG.chanceIdle && roll < CFG.chanceIdle + CFG.chanceGlance) roll += CFG.chanceGlance;
@@ -1177,7 +1186,7 @@ if (document.querySelector("[data-parvus-home]")) {
     /* he only pipes up once he has settled, never mid-walk or mid-mood */
     if (!chatAt) chatAt = now + rand(CFG.chatMin, CFG.chatMax);
     if (chatEnd) { if (now >= chatEnd) hush(now); }
-    else if (CFG.chatMs > 0 && now >= chatAt && !inMood(now) && !partying &&
+    else if (CFG.chatMs > 0 && now >= chatAt && !tired && !inMood(now) && !partying &&
              (state === 'rest' || state === 'idle')) say(now);
 
     var bolting = now < dashUntil;
@@ -1292,6 +1301,21 @@ if (document.querySelector("[data-parvus-home]")) {
 
     requestAnimationFrame(tick);
   }
+
+  document.addEventListener('parvus:limit', function (e) {
+    var on = !!(e.detail && e.detail.tired);
+    if (on === tired) return;
+    tired = on;
+    var now = performance.now();
+    if (tired) {
+      stopRainbow(now);
+      moodUntil = 0;
+      if (state === 'screen' || state === 'tell') rest(now);
+      if (chatEnd && !thinking) hush(now, true);
+    }
+    show(plainBody(), EYE.base);
+  });
+  window.mascotTired = function () { return tired; };
 
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduced) {

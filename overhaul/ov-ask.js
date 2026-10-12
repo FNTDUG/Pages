@@ -3,6 +3,47 @@
   var linksFor = {};
   var SITES = /(^|[\s("'])(findahelpline\.com|report\.cybertip\.org)/g;
   var FAIL = 'something went wrong on my end. try again in a moment.';
+  var KEY = 'pv:tiredUntil';
+  var left = null, until = 0, wake = 0;
+
+  try { until = +localStorage.getItem(KEY) || 0; } catch (e) {}
+
+  function state() {
+    var tired = Date.now() < until;
+    return { tired: tired, left: tired ? 0 : left, until: tired ? until : 0 };
+  }
+  function save() {
+    try {
+      if (until > Date.now()) localStorage.setItem(KEY, String(until));
+      else localStorage.removeItem(KEY);
+    } catch (e) {}
+  }
+  function emit() {
+    clearTimeout(wake);
+    var st = state();
+    if (st.tired) {
+      wake = setTimeout(function () {
+        until = 0;
+        left = null;
+        save();
+        emit();
+        window.parvusStatus();
+      }, Math.min(until - Date.now() + 500, 2147483000));
+    }
+    try { document.dispatchEvent(new CustomEvent('parvus:limit', { detail: st })); } catch (e) {}
+  }
+  function take(d) {
+    if (!d || typeof d.left !== 'number') return;
+    left = d.left;
+    until = d.left > 0 ? 0 : (+d.resetAt || 0);
+    save();
+    emit();
+  }
+
+  window.parvusLimit = state;
+  window.parvusStatus = function () {
+    return fetch('/parvus/status', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(take).catch(function () {});
+  };
 
   window.parvusAsk = function (q) {
     return fetch('/parvus/ask', {
@@ -13,6 +54,7 @@
       return r.json().catch(function () { return {}; });
     }).then(function (d) {
       var a = d && d.answer ? String(d.answer) : FAIL;
+      take(d);
       if (d && Array.isArray(d.links) && d.links.length) linksFor[a] = d.links;
       if (d && d.ok) {
         history.push({ role: 'user', content: q }, { role: 'assistant', content: a });
@@ -50,4 +92,6 @@
     el.textContent = '';
     el.appendChild(out);
   };
+
+  emit();
 })();

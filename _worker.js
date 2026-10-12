@@ -6933,13 +6933,53 @@ async function parvusRate(db, who, now) {
   const hour = Math.floor(now / 3600000), day = Math.floor(now / 86400000);
   const seat = (win, max, exp) => db.prepare('INSERT INTO parvus_rate (who, win, n, exp) VALUES (?1, ?2, 1, ?3) ON CONFLICT(who, win) DO UPDATE SET n = n + 1 WHERE n < ?4 RETURNING n').bind(who, win, exp, max).first();
   const h = await seat('h' + hour, PARVUS_PER_HOUR, (hour + 2) * 3600000);
-  if (!h) return false;
+  if (!h) return { ok: false };
   const d = await seat('d' + day, PARVUS_PER_DAY, (day + 2) * 86400000);
-  return !!d;
+  if (!d) return { ok: false };
+  return { ok: true, hn: h.n, dn: d.n };
 }
 
-function parvusReply(answer, ok, status, links) {
-  return pushJson(links && links.length ? { ok: !!ok, answer, links } : { ok: !!ok, answer }, status || 200);
+async function parvusWho(env, request) {
+  return wikiHex((await pushSha256(env.POLL_SALT + '|parvus|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 8));
+}
+
+function parvusMidnight(now) {
+  return (Math.floor(now / 86400000) + 1) * 86400000;
+}
+
+function parvusLeft(hn, dn, now) {
+  const hl = Math.max(0, PARVUS_PER_HOUR - hn), dl = Math.max(0, PARVUS_PER_DAY - dn);
+  const left = Math.min(hl, dl);
+  return { left, resetAt: left > 0 ? 0 : dl === 0 ? parvusMidnight(now) : (Math.floor(now / 3600000) + 1) * 3600000 };
+}
+
+async function parvusStanding(db, who, now) {
+  const hk = 'h' + Math.floor(now / 3600000), dk = 'd' + Math.floor(now / 86400000);
+  const r = await db.prepare('SELECT win, n FROM parvus_rate WHERE who = ?1 AND win IN (?2, ?3)').bind(who, hk, dk).all();
+  let hn = 0, dn = 0;
+  for (const row of (r && r.results) || []) { if (row.win === hk) hn = row.n; else if (row.win === dk) dn = row.n; }
+  return parvusLeft(hn, dn, now);
+}
+
+async function parvusStatus(request, env) {
+  if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false }, 503);
+  const now = Date.now();
+  const db = env.POLLS;
+  try {
+    await parvusInit(db);
+    const used = await db.prepare('SELECT neurons FROM parvus_usage WHERE day = ?1').bind(new Date(now).toISOString().slice(0, 10)).first();
+    if (used && used.neurons >= PARVUS_DAY_NEURONS) return pushJson({ ok: true, left: 0, resetAt: parvusMidnight(now) });
+    return pushJson(Object.assign({ ok: true }, await parvusStanding(db, await parvusWho(env, request), now)));
+  } catch (e) {
+    return pushJson({ ok: false }, 503);
+  }
+}
+
+function parvusReply(answer, ok, status, links, standing) {
+  const out = { ok: !!ok, answer };
+  if (links && links.length) out.links = links;
+  if (standing) { out.left = standing.left; out.resetAt = standing.resetAt; }
+  return pushJson(out, status || 200);
 }
 
 function parvusLabel(path, units) {
@@ -7003,12 +7043,15 @@ async function parvusAsk(request, env, url) {
   const now = Date.now();
   const day = new Date(now).toISOString().slice(0, 10);
   const db = env.POLLS;
+  let standing = null;
   try {
     await parvusInit(db);
     const used = await db.prepare('SELECT neurons FROM parvus_usage WHERE day = ?1').bind(day).first();
-    if (used && used.neurons >= PARVUS_DAY_NEURONS) return parvusReply(PARVUS_SAY.tired, false, 429);
-    const who = wikiHex((await pushSha256(env.POLL_SALT + '|parvus|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 8));
-    if (!(await parvusRate(db, who, now))) return parvusReply(PARVUS_SAY.busy, false, 429);
+    if (used && used.neurons >= PARVUS_DAY_NEURONS) return parvusReply(PARVUS_SAY.tired, false, 429, null, { left: 0, resetAt: parvusMidnight(now) });
+    const who = await parvusWho(env, request);
+    const seat = await parvusRate(db, who, now);
+    if (!seat.ok) return parvusReply(PARVUS_SAY.busy, false, 429, null, await parvusStanding(db, who, now));
+    standing = parvusLeft(seat.hn, seat.dn, now);
     await db.prepare('DELETE FROM parvus_rate WHERE exp < ?1').bind(now).run();
   } catch (e) {
     return parvusReply(PARVUS_SAY.broke, false, 503);
@@ -7032,7 +7075,7 @@ async function parvusAsk(request, env, url) {
       new Promise((_, no) => setTimeout(() => no(new Error('timeout')), 25000))
     ]);
   } catch (e) {
-    return parvusReply(PARVUS_SAY.broke, false, 502);
+    return parvusReply(PARVUS_SAY.broke, false, 502, null, standing);
   }
   let raw = out && out.response != null ? out.response : out && out.choices && out.choices[0] && out.choices[0].message ? out.choices[0].message.content : '';
   let parsed = raw && typeof raw === 'object' ? raw : null;
@@ -7049,11 +7092,11 @@ async function parvusAsk(request, env, url) {
   try {
     await db.prepare('INSERT INTO parvus_usage (day, neurons, msgs) VALUES (?1, ?2, 1) ON CONFLICT(day) DO UPDATE SET neurons = neurons + ?2, msgs = msgs + 1').bind(day, neurons).run();
   } catch (e) {}
-  if (PARVUS_SAFE[topic]) return parvusReply(PARVUS_SAFE[topic], true);
+  if (PARVUS_SAFE[topic]) return parvusReply(PARVUS_SAFE[topic], true, 200, null, standing);
   answer = answer.replace(/\bhttps?:\/\/\S+/gi, '').replace(/\s{2,}/g, ' ').trim();
-  if (!answer) return parvusReply(PARVUS_SAY.broke, false, 502);
+  if (!answer) return parvusReply(PARVUS_SAY.broke, false, 502, null, standing);
   const linked = parvusLinks(answer, data.units);
-  return parvusReply(linked.text, true, 200, linked.links);
+  return parvusReply(linked.text, true, 200, linked.links, standing);
 }
 
 export default {
@@ -7072,6 +7115,7 @@ export default {
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
     if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
     if (url.pathname === '/parvus/ask') return parvusAsk(request, env, url);
+    if (url.pathname === '/parvus/status') return parvusStatus(request, env);
     if (!WIKI_EDITOR_ON && /^(\/overhaul)?\/wiki-edit(\.html)?\/?$/.test(url.pathname)) {
       return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     }

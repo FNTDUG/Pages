@@ -511,7 +511,8 @@
       var p = window.mascotPeek && window.mascotPeek();
       if (p && window.mascotSay && !p.thinking) {
         clearInterval(iv);
-        if (title) window.mascotSay('Welcome to ' + title + '! ' + (window.matchMedia && window.matchMedia('(pointer: fine)').matches ? 'Click' : 'Tap') + ' me if you need help.');
+        if (window.mascotTired && window.mascotTired()) window.mascotSay("zzz. i'm out of answers for now. come back once i've had a rest.");
+        else if (title) window.mascotSay('Welcome to ' + title + '! ' + (window.matchMedia && window.matchMedia('(pointer: fine)').matches ? 'Click' : 'Tap') + ' me if you need help.');
       } else if (tries > 20) clearInterval(iv);
     }, 400);
   }
