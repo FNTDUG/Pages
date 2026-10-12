@@ -24,6 +24,7 @@
 
   var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', 'patch-notes': 'Patch notes', wiki: 'Community wiki' };
   var title = '';
+  var PREFIX = { fntd1: /^FNTD ?1\s+/i, fntd2: /^FNTD ?2\s+/i, bbn: /^(BBN|Bite By Night)\s+/i };
   function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function gameKey() {
     var q = /[?&]game=([a-z0-9-]+)/.exec(location.search);
@@ -42,7 +43,8 @@
     var t = area.querySelector('.ug-page-title');
     if (t) {
       title = t.textContent.trim();
-      var words = title.split(' '), last = words.pop();
+      var shown = title.replace(PREFIX[game] || /$^/, '') || title;
+      var words = shown.split(' '), last = words.pop();
       t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
     }
     var wrap = document.createElement('div');

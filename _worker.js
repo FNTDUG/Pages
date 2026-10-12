@@ -6791,7 +6791,10 @@ export default {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/circle_done.png'); }
       })
       .on('img.ug-mn-brand-logo', {
-        element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/glowy.webp'); }
+        element(el) {
+          if (pvOn) { el.setAttribute('src', '/overhaul/parvus_fntdug.png'); el.setAttribute('class', 'ug-mn-brand-logo pv-mn-logo'); el.setAttribute('width', '46'); el.setAttribute('height', '41'); el.setAttribute('alt', ''); }
+          else el.setAttribute('src', 'https://images.fntduserguide.com/glowy.webp');
+        }
       })
       .on('.ug-mn-body', {
         element(el) { el.setInnerContent(nav.mobile, { html: true }); }
@@ -6814,7 +6817,7 @@ export default {
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
-          if (hasInfo) el.append(INFO_HTML, { html: true });
+          if (hasInfo) el.append(pvOn ? INFO_HTML.replace('<img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD">', '<img class="ug-mn-brand-logo pv-mn-logo" src="/overhaul/parvus_fntdug.png" alt="" width="46" height="41">') : INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append(ACTIVE_SCRIPT, { html: true });
             if (!pvOn && wipActive(realPath)) el.append(WIP_HTML, { html: true });

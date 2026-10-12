@@ -157,16 +157,16 @@ h1{margin:24px 0;font:400 clamp(40px,5vw,66px)/1 var(--font-head);text-transform
 .tub{position:absolute;left:0;top:0;width:366px;height:390px;transform-origin:0 0}
 .tub-in{position:absolute;inset:0}
 .tb-back,.tb-front,.tb-anim{position:absolute;left:0;top:0;width:366px;height:390px;image-rendering:pixelated;pointer-events:none}
-.tb-back,.tb-anim{background:url('parvus-jump-strip.png') no-repeat 0 0/4392px 390px}
+.tb-back,.tb-anim{background:url('/overhaul/parvus-jump-strip.png') no-repeat 0 0/4392px 390px}
 .tb-back{z-index:1}
 .tb-front{z-index:3}
 .tb-anim{z-index:5}
 .pv{position:absolute;left:84px;top:108px;width:210px;height:222px;z-index:2}
 .pv-bob,.pv-body,.pv-eyes{position:absolute;inset:0}
-.pv-body,.pv-eyes{background-image:url('mascot-states.png');background-size:4410px 666px;background-repeat:no-repeat;image-rendering:pixelated}
+.pv-body,.pv-eyes{background-image:url('/overhaul/mascot-states.png');background-size:4410px 666px;background-repeat:no-repeat;image-rendering:pixelated}
 .pv-body{background-position:0 0}
 .pv-eyes{background-position:0 -222px}
-.pv-lids{position:absolute;left:84px;top:108px;width:210px;height:222px;z-index:5;background:url('mascot-states.png') no-repeat -1260px -222px/4410px 666px;image-rendering:pixelated;pointer-events:none;visibility:hidden}
+.pv-lids{position:absolute;left:84px;top:108px;width:210px;height:222px;z-index:5;background:url('/overhaul/mascot-states.png') no-repeat -1260px -222px/4410px 666px;image-rendering:pixelated;pointer-events:none;visibility:hidden}
 .pv-hit{position:absolute;left:84px;top:96px;width:210px;height:123px;z-index:6;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pv-hit:focus-visible{outline:6px solid var(--acc);outline-offset:0}
 .px-ink{--px-ink:#151b2c;--px-ink-edge:#070b14;--px-ink-shine:#2a3554;--px-ink-outline:#fafafa;--px-ink-text:#e6edf3;position:relative;isolation:isolate;color:var(--px-ink-text)}
@@ -310,7 +310,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
     <div class="ug-mn-header">
       <div class="ug-mn-brand">
-        <img class="pv-mn-logo" src="parvus_fntdug.png" alt="" width="46" height="41">
+        <img class="pv-mn-logo" src="/overhaul/parvus_fntdug.png" alt="" width="46" height="41">
         <span class="ug-mn-brand-name">FNTD User Guide</span>
       </div>
       <button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button>
@@ -333,7 +333,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <div class="pt-scene" id="ptScene">
               <div class="tb-back"></div>
               <div class="pv"><div class="pv-bob" id="ptBob"><div class="pv-body"></div><div class="pv-eyes" id="ptEyes"></div></div></div>
-              <img class="tb-front" src="parvus-tub-front.png" alt="" width="366" height="390">
+              <img class="tb-front" src="/overhaul/parvus-tub-front.png" alt="" width="366" height="390">
             </div>
           </div>
         </div>
@@ -389,7 +389,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
                   <div class="pv-eyes" id="pvEyes"></div>
                 </div>
               </div>
-              <img class="tb-front" id="tbFront" src="parvus-tub-front.png" alt="" width="366" height="390">
+              <img class="tb-front" id="tbFront" src="/overhaul/parvus-tub-front.png" alt="" width="366" height="390">
               <div class="tb-anim" id="tbAnim"></div>
               <div class="pv-lids" id="pvLids"></div>
               <button class="pv-hit" id="pvHit" type="button" aria-label="Talk to Parvus" aria-haspopup="dialog" aria-controls="pvTalk"></button>
@@ -520,11 +520,11 @@ html.talk-on,html.talk-on body{overflow:hidden}
   </script>
 <script>(function(){var on=true,t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStart(btn)});document.addEventListener("visibilitychange",function(){if(!document.hidden){clearInterval(t);on=true;document.body.classList.remove("ug-cursor-off");t=setInterval(function(){on=!on;document.body.classList.toggle("ug-cursor-off",!on)},500);document.querySelectorAll("#ug-mobile-nav .ug-mn-section.open .ug-mn-section-btn").forEach(function(btn){ugMnSpinStop(btn);ugMnSpinStart(btn)})}})})();</script>
 
-<script src="gsap/gsap.min.js"></script>
-<script src="gsap/ScrollTrigger.min.js"></script>
-<script src="gsap/SplitText.min.js"></script>
-<script src="gsap/Draggable.min.js"></script>
-<script src="gsap/InertiaPlugin.min.js"></script>
+<script src="/overhaul/gsap/gsap.min.js"></script>
+<script src="/overhaul/gsap/ScrollTrigger.min.js"></script>
+<script src="/overhaul/gsap/SplitText.min.js"></script>
+<script src="/overhaul/gsap/Draggable.min.js"></script>
+<script src="/overhaul/gsap/InertiaPlugin.min.js"></script>
 <script>
 (function () {
   var M = 7;
