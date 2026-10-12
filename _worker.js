@@ -3210,6 +3210,13 @@ const EXTRA_ITEMS = {
   }
 };
 
+function infSafeJson(text) {
+  return String(text)
+    .replace(/\\u003[cC]/g, '<').replace(/\\u003[eE]/g, '>')
+    .replace(/<(?!\/?(?:br|b|i|u|em|strong)\s*\/?>)[a-zA-Z\/!?](?:[^<>"\\]|\\.)*>/g, '')
+    .replace(/<(?=[a-zA-Z\/!?])(?!\/?(?:br|b|i|u|em|strong)\s*\/?>)/g, '');
+}
+
 const INF_PROXY = {
   'presents':        'https://presents.fntduserguide.com/fntd2-presents.json',
   'units':           'https://raw.githubusercontent.com/FNTDUG/characters.json/main/json',
@@ -6341,6 +6348,7 @@ const WIKI_SIGNUPS_PER_HOUR = 5;
 const WIKI_SESSION_DAYS = 30;
 const WIKI_PASS_ITER = 10000;
 const WIKI_REQUIRE_LOGIN = false;
+const WIKI_EDITOR_ON = false;
 const WIKI_IMG_MAX = 2 * 1024 * 1024;
 const WIKI_UPLOADS_PER_HOUR = 30;
 const WIKI_FRAMES = ['none', 'orange', 'white', 'black', 'purple', 'uncommon', 'rare', 'epic', 'mythic', 'exclusive', 'secret', 'nightmare', 'apex', 'hero', 'radiant', 'shiny'];
@@ -6570,6 +6578,7 @@ async function wikiApi(request, env, url) {
       return pushJson({ ok: false }, 404);
     }
 
+    if (!WIKI_EDITOR_ON) return pushJson({ ok: false, error: 'closed' }, 403);
     if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
     const now = Date.now();
     const minute = Math.floor(now / 60000);
@@ -6680,6 +6689,9 @@ export default {
     if (url.pathname.indexOf('/poll/img/') === 0) return pollImageGet(env, url);
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
     if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
+    if (!WIKI_EDITOR_ON && /^(\/overhaul)?\/wiki-edit(\.html)?\/?$/.test(url.pathname)) {
+      return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+    }
     if (url.pathname === '/wiki-edit') {
       const page = await env.ASSETS.fetch(request);
       if (!(page.headers.get('content-type') || '').includes('text/html')) return page;
@@ -6772,6 +6784,7 @@ export default {
         .replace(/pub-bd8c71834de64b078aa68df269b7d92e\.r2\.dev/g, 'items.fntduserguide.com')
         .replace(/pub-71c3b160626949ae8220d0daad5a9fc8\.r2\.dev/g, 'presents.fntduserguide.com')
         .replace(/pub-147ea4ffd88444cba282e819b9168c94\.r2\.dev/g, 'images.fntduserguide.com');
+      body = infSafeJson(body);
       const extra = Object.prototype.hasOwnProperty.call(EXTRA_ITEMS, feed) ? EXTRA_ITEMS[feed] : null;
       if (extra) {
         try {
