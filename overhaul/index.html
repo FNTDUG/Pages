@@ -239,8 +239,8 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .msg{max-width:88%;padding:12px 16px;font-size:15px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
 .msg-pv{--ink-u:8px;align-self:flex-start;max-width:min(520px,calc(100% - 110px));font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .msg-pv .rest{color:transparent}
-.msg-pv a{color:#79c0ff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;overflow-wrap:anywhere}
-.msg-pv a:hover{color:#a5d6ff}
+.msg-pv a{color:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:3px;overflow-wrap:anywhere}
+.msg-pv a:hover{color:var(--acc-ink);background:var(--acc)}
 .msg-me{align-self:flex-end;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:500}
 .msg-dots{display:inline-flex;gap:6px;padding:6px 0}
 .msg-dots i{width:8px;height:8px;background:#e6edf3;animation:pvDot 1s steps(2,jump-none) infinite}

@@ -220,8 +220,8 @@ html.ov[data-theme="light"] .ov-far{opacity:.32}
 .ovt-msg-pv{--ink-u:8px;--px-ink:#151b2c;--px-ink-edge:#070b14;--px-ink-shine:#2a3554;--px-ink-outline:#fafafa;--px-ink-text:#e6edf3;position:relative;isolation:isolate;align-self:flex-start;max-width:min(520px,calc(100% - 110px));color:var(--px-ink-text);font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .ovt-msg-pv.is-splashing>:not(.px-ink-canvas){visibility:hidden}
 .ovt-msg-pv .rest{color:transparent}
-.ovt-msg-pv a{color:#79c0ff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;overflow-wrap:anywhere}
-.ovt-msg-pv a:hover{color:#a5d6ff}
+.ovt-msg-pv a{color:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--game);text-decoration-thickness:3px;text-underline-offset:3px;overflow-wrap:anywhere}
+.ovt-msg-pv a:hover{color:var(--game-ink);background:var(--game)}
 .ovt-msg-me{align-self:flex-end;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:500}
 .ovt-dots{display:inline-flex;gap:6px;padding:6px 0}
 .ovt-dots i{width:8px;height:8px;background:#e6edf3;animation:ovtDot 1s steps(2,jump-none) infinite}
