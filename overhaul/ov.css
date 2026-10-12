@@ -346,11 +346,11 @@ html.ov .f1-dir-btn:focus-visible,html.ov .bbn-dir-btn:focus-visible{outline:non
 html.ov .f1-dir-btn:focus-visible .f1-glow-card,html.ov .bbn-dir-btn:focus-visible .bbn-glow-card{outline:3px solid var(--text);outline-offset:4px}
 html.ov .bbn-dir-desc{margin-top:8px}
 html.ov .bbn-dir-desc p{text-align:left}
-html.ov .update-log-wrapper{max-width:none;margin:0 0 40px;padding:0;background:none;border:0;border-radius:0;box-shadow:none}
+html.ov .update-log-wrapper{max-width:none;margin:0 0 32px;padding:24px 26px 8px;background:var(--surface);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow)}
 html.ov .update-date{display:flex;align-items:center;gap:12px;margin:0 0 18px;font:400 20px/1.2 var(--font-head);letter-spacing:0;color:var(--text)}
 html.ov .update-date::before{content:'';width:12px;height:12px;flex:none;background:var(--game);border:2px solid var(--ink)}
-html.ov .update-entry{margin-bottom:18px;padding:18px 22px;background:var(--surface);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
-html.ov .update-entry:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
+html.ov .update-entry{margin-bottom:16px;padding:16px 20px;background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none;transition:transform .15s,box-shadow .15s}
+html.ov .update-entry:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
 html.ov .update-badge{margin:0 10px 6px 0;padding:4px 8px;font:700 11px/1.2 var(--font-body);letter-spacing:.06em;text-transform:uppercase;border:2px solid var(--ink);border-radius:0;vertical-align:middle}
 html.ov .badge-new{color:#fff;background:#c4282d}
 html.ov .badge-feature{color:#0d1a29;background:var(--blue)}
@@ -379,6 +379,7 @@ html.ov .pp-note{padding:16px 18px;color:var(--text);background:var(--surface2);
   html.ov .pp-header{margin:62px 16px 0;padding:22px 18px}
   html.ov body>main{margin:20px 16px 60px;padding:22px 18px}
   html.ov .update-entry{padding:14px 16px}
+  html.ov .update-log-wrapper{padding:18px 16px 4px}
 }
 html.ov .info-card>.ov-card:only-child{flex:0 1 640px;max-width:100%}
 html.ov .ov-card p{text-align:left}
@@ -403,3 +404,4 @@ html.ov .ov-copy .ug-page-title div{white-space:nowrap}
 html.ov .ov-note-card [style*="Audiowide"]{text-align:left!important}
 html.ov .ov-notes .ov-note-card p{font:400 16px/1.6 var(--font-body)!important;color:var(--mute)!important;text-align:left!important;margin:0!important;max-width:none!important}
 html.ov .ov-notes .ov-note-card p+p{margin-top:8px!important}
+html.ov .ov-copy .ug-page-title{font-kerning:none;font-variant-ligatures:none;font-feature-settings:"kern" 0,"liga" 0}
