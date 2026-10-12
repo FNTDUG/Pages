@@ -3538,6 +3538,99 @@ async function pushSend(request, env) {
   return pushJson({ ok: true, sent: out.sent, removed: out.removed, failed: out.failed, cursor: list.list_complete ? null : list.cursor });
 }
 
+const SITE_URL = 'https://www.fntduserguide.com';
+const SITE_NAME = 'FNTD User Guide';
+const SEO_IMAGE = SITE_URL + '/icon-512.png';
+const SEO_CANON = { '/fntd2/patch-notes': '/patch-notes' };
+const SEO_DEEP = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams'];
+const SEO_SECTIONS = {
+  fntd1: { name: 'Five Nights TD', path: '/fntd1/' },
+  fntd2: { name: 'Five Nights TD 2', path: '/fntd2/fntd2-directory' },
+  bbn: { name: 'Bite By Night', path: '/bbn/bite-by-night-directory' },
+  'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
+};
+const SEO_PAGES = {
+  '/': ['FNTD User Guide: Five Nights TD 2 & Bite By Night Guides', 'Community guides for the Roblox games Five Nights TD 2, Five Nights TD and Bite By Night: tier lists, meta teams, unit stats, trade values and patch notes.'],
+  '/fntd2/fntd2-directory': ['Five Nights TD 2 (FNTD2) Guide | FNTD User Guide', 'The Five Nights TD 2 hub: FNTD2 tier lists, meta teams, unit stats, trade values and guides for Story, Endless, Boss Raids and Challenges.'],
+  '/fntd2/fntd2-index': ['FNTD2 Metas & Info: Unit Stats, Values & Guides', 'Everything for Five Nights TD 2 in one place: the Unit Engine, trade calculator, meta teams and guides for Story, Endless, Boss Raids and Challenges.'],
+  '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2', 'Five Nights TD 2 tier list ranking every unit by role: starters, support, stun, slow, summon and knockback. Updated after every FNTD2 update.'],
+  '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Teams for Every Mode', 'The best Five Nights TD 2 teams for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements, tested at level 100.'],
+  '/fntd2/unit-engine': ['FNTD2 Unit Engine: Unit Stats, DPS & Values', 'Search every Five Nights TD 2 unit: stats, upgrades, hero paths, a DPS calculator, live Exists counts and trading values from Value Central.'],
+  '/fntd2/trade-calculator': ['FNTD2 Trade Calculator: Unit Values & Demand', 'Check Five Nights TD 2 trades with official Value Central values and demand. Add units and Souls to each side to see if a trade is fair.'],
+  '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm Materials and Pass EXP.'],
+  '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards', 'Five Nights TD 2 Endless guide: the best farthest and grind teams for each Endless game, unit placements and the rewards for every map.'],
+  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC', 'Five Nights TD 2 Boss Raids meta: the best teams, placements for every map, a modifier tier list and how to unlock OMC and the ??? modifier.'],
+  '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge with its map, restrictions, rewards and the recommended team to clear it.'],
+  '/fntd2/event-story-endless': ['FNTD2 Event Story & Endless: Best Event Teams', 'The current Five Nights TD 2 event: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
+  '/fntd2/clan-wars': ['FNTD2 Clan Wars Team Builder | FNTD User Guide', 'Set the Clan Wars objective, restriction and banned, buffed and debuffed elements to see every Five Nights TD 2 unit you can still use.'],
+  '/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
+  '/fntd2/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
+  '/fntd1': ['Five Nights TD (FNTD1) Guide | FNTD User Guide', 'The original Five Nights TD guide: FNTD1 charts, tier lists, meta teams, PvP, Boss Raids, Endless, Night Shift and an FAQ with every code.'],
+  '/fntd1/charts-tierlists': ['FNTD1 Unit Charts: Midgame, Endgame, Stun & Slow', 'Five Nights TD unit charts ranking the top units for midgame, starters, endgame, slow, stun, booster, anti-regen and wither, with DPS and placements.'],
+  '/fntd1/other-charts': ['FNTD1 Title Chart & Attack Types Explained', 'The Five Nights TD title chart and every attack type explained with pictures: AOE, splash, pierce, pierce spread, nuke, chain, cone AOE and single.'],
+  '/fntd1/tierlists': ['FNTD1 Tier Lists: PvP & Boss Raids by Slot', 'Five Nights TD tier lists for every team slot (starter, stun, slow, endgame and booster) for PvP/Ranked and Boss Raids, with a team builder.'],
+  '/fntd1/meta-teams': ['FNTD1 Meta Teams: Best Five Nights TD Teams', 'The best Five Nights TD teams for Boss Raids, Endless, PvP, Event Endless and Night Shift, with the enchant for every unit.'],
+  '/fntd1/pvp-ranked': ['FNTD1 PvP & Ranked: Final Tier List & Cooldowns', 'Five Nights TD PvP and Ranked guide: the final PvP tier list and the cooldown chart. Shiny boosters are a must for the Top 250.'],
+  '/fntd1/boss-raids': ['FNTD1 Boss Raids: Meta Teams & Map Chart', 'Five Nights TD Boss Raids guide: solo meta teams with and without map select, the map chart, tier list, modifier priorities and multiplayer teams.'],
+  '/fntd1/endless': ['FNTD1 Endless Guide: Meta Team & Map Rewards', 'Five Nights TD Endless guide: the meta team for Endless 5+ and the starting cash, wave 100 tokens, souls and presents for every Endless game.'],
+  '/fntd1/event-endless': ['FNTD1 Event Endless: Meta Team & Rewards', 'Five Nights TD Event Endless meta team, the strategy to reach wave 200 and its rewards: 56.4k Beachballs, 259 Souls, 21.2k Stars and a Strawbaby present.'],
+  '/fntd1/night-shift': ['FNTD1 Night Shift: Best Teams & Placements', 'Five Nights TD Night Shift guide: the best teams for Night 1 and Night 2 and map layouts with unit placements for macroing.'],
+  '/fntd1/faq-fntd1': ['FNTD1 FAQ & Codes: Five Nights TD Questions', 'Five Nights TD FAQ: every code, rare unit drop rates, the best enchants, stun vs true stun, unit transfers and whether FNTD1 still gets updates.'],
+  '/patch-notes/fntd1-1': ['FNTD1 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD pages of the FNTD User Guide: chart, tier list and meta team updates, newest first.'],
+  '/bbn/bite-by-night-directory': ['Bite By Night (BBN) Guide | FNTD User Guide', 'Bite By Night guide for Roblox: Killer and Survivor tier lists, map tier lists and the Killer and Survivor Terminals with stats, costs and tips.'],
+  '/bbn/bite-by-night-tierlists': ['Bite By Night Tier List: Killers, Survivors & Maps', 'Bite By Night tier lists for Killers, Solo and Team Survivors, plus killer and survivor map tier lists, ranked by mid to high skill players.'],
+  '/bbn/killer-terminal': ['Bite By Night Killer Terminal: Killer Stats & Info', 'A Bite By Night killer wiki styled as a retro terminal: Mimic, Springtrap and Ennard abilities, passives, hardware, voice lines and skins.'],
+  '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
+  '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
+  '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
+  '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
+};
+function seoPath(pathname) {
+  return String(pathname || '/').replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/+$/, '') || '/';
+}
+function seoCanon(pathname) {
+  const p = seoPath(pathname);
+  if (SEO_CANON[p]) return SEO_CANON[p];
+  for (let i = 0; i < SEO_DEEP.length; i++) if (p.indexOf(SEO_DEEP[i] + '/') === 0) return SEO_DEEP[i];
+  return p === '/fntd1' ? '/fntd1/' : p;
+}
+function seoAttr(v) { return String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function seoMeta(pathname) {
+  const p = seoPath(pathname);
+  let m = SEO_PAGES[p];
+  if (!m) {
+    for (let i = 0; i < SEO_DEEP.length; i++) if (p.indexOf(SEO_DEEP[i] + '/') === 0) { m = SEO_PAGES[SEO_DEEP[i]]; break; }
+  }
+  if (!m && p.indexOf('/wiki/') === 0) {
+    let slug = p.slice(6);
+    try { slug = decodeURIComponent(slug); } catch (e) {}
+    const name = slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }).trim();
+    if (name) m = [name + ' | FNTD Community Wiki', name + ': a community wiki page on the FNTD User Guide for Five Nights TD 2, Five Nights TD and Bite By Night.'];
+  }
+  return m ? { title: m[0], desc: m[1] } : null;
+}
+function seoHead(pathname, canonUrl) {
+  const m = seoMeta(pathname);
+  if (!m) return '';
+  const p = seoPath(pathname);
+  let out = '<meta name="description" content="' + seoAttr(m.desc) + '">' +
+    '<meta property="og:type" content="website"><meta property="og:site_name" content="' + SITE_NAME + '">' +
+    '<meta property="og:title" content="' + seoAttr(m.title) + '"><meta property="og:description" content="' + seoAttr(m.desc) + '">' +
+    '<meta property="og:url" content="' + seoAttr(canonUrl) + '"><meta property="og:image" content="' + SEO_IMAGE + '">' +
+    '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + seoAttr(m.title) + '"><meta name="twitter:description" content="' + seoAttr(m.desc) + '"><meta name="twitter:image" content="' + SEO_IMAGE + '">';
+  let ld;
+  if (p === '/') {
+    ld = { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, alternateName: ['FNTDUG', 'FNTD Userguide'], url: SITE_URL + '/' };
+  } else {
+    const items = [{ '@type': 'ListItem', position: 1, name: SITE_NAME, item: SITE_URL + '/' }];
+    const sec = SEO_SECTIONS[p.split('/')[1]];
+    const canonPath = seoCanon(pathname);
+    if (sec && sec.path !== canonPath) items.push({ '@type': 'ListItem', position: 2, name: sec.name, item: SITE_URL + sec.path });
+    items.push({ '@type': 'ListItem', position: items.length + 1, name: m.title.split(/ \| |: /)[0], item: canonUrl });
+    ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items };
+  }
+  return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
+}
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
 const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><script src="/overhaul/ov.js"><\/script>';
@@ -6767,7 +6860,8 @@ export default {
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
-    const canonUrl = ('https://www.fntduserguide.com' + realPath).replace(/"/g, '%22');
+    const canonUrl = (SITE_URL + seoCanon(realPath)).replace(/"/g, '%22');
+    const seo = pvMissing ? null : seoMeta(realPath);
     const noInfoPanel = realPath === '/privacy-policy' || realPath === '/privacy-policy.html';
     const hasInfo = !noInfoPanel && infoPanelActive(realPath);
     const isOvHome = pvOn && (realPath === '/' || pvMissing);
@@ -6775,7 +6869,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl), { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
         }
@@ -6827,16 +6921,26 @@ export default {
           if (xdActive(realPath)) el.append(XDISMISS_HTML, { html: true });
         }
       });
+    if (seo) {
+      rw = rw.on('title', {
+        element(el) { el.setInnerContent(seo.title); }
+      }).on('meta[name="description"]', {
+        element(el) { el.remove(); }
+      });
+    }
     if (pvOn) {
       rw = rw.on('link[href*="fonts.googleapis.com/css2"]', {
         element(el) { el.setAttribute('href', OV_FONTS); }
       });
     }
-    if (ovLive) {
+    if (ovLive && isOvHome) {
       rw = rw.on('meta[name="robots"]', {
         element(el) { el.remove(); }
       });
     }
+    rw = rw.on('link[rel="canonical"]', {
+      element(el) { el.remove(); }
+    });
     if (ovMirror) {
       rw = rw.on('a[href]', {
         element(el) { const n = ovHref(el.getAttribute('href')); if (n) el.setAttribute('href', n); }

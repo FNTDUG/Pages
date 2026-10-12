@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /notify-send
+Disallow: /poll-admin
+Disallow: /wiki-edit
+Disallow: /push/
+Disallow: /poll/admin
+
+Sitemap: https://www.fntduserguide.com/sitemap.xml
