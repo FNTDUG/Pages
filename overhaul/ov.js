@@ -454,8 +454,10 @@
       var move = function () { pos = slide.x; render(); };
       slide.x = pos;
       nt = g.timeline({ onComplete: function () { nt = null; idle(); } })
-        .to(slide, { x: base + d, duration: 0.42, ease: 'power2.inOut', onUpdate: move })
-        .to(slide, { x: base, duration: 0.62, ease: 'power2.inOut', onUpdate: move });
+        .to(slide, { x: base + d, duration: 0.34, ease: 'power2.inOut', onUpdate: move })
+        .to(slide, { x: base, duration: 0.4, ease: 'power2.inOut', onUpdate: move })
+        .to(slide, { x: base + d, duration: 0.34, ease: 'power2.inOut', onUpdate: move }, '+=0.08')
+        .to(slide, { x: base, duration: 0.55, ease: 'power2.inOut', onUpdate: move });
     }
     box.addEventListener('pointerenter', function (e) {
       if (e.pointerType !== 'mouse') return;

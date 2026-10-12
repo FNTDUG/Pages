@@ -269,6 +269,16 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .tools{grid-template-columns:minmax(0,1fr);--row-item:calc((100vw - 48px - 24px) / 2.3)}
 }
 @media (max-width:768px){
+  html.ov .ug-mn-header{min-height:58px;padding:9px 100px 9px 14px}
+  html.ov .pv-mn-logo{width:34px;height:30px}
+  html.ov .ug-mn-brand{gap:8px}
+  html.ov .ug-mn-brand-name{font-size:12px!important}
+  html.ov .ug-mn-body{padding:6px 0 12px}
+  html.ov .ug-mn-link,html.ov .ug-mn-section-btn{padding:10px 18px!important;font-size:14px!important}
+  html.ov .ug-mn-child{padding:7px 18px 7px 28px!important;font-size:13px!important}
+  html.ov .ug-mn-child.active{padding-left:22px!important}
+  html.ov .ug-mn-discord-wrap{padding:14px 14px 4px}
+  html.ov .ug-mn-discord{padding:10px 12px;font-size:13px}
   html.ov #ug-hamburger{display:flex}
 }
 @media (min-width:769px){
@@ -1449,8 +1459,10 @@ html.talk-on,html.talk-on body{overflow:hidden}
       var move = function () { pos = slide.x; render(); };
       slide.x = pos;
       nt = gsap.timeline({ onComplete: function () { nt = null; idle(); } })
-        .to(slide, { x: base + d, duration: 0.42, ease: 'power2.inOut', onUpdate: move })
-        .to(slide, { x: base, duration: 0.62, ease: 'power2.inOut', onUpdate: move });
+        .to(slide, { x: base + d, duration: 0.34, ease: 'power2.inOut', onUpdate: move })
+        .to(slide, { x: base, duration: 0.4, ease: 'power2.inOut', onUpdate: move })
+        .to(slide, { x: base + d, duration: 0.34, ease: 'power2.inOut', onUpdate: move }, '+=0.08')
+        .to(slide, { x: base, duration: 0.55, ease: 'power2.inOut', onUpdate: move });
     }
     box.addEventListener('pointerenter', function (e) {
       if (e.pointerType !== 'mouse') return;

@@ -408,3 +408,6 @@ html.ov .ov-copy .ug-page-title{font-kerning:none;font-variant-ligatures:none;fo
 html.ov .inf-exp-body{grid-auto-rows:minmax(0,0fr)}
 html.ov-noads #ug-info-panel .inf-ad{height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
 html.ov #ug-info-panel .ad-slot:not(:has(ins[data-ad-status="filled"])) .ug-xd{display:none}
+html.ov #ug-mobile-nav{font-size:17px;line-height:1.6}
+html.ov .ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{color:inherit;opacity:.7}
+html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
