@@ -3682,7 +3682,7 @@ const PV_TIPS = [
   'Click or tap Parvus to open his chat window.'
 ];
 function pvDev(pathname) { return pathname === '/overhaul' || pathname.indexOf('/overhaul/') === 0; }
-function ovReal(pathname) { return pvDev(pathname) ? pathname.slice(9) || '/' : pathname; }
+function ovReal(pathname) { return pvDev(pathname) ? '/' + pathname.slice(9).replace(/^\/+/, '') : pathname; }
 function pvPopupHtml(first) {
   const cfg = { first: first || '', files: PV_POP_FILES, update: PV_UPDATE, tips: PV_TIPS, tipDays: PV_TIP_DAYS };
   return '<script>window.PV_POP=' + JSON.stringify(cfg).replace(/</g, '\\u003c') + ';<\/script>' + PV_POPUP_SCRIPT;
@@ -6763,7 +6763,7 @@ export default {
 
     if (url.pathname.startsWith('/inf-data/')) {
       const feed = url.pathname.slice('/inf-data/'.length);
-      const target = INF_PROXY[feed];
+      const target = Object.prototype.hasOwnProperty.call(INF_PROXY, feed) ? INF_PROXY[feed] : null;
       if (!target) return new Response('Not found', { status: 404 });
       const up = await fetch(target, { cf: { cacheTtl: 300, cacheEverything: true } });
       let body = await up.text();
@@ -6772,7 +6772,7 @@ export default {
         .replace(/pub-bd8c71834de64b078aa68df269b7d92e\.r2\.dev/g, 'items.fntduserguide.com')
         .replace(/pub-71c3b160626949ae8220d0daad5a9fc8\.r2\.dev/g, 'presents.fntduserguide.com')
         .replace(/pub-147ea4ffd88444cba282e819b9168c94\.r2\.dev/g, 'images.fntduserguide.com');
-      const extra = EXTRA_ITEMS[feed];
+      const extra = Object.prototype.hasOwnProperty.call(EXTRA_ITEMS, feed) ? EXTRA_ITEMS[feed] : null;
       if (extra) {
         try {
           const data = JSON.parse(body);
