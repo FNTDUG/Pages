@@ -417,24 +417,6 @@ html.ov .info-card.rowloop.can-drag{cursor:grab}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 
 .ov-dir{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:8px}
-html.ov .ov-card.ov-card--art{padding:0;gap:0;overflow:hidden}
-html.ov .ov-card.ov-card--art>h3{margin:20px 24px 0}
-html.ov .ov-card.ov-card--art>p{margin:10px 24px 0}
-html.ov .ov-card.ov-card--art>.ov-card-go{padding:16px 24px 22px}
-.ov-art{position:relative;display:flex;align-items:flex-end;justify-content:center;height:330px;padding-top:18px;box-sizing:border-box;overflow:hidden;background:var(--c,var(--game));border-bottom:var(--bw) solid var(--ink)}
-.ov-art-pv{position:relative;flex:none;width:210px;height:300px;margin-bottom:-6px;filter:drop-shadow(8px 8px 0 var(--ink))}
-.ov-art-pv--bare{height:222px}
-.ov-art-pv i{position:absolute;left:0;width:210px;height:222px;background:url('/overhaul/mascot-states.png') no-repeat;background-size:4410px 666px;image-rendering:pixelated}
-.ov-pv-b,.ov-pv-e{top:78px}
-.ov-art-pv--bare .ov-pv-b,.ov-art-pv--bare .ov-pv-e{top:0}
-.ov-pv-b{background-position:0 0!important}
-.ov-pv-h{top:0}
-@media (prefers-reduced-motion:no-preference){
-  .ov-art-pv{animation:ovArtBob 1.6s steps(1,end) infinite}
-  .ov-card--art:hover .ov-art-pv{animation:ovArtHop .42s steps(2,end) infinite alternate}
-}
-@keyframes ovArtBob{50%{translate:0 -12px}}
-@keyframes ovArtHop{to{translate:0 -24px}}
 html.ov .f1-dir-grid.ov-quick{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:none;text-align:left}
 html.ov .ov-card.ov-card--row{flex-direction:row;align-items:center;gap:16px;padding:16px 18px}
 html.ov .ov-card.ov-card--row .ov-card-ic--px{width:52px;height:52px;background:var(--surface2)}
@@ -455,5 +437,4 @@ html.ov .ov-card.ov-card--row>.arrow{flex:none;font:700 20px/1 var(--font-body);
 @media (max-width:760px){
   .ov-dir{grid-template-columns:minmax(0,1fr)}
   html.ov .f1-dir-grid.ov-quick{grid-template-columns:minmax(0,1fr);gap:14px}
-  .ov-art{height:300px}
 }

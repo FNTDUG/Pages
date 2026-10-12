@@ -144,10 +144,10 @@
     return { w: w, h: ht, svg: '<svg viewBox="0 0 ' + w + ' ' + ht + '" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>' };
   }
   var SCENES = {
-    '/fntd2/tierlists-1': { eyes: 19, hat: 14, tint: 'yellow', go: 'Open TierLists' },
-    '/fntd2/fntd2-index': { eyes: 0, hat: 12, tint: 'blue', go: 'Open Metas & Info' },
-    '/bbn/bite-by-night-tierlists': { eyes: 0, hat: 15, tint: 'pink', go: 'Open TierLists & Maps' },
-    '/bbn/killer-terminal': { eyes: 10, hat: null, tint: 'green', go: 'Open the Terminals' }
+    '/fntd2/tierlists-1': { tint: 'yellow', go: 'Open TierLists' },
+    '/fntd2/fntd2-index': { tint: 'blue', go: 'Open Metas & Info' },
+    '/bbn/bite-by-night-tierlists': { tint: 'pink', go: 'Open TierLists & Maps' },
+    '/bbn/killer-terminal': { tint: 'green', go: 'Open the Terminals' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
@@ -158,14 +158,13 @@
     Array.prototype.forEach.call(grid.querySelectorAll('.bbn-dir-col'), function (col) {
       var a = col.querySelector('a[href]'), label = col.querySelector('.bbn-dir-label'), desc = col.querySelector('.bbn-dir-desc');
       if (!a) return;
-      var href = a.getAttribute('href'), sc = SCENES[href.replace(/^\/overhaul/, '')] || { eyes: 0, hat: null, tint: 'yellow' };
+      var href = a.getAttribute('href'), sc = SCENES[href.replace(/^\/overhaul/, '')] || { tint: 'yellow' };
       var name = label ? label.textContent.trim() : (a.querySelector('img') || {}).alt || '';
       var card = document.createElement('a');
-      card.className = 'ov-card ov-card--art';
+      card.className = 'ov-card';
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
-      var pv = '<span class="ov-art-pv' + (sc.hat !== null ? '' : ' ov-art-pv--bare') + '"><i class="ov-pv-b"></i><i class="ov-pv-e" style="background-position:' + (-sc.eyes * 210) + 'px -222px"></i>' + (sc.hat !== null ? '<i class="ov-pv-h" style="background-position:' + (-sc.hat * 210) + 'px 0"></i>' : '') + '</span>';
-      card.innerHTML = '<span class="ov-art">' + pv + '</span><h3></h3>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      card.innerHTML = '<span class="ov-card-ic"><i></i></span><h3></h3>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
       card.querySelector('h3').textContent = name;
       if (desc) card.querySelector('p').textContent = desc.textContent.trim();
       out.appendChild(card);
