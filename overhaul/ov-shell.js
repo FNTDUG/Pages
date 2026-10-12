@@ -99,8 +99,10 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && isOpen()) { set(false); g.focus(); }
   });
-  layout();
-  h.classList.add('pv-shell');
+  requestAnimationFrame(function () {
+    layout();
+    h.classList.add('pv-shell');
+  });
   var resizeT = 0;
   window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(layout, 100); }, { passive: true });
   var bell = document.getElementById('ntfBell');

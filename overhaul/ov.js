@@ -2,6 +2,7 @@
   var h = document.documentElement, t;
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   h.classList.add('ov');
+  setTimeout(function () { h.classList.add('ov-ready'); }, 2500);
   if (!/(^|\.)fntduserguide\.com$/.test(location.hostname)) h.classList.add('ov-noads');
   if (!reduced) {
     h.classList.add('ov-pre');
@@ -374,8 +375,10 @@
       f.el.style.transform = 'translate(' + Math.round(f.x - cam.x * k * 2) + 'px,' + Math.round(y - cam.y * k * 2) + 'px)';
     });
   }
+  var ovCol = 0;
   function spot(f, vw) {
-    var col = Math.min(vw, (parseFloat(getComputedStyle(h).getPropertyValue('--ov-col')) || 980) + 48);
+    if (!ovCol) ovCol = parseFloat(getComputedStyle(h).getPropertyValue('--ov-col')) || 980;
+    var col = Math.min(vw, ovCol + 48);
     var room = (vw - col) / 2 - f.w - 12;
     if (room < 8) return Math.random();
     var x = 6 + f.w / 2 + Math.random() * room;
@@ -455,15 +458,16 @@
   }
 
   var SCALE = 0.75;
+  var screenSet = {};
   function sizeScreen() {
     var sc = document.querySelector('.ov-screen'), host = sc && sc.querySelector('[data-parvus-home]');
     if (!host) return;
-    host.style.width = sc.clientWidth / SCALE + 'px';
     var home = document.getElementById('parvusHome');
-    if (!home) return;
-    var hh = home.offsetHeight * SCALE, edge = getComputedStyle(sc).boxSizing === 'border-box' ? sc.offsetHeight - sc.clientHeight : 0;
-    sc.style.minHeight = Math.ceil(hh) + edge + 'px';
-    host.style.top = Math.max(0, Math.round((sc.clientHeight - hh) / 2)) + 'px';
+    var cw = sc.clientWidth, ch = sc.clientHeight, edge = getComputedStyle(sc).boxSizing === 'border-box' ? sc.offsetHeight - ch : 0, hh = home ? home.offsetHeight * SCALE : 0;
+    var w = cw / SCALE + 'px', mh = home ? Math.ceil(hh) + edge + 'px' : '', top = home ? Math.max(0, Math.round((Math.max(ch, Math.ceil(hh)) - hh) / 2)) + 'px' : '';
+    if (screenSet.w !== w) host.style.width = screenSet.w = w;
+    if (home && screenSet.mh !== mh) sc.style.minHeight = screenSet.mh = mh;
+    if (home && screenSet.top !== top) host.style.top = screenSet.top = top;
   }
 
   function chat() {
@@ -532,13 +536,13 @@
   }
 
   function rowLoop(box) {
-    if (!box || !window.Draggable) return;
+    var fine = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+    if (!box || !window.gsap || (!fine && !window.Draggable)) return;
     var g = window.gsap, SPEED = 22;
-    g.registerPlugin(window.Draggable);
+    if (window.Draggable) g.registerPlugin(window.Draggable);
     if (window.InertiaPlugin) g.registerPlugin(window.InertiaPlugin);
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
-    var fine = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     function kids() { return Array.prototype.slice.call(box.children); }
     function wants() {
       var n = kids().filter(function (el) { return !el.classList.contains('is-copy'); }).length, vw = window.innerWidth;
@@ -819,13 +823,18 @@
 
   function ready() {
     if (document.getElementById('pv-theme')) return;
-    drops();
-    cards();
-    directory();
-    quick();
-    hero();
+    try {
+      drops();
+      cards();
+      directory();
+      quick();
+      hero();
+    } finally {
+      h.classList.add('ov-ready');
+    }
     floaters();
-    loadAll(['gsap', 'ScrollTrigger', 'SplitText', 'Draggable', 'InertiaPlugin'].map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }), animate);
+    var touchRows = document.querySelector('.info-card') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+    loadAll(['gsap', 'ScrollTrigger', 'SplitText'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';
@@ -847,7 +856,13 @@
       try { localStorage.setItem('pv-theme', next); } catch (e) {}
       label();
     });
+    var placeT = 0;
     function place() {
+      if (placeT || h.classList.contains('pv-shell')) return;
+      placeT = requestAnimationFrame(function () { placeT = 0; placeNow(); });
+    }
+    function placeNow() {
+      if (h.classList.contains('pv-shell')) return;
       var bell = document.getElementById('ntfBell');
       var ref = bell && !bell.hidden && bell.getClientRects().length ? bell : document.getElementById('ug-sound-btn');
       if (!ref) return;

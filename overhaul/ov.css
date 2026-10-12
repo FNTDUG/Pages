@@ -130,7 +130,8 @@ html.ov #ug-hero-inner{padding:0 24px;max-width:var(--ov-col)}
 
 html.ov .ug-page-title-area{text-align:left;margin:0;padding:0}
 html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}
-.ov-hl{position:relative;display:inline-block;isolation:isolate;padding:calc(.1em + var(--bw)) calc(.12em + var(--bw)) calc(.07em + var(--bw));line-height:1;color:#1d2228}
+.ov-hl{position:relative;top:-.069em;display:inline;isolation:isolate;padding:calc(.048em + var(--bw)) calc(.12em + var(--bw)) calc(.036em + var(--bw));line-height:1;white-space:nowrap;color:#1d2228}
+.ov-hl::after{content:'';display:inline-block;width:0;height:calc(1.067em + var(--bw) * 2);vertical-align:calc(-.07em - var(--bw))}
 .ov-hl-bg{position:absolute;inset:0;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
 html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 10px;font:700 13px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none}
 html.ov .ug-status-badge::before{content:'';width:9px;height:9px;flex:none;background:var(--green);border:2px solid var(--ink)}
@@ -458,3 +459,6 @@ html.ov .ov-card.ov-card--term>.ov-card-go{padding:14px 24px 22px}
 .ov-term-type{position:absolute;inset:0;z-index:0;pointer-events:none}
 .ov-sq{position:absolute;display:block}
 html.ov .ov-card.ov-card--term .ov-term h3{z-index:1}
+html.ov:not(.ov-ready) #ug-hero-inner,html.ov:not(.ov-ready) #ug-content,html.ov:not(.ov-ready) #ug-footer{visibility:hidden}
+html.ov #patchnotesMount{min-height:150vh}
+.ov-screen #mascotEyes{clip-path:inset(15% 5% 40% 15%)}
