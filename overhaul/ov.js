@@ -161,11 +161,11 @@
       var href = a.getAttribute('href'), sc = SCENES[href.replace(/^\/overhaul/, '')] || { tint: 'yellow' };
       var name = label ? label.textContent.trim() : (a.querySelector('img') || {}).alt || '';
       var card = document.createElement('a');
-      card.className = 'ov-card';
+      card.className = 'ov-card ov-card--term';
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
-      card.innerHTML = '<span class="ov-card-ic"><i></i></span><h3></h3>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
-      card.querySelector('h3').textContent = name;
+      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-c" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      card.querySelector('.ov-term-t').textContent = name;
       if (desc) card.querySelector('p').textContent = desc.textContent.trim();
       out.appendChild(card);
     });
