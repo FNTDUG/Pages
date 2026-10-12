@@ -79,7 +79,7 @@
     js.onload = function () {
       var home = document.getElementById('parvusHome');
       sizeScreen();
-      if (home && window.ResizeObserver) new ResizeObserver(sizeScreen).observe(home);
+      if (home && window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(sizeScreen); }).observe(home);
       chat();
     };
     document.body.appendChild(js);
