@@ -414,3 +414,4 @@ html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
 .ov-hero--bare{grid-template-columns:minmax(0,1fr)}
 html.ov .info-card.rowloop{cursor:auto}
 html.ov .info-card.rowloop.can-drag{cursor:grab}
+html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}

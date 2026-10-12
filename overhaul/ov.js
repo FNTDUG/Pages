@@ -699,7 +699,7 @@
     var bell = document.getElementById('ntfBell');
     if (bell && window.MutationObserver) new MutationObserver(place).observe(bell, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
     window.addEventListener('resize', place, { passive: true });
-    load('/overhaul/ov-shell.js');
+    load('/overhaul/ov-shell.js', function () { if (!document.getElementById('pv-gear')) h.classList.add('pv-shell'); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();

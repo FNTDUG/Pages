@@ -105,6 +105,7 @@ html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
 html.ov .pv-mn-logo{width:46px;height:41px}
+html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}
 html.ov .ug-mn-body{flex:1;padding:10px 0 16px}
@@ -1593,6 +1594,6 @@ html.talk-on,html.talk-on body{overflow:hidden}
   setTimeout(start, document.fonts && document.fonts.ready ? 1200 : 0);
 })();
 </script>
-<script src="/overhaul/ov-shell.js" defer></script>
+<script src="/overhaul/ov-shell.js" defer onerror="document.documentElement.classList.add('pv-shell')"></script>
 </body>
 </html>
