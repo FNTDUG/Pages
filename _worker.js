@@ -324,8 +324,8 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 const FOOTER_HTML = `
       <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
       <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
-      <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a></p>
-      <p>&copy; 2025 www.fntduserguide.com</p>`;
+      <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="/privacy-policy#your-privacy-choices" rel="noopener">Your Privacy Choices</a></p>
+      <p>&copy; 2025&ndash;2026 www.fntduserguide.com</p>`;
 
 const SOUND_GOVERNOR = `<script>
 (function(){
@@ -475,6 +475,7 @@ const CONTENT_AD_HTML = `<script>
     ins.className='adsbygoogle';
     ins.style.cssText='display:block;text-align:center';
     ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+    if(navigator.globalPrivacyControl===true)ins.setAttribute('data-restrict-data-processing','1');
     ins.setAttribute('data-ad-slot','${CONTENT_AD_SLOT}');
     ins.setAttribute('data-ad-layout','in-article');
     ins.setAttribute('data-ad-format','fluid');
@@ -553,6 +554,7 @@ const RAIL_HTML = `<script>
     ins.className='adsbygoogle';
     ins.style.cssText='display:inline-block;width:'+railW+'px;height:600px';
     ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+    if(navigator.globalPrivacyControl===true)ins.setAttribute('data-restrict-data-processing','1');
     ins.setAttribute('data-ad-slot','${RAIL_AD_SLOT}');
     r.inner.appendChild(ins);
     try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
@@ -2512,6 +2514,7 @@ function _infAdFill(ph){
   ins.className='adsbygoogle';
   ins.style.cssText='display:block;text-align:center';
   ins.setAttribute('data-ad-client','ca-pub-7017245771068026');
+  if(navigator.globalPrivacyControl===true)ins.setAttribute('data-restrict-data-processing','1');
   var phW=ph.getBoundingClientRect().width;
   if(${PANEL_AD_FLUID ? 'true' : 'false'}&&phW>=250){
     ins.setAttribute('data-ad-slot','${PANEL_AD_SLOT}');
@@ -3190,10 +3193,18 @@ const HOME_ICONS =
   '<meta name="theme-color" content="#681f62">';
 
 const ANALYTICS =
+  '<script>' +
+  '(function(){if(navigator.globalPrivacyControl!==true)return;' +
+  "function tag(n){if(n.nodeType===1&&n.matches&&n.matches('ins.adsbygoogle')&&!n.hasAttribute('data-restrict-data-processing'))n.setAttribute('data-restrict-data-processing','1');}" +
+  "Array.prototype.forEach.call(document.querySelectorAll('ins.adsbygoogle'),tag);" +
+  'new MutationObserver(function(ms){ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes,function(n){tag(n);if(n.querySelectorAll)Array.prototype.forEach.call(n.querySelectorAll(\'ins.adsbygoogle\'),tag);});});}).observe(document.documentElement,{childList:true,subtree:true});' +
+  '})();' +
+  '<\/script>' +
   '<script async src="https://www.googletagmanager.com/gtag/js?id=G-VSK54B7T1G"><\/script>' +
   '<script>' +
   'window.dataLayer = window.dataLayer || [];' +
   'function gtag(){dataLayer.push(arguments);}' +
+  "if (navigator.globalPrivacyControl === true) { gtag('set', 'restricted_data_processing', true); gtag('set', 'allow_ad_personalization_signals', false); }" +
   "gtag('js', new Date());" +
   "gtag('config', 'G-VSK54B7T1G');" +
   '<\/script>';
