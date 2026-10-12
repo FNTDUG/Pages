@@ -8,4 +8,6 @@ html.ov .ov-card p{margin:0;font:400 15px/1.6 var(--font-body);color:var(--mute)
 html.ov .ov-card-go{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:6px;font:700 15px/1.2 var(--font-body);color:var(--text)}
 html.ov .ov-card .arrow{display:inline-block;transition:transform .15s}
 html.ov .ov-card:hover .arrow{transform:translateX(3px)}
+html.ov .ov-card--static{cursor:default}
+html.ov .ov-card--static:hover{transform:none;box-shadow:var(--shadow)}
 @media (prefers-reduced-motion:reduce){html.ov .ov-card,html.ov .ov-card .arrow{transition:none}}

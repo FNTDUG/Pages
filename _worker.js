@@ -2867,7 +2867,7 @@ const WIP_PAGES = {
 };
 function infoPanelActive(pathname) {
   const p = pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
-  return p === '/fntd2' || p.indexOf('/fntd2/') === 0 || p.indexOf('/overhaul/') === 0;
+  return p === '/fntd2' || p.indexOf('/fntd2/') === 0;
 }
 function wipActive(pathname) {
   let p = String(pathname || '').replace(/\.html$/, '').replace(/\/+$/, '');
@@ -3539,7 +3539,39 @@ async function pushSend(request, env) {
 }
 
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
-const PV_OV_PAGES = ['/overhaul', '/overhaul/meta-teams', '/overhaul/unit-engine'];
+const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><script src="/overhaul/ov.js"><\/script>';
+const OV_FONTS = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
+const OV_SKIP = /^\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|wiki-edit|wiki\/api|wiki\/img)(\/|$)/;
+function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
+function ovHref(href) {
+  const m = /^(?:https?:\/\/(?:www\.)?fntduserguide\.com)?(\/(?!\/)[^?#]*)(.*)$/.exec(href || '');
+  if (!m || OV_SKIP.test(m[1]) || !ovPage(m[1])) return null;
+  return '/overhaul' + (m[1] === '/' ? '/' : m[1].replace(/\.html$/i, '')) + m[2];
+}
+function ovLinks(html) {
+  return html.replace(/href="([^"]*)"/g, function (all, h) { const n = ovHref(h); return n ? 'href="' + n + '"' : all; });
+}
+let OV_NAV = null;
+function ovNav() {
+  if (!OV_NAV) OV_NAV = { mobile: ovLinks(MOBILE_NAV_BODY), desktop: ovLinks(DESKTOP_NAV_INNER), footer: ovLinks(FOOTER_HTML) };
+  return OV_NAV;
+}
+const OV_MIRROR_SCRIPT = `<script>
+(function () {
+  var P = '/overhaul', skip = /^\\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|wiki-edit|wiki\\/api|wiki\\/img)(\\/|$)/;
+  function fix(e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var u;
+    try { u = new URL(a.getAttribute('href'), location.href); } catch (x) { return; }
+    if (u.origin !== location.origin && !/^(www\\.)?fntduserguide\\.com$/.test(u.hostname)) return;
+    if (skip.test(u.pathname) || (/\\.[a-z0-9]+$/i.test(u.pathname) && !/\\.html$/i.test(u.pathname))) return;
+    a.setAttribute('href', P + (u.pathname === '/' ? '/' : u.pathname.replace(/\\.html$/i, '')) + u.search + u.hash);
+  }
+  ['pointerdown', 'focusin', 'contextmenu', 'click'].forEach(function (t) { document.addEventListener(t, fix, true); });
+})();
+<\/script>`;
 const PV_UPDATE = {
   version: '2026-10-11',
   items: [
@@ -3557,6 +3589,7 @@ const PV_TIPS = [
   'Click or tap Parvus to open his chat window.'
 ];
 function pvDev(pathname) { return pathname === '/overhaul' || pathname.indexOf('/overhaul/') === 0; }
+function ovReal(pathname) { return pvDev(pathname) ? pathname.slice(9) || '/' : pathname; }
 function pvPopupHtml(first) {
   const cfg = { first: first || '', files: PV_POP_FILES, update: PV_UPDATE, tips: PV_TIPS, tipDays: PV_TIP_DAYS };
   return '<script>window.PV_POP=' + JSON.stringify(cfg).replace(/</g, '\\u003c') + ';<\/script>' + PV_POPUP_SCRIPT;
@@ -3597,8 +3630,9 @@ const PV_POPUP_SCRIPT = `<script>
     }
     if (name === '404') {
       var ov = root.querySelector('.px-overlay');
-      if (ov) ov.setAttribute('data-close-to', '/overhaul/');
-      Array.prototype.forEach.call(text.querySelectorAll('a.px-btn[href="/"]'), function (a) { a.setAttribute('href', '/overhaul/'); });
+      var home = location.pathname.indexOf('/overhaul') === 0 ? '/overhaul/' : '/';
+      if (ov) ov.setAttribute('data-close-to', home);
+      Array.prototype.forEach.call(text.querySelectorAll('a.px-btn[href="/"]'), function (a) { a.setAttribute('href', home); });
     }
   }
   function mount(name, html, opts) {
@@ -3801,7 +3835,7 @@ const NOTIFY_HTML = `
   var panel = document.getElementById('ntfPanel');
   var content = document.getElementById('ntfContent');
   var bell = document.getElementById('ntfBell');
-  var desktop = window.matchMedia(location.pathname === '/overhaul' || location.pathname.indexOf('/overhaul/') === 0 ? 'all' : '(min-width: 769px)');
+  var desktop = window.matchMedia(document.documentElement.classList.contains('ov') ? 'all' : '(min-width: 769px)');
   var auto = veil.getAttribute('data-auto') === '1';
   var state = '';
   var prevOverflow = '';
@@ -5089,7 +5123,7 @@ const POLL_HTML = `
   var DELAY = 2;
   var panel = document.getElementById('pollPanel');
   var content = document.getElementById('pollContent');
-  var desktop = window.matchMedia(location.pathname === '/overhaul' || location.pathname.indexOf('/overhaul/') === 0 ? 'all' : '(min-width: 769px)');
+  var desktop = window.matchMedia(document.documentElement.classList.contains('ov') ? 'all' : '(min-width: 769px)');
   var poll = null;
   var picks = [];
   var answers = [];
@@ -5385,7 +5419,7 @@ const POLL_HTML = `
   else if (desktop.addListener) desktop.addListener(lockScroll);
 
   function inScope(scope) {
-    var path = location.pathname.toLowerCase();
+    var path = location.pathname.toLowerCase().replace(/^\\/overhaul(?=\\/|$)/, '');
     if (scope === 'fntd2') return path.indexOf('/fntd2') === 0;
     if (scope === 'bbn') return path.indexOf('/bbn') === 0 || path.indexOf('bbn-patch-notes') !== -1;
     return true;
@@ -6693,29 +6727,58 @@ export default {
       popHeaders.set('x-robots-tag', 'noindex');
       return new Response(pop.body, { status: pop.status, headers: popHeaders });
     }
-    const pvMissing = pvDev(url.pathname) && !/\.[a-z0-9]+$/i.test(url.pathname) && PV_OV_PAGES.indexOf(url.pathname.replace(/\/+$/, '')) === -1;
+    const ovLive = env.OV_LIVE === '1';
+    const ovMirror = pvDev(url.pathname) && ovPage(url.pathname);
+    const movedTo = OV_MOVED[url.pathname.replace(/\/+$/, '')] || (url.pathname.indexOf('/overhaul/unit-engine/') === 0 ? '/overhaul/fntd2' + url.pathname.slice(9) : '');
+    if (ovMirror && (ovLive || movedTo)) {
+      const dest = ovLive ? ovReal(movedTo || url.pathname) : movedTo;
+      return Response.redirect(new URL(dest + url.search, url).toString(), 301);
+    }
+    const pvOn = ovLive || ovMirror;
+    const realPath = ovMirror ? ovReal(url.pathname) : url.pathname;
+    const realUrl = new URL(realPath + url.search, url);
 
-    let assetReq = request;
+    let assetReq = ovMirror ? new Request(realUrl.toString(), request) : request;
     const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
-      if (url.pathname.indexOf(_deepBases[_i] + '/') === 0) {
+      if (realPath.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
         break;
       }
     }
-    if (pvMissing) assetReq = new Request(new URL('/overhaul/', url).toString(), request);
+    if (pvOn && realPath === '/') assetReq = new Request(new URL('/overhaul/', url).toString(), request);
 
-    const response = await env.ASSETS.fetch(assetReq);
+    let response = await env.ASSETS.fetch(assetReq);
+    if (ovMirror && response.status >= 300 && response.status < 400) {
+      const loc = response.headers.get('location');
+      const to = loc ? ovHref(new URL(loc, realUrl).pathname) : null;
+      if (to) return Response.redirect(new URL(to + url.search, url).toString(), response.status === 308 ? 301 : response.status);
+      return response;
+    }
+    let pvMissing = false;
+    if (pvOn && realPath !== '/' && response.status === 200 && ovPage(realPath)) {
+      const tag = response.headers.get('etag');
+      const root = tag ? await env.ASSETS.fetch(new Request(new URL('/', url).toString(), { headers: { accept: 'text/html' } })) : null;
+      if (root && root.headers.get('etag') === tag) {
+        pvMissing = true;
+        response = await env.ASSETS.fetch(new Request(new URL('/overhaul/', url).toString(), request));
+      }
+    }
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
-    const canonUrl = ('https://www.fntduserguide.com' + url.pathname).replace(/"/g, '%22');
-    const noInfoPanel = url.pathname === '/privacy-policy' || url.pathname === '/privacy-policy.html';
-    const hasInfo = !noInfoPanel && infoPanelActive(url.pathname);
-    const pvOn = pvDev(url.pathname);
-    const out = new HTMLRewriter()
+    const canonUrl = ('https://www.fntduserguide.com' + realPath).replace(/"/g, '%22');
+    const noInfoPanel = realPath === '/privacy-policy' || realPath === '/privacy-policy.html';
+    const hasInfo = !noInfoPanel && infoPanelActive(realPath);
+    const isOvHome = pvOn && (realPath === '/' || pvMissing);
+    const nav = ovMirror ? ovNav() : { mobile: MOBILE_NAV_BODY, desktop: DESKTOP_NAV_INNER, footer: FOOTER_HTML };
+    let rw = new HTMLRewriter()
       .on('head', {
-        element(el) { el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true }); }
+        element(el) {
+          el.append(NAV_CSS, { html: true }); el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
+          if (ovMirror && !isOvHome) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
+        }
       })
       .on('link[rel="icon"]', {
         element(el) {
@@ -6731,13 +6794,13 @@ export default {
         element(el) { el.setAttribute('src', 'https://images.fntduserguide.com/glowy.webp'); }
       })
       .on('.ug-mn-body', {
-        element(el) { el.setInnerContent(MOBILE_NAV_BODY, { html: true }); }
+        element(el) { el.setInnerContent(nav.mobile, { html: true }); }
       })
       .on('.ug-tn-inner', {
-        element(el) { el.setInnerContent(DESKTOP_NAV_INNER, { html: true }); }
+        element(el) { el.setInnerContent(nav.desktop, { html: true }); }
       })
       .on('footer#ug-footer', {
-        element(el) { el.setInnerContent(FOOTER_HTML, { html: true }); }
+        element(el) { el.setInnerContent(nav.footer, { html: true }); }
       })
       .on('body', {
         element(el) {
@@ -6754,13 +6817,31 @@ export default {
           if (hasInfo) el.append(INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append(ACTIVE_SCRIPT, { html: true });
-            if (!pvOn && wipActive(url.pathname)) el.append(WIP_HTML, { html: true });
+            if (!pvOn && wipActive(realPath)) el.append(WIP_HTML, { html: true });
           }
-          if (pvOn) el.append(pvPopupHtml(pvMissing ? '404' : wipActive(url.pathname.replace(/^\/overhaul/, '/fntd2')) ? 'wip' : ''), { html: true });
-          if (xdActive(url.pathname)) el.append(XDISMISS_HTML, { html: true });
+          if (pvOn) el.append(pvPopupHtml(pvMissing ? '404' : wipActive(realPath) ? 'wip' : ''), { html: true });
+          if (ovMirror) el.append(OV_MIRROR_SCRIPT, { html: true });
+          if (xdActive(realPath)) el.append(XDISMISS_HTML, { html: true });
         }
-      })
-      .transform(response);
+      });
+    if (pvOn) {
+      rw = rw.on('link[href*="fonts.googleapis.com/css2"]', {
+        element(el) { el.setAttribute('href', OV_FONTS); }
+      });
+    }
+    if (ovLive) {
+      rw = rw.on('meta[name="robots"]', {
+        element(el) { el.remove(); }
+      });
+    }
+    if (ovMirror) {
+      rw = rw.on('a[href]', {
+        element(el) { const n = ovHref(el.getAttribute('href')); if (n) el.setAttribute('href', n); }
+      }).on('[onclick*="location.href=\'/"]', {
+        element(el) { el.setAttribute('onclick', el.getAttribute('onclick').replace(/location\.href='\/(?!overhaul)/g, "location.href='/overhaul/")); }
+      });
+    }
+    const out = rw.transform(response);
     return pvMissing ? new Response(out.body, { status: 404, headers: out.headers }) : out;
   }
 };

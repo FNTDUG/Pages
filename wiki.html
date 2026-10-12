@@ -44,7 +44,7 @@
   var titleEl = document.querySelector('.ug-page-title');
   var descEl = document.querySelector('.ug-page-desc');
   var badge = document.getElementById('wkvBadge');
-  var slug = decodeURIComponent(location.pathname.replace(/^\/wiki\/?/, '').replace(/\/+$/, '')).toLowerCase();
+  var slug = decodeURIComponent(location.pathname.replace(/^(\/overhaul)?\/wiki\/?/, '').replace(/\/+$/, '')).toLowerCase();
   var esc = WikiBlocks.esc;
 
   function day(t) {
