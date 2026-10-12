@@ -104,7 +104,7 @@ html.ov #ug-mobile-nav{position:fixed;top:0;right:0;bottom:0;width:min(290px,88v
 html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
-html.ov .pv-mn-logo{width:56px;height:46px;image-rendering:pixelated}
+html.ov .pv-mn-logo{width:60px;height:50px;image-rendering:pixelated}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}
@@ -276,8 +276,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .tools{grid-template-columns:minmax(0,1fr);--row-item:calc((100vw - 48px - 24px) / 2.3)}
 }
 @media (max-width:768px){
-  html.ov .ug-mn-header{min-height:58px;padding:6px 100px 6px 14px}
-  html.ov .pv-mn-logo{width:56px;height:46px}
+  html.ov .ug-mn-header{min-height:58px;padding:4px 100px 4px 12px}
+  html.ov .pv-mn-logo{width:60px;height:50px}
   html.ov .ug-mn-brand{gap:8px}
   html.ov .ug-mn-brand-name{font-size:12px!important}
   html.ov .ug-mn-body{padding:6px 0 12px}
@@ -327,7 +327,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
     <div class="ug-mn-header">
       <div class="ug-mn-brand">
-        <img class="pv-mn-logo" src="/overhaul/parvus_fntdug_px.png" alt="" width="56" height="46">
+        <img class="pv-mn-logo" src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50">
         <span class="ug-mn-brand-name">FNTD User Guide</span>
       </div>
       <button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button>

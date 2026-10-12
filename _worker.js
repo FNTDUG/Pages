@@ -6899,7 +6899,7 @@ export default {
       })
       .on('img.ug-mn-brand-logo', {
         element(el) {
-          if (pvOn) { el.setAttribute('src', '/overhaul/parvus_fntdug_px.png'); el.setAttribute('class', 'ug-mn-brand-logo pv-mn-logo'); el.setAttribute('width', '56'); el.setAttribute('height', '46'); el.setAttribute('alt', ''); }
+          if (pvOn) { el.setAttribute('src', '/overhaul/parvus_fntdug_px.png?v=2'); el.setAttribute('class', 'ug-mn-brand-logo pv-mn-logo'); el.setAttribute('width', '60'); el.setAttribute('height', '50'); el.setAttribute('alt', ''); }
           else el.setAttribute('src', 'https://images.fntduserguide.com/glowy.webp');
         }
       })
@@ -6924,7 +6924,7 @@ export default {
           el.append(REWARD_TIP, { html: true });
           el.append(RAIL_HTML, { html: true });
           el.append(CONTENT_AD_HTML, { html: true });
-          if (hasInfo) el.append(pvOn ? INFO_HTML.replace('<img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD">', '<img class="ug-mn-brand-logo pv-mn-logo" src="/overhaul/parvus_fntdug_px.png" alt="" width="56" height="46">') : INFO_HTML, { html: true });
+          if (hasInfo) el.append(pvOn ? INFO_HTML.replace('<img class="ug-mn-brand-logo" src="https://images.fntduserguide.com/glowy.webp" alt="FNTD">', '<img class="ug-mn-brand-logo pv-mn-logo" src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50">') : INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append(ACTIVE_SCRIPT, { html: true });
             if (!pvOn && wipActive(realPath)) el.append(WIP_HTML, { html: true });
