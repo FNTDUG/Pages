@@ -104,7 +104,7 @@ html.ov #ug-mobile-nav{position:fixed;top:0;right:0;bottom:0;width:min(290px,88v
 html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
-html.ov .pv-mn-logo{width:46px;height:41px}
+html.ov .pv-mn-logo{width:56px;height:46px;image-rendering:pixelated}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}
@@ -139,6 +139,7 @@ html.ov #ug-footer a:hover{color:var(--acc)}
 .btn-sponsor{background:var(--green);color:#10260f;cursor:pointer}
 .btn-sponsor:hover{background:#9be59f;color:#10260f}
 .sponsor-case{width:21px;height:16px;flex:none;fill:currentColor}
+.ov-card-go .sponsor-case{width:18px;height:14px}
 .arrow{display:inline-block;transition:transform .15s}
 a:hover>.arrow,.game:hover .arrow{transform:translateX(3px)}
 
@@ -275,8 +276,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .tools{grid-template-columns:minmax(0,1fr);--row-item:calc((100vw - 48px - 24px) / 2.3)}
 }
 @media (max-width:768px){
-  html.ov .ug-mn-header{min-height:58px;padding:9px 100px 9px 14px}
-  html.ov .pv-mn-logo{width:34px;height:30px}
+  html.ov .ug-mn-header{min-height:58px;padding:6px 100px 6px 14px}
+  html.ov .pv-mn-logo{width:56px;height:46px}
   html.ov .ug-mn-brand{gap:8px}
   html.ov .ug-mn-brand-name{font-size:12px!important}
   html.ov .ug-mn-body{padding:6px 0 12px}
@@ -326,7 +327,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   <div id="ug-mobile-nav" role="navigation" aria-label="Mobile navigation">
     <div class="ug-mn-header">
       <div class="ug-mn-brand">
-        <img class="pv-mn-logo" src="/overhaul/parvus_fntdug.png" alt="" width="46" height="41">
+        <img class="pv-mn-logo" src="/overhaul/parvus_fntdug_px.png" alt="" width="56" height="46">
         <span class="ug-mn-brand-name">FNTD User Guide</span>
       </div>
       <button class="ug-mn-close" onclick="ugMobileClose()" aria-label="Close menu">&#x2715;</button>
@@ -492,6 +493,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <button class="ov-card reveal" id="pvNotify" type="button" style="--c:var(--blue)"><span class="ov-card-ic"><i></i></span><h3>Notifications</h3><p>Get a ping when a game you follow updates.</p><span class="ov-card-go">Turn them on <span class="arrow" aria-hidden="true">&rarr;</span></span></button>
             <a class="ov-card reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="ov-card-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="ov-card-go">Join the Discord <span class="arrow" aria-hidden="true">&rarr;</span></span></a>
             <a class="ov-card reveal" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="ov-card-ic"><i></i></span><h3>Support us</h3><p>Help keep the guide free and up to date.</p><span class="ov-card-go">Support on Ko-fi <span class="arrow" aria-hidden="true">&nearr;</span></span></a>
+            <button class="ov-card reveal" type="button" style="--c:var(--green)" title="Sponsorship info coming soon"><span class="ov-card-ic"><i></i></span><h3>Sponsor</h3><p>Partner with the guide and reach its players.</p><span class="ov-card-go">Coming soon <svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg></span></button>
           </div>
         </div>
       </section>

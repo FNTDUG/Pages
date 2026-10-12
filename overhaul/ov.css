@@ -77,7 +77,7 @@ html.ov #ug-mobile-nav{position:fixed;top:0;right:0;bottom:0;width:min(290px,88v
 html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
-html.ov .pv-mn-logo{width:46px;height:41px}
+html.ov .pv-mn-logo{width:56px;height:46px;image-rendering:pixelated}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}
 html.ov .ug-mn-body{flex:1;padding:10px 0 16px}
@@ -256,8 +256,8 @@ html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
   html.ov #ug-hamburger{display:flex}
   html.ov .inf-modes{gap:8px;padding:34px 14px 0!important}
   html.ov #ug-info-panel{width:min(290px,88vw)}
-  html.ov .ug-mn-header{min-height:58px;padding:9px 100px 9px 14px}
-  html.ov .pv-mn-logo{width:34px;height:30px}
+  html.ov .ug-mn-header{min-height:58px;padding:6px 100px 6px 14px}
+  html.ov .pv-mn-logo{width:56px;height:46px}
   html.ov .ug-mn-brand{gap:8px}
   html.ov .ug-mn-brand-name{font-size:12px!important}
   html.ov .ug-mn-body{padding:6px 0 12px}
