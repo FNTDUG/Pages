@@ -143,6 +143,101 @@
     }
     return { w: w, h: ht, svg: '<svg viewBox="0 0 ' + w + ' ' + ht + '" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>' };
   }
+  var PROPS = {
+    tierboard: ['mmmmmmmmmmmmmmm', 'mrrmccmccmccmmm', 'mrrmccmccmccmmm', 'mmmmmmmmmmmmmmm', 'myymccmccmmmmmm', 'myymccmccmmmmmm', 'mmmmmmmmmmmmmmm', 'mnnmccmmmmmmmmm', 'mnnmccmmmmmmmmm', 'mmmmmmmmmmmmmmm'],
+    terminal: ['mmmmmmmmmmmmmmmm', 'mvvvvvvvvvvvvvvm', 'mvccvvvvvvvvvvvm', 'mvvvvvvvvvvvvvvm', 'mvcccvccvvvvvvvm', 'mvvvvvvvvvvvvvvm', 'mvccvvvvvvvvvvvm', 'mvvvvvvvvnvvvvvm', 'mmmmmmmmmmmmmmmm', 'mmmmmmmmmmmrmnmm', '.....mmmmmm.....', '...mmmmmmmmmm...'],
+    map: ['ccccmccccmccccc', 'cnncmccccmccccc', 'cnncmccrrmccrcr', 'ccccmcrccmcccrc', 'ccccmrcccmccrcr', 'cccrmccccmccccc', 'ccrcmccccmccccc', 'crccmccnnmccccc', 'ccccmccnnmccccc', 'ccccmccccmccccc']
+  };
+  function art2(rows) {
+    var a = art(rows), w = a.w + 2, ht = a.h + 2, g = [], x, y, i, j;
+    var inner = a.svg.match(/<rect[^>]*>/g) || [];
+    var cells = {};
+    inner.forEach(function (r) {
+      var m = /class="(\w)" x="(\d+)" y="(\d+)" width="(\d+)"/.exec(r);
+      for (var k = 0; k < +m[4]; k++) cells[(+m[2] + k + 1) + ',' + (+m[3] + 1)] = m[1];
+    });
+    var rects = '';
+    for (y = 0; y < ht; y++) for (x = 0; x < w; x++) {
+      var c = cells[x + ',' + y];
+      if (!c) {
+        for (i = -1; i <= 1 && !c; i++) for (j = -1; j <= 1 && !c; j++) if (cells[(x + j) + ',' + (y + i)] === 'k') c = 'w';
+      }
+      if (c) rects += '<rect class="' + c + '" x="' + x + '" y="' + y + '" width="1" height="1"/>';
+    }
+    return { w: w, h: ht, svg: '<svg viewBox="0 0 ' + w + ' ' + ht + '" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>' };
+  }
+  function prop(name, u) {
+    var a = art2(PROPS[name] || SPRITES[name]);
+    return '<span class="ov-art-prop" style="width:' + a.w * u + 'px;height:' + a.h * u + 'px">' + a.svg + '</span>';
+  }
+  var SCENES = {
+    '/fntd2/tierlists-1': { eyes: 19, hat: 14, props: ['tierboard', 'trophy'], tint: 'yellow', go: 'Open TierLists' },
+    '/fntd2/fntd2-index': { eyes: 0, hat: 12, props: ['file', 'lens'], tint: 'blue', go: 'Open Metas & Info' },
+    '/bbn/bite-by-night-tierlists': { eyes: 0, hat: 15, props: ['map'], tint: 'pink', go: 'Open TierLists & Maps' },
+    '/bbn/killer-terminal': { eyes: 10, hat: null, props: ['terminal'], tint: 'green', go: 'Open the Terminals' }
+  };
+  function directory() {
+    var grid = document.querySelector('#ug-content .bbn-dir-grid');
+    if (!grid || grid.getAttribute('data-ov')) return;
+    grid.setAttribute('data-ov', '1');
+    var out = document.createElement('div');
+    out.className = 'ov-dir';
+    Array.prototype.forEach.call(grid.querySelectorAll('.bbn-dir-col'), function (col) {
+      var a = col.querySelector('a[href]'), label = col.querySelector('.bbn-dir-label'), desc = col.querySelector('.bbn-dir-desc');
+      if (!a) return;
+      var href = a.getAttribute('href'), sc = SCENES[href.replace(/^\/overhaul/, '')] || { eyes: 0, hat: null, props: ['sparkle'], tint: 'yellow' };
+      var name = label ? label.textContent.trim() : (a.querySelector('img') || {}).alt || '';
+      var card = document.createElement('a');
+      card.className = 'ov-card ov-card--art';
+      card.href = href;
+      card.style.setProperty('--c', 'var(--' + sc.tint + ')');
+      var pv = '<span class="ov-art-pv"><i class="ov-pv-b"></i><i class="ov-pv-e" style="background-position:' + (-sc.eyes * 105) + 'px -111px"></i>' + (sc.hat !== null ? '<i class="ov-pv-h" style="background-position:' + (-sc.hat * 105) + 'px 0"></i>' : '') + '</span>';
+      card.innerHTML = '<span class="ov-art">' + pv + '<span class="ov-art-props">' + sc.props.map(function (n) { return prop(n, 6); }).join('') + '</span></span><h3></h3>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      card.querySelector('h3').textContent = name;
+      if (desc) card.querySelector('p').textContent = desc.textContent.trim();
+      out.appendChild(card);
+    });
+    grid.parentNode.replaceChild(out, grid);
+  }
+  var QUICK = {
+    '/fntd1/charts-tierlists': ['pie', 'Top units for every role'],
+    '/fntd1/other-charts': ['file', 'Titles and attack types'],
+    '/fntd1/tierlists': ['trophy', 'Best picks for each slot'],
+    '/fntd1/meta-teams': ['pad', 'Best team for every mode'],
+    '/fntd1/pvp-ranked': ['gg', 'Final PvP tier list'],
+    '/fntd1/boss-raids': ['heart', 'Teams, maps and modifiers'],
+    '/fntd1/endless': ['signal', 'Meta team and map rewards'],
+    '/fntd1/event-endless': ['sparkle', 'Event team and rewards'],
+    '/fntd1/night-shift': ['bell', 'Teams and placements'],
+    '/fntd2/unit-engine': ['gear', 'Stats, DPS and values'],
+    '/fntd2/trade-calculator': ['coin', 'Check if a trade is fair'],
+    '/fntd2/story-index': ['bookmark', 'Rewards and best nights'],
+    '/fntd2/endless-index': ['signal', 'Teams and rewards per game'],
+    '/fntd2/boss-raids-index': ['trophy', 'Teams, placements and OMC'],
+    '/fntd2/challenges': ['key', 'Maps, rewards and teams'],
+    '/fntd2/event-story-endless': ['sparkle', 'Current event teams']
+  };
+  function quick() {
+    var grid = document.querySelector('#ug-content .f1-dir-grid');
+    if (!grid || grid.getAttribute('data-ov')) return;
+    grid.setAttribute('data-ov', '1');
+    grid.classList.add('ov-quick');
+    Array.prototype.forEach.call(grid.querySelectorAll('a.f1-dir-btn'), function (a) {
+      var href = a.getAttribute('href'), key = href.replace(/^\/overhaul/, '').replace(/^https?:\/\/[^/]+/, ''), ext = /^https?:/.test(href) && href.indexOf(location.host) === -1;
+      var q = QUICK[key] || (ext ? ['coin', 'Value Central calculator'] : ['sparkle', '']);
+      var name = (a.querySelector('img') || {}).alt || a.textContent.trim();
+      var card = document.createElement('a');
+      card.className = 'ov-card ov-card--row';
+      card.href = href;
+      if (a.target) { card.target = a.target; card.rel = a.rel || 'noopener noreferrer'; }
+      var ic = art(SPRITES[q[0]] || SPRITES.sparkle);
+      card.innerHTML = '<span class="ov-card-ic ov-card-ic--px"><span style="width:' + ic.w * 2 + 'px;height:' + ic.h * 2 + 'px">' + ic.svg + '</span></span><span class="ov-row-text"><h3></h3>' + (q[1] ? '<p></p>' : '') + '</span><span class="arrow" aria-hidden="true">' + (ext ? '&#8599;' : '&rarr;') + '</span>';
+      card.querySelector('h3').textContent = name.replace(/\s*\/\s*/g, ' / ');
+      if (q[1]) card.querySelector('p').textContent = q[1];
+      a.parentNode.replaceChild(card, a);
+    });
+  }
+
   function sticker(name, u, cls) {
     var a = art(SPRITES[name]), el = document.createElement('div');
     el.className = cls;
@@ -665,6 +760,8 @@
     if (document.getElementById('pv-theme')) return;
     drops();
     cards();
+    directory();
+    quick();
     hero();
     floaters();
     loadAll(['gsap', 'ScrollTrigger', 'SplitText', 'Draggable', 'InertiaPlugin'].map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }), animate);

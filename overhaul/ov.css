@@ -415,3 +415,48 @@ html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
 html.ov .info-card.rowloop{cursor:auto}
 html.ov .info-card.rowloop.can-drag{cursor:grab}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
+
+.ov-dir{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:8px}
+html.ov .ov-card.ov-card--art{padding:0;gap:0;overflow:hidden}
+html.ov .ov-card.ov-card--art>h3{margin:20px 24px 0}
+html.ov .ov-card.ov-card--art>p{margin:10px 24px 0}
+html.ov .ov-card.ov-card--art>.ov-card-go{padding:16px 24px 22px}
+.ov-art{position:relative;display:flex;align-items:flex-end;justify-content:center;gap:22px;height:230px;padding:0 20px 22px;box-sizing:border-box;overflow:hidden;background:#070b14 var(--ph-tile-back) 0 0/768px 144px repeat;image-rendering:pixelated;border-bottom:var(--bw) solid var(--ink)}
+.ov-art::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--c,var(--game));border-top:var(--bw) solid var(--ink)}
+.ov-art-pv{position:relative;z-index:1;flex:none;width:105px;height:150px;margin-bottom:-4px}
+.ov-art-pv i{position:absolute;left:0;width:105px;height:111px;background:url('/overhaul/mascot-states.png') no-repeat;background-size:2205px 333px;image-rendering:pixelated}
+.ov-pv-b,.ov-pv-e{top:39px}
+.ov-pv-b{background-position:0 0!important}
+.ov-pv-h{top:0}
+.ov-art-props{position:relative;z-index:1;display:flex;align-items:flex-end;gap:10px}
+.ov-art-prop{display:block;flex:none}
+.ov-art-prop svg,.ov-card-ic--px svg{display:block;width:100%;height:100%}
+.ov-art .k,.ov-card-ic--px .k{fill:#06050a}
+.ov-art .w{fill:#fafafa}
+.ov-art .c,.ov-card-ic--px .c{fill:#f7f0e4}
+.ov-art .m,.ov-card-ic--px .m{fill:#bdb5cb}
+.ov-art .g,.ov-card-ic--px .g{fill:var(--c,var(--game))}
+.ov-art .y,.ov-card-ic--px .y{fill:#ffd23f}
+.ov-art .b,.ov-card-ic--px .b{fill:#8cc0ef}
+.ov-art .r,.ov-card-ic--px .r{fill:#e5484d}
+.ov-art .n,.ov-card-ic--px .n{fill:#86d98a}
+.ov-art .v{fill:#16207a}
+@media (prefers-reduced-motion:no-preference){
+  .ov-art-pv{animation:ovArtBob 1.6s steps(1,end) infinite}
+  .ov-card--art:hover .ov-art-pv{animation:ovArtHop .42s steps(3,end) infinite alternate}
+}
+@keyframes ovArtBob{50%{translate:0 -6px}}
+@keyframes ovArtHop{to{translate:0 -18px}}
+html.ov .f1-dir-grid.ov-quick{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:none;text-align:left}
+html.ov .ov-card.ov-card--row{flex-direction:row;align-items:center;gap:16px;padding:16px 18px}
+html.ov .ov-card.ov-card--row .ov-card-ic--px{width:52px;height:52px;background:var(--surface2)}
+html.ov .ov-card.ov-card--row .ov-card-ic--px>span{display:block}
+html.ov .ov-row-text{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+html.ov .ov-card.ov-card--row h3{margin:0;font-size:18px}
+html.ov .ov-card.ov-card--row p{font-size:14px;line-height:1.4}
+html.ov .ov-card.ov-card--row>.arrow{flex:none;font:700 20px/1 var(--font-body);color:var(--text)}
+@media (max-width:760px){
+  .ov-dir{grid-template-columns:minmax(0,1fr)}
+  html.ov .f1-dir-grid.ov-quick{grid-template-columns:minmax(0,1fr);gap:14px}
+  .ov-art{height:210px}
+}
