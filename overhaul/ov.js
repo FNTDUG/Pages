@@ -536,7 +536,7 @@
       stopAuto();
       var el = e.target.closest ? e.target.closest('.rowloop > *') : null;
       var i = items.indexOf(el);
-      if (i >= 0) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
+      if (i >= 0 && e.target.matches && e.target.matches(':focus-visible')) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
     });
     box.addEventListener('keydown', stopAuto);
     var outsideAt = -1e9, wheelTo = null, wheelT = 0;
