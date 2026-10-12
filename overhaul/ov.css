@@ -441,7 +441,12 @@ html.ov .ov-card.ov-card--row>.arrow{flex:none;font:700 20px/1 var(--font-body);
 
 html.ov .ov-card.ov-card--term{padding:0;gap:0;overflow:hidden}
 .ov-term-frame{display:block;padding:8px;background:var(--c,var(--game));border-bottom:var(--bw) solid var(--ink)}
-.ov-term{display:flex;align-items:center;gap:12px;min-height:150px;padding:24px 22px;box-sizing:border-box;background:#070b14 var(--ph-tile-back) 0 0/768px 144px repeat;image-rendering:pixelated;border:var(--bw) solid var(--ink)}
+.ov-term{position:relative;isolation:isolate;display:flex;align-items:center;gap:12px;min-height:150px;padding:24px 22px;box-sizing:border-box;overflow:hidden;background:#070b14;border:var(--bw) solid var(--ink)}
+.ov-term::before,.ov-term::after{content:'';position:absolute;inset:0;z-index:-1;background-repeat:repeat;background-size:1152px 216px;image-rendering:pixelated;pointer-events:none}
+.ov-term::before{background-image:var(--ph-tile-back)}
+.ov-term::after{background-image:var(--ph-tile-front)}
+@media (prefers-reduced-motion:no-preference){.ov-term::before{animation:ovTermScroll 9.6s steps(12,end) infinite}}
+@keyframes ovTermScroll{from{background-position:0 0}to{background-position:0 -216px}}
 .ov-term-p{position:absolute;left:0;top:0;color:var(--c,var(--game))}
 html.ov .ov-card.ov-card--term .ov-term h3{position:relative;padding-left:1.05em;margin:0;min-width:0;font:400 clamp(26px,3vw,34px)/1.1 var(--font-head);letter-spacing:0;text-transform:uppercase;color:#f7f0e4;overflow-wrap:anywhere}
 .ov-term-c{display:inline-block;width:.5em;height:.85em;margin-left:.22em;vertical-align:-.06em;background:var(--c,var(--game))}
