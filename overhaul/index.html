@@ -105,6 +105,16 @@ html.ov #ug-mobile-nav.open{transform:translateX(0)}
 html.ov .ug-mn-header{display:flex;align-items:center;justify-content:space-between;min-height:70px;padding:12px 116px 12px 16px;background:var(--acc);border-bottom:var(--bw) solid var(--ink);flex-shrink:0}
 html.ov .ug-mn-brand{display:flex;align-items:center;gap:10px}
 html.ov .pv-mn-logo{width:46px;height:41px}
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  ::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal;animation-duration:.36s;animation-fill-mode:both}
+  ::view-transition-old(root){animation-name:ovVtOld;animation-timing-function:linear}
+  ::view-transition-new(root){animation-name:ovVtNew;animation-timing-function:steps(6,end)}
+  #ug-hamburger{view-transition-name:ov-menu-btn}
+  #ug-info-btn{view-transition-name:ov-info-btn}
+}
+@keyframes ovVtNew{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes ovVtOld{to{filter:brightness(.72)}}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 html.ov .ug-mn-brand-name{max-width:7em;font:400 13px/1.15 var(--font-head)!important;color:var(--acc-ink);text-transform:uppercase}
 html.ov .ug-mn-close{display:none}

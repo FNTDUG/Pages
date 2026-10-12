@@ -415,3 +415,13 @@ html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
 html.ov .info-card.rowloop{cursor:auto}
 html.ov .info-card.rowloop.can-drag{cursor:grab}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  ::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal;animation-duration:.36s;animation-fill-mode:both}
+  ::view-transition-old(root){animation-name:ovVtOld;animation-timing-function:linear}
+  ::view-transition-new(root){animation-name:ovVtNew;animation-timing-function:steps(6,end)}
+  #ug-hamburger{view-transition-name:ov-menu-btn}
+  #ug-info-btn{view-transition-name:ov-info-btn}
+}
+@keyframes ovVtNew{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes ovVtOld{to{filter:brightness(.72)}}
