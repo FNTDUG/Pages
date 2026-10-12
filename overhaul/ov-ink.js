@@ -237,6 +237,8 @@
   }
 
 
+  Array.prototype.slice.call(document.querySelectorAll('.px-ink')).forEach(function (el, i) { if (!el._ink) setup(el, i); });
+
   window.pxInkChat = {
     splash: splash,
     unsplash: unsplash,
@@ -260,4 +262,5 @@
       el._ink.quiet = true; draw(el, SETTLED); el._ink.quiet = false;
     }
   };
+  if (!window.pxInk) window.pxInk = window.pxInkChat;
 })();

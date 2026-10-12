@@ -367,13 +367,13 @@ if (document.querySelector("[data-parvus-home]")) {
     dashSpeed:    0.42,   /* pixels per millisecond while bolting */
     faceDeadZone:   24,   /* pointer nearer his middle than this will not turn him */
     settleSpeed:  0.11,
-    chanceRainbow: 100,
+    chanceRainbow: 0.02,
     rainbowMinMs:  6000,
     rainbowMaxMs: 10000,
     rainbowGapMs: 45000,
     rainbowFrameMs:  80,
     danceFrameMs:    90,
-    chanceScreen:  1000,
+    chanceScreen:  0.08,
     screenMinMs:   4000,
     screenMaxMs:   8000,
     screenGapMs:  30000,
