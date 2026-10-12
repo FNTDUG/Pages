@@ -36,7 +36,7 @@
     '<div class="ovt-box">' +
       '<div class="ovt-side">' +
         '<div class="ovt-view" aria-hidden="true"><div class="ovt-zoom"><div class="ovt-sprite"><div class="ovt-body"></div><div class="ovt-eyes"></div></div></div></div>' +
-        '<div class="ovt-side-text"><span class="ovt-name">Parvus</span><p class="ovt-note">I can\'t answer questions yet. My AI is coming soon.</p></div>' +
+        '<div class="ovt-side-text"><span class="ovt-name">Parvus</span><p class="ovt-note">Ask me about units, tier lists or meta teams. I\'m an AI, so I can get things wrong.</p></div>' +
       '</div>' +
       '<div class="ovt-main">' +
         '<div class="ovt-head"><h2 id="ovtTitle">Ask Parvus</h2><button class="ovt-x" type="button" aria-label="Close">&#x2715;</button></div>' +
@@ -109,7 +109,7 @@
     m.appendChild(rest);
     inkMsg(m);
     play(SND.text);
-    if (reduced) { shown.textContent = text; rest.textContent = ''; return Promise.resolve(); }
+    if (reduced) { shown.textContent = text; rest.textContent = ''; if (window.parvusLinkify) window.parvusLinkify(shown); return Promise.resolve(); }
     return new Promise(function (resolve) {
       var i = 0;
       setTimeout(function step() {
@@ -117,7 +117,7 @@
         shown.textContent = text.slice(0, i);
         rest.textContent = text.slice(i);
         if (i < text.length) setTimeout(step, 22);
-        else resolve();
+        else { if (window.parvusLinkify) window.parvusLinkify(shown); resolve(); }
       }, 200);
     });
   }

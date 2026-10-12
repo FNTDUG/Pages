@@ -482,6 +482,7 @@
     sp.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
     });
+    load('/overhaul/ov-ask.js');
     load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
   }
 
