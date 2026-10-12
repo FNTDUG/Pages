@@ -1,6 +1,6 @@
 (function () {
   var history = [];
-  var PATH = /(^|[\s("'])(\/(?:fntd1|fntd2|bbn|patch-notes|wiki|privacy-policy)(?:\/[^\s)"',!?;:]*)?)/g;
+  var PATH = /(^|[\s("'])(\/(?:fntd1|fntd2|bbn|patch-notes|wiki|privacy-policy)(?:\/[^\s)"',!?;:]*)?|findahelpline\.com|report\.cybertip\.org)/g;
   var FAIL = 'something went wrong on my end. try again in a moment.';
 
   window.parvusAsk = function (q) {
@@ -31,7 +31,8 @@
       if (path.length < 2) continue;
       out.appendChild(document.createTextNode(text.slice(last, at)));
       var a = document.createElement('a');
-      a.href = pre + path;
+      if (path.charAt(0) === '/') a.href = pre + path;
+      else { a.href = 'https://' + path; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
       a.textContent = path;
       out.appendChild(a);
       last = at + path.length;
