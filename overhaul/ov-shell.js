@@ -66,6 +66,15 @@
     window._infSpin = function () {};
   }
   calm();
+  if (typeof window.ugMobileOpen === 'function' && !window.ugMobileOpen._ov) {
+    var menuOpen = window.ugMobileOpen;
+    window.ugMobileOpen = function () {
+      var info = document.getElementById('ug-info-panel');
+      if (info && info.classList.contains('open') && typeof window.ugInfoClose === 'function') window.ugInfoClose();
+      return menuOpen.apply(this, arguments);
+    };
+    window.ugMobileOpen._ov = true;
+  }
 
   var g = document.createElement('button');
   g.id = 'pv-gear';
