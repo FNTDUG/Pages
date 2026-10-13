@@ -28,6 +28,7 @@
     '#pv-ask:focus-visible{outline:3px solid var(--yellow,#ffd23f);outline-offset:3px}' +
     '#pv-ask svg{pointer-events:none;width:28px;height:23px;fill:currentColor}' +
     '#pv-ask .pv-ask-word{fill:#fff}' +
+    'html[data-theme="light"] #pv-ask .pv-ask-word{fill:var(--ink,#1d2228)}' +
     '@media (max-width:768px){#pv-ask svg{width:21px;height:17px}}' +
     'html.pv-pop-on #pv-ask,html.ovt-on #pv-ask,html.talk-on #pv-ask{visibility:hidden}' +
     '@media (prefers-reduced-motion:reduce){#pv-ask,#pv-gear svg,html.ov .pv-tray,html.ov.pv-gear-open .pv-tray{transition:none!important}}' +
