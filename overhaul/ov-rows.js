@@ -29,10 +29,10 @@
     var r = rng(seed), waves = [], lobes = [], blobs = [], k;
     [3, 5, 7].forEach(function (f, n) { waves.push({ f: f, p: r() * 6.283, a: [0.45, 0.3, 0.2][n] }); });
     for (k = 0; k < 4; k++) lobes.push({ a: (r() - 0.5) * 2.8, size: 1 + r() * 1.4 });
-    var nb = Math.max(2, Math.min(4, Math.round(rows / 18) + (r() < 0.5 ? 0 : 1))), reach = out - 8;
+    var nb = Math.max(2, Math.min(4, Math.round(rows / 18) + (r() < 0.5 ? 0 : 1))), reach = out - 4;
     for (k = 0; k < nb; k++) {
       var ry = Math.min(rows * (0.12 + r() * 0.1), rows / (nb * 1.4));
-      blobs.push({ y: ry * 1.2 + (rows - ry * 2.4) * ((k + 0.2 + r() * 0.6) / nb), rx: reach * (0.32 + r() * 0.36), ry: ry, bx: r() * 2.5, p: r() * 6.283 });
+      blobs.push({ y: ry * 1.2 + (rows - ry * 2.4) * ((k + 0.2 + r() * 0.6) / nb), rx: reach * (0.45 + r() * 0.4), ry: ry, bx: r() * 2.5, p: r() * 6.283 });
     }
     return { waves: waves, lobes: lobes, blobs: blobs, band: r() * 6.283 };
   }
@@ -82,7 +82,7 @@
         }
       }
       if (f.drop !== null) {
-        var pud = inside.slice(), reach = (out - 8) * 0.5;
+        var pud = inside.slice(), reach = (out - 4) * 0.5;
         drops.forEach(function (d) {
           var ux = Math.cos(d.a) * reach, uy = Math.sin(d.a) * (half + 1), len = Math.hypot(ux, uy), t = 0;
           ux /= len; uy /= len;
@@ -226,14 +226,15 @@
       if (inks) gauge();
     }
     function gauge() {
-      var br = box.getBoundingClientRect(), cs = getComputedStyle(box), m = /inset\(([^)]*)\)/.exec(cs.clipPath || '');
+      var cs = getComputedStyle(box), m = /inset\(([^)]*)\)/.exec(cs.clipPath || '');
       var cut = m ? m[1].trim().split(/\s+/) : [], insetL = parseFloat(cut[3] || cut[1] || cut[0]) || 0;
-      var r0 = items[0].getBoundingClientRect();
+      var own = items[0].offsetParent === box;
+      function off(el, k) { return own ? el[k] + (k === 'offsetTop' ? box.clientTop : box.clientLeft) : el[k] - box[k]; }
       geo = {
-        left0: r0.left - br.left,
-        clipL: Math.max(parseFloat(cs.borderLeftWidth) || 0, insetL),
-        clipR: box.clientWidth + (parseFloat(cs.borderLeftWidth) || 0),
-        cards: items.map(function (el) { var r = el.getBoundingClientRect(); return { top: r.top - br.top, h: r.height, w: r.width }; })
+        left0: off(items[0], 'offsetLeft'),
+        clipL: Math.max(box.clientLeft, insetL),
+        clipR: box.clientWidth + box.clientLeft,
+        cards: items.map(function (el) { return { top: off(el, 'offsetTop'), h: el.offsetHeight, w: el.offsetWidth }; })
       };
       prevX = [];
     }
