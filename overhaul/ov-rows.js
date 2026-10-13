@@ -34,7 +34,21 @@
       var ry = Math.min(rows * (0.12 + r() * 0.1), rows / (nb * 1.4));
       blobs.push({ y: ry * 1.2 + (rows - ry * 2.4) * ((k + 0.2 + r() * 0.6) / nb), rx: reach * (0.45 + r() * 0.4), ry: ry, bx: r() * 2.5, p: r() * 6.283 });
     }
-    return { waves: waves, lobes: lobes, blobs: blobs, band: r() * 6.283 };
+    var sh = { waves: waves, lobes: lobes, blobs: blobs, band: r() * 6.283 }, peak = 0, half = rows / 2;
+    for (k = 0; k < 360; k++) peak = Math.max(peak, inkNoise(sh, k / 360 * 6.283));
+    var grow = 1.13 * (1 + 0.16 * Math.max(0, peak) * 1.8);
+    sh.k = 1;
+    blobs.forEach(function (B) {
+      sh.k = Math.min(sh.k, (out - 2 - B.bx) / (B.rx * grow), (half - Math.abs(B.y - half)) / (B.ry * grow));
+    });
+    sh.k = Math.max(0.2, sh.k);
+    return sh;
+  }
+  function inkNoise(sh, th) {
+    var v = 0;
+    sh.waves.forEach(function (w) { v += w.a * Math.sin(w.f * th + w.p); });
+    sh.lobes.forEach(function (l) { var d = Math.atan2(Math.sin(th - l.a), Math.cos(th - l.a)); v += l.size * Math.exp(-d * d / 0.08); });
+    return v;
   }
 
   function Splash(side, seed) {
@@ -57,12 +71,6 @@
       for (var k = 0; k < count; k++) drops.push({ a: -1.3 + (k + r() * 0.7) / count * 2.6, gap: 1 + r() * 2.6, wide: r() < 0.4 });
     }
     newDrops();
-    function noise(sh, th) {
-      var v = 0;
-      sh.waves.forEach(function (w) { v += w.a * Math.sin(w.f * th + w.p); });
-      sh.lobes.forEach(function (l) { var d = Math.atan2(Math.sin(th - l.a), Math.cos(th - l.a)); v += l.size * Math.exp(-d * d / 0.08); });
-      return v;
-    }
     function draw(f) {
       if (!rows || !out) return;
       var sh = shape(), all = rows + 2 * INK_PAD, half = rows / 2, sc = Math.min(1, f.s), hh = half * sc, cy = INK_PAD + half;
@@ -71,11 +79,11 @@
       function inCard(row) { return row >= INK_PAD && row < INK_PAD + rows; }
       function on(u, row) { if (u < 0) return inCard(row) && Math.abs(row + 0.5 - cy) <= hh; return u < out && row >= 0 && row < all && inside[idx(u, row)] === 1; }
       for (row = INK_PAD; row < INK_PAD + rows; row++) {
-        for (u = 0; u < out; u++) {
+        for (u = 0; u < out - 1; u++) {
           var px = u + 0.5, py = row + 0.5 - cy, hit = false;
           for (var b = 0; b < sh.blobs.length && !hit; b++) {
-            var B = sh.blobs[b], qx = (px - B.bx) / (B.rx * f.s), qy = (py - (B.y - half) * sc) / (B.ry * f.s);
-            if (Math.hypot(qx, qy) <= 1 + 0.16 * noise(sh, Math.atan2(qy, qx) + B.p) * (f.wild || 1)) hit = true;
+            var B = sh.blobs[b], qx = (px - B.bx) / (B.rx * sh.k * f.s), qy = (py - (B.y - half) * sc) / (B.ry * sh.k * f.s);
+            if (Math.hypot(qx, qy) <= 1 + 0.16 * inkNoise(sh, Math.atan2(qy, qx) + B.p) * (f.wild || 1)) hit = true;
           }
           if (!hit && Math.abs(py) <= hh && px <= (2.2 + 0.9 * Math.sin(row * 0.45 + sh.band)) * sc) hit = true;
           if (hit) inside[idx(u, row)] = 1;
@@ -136,7 +144,7 @@
         if (no < INK_MIN || h < 32) { cv.style.display = 'none'; return false; }
         var resized = nr !== rows || no !== out;
         rows = nr; out = no;
-        var left = Math.round(side === 'left' ? x - out * INK_U : x), top = Math.round(y - INK_PAD * INK_U);
+        var left = Math.round(side === 'left' ? x - out * INK_U + 1 : x - 1), top = Math.round(y - INK_PAD * INK_U);
         if (resized) {
           cv.width = out * INK_U;
           cv.height = (rows + 2 * INK_PAD) * INK_U;
