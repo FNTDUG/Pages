@@ -79,24 +79,24 @@
     <div id="ug-content">
       <div class="sp-wrap">
       <form id="spForm" class="sp-card" novalidate>
-        <fieldset class="sp-kind">
+        <fieldset class="sp-kind" data-field="kind">
           <legend>What do you want to sponsor?</legend>
           <label class="sp-pick"><input type="radio" name="kind" value="game"><span><b>A Roblox game</b><small>Get your game seen by players</small></span></label>
           <label class="sp-pick"><input type="radio" name="kind" value="product"><span><b>A product, brand or service</b><small>Anything else you want to promote</small></span></label>
         </fieldset>
         <div class="sp-grid">
-          <label class="sp-f">Your name<input type="text" name="name" maxlength="80" autocomplete="name" required></label>
-          <label class="sp-f">Studio or business name<input type="text" name="business" maxlength="120" autocomplete="organization" required></label>
-          <label class="sp-f">Email<input type="email" name="email" maxlength="160" autocomplete="email" required></label>
-          <label class="sp-f">Discord username <em>optional</em><input type="text" name="discord" maxlength="40" autocomplete="off"></label>
+          <label class="sp-f"><span>Your name</span><input type="text" name="name" maxlength="80" autocomplete="name" required></label>
+          <label class="sp-f"><span>Studio or business name</span><input type="text" name="business" maxlength="120" autocomplete="organization" required></label>
+          <label class="sp-f"><span>Email</span><input type="email" name="email" maxlength="160" autocomplete="email" required></label>
+          <label class="sp-f"><span>Discord username <em>optional</em></span><input type="text" name="discord" maxlength="40" autocomplete="off"></label>
         </div>
         <div class="sp-part" data-for="game" hidden>
-          <label class="sp-f">Roblox game link<input type="url" name="gameLink" maxlength="300" placeholder="https://www.roblox.com/games/1234567890/Your-Game"></label>
-          <label class="sp-f">Anything we should know about the game? <em>optional</em><textarea name="gameAbout" maxlength="1500" rows="3"></textarea></label>
+          <label class="sp-f"><span>Roblox game link</span><input type="url" name="gameLink" maxlength="300" placeholder="https://www.roblox.com/games/1234567890/Your-Game"></label>
+          <label class="sp-f"><span>Anything we should know about the game? <em>optional</em></span><textarea name="gameAbout" maxlength="1500" rows="3"></textarea></label>
         </div>
         <div class="sp-part" data-for="product" hidden>
-          <label class="sp-f">Website link<input type="url" name="productLink" maxlength="300" placeholder="https://"></label>
-          <label class="sp-f">What is it, and who is it for?<textarea name="productAbout" maxlength="1500" rows="3"></textarea></label>
+          <label class="sp-f"><span>Website link</span><input type="url" name="productLink" maxlength="300" placeholder="https://"></label>
+          <label class="sp-f"><span>What is it, and who is it for?</span><textarea name="productAbout" maxlength="1500" rows="3"></textarea></label>
         </div>
         <fieldset class="sp-set" data-field="placements">
           <legend>Where would you like to appear? <em>pick any</em></legend>
@@ -107,10 +107,10 @@
           <label class="sp-check"><input type="checkbox" name="placements" value="unsure">Not sure yet</label>
         </fieldset>
         <div class="sp-grid">
-          <label class="sp-f">How long?<select name="length" required><option value="">Choose one</option><option value="w1">1 week</option><option value="w2">2 weeks</option><option value="m1">1 month</option><option value="long">Longer than a month</option><option value="unsure">Not sure yet</option></select></label>
-          <label class="sp-f">Budget <em>optional</em><select name="budget"><option value="">Rather not say</option><option value="b1">Under $50</option><option value="b2">$50 to $150</option><option value="b3">$150 to $500</option><option value="b4">$500 or more</option><option value="robux">Robux or other (tell us below)</option><option value="talk">Prefer to discuss</option></select></label>
+          <label class="sp-f"><span>How long?</span><select name="length" required><option value="">Choose one</option><option value="w1">1 week</option><option value="w2">2 weeks</option><option value="m1">1 month</option><option value="long">Longer than a month</option><option value="unsure">Not sure yet</option></select></label>
+          <label class="sp-f"><span>Budget <em>optional</em></span><select name="budget"><option value="">Rather not say</option><option value="b1">Under $50</option><option value="b2">$50 to $150</option><option value="b3">$150 to $500</option><option value="b4">$500 or more</option><option value="robux">Robux or other (tell us below)</option><option value="talk">Prefer to discuss</option></select></label>
         </div>
-        <label class="sp-f">Anything else? <em>optional</em><textarea name="notes" maxlength="1500" rows="3"></textarea></label>
+        <label class="sp-f"><span>Anything else? <em>optional</em></span><textarea name="notes" maxlength="1500" rows="3"></textarea></label>
         <div class="sp-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <label class="sp-check" data-field="adult"><input type="checkbox" name="adult">I'm 18 or older, or a parent or guardian has said yes to this request.</label>
         <label class="sp-check" data-field="rules"><input type="checkbox" name="rules">My game or product is suitable for kids: no gambling, no free Robux offers, no scams. I understand it will be labeled "Sponsored".</label>
@@ -133,13 +133,16 @@
     var k = kind();
     Array.prototype.forEach.call(form.querySelectorAll('.sp-part'), function (p) { p.hidden = p.getAttribute('data-for') !== k; });
   }
-  form.addEventListener('change', function (e) { if (e.target.name === 'kind') show(); });
-  function val(n) { var el = form.elements[n]; return el ? String(el.value || '').trim() : ''; }
+  form.addEventListener('change', function (e) { if (e.target.name === 'kind') show(); unmark(e.target); });
+  form.addEventListener('input', function (e) { unmark(e.target); });
+  function unmark(t) { var el = t && t.closest ? t.closest('.sp-bad') : null; if (el) el.classList.remove('sp-bad'); if (t && t.name === 'kind') { var k = form.querySelector('.sp-kind.sp-bad'); if (k) k.classList.remove('sp-bad'); } }
+  function field(n) { return form.querySelector('[name="' + n + '"]'); }
+  function val(n) { var el = field(n); return el ? String(el.value || '').trim() : ''; }
   function mark(fields) {
     Array.prototype.forEach.call(form.querySelectorAll('.sp-bad'), function (el) { el.classList.remove('sp-bad'); });
     fields.forEach(function (f) {
       var map = { link: kind() === 'game' ? 'gameLink' : 'productLink', about: 'productAbout' };
-      var el = form.querySelector('[data-field="' + f + '"]') || (form.elements[map[f] || f] && (form.elements[map[f] || f].closest ? form.elements[map[f] || f].closest('label, fieldset') : null));
+      var input = field(map[f] || f), el = form.querySelector('[data-field="' + f + '"]') || (input && input.closest ? input.closest('label, fieldset') : null);
       if (el && el.classList) el.classList.add('sp-bad');
     });
   }
@@ -153,7 +156,7 @@
       link: k === 'game' ? val('gameLink') : val('productLink'), about: k === 'game' ? val('gameAbout') : val('productAbout'),
       placements: Array.prototype.map.call(form.querySelectorAll('input[name="placements"]:checked'), function (c) { return c.value; }),
       length: val('length'), budget: val('budget'), notes: val('notes'), website: val('website'),
-      adult: form.elements.adult.checked, rules: form.elements.rules.checked, t: opened
+      adult: field('adult').checked, rules: field('rules').checked, t: opened
     };
     var miss = [];
     if (!data.kind) miss.push('kind');
