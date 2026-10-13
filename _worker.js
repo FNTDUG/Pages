@@ -7576,9 +7576,9 @@ export default {
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           el.append(PAGE_NOTES_SCRIPT, { html: true });
-          el.append(noInfoPanel ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
+          el.append(noInfoPanel || pvMissing ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
           if (!hasInfo) el.append('<style>.ntf-bell{top:85px}@media(min-width:769px){.ntf-bell{top:117px}}</style>', { html: true });
-          el.append(noInfoPanel ? POLL_HTML.replace('data-auto="1"', 'data-auto="0"') : POLL_HTML, { html: true });
+          el.append(noInfoPanel || pvMissing ? POLL_HTML.replace('data-auto="1"', 'data-auto="0"') : POLL_HTML, { html: true });
           if (!pvOn) el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
