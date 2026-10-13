@@ -470,19 +470,3 @@ html.ov .ov-card.ov-card--term .ov-term h3{z-index:1}
 html.ov:not(.ov-ready) #ug-hero-inner,html.ov:not(.ov-ready) #ug-content,html.ov:not(.ov-ready) #ug-footer{visibility:hidden}
 html.ov #patchnotesMount{min-height:150vh}
 .ov-screen #mascotEyes{clip-path:inset(15% 5% 40% 15%)}
-html.ov .ns-panel{box-sizing:border-box;padding:0;border:var(--bw) solid var(--ink)!important;border-image:none!important;border-radius:0;background:var(--surface);box-shadow:var(--shadow-sm);clip-path:none}
-html.ov .ns-panel::before,html.ov .ns-panel::after{display:none}
-html.ov .ns-panel .ns-body{padding:18px 22px 20px;font-family:var(--font-body);color:var(--text);scrollbar-width:thin;scrollbar-color:var(--mute) transparent}
-html.ov .ns-panel .ns-body::-webkit-scrollbar-track{background:transparent}
-html.ov .ns-panel .ns-body::-webkit-scrollbar-thumb,html.ov .ns-panel .ns-body::-webkit-scrollbar-thumb:hover{background:var(--mute);border-radius:0}
-html.ov .ns-panel .ns-body h2{display:flex;align-items:center;justify-content:var(--ns-align,center);gap:10px;margin:0 0 10px;font:400 16px/1.3 var(--font-head);letter-spacing:0;text-transform:uppercase;text-shadow:none;color:var(--text)}
-html.ov .ns-panel .ns-body h2::before{content:'';width:10px;height:10px;flex:none;background:var(--game);border:2px solid var(--ink)}
-html.ov .ns-panel .ns-body h3{margin:16px 0 6px;font:400 14px/1.3 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text)}
-html.ov .ns-panel .ns-body p,html.ov .ns-panel .ns-body li{font:500 16px/1.6 var(--font-body);color:var(--text)}
-html.ov .ns-panel .ns-body p{margin:0 0 10px}
-html.ov .ns-panel .ns-body p:last-child,html.ov .ns-panel .ns-body ul:last-child{margin-bottom:0}
-html.ov .ns-panel .ns-body b{color:var(--text);font-weight:700}
-html.ov .ns-panel .ns-body li::marker{color:var(--game)}
-html.ov .ns-panel .ns-body a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--game);text-decoration-thickness:3px;text-underline-offset:3px}
-html.ov .ns-panel .ns-body a:hover{color:var(--game-ink);background:var(--game)}
-@media (max-width:720px){html.ov .ns-panel .ns-body{padding:14px 16px 16px}html.ov .ns-panel .ns-body p,html.ov .ns-panel .ns-body li{font-size:15px}}
