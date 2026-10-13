@@ -7518,7 +7518,7 @@ export default {
       const root = tag ? await env.ASSETS.fetch(new Request(new URL('/', url).toString(), { headers: { accept: 'text/html' } })) : null;
       if (root && root.headers.get('etag') === tag) {
         pvMissing = true;
-        response = await env.ASSETS.fetch(new Request(new URL('/overhaul/', url).toString(), request));
+        response = await env.ASSETS.fetch(new Request(new URL('/overhaul/not-found', url).toString(), { headers: { accept: 'text/html' } }));
       }
     }
     const ct = response.headers.get('content-type') || '';
@@ -7529,15 +7529,15 @@ export default {
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
     const noInfoPanel = realPath === '/privacy-policy' || realPath === '/privacy-policy.html';
-    const hasInfo = !noInfoPanel && infoPanelActive(realPath);
-    const isOvHome = pvOn && (realPath === '/' || pvMissing);
+    const hasInfo = !noInfoPanel && !pvMissing && infoPanelActive(realPath);
+    const isOvHome = pvOn && realPath === '/';
     const nav = ovMirror ? ovNav() : { mobile: MOBILE_NAV_BODY, desktop: DESKTOP_NAV_INNER, footer: FOOTER_HTML };
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
-          if (ovMirror && !isOvHome) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
+          if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
         }
       })
       .on('link[rel="icon"]', {
