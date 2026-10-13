@@ -3835,6 +3835,32 @@ async function seoSsr(realPath) {
   return html ? { html } : null;
 }
 
+function seoLlms() {
+  const groups = [
+    ['Five Nights TD 2', p => p.indexOf('/fntd2/') === 0 || p === '/patch-notes'],
+    ['Five Nights TD', p => p === '/fntd1' || p.indexOf('/fntd1/') === 0 || p === '/patch-notes/fntd1-1'],
+    ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
+    ['About the site', p => p === '/sponsor' || p === '/privacy-policy']
+  ];
+  const skip = ['/', '/wiki', '/fntd2/patch-notes'];
+  const pages = Object.keys(SEO_PAGES).filter(p => skip.indexOf(p) === -1);
+  const line = p => '- [' + SEO_PAGES[p][0].replace(/ \| FNTD User Guide$/, '') + '](' + SITE_URL + (p === '/fntd1' ? '/fntd1/' : p) + '): ' + SEO_PAGES[p][1];
+  const out = [
+    '# ' + SITE_NAME,
+    '',
+    '> ' + SEO_PAGES['/'][1],
+    '',
+    'The FNTD User Guide (fntduserguide.com) is a fan-made community guide for the Roblox tower defense games Five Nights TD 2 (FNTD2) and Five Nights TD (FNTD1), and the Roblox horror game Bite By Night (BBN). Tier lists, meta teams and unit data are kept up to date after each game update. Trading values come from Value Central. Contact: contact@fntduserguide.com.',
+    ''
+  ];
+  groups.forEach(g => {
+    const list = pages.filter(g[1]);
+    if (list.length) out.push('## ' + g[0], '', list.map(line).join('\n'), '');
+  });
+  out.push('## Optional', '', '- [Every FNTD2 unit](' + SITE_URL + '/sitemap-units.xml): each Five Nights TD 2 unit has its own page at ' + SITE_URL + '/fntd2/unit-engine/<Unit-Name> with stats by level, passives, tier list rank, meta teams and trade value.', '- [Sitemap](' + SITE_URL + '/sitemap.xml): every main page on the site.', '');
+  return new Response(out.join('\n'), { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600', 'x-robots-tag': 'noindex' } });
+}
+
 async function seoUnitSitemap() {
   const data = await seoTimed(parvusLoad(), 4000);
   const units = data && Array.isArray(data.units) ? data.units : [];
@@ -7687,6 +7713,7 @@ export default {
     }
 
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap();
+    if (url.pathname === '/llms.txt') return seoLlms();
 
     if (url.pathname.startsWith('/game-thumb/')) {
       const id = url.pathname.slice('/game-thumb/'.length);
