@@ -133,7 +133,7 @@
     return {
       place: function (x, y, h, room) {
         var nr = Math.max(4, Math.round(h / INK_U)), no = Math.min(INK_MAX, Math.floor(room / INK_U));
-        if (no < INK_MIN || h < 32) { cv.style.display = 'none'; return; }
+        if (no < INK_MIN || h < 32) { cv.style.display = 'none'; return false; }
         var resized = nr !== rows || no !== out;
         rows = nr; out = no;
         var left = Math.round(side === 'left' ? x - out * INK_U : x), top = Math.round(y - INK_PAD * INK_U);
@@ -145,11 +145,12 @@
         }
         if (left !== at.x || top !== at.y) { cv.style.left = left + 'px'; cv.style.top = top + 'px'; at.x = left; at.y = top; }
         if (cv.style.display === 'none') cv.style.display = 'block';
-        if (!shown) { if (resized) ctx.clearRect(0, 0, cv.width, cv.height); return; }
+        if (!shown) { if (resized) ctx.clearRect(0, 0, cv.width, cv.height); return true; }
         if (resized) {
           if (timer || reduced) draw(SETTLED);
           else { swap(); newDrops(); lastBurst = performance.now(); play(BURST); }
         }
+        return true;
       },
       show: function () {
         if (shown) return;
@@ -226,7 +227,10 @@
       if (inks) gauge();
     }
     function gauge() {
+      var mine = box.style.clipPath;
+      box.style.clipPath = '';
       var cs = getComputedStyle(box), m = /inset\(([^)]*)\)/.exec(cs.clipPath || '');
+      box.style.clipPath = mine;
       var cut = m ? m[1].trim().split(/\s+/) : [], insetL = parseFloat(cut[3] || cut[1] || cut[0]) || 0;
       var own = items[0].offsetParent === box;
       function off(el, k) { return own ? el[k] + (k === 'offsetTop' ? box.clientTop : box.clientLeft) : el[k] - box[k]; }
@@ -236,6 +240,10 @@
         clipR: box.clientWidth + box.clientLeft,
         cards: items.map(function (el) { return { top: off(el, 'offsetTop'), h: el.offsetHeight, w: el.offsetWidth }; })
       };
+      var gap = step - geo.cards[0].w, fit = Math.floor((geo.clipR - geo.left0 + gap) / step);
+      geo.lineL = Math.max(geo.clipL, geo.left0 - 2);
+      geo.lineR = Math.min(geo.clipR, geo.left0 + fit * step - gap + 8);
+      geo.clip = null;
       prevX = [];
     }
     function nearestCard(xs, line) {
@@ -251,15 +259,18 @@
       var br = box.getBoundingClientRect();
       if (!br.width) { inks[0].hide(); inks[1].hide(); return; }
       var lr = layer().getBoundingClientRect(), vw = document.documentElement.clientWidth;
-      [[0, geo.clipL, br.left + geo.clipL], [1, geo.clipR, vw - br.left - geo.clipR]].forEach(function (s) {
+      var lines = [geo.lineL, geo.lineR], live = [false, false];
+      [[0, geo.lineL, br.left + geo.lineL], [1, geo.lineR, vw - br.left - geo.lineR]].forEach(function (s) {
         var i = nearestCard(xs, s[1]), c = geo.cards[i];
         if (i < 0) return;
-        inks[s[0]].place(br.left + s[1] - lr.left, br.top + c.top - lr.top, c.h, s[2] - 16);
+        live[s[0]] = inks[s[0]].place(br.left + s[1] - lr.left, br.top + c.top - lr.top, c.h, s[2] - 16);
       });
+      var clip = live[0] || live[1] ? 'inset(0px ' + (live[1] ? box.offsetWidth - geo.lineR : 0) + 'px 0px ' + (live[0] ? geo.lineL : geo.clipL) + 'px)' : '';
+      if (clip !== geo.clip) { box.style.clipPath = clip; geo.clip = clip; }
       xs.forEach(function (x, i) {
         var p = prevX[i], w = geo.cards[i].w;
         if (p !== undefined && Math.abs(p - x) < step) {
-          [[0, geo.clipL], [1, geo.clipR]].forEach(function (s) {
+          [[0, lines[0]], [1, lines[1]]].forEach(function (s) {
             if ((p - s[1]) * (x - s[1]) < 0 || (p + w - s[1]) * (x + w - s[1]) < 0) inks[s[0]].burst();
           });
         }
@@ -374,7 +385,7 @@
     }
     function teardown() {
       on = false;
-      if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; }
+      if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; box.style.clipPath = ''; }
       cancelAnimationFrame(raf);
       clearTimeout(nudgeT);
       if (drag) { drag.kill(); drag = null; }
