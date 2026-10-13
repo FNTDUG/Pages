@@ -4691,10 +4691,8 @@ const ADMIN_CSS = `*,*::before,*::after{box-sizing:border-box;margin:0;padding:0
 html,body{min-height:100%;background:var(--bg);color:var(--text);font:400 16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
 body{display:flex;justify-content:center;padding:32px 16px 64px}
 .wrap{width:min(640px,100%);display:flex;flex-direction:column;gap:22px}
+.stripe{display:none}
 .card{position:relative;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
-.stripe{height:10px;border-bottom:var(--bw) solid var(--ink);background-image:repeating-linear-gradient(45deg,var(--acc) 0 12px,var(--ink) 12px 24px);animation:slide 1.2s steps(6) infinite}
-.card.ok .stripe,.card.live .stripe{background-image:repeating-linear-gradient(45deg,var(--green) 0 12px,var(--ink) 12px 24px)}
-@keyframes slide{from{background-position:0 0}to{background-position:34px 0}}
 .body{padding:24px 24px 26px}
 .kicker{display:block;margin-bottom:10px;font:400 26px/1.15 var(--head);letter-spacing:.01em;text-transform:uppercase;color:var(--text);text-shadow:none;text-align:left}
 .card.ok .kicker,.card.live .kicker{color:var(--text)}
@@ -4829,7 +4827,7 @@ dd a,.past a{color:var(--text);font-weight:700;text-decoration:underline;text-de
 .row .btn{flex:none;min-width:0;padding:10px 14px;font-size:13px}
 @media (max-width:520px){.body{padding:20px 18px 22px}.kicker{font-size:22px}.sq .opt-row .go{order:3;flex:1 0 100%}dl{grid-template-columns:1fr}dt{margin-top:6px}}
 [hidden]{display:none!important}
-@media (prefers-reduced-motion:reduce){.stripe{animation:none}.btn,.kind button{transition:none}}`;
+@media (prefers-reduced-motion:reduce){.btn,.kind button{transition:none}}`;
 
 const PUSH_SEND_PAGE = `<!doctype html>
 <html lang="en">
