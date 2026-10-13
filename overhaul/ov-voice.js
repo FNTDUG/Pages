@@ -1,62 +1,85 @@
 (function () {
   if (window.parvusVoice) return;
-  var SRC = '/overhaul/parvus-talk.m4a', VOLUME = 0.35, GAP = 75;
-  var pool = [], turn = 0, timer = 0, primed = false;
-  for (var k = 0; k < 4; k++) {
-    var a = new Audio();
-    a.preload = 'auto';
-    a.src = SRC;
-    a.preservesPitch = false;
-    a.mozPreservesPitch = false;
-    a.webkitPreservesPitch = false;
-    pool.push(a);
-  }
+  var SRC = '/overhaul/parvus-talk.wav', VOLUME = 0.35, CHAR_MS = 34, COMMA_MS = 120, STOP_MS = 220;
+  var ctx = null, gain = null, buf = null, loading = null;
+
   function muted() {
+    if (window.ugSoundMuted) return window.ugSoundMuted();
     try { return localStorage.getItem('ug:sound') === 'off'; } catch (e) { return false; }
   }
-  function prime() {
-    if (primed) return;
-    primed = true;
-    pool.forEach(function (a) {
-      a.volume = 0;
-      try {
-        var r = a.play();
-        var done = function () { a.pause(); a.currentTime = 0; a.volume = VOLUME; };
-        if (r && r.then) r.then(done, function () { primed = false; a.volume = VOLUME; });
-        else done();
-      } catch (e) { a.volume = VOLUME; }
-    });
+  function load() {
+    if (loading || !ctx) return;
+    loading = fetch(SRC).then(function (r) { return r.arrayBuffer(); }).then(function (data) {
+      return new Promise(function (ok, no) {
+        var p = ctx.decodeAudioData(data, ok, no);
+        if (p && p.then) p.then(ok, no);
+      });
+    }).then(function (b) { buf = b; }, function () { loading = null; });
+  }
+  function wake() {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return;
+    if (!ctx) {
+      ctx = new C();
+      gain = ctx.createGain();
+      gain.gain.value = VOLUME;
+      gain.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended' && !muted()) {
+      var r = ctx.resume();
+      if (r && r.catch) r.catch(function () {});
+    }
+    load();
   }
   ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) {
-    window.addEventListener(t, prime, { capture: true, passive: true });
+    window.addEventListener(t, wake, { capture: true, passive: true });
   });
+
   function blip() {
-    if (muted()) return;
-    var a = pool[turn++ % pool.length];
-    a.volume = VOLUME;
-    a.playbackRate = 0.92 + Math.random() * 0.16;
-    try {
-      a.currentTime = 0;
-      var r = a.play();
-      if (r && r.catch) r.catch(function () {});
-    } catch (e) {}
+    if (!ctx || !buf || muted() || ctx.state !== 'running') return;
+    var s = ctx.createBufferSource();
+    s.buffer = buf;
+    s.playbackRate.value = 0.94 + Math.random() * 0.12;
+    s.connect(gain);
+    s.start();
   }
-  function stop() {
-    clearInterval(timer);
-    timer = 0;
+
+  function type(shown, rest, text, done) {
+    var i = 0, said = 0, timer = 0, live = true;
+    text = String(text || '');
+    shown.textContent = '';
+    rest.textContent = text;
+    function step() {
+      if (!live) return;
+      i++;
+      shown.textContent = text.slice(0, i);
+      rest.textContent = text.slice(i);
+      var ch = text.charAt(i - 1);
+      if (/\S/.test(ch) && said++ % 2 === 0) blip();
+      if (i >= text.length) {
+        live = false;
+        if (done) done();
+        return;
+      }
+      timer = setTimeout(step, /[.!?]/.test(ch) && /\s/.test(text.charAt(i)) ? STOP_MS : /[,;:]/.test(ch) ? COMMA_MS : CHAR_MS);
+    }
+    timer = setTimeout(step, CHAR_MS);
+    return {
+      cancel: function () { live = false; clearTimeout(timer); },
+      finish: function () {
+        if (!live) return;
+        live = false;
+        clearTimeout(timer);
+        shown.textContent = text;
+        rest.textContent = '';
+        if (done) done();
+      }
+    };
   }
+
   window.parvusVoice = {
     blip: blip,
-    stop: stop,
-    say: function (text) {
-      stop();
-      var n = Math.max(2, Math.min(14, Math.round(String(text || '').replace(/\s+/g, '').length / 5)));
-      var count = 1;
-      blip();
-      timer = setInterval(function () {
-        if (count++ >= n) { stop(); return; }
-        blip();
-      }, GAP);
-    }
+    type: type,
+    ready: function () { return !!(ctx && buf && ctx.state === 'running'); }
   };
 })();

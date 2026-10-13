@@ -239,7 +239,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .talk-log{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:18px 22px}
 .msg{max-width:88%;padding:12px 16px;font-size:15px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
 .msg-pv{--ink-u:8px;align-self:flex-start;max-width:min(520px,calc(100% - 110px));font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.msg-pv .rest{color:transparent}
+.msg-pv .rest,.bubble .rest{color:transparent}
 .msg-pv a{color:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:3px;overflow-wrap:anywhere}
 .msg-pv a:hover{color:var(--acc-ink);background:var(--acc)}
 .msg-me{align-self:flex-end;background:var(--yellow);color:#1d2228;border:var(--bw) solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:500}
@@ -706,8 +706,10 @@ html.talk-on,html.talk-on body{overflow:hidden}
   }
 
   var hushT = 0;
+  var bubbleTyping = null;
   function hideBubble(now) {
     clearTimeout(hushT);
+    if (bubbleTyping) { bubbleTyping.cancel(); bubbleTyping = null; }
     if (!bubble.classList.contains('on')) return;
     if (now || !window.pxInk) { bubble.classList.remove('on'); return; }
     play(SND.close);
@@ -725,9 +727,20 @@ html.talk-on,html.talk-on body{overflow:hidden}
   }
   function say(text, ms) {
     clearTimeout(hushT);
-    bubbleText.textContent = text;
+    if (bubbleTyping) { bubbleTyping.cancel(); bubbleTyping = null; }
+    var said = document.createElement('span'), shown = document.createElement('span'), rest = document.createElement('span');
+    said.className = 'sr';
+    said.textContent = text;
+    shown.setAttribute('aria-hidden', 'true');
+    rest.className = 'rest';
+    rest.setAttribute('aria-hidden', 'true');
+    rest.textContent = text;
+    bubbleText.textContent = '';
+    bubbleText.appendChild(said);
+    bubbleText.appendChild(shown);
+    bubbleText.appendChild(rest);
     bubble.classList.add('on');
-    if (!window.pxInk) return;
+    if (!window.pxInk) { shown.textContent = text; rest.textContent = ''; return; }
     var u = 12 * scale;
     bubble.style.setProperty('--ink-u', u + 'px');
     bubble.style.maxWidth = Math.round(Math.max(150, Math.min(300, stage.clientWidth - 12 * u - 12))) + 'px';
@@ -741,9 +754,21 @@ html.talk-on,html.talk-on body{overflow:hidden}
     bubble.style.top = Math.max(spot.top, spot.top - spot.room) + 'px';
     window.pxInk.point(bubble, 'b', spot.at);
     window.pxInk.splash(bubble);
-    if (window.parvusVoice) window.parvusVoice.say(text);
-    else play(SND.text);
-    hushT = setTimeout(function () { hideBubble(false); }, ms || 3800);
+    play(SND.text);
+    var stay = ms || 3800;
+    if (reduced || !window.parvusVoice) {
+      shown.textContent = text;
+      rest.textContent = '';
+      hushT = setTimeout(function () { hideBubble(false); }, stay);
+      return;
+    }
+    var wait = setTimeout(function () {
+      bubbleTyping = window.parvusVoice.type(shown, rest, text, function () {
+        bubbleTyping = null;
+        hushT = setTimeout(function () { hideBubble(false); }, stay);
+      });
+    }, 220);
+    bubbleTyping = { cancel: function () { clearTimeout(wait); } };
   }
 
   function scheduleBlink() {
@@ -891,28 +916,29 @@ html.talk-on,html.talk-on body{overflow:hidden}
     scrollLog();
     window.pxInk.splash(m);
   }
+  var pvTyping = null;
   function pvLine(text) {
     var m = addMsg('pv', '');
     var shown = document.createElement('span'), rest = document.createElement('span');
     rest.className = 'rest';
     rest.setAttribute('aria-hidden', 'true');
     rest.textContent = text;
+    shown.setAttribute('aria-hidden', 'true');
+    var said = document.createElement('span');
+    said.className = 'sr';
+    said.textContent = text;
+    m.appendChild(said);
     m.appendChild(shown);
     m.appendChild(rest);
     inkMsg(m);
-    if (!window.parvusVoice) play(SND.text);
-    else if (reduced) window.parvusVoice.say(text);
-    if (reduced) { shown.textContent = text; rest.textContent = ''; if (window.parvusLinkify) window.parvusLinkify(shown); return Promise.resolve(); }
+    play(SND.text);
+    var done = function () { if (window.parvusLinkify) window.parvusLinkify(shown); };
+    if (reduced || !window.parvusVoice) { shown.textContent = text; rest.textContent = ''; done(); return Promise.resolve(); }
     return new Promise(function (resolve) {
-      var i = 0;
-      setTimeout(function step() {
-        i = Math.min(text.length, i + 2);
-        if (window.parvusVoice && (i / 2) % 3 === 1) window.parvusVoice.blip();
-        shown.textContent = text.slice(0, i);
-        rest.textContent = text.slice(i);
-        if (i < text.length) setTimeout(step, 22);
-        else { if (window.parvusLinkify) window.parvusLinkify(shown); resolve(); }
+      var wait = setTimeout(function () {
+        pvTyping = window.parvusVoice.type(shown, rest, text, function () { pvTyping = null; done(); resolve(); });
       }, 200);
+      pvTyping = { cancel: function () { clearTimeout(wait); }, finish: function () { clearTimeout(wait); shown.textContent = text; rest.textContent = ''; pvTyping = null; done(); resolve(); } };
     });
   }
   function thinking() {
@@ -967,7 +993,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     if (!talkOpen || !talkTl) return;
     talkOpen = false;
     clearTimeout(ptBlink);
-    if (window.parvusVoice) window.parvusVoice.stop();
+    if (pvTyping) pvTyping.finish();
     if (reduced) { afterClose(); return; }
     play(SND.close);
     talkTl.timeScale(1.6).reverse();

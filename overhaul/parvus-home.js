@@ -981,14 +981,34 @@ if (document.querySelector("[data-parvus-home]")) {
   function say(now, line) {
     if (!line) line = pickLine();
     if (!line) return;
-    bubbleText.textContent = line;
+    if (typing) { typing.cancel(); typing = null; }
+    var shown = document.createElement('span'), rest = document.createElement('span');
+    rest.className = 'rest';
+    rest.textContent = line;
+    bubbleText.textContent = '';
+    bubbleText.appendChild(shown);
+    bubbleText.appendChild(rest);
     bubble.classList.add('on');
-    chatEnd = now + CFG.chatMs;
     splat();
-    if (window.parvusVoice) window.parvusVoice.say(line);
-    else play(SND.text);
+    play(SND.text);
+    if (reduced || !window.parvusVoice) {
+      shown.textContent = line;
+      rest.textContent = '';
+      chatEnd = now + CFG.chatMs;
+      return;
+    }
+    chatEnd = Infinity;
+    var wait = setTimeout(function () {
+      typing = window.parvusVoice.type(shown, rest, line, function () {
+        typing = null;
+        if (chatEnd === Infinity) chatEnd = performance.now() + CFG.chatMs;
+      });
+    }, 220);
+    typing = { cancel: function () { clearTimeout(wait); } };
   }
+  var typing = null;
   function hush(now, quiet) {
+    if (typing) { typing.cancel(); typing = null; }
     if (!chatEnd) return;
     chatEnd = 0;
     if (window.pxInk && window.pxInk.unsplash) window.pxInk.unsplash(bubble, function () { bubble.classList.remove('on'); });
@@ -1379,6 +1399,7 @@ if (document.querySelector("[data-parvus-home]")) {
     wear(hatNow());
     wiggleAt = 0;
     state = 'think'; started = now;
+    if (typing) { typing.cancel(); typing = null; }
     var spin = document.createElement('span');
     spin.className = 'mascot-think';
     bubbleText.textContent = '';

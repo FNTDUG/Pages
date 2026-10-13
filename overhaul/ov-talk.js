@@ -124,28 +124,29 @@
     scrollLog();
     ink.splash(m);
   }
+  var pvTyping = null;
   function pvLine(text) {
     var m = addMsg('pv', '');
     var shown = document.createElement('span'), rest = document.createElement('span');
     rest.className = 'rest';
     rest.setAttribute('aria-hidden', 'true');
     rest.textContent = text;
+    shown.setAttribute('aria-hidden', 'true');
+    var said = document.createElement('span');
+    said.className = 'ovt-sr';
+    said.textContent = text;
+    m.appendChild(said);
     m.appendChild(shown);
     m.appendChild(rest);
     inkMsg(m);
-    if (!window.parvusVoice) play(SND.text);
-    else if (reduced) window.parvusVoice.say(text);
-    if (reduced) { shown.textContent = text; rest.textContent = ''; if (window.parvusLinkify) window.parvusLinkify(shown); return Promise.resolve(); }
+    play(SND.text);
+    var done = function () { if (window.parvusLinkify) window.parvusLinkify(shown); };
+    if (reduced || !window.parvusVoice) { shown.textContent = text; rest.textContent = ''; done(); return Promise.resolve(); }
     return new Promise(function (resolve) {
-      var i = 0;
-      setTimeout(function step() {
-        i = Math.min(text.length, i + 2);
-        if (window.parvusVoice && (i / 2) % 3 === 1) window.parvusVoice.blip();
-        shown.textContent = text.slice(0, i);
-        rest.textContent = text.slice(i);
-        if (i < text.length) setTimeout(step, 22);
-        else { if (window.parvusLinkify) window.parvusLinkify(shown); resolve(); }
+      var wait = setTimeout(function () {
+        pvTyping = window.parvusVoice.type(shown, rest, text, function () { pvTyping = null; done(); resolve(); });
       }, 200);
+      pvTyping = { cancel: function () { clearTimeout(wait); }, finish: function () { clearTimeout(wait); shown.textContent = text; rest.textContent = ''; pvTyping = null; done(); resolve(); } };
     });
   }
   function thinking() {
@@ -203,7 +204,7 @@
     if (!open) return;
     open = false;
     clearTimeout(blinkT);
-    if (window.parvusVoice) window.parvusVoice.stop();
+    if (pvTyping) pvTyping.finish();
     play(SND.close);
     if (!tl || reduced || !window.gsap) { afterClose(); return; }
     tl.timeScale(1.6).reverse();

@@ -470,3 +470,4 @@ html.ov .ov-card.ov-card--term .ov-term h3{z-index:1}
 html.ov:not(.ov-ready) #ug-hero-inner,html.ov:not(.ov-ready) #ug-content,html.ov:not(.ov-ready) #ug-footer{visibility:hidden}
 html.ov #patchnotesMount{min-height:150vh}
 .ov-screen #mascotEyes{clip-path:inset(15% 5% 40% 15%)}
+.mascot-bubble .rest{color:transparent}
