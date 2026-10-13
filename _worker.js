@@ -4862,8 +4862,9 @@ const PUSH_SEND_PAGE = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Send a Notification</title>
-<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/overhaul/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/overhaul/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/overhaul/icon-180.png">
 <script>try{var t=localStorage.getItem('pv-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -6037,7 +6038,8 @@ const SPONSOR_ADMIN_PAGE = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Sponsor requests</title>
-<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
+<link rel="icon" type="image/png" sizes="32x32" href="/overhaul/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/overhaul/favicon-192.png">
 <script>try{var t=localStorage.getItem('pv-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -6150,8 +6152,9 @@ const POLL_ADMIN_PAGE = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Polls</title>
-<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/overhaul/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/overhaul/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/overhaul/icon-180.png">
 <script>try{var t=localStorage.getItem('pv-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -7793,16 +7796,17 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
         }
       })
       .on('link[rel="icon"]', {
         element(el) {
-          el.setAttribute('href', '/favicon-192.png');
+          el.setAttribute('href', pvOn ? '/overhaul/favicon-192.png' : '/favicon-192.png');
           el.setAttribute('sizes', '192x192');
           el.setAttribute('type', 'image/png');
+          if (pvOn) el.after('<link rel="icon" type="image/png" sizes="32x32" href="/overhaul/favicon-32.png">', { html: true });
         }
       })
       .on('img.ug-header-logo', {
