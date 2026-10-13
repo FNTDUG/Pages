@@ -134,6 +134,7 @@ html.ov #ug-hero-inner{padding:0 24px;max-width:var(--ov-col)}
 .ov-screen .parvus-home .mascot-disco-room{clip-path:inset(calc(var(--ph-sky,0px) * -1) -100vw 0)}
 .ov-screen .mascot-disco-drop{transform:translateY(calc(-100% - 4px - var(--ph-sky,0px)))}
 .ov-wait #mascot{visibility:hidden}
+.ov-screen>.ov-still{position:absolute;left:50%;top:50%;width:219px;height:234px;max-width:none;transform:translate(-50%,-50%);image-rendering:pixelated}
 
 html.ov .ug-page-title-area{text-align:left;margin:0;padding:0}
 html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 var(--font-head);color:var(--text);text-transform:uppercase;text-decoration:none;text-shadow:none}

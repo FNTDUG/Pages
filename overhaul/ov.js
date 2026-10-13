@@ -52,7 +52,8 @@
     }
     var wrap = document.createElement('div');
     wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '');
-    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
+    var still = document.querySelector('meta[name="ov-still"]');
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : still ? '<div class="ov-stage"><div class="ov-screen"><img class="ov-still" src="' + esc(still.content) + '" alt="' + esc(still.getAttribute('data-alt') || '') + '"></div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
     pins(wrap);
@@ -64,6 +65,11 @@
     window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
     if (bare) return;
     load('/overhaul/ov-voice.js');
+    if (still) {
+      load('/overhaul/ov-ask.js');
+      load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
+      return;
+    }
     var js = document.createElement('script');
     js.src = '/overhaul/parvus-home.js';
     js.onload = function () {
@@ -528,7 +534,6 @@
       if (p && window.mascotSay && !p.thinking) {
         clearInterval(iv);
         if (window.mascotTired && window.mascotTired()) window.mascotSay("zzz. i'm out of answers for now. come back once i've had a rest.");
-        else if (document.querySelector('meta[name="ov-greet"]')) window.mascotSay(document.querySelector('meta[name="ov-greet"]').content);
         else if (title) window.mascotSay('Welcome to ' + title + '! ' + (window.matchMedia && window.matchMedia('(pointer: fine)').matches ? 'Click' : 'Tap') + ' me if you need help.');
       } else if (tries > 20) clearInterval(iv);
     }, 400);
