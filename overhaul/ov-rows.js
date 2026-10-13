@@ -241,8 +241,9 @@
         cards: items.map(function (el) { return { top: off(el, 'offsetTop'), h: el.offsetHeight, w: el.offsetWidth }; })
       };
       var gap = step - geo.cards[0].w, fit = Math.floor((geo.clipR - geo.left0 + gap) / step);
-      geo.lineL = Math.max(geo.clipL, geo.left0 - 2);
-      geo.lineR = Math.min(geo.clipR, geo.left0 + fit * step - gap + 8);
+      var sh = /(-?[\d.]+)px\s+(-?[\d.]+)px/.exec(getComputedStyle(items[0]).boxShadow || ''), shadow = sh ? Math.max(0, parseFloat(sh[1])) : 0;
+      geo.lineL = Math.max(geo.clipL, geo.left0);
+      geo.lineR = Math.min(geo.clipR, geo.left0 + fit * step - gap + shadow);
       geo.clip = null;
       prevX = [];
     }
