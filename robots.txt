@@ -1,6 +1,8 @@
 User-agent: *
 Disallow: /notify-send
 Disallow: /poll-admin
+Disallow: /sponsor-admin
+Disallow: /sponsor/
 Disallow: /wiki-edit
 Disallow: /push/
 Disallow: /poll/admin

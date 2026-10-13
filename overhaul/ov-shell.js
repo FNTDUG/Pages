@@ -38,7 +38,7 @@
     '@media (max-width:768px){html.ov .ug-mn-kofi{margin-top:10px;padding:10px 12px;font-size:13px}}' +
     'html.ov .ov-cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}' +
     '.sponsor-case{width:21px;height:16px;flex:none;fill:currentColor}' +
-    'html.ov .ug-mn-sponsor{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;margin-top:12px;padding:12px 14px;color:#10260f;background:var(--green);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-align:left;cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .13s}' +
+    'html.ov .ug-mn-sponsor{text-decoration:none;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;margin-top:12px;padding:12px 14px;color:#10260f;background:var(--green);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-align:left;cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .13s}' +
     'html.ov .ug-mn-sponsor:hover{background:#9be59f;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
     'html.ov .ug-mn-sponsor:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
     'html.ov .ug-mn-sponsor .sponsor-case{width:18px;height:14px}' +
@@ -153,10 +153,9 @@
   if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', 'Support us on Ko-fi' + CUP), dc.nextSibling);
   var kf = document.querySelector('.ug-mn-kofi');
   if (kf && !document.querySelector('.ug-mn-sponsor')) {
-    var sp = document.createElement('button');
-    sp.type = 'button';
+    var sp = document.createElement('a');
+    sp.href = '/sponsor';
     sp.className = 'ug-mn-sponsor';
-    sp.title = 'Sponsorship info coming soon';
     sp.innerHTML = 'Sponsor' + CASE;
     kf.parentNode.insertBefore(sp, kf.nextSibling);
   }

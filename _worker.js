@@ -320,8 +320,12 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 #ug-footer p{position:relative;z-index:1}
 #ug-footer a{color:#ffa45b;text-decoration:none;position:relative;z-index:1}
 #ug-footer a:hover{text-decoration:underline}
+#ug-footer .ug-top-row{margin-bottom:10px}
+#ug-footer a.ug-top{display:inline-block;padding:6px 18px;border-radius:20px;background:#ffa45b;color:#15100b;font-weight:700;line-height:1.6}
+#ug-footer a.ug-top:hover{text-decoration:none;background:#ffb878}
 </style>`;
 const FOOTER_HTML = `
+      <p class="ug-top-row"><a class="ug-top" href="#" onclick="window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return false;">Back to top &uarr;</a></p>
       <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="mailto:contact@fntduserguide.com">Contact us</a></p>
       <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="/privacy-policy#your-privacy-choices" rel="noopener">Your Privacy Choices</a></p>
       <p>&copy; 2025&ndash;2026 www.fntduserguide.com</p>`;
@@ -3601,6 +3605,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
+  '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
 function seoPath(pathname) {
@@ -3863,7 +3868,7 @@ const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
 const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><script src="/overhaul/ov.js"><\/script>';
 const OV_FONTS = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
-const OV_SKIP = /^\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|wiki-edit|wiki\/api|wiki\/img)(\/|$)/;
+const OV_SKIP = /^\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|sponsor-admin|sponsor\/submit|sponsor\/admin|wiki-edit|wiki\/api|wiki\/img)(\/|$)/;
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 function ovHref(href) {
   const m = /^(?:https?:\/\/(?:www\.)?fntduserguide\.com)?(\/(?!\/)[^?#]*)(.*)$/.exec(href || '');
@@ -3880,7 +3885,7 @@ function ovNav() {
 }
 const OV_MIRROR_SCRIPT = `<script>
 (function () {
-  var P = '/overhaul', skip = /^\\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|wiki-edit|wiki\\/api|wiki\\/img)(\\/|$)/;
+  var P = '/overhaul', skip = /^\\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|sponsor-admin|sponsor\\/submit|sponsor\\/admin|wiki-edit|wiki\\/api|wiki\\/img)(\\/|$)/;
   function fix(e) {
     var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
     if (!a) return;
@@ -5785,6 +5790,281 @@ const POLL_HTML = `
 })();
 <\/script>`;
 
+const SPONSOR_SCHEMA = 'CREATE TABLE IF NOT EXISTS sponsors (id TEXT PRIMARY KEY, created INTEGER NOT NULL, status TEXT NOT NULL, kind TEXT NOT NULL, name TEXT NOT NULL, business TEXT NOT NULL, email TEXT NOT NULL, discord TEXT, link TEXT NOT NULL, game TEXT, about TEXT, placements TEXT, length TEXT, budget TEXT, notes TEXT, who TEXT NOT NULL)';
+const SPONSOR_PLACES = { banner: 'Banner across the site', card: 'Featured card on the home page', ad: 'In-page ad spot', parvus: 'A mention from Parvus', unsure: 'Not sure yet' };
+const SPONSOR_LENGTHS = { w1: '1 week', w2: '2 weeks', m1: '1 month', long: 'Longer than a month', unsure: 'Not sure yet' };
+const SPONSOR_BUDGETS = { '': 'Not given', b1: 'Under $50', b2: '$50 to $150', b3: '$150 to $500', b4: '$500 or more', robux: 'Robux or other (see notes)', talk: 'Prefer to discuss' };
+const SPONSOR_STATUS = ['new', 'replied', 'archived'];
+const SPONSOR_GAME_RE = /^https?:\/\/(?:www\.|web\.)?roblox\.com\/games\/(\d+)/i;
+
+function sponsorText(v, max) {
+  return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, max);
+}
+
+function sponsorTimed(p, ms) {
+  return Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]);
+}
+
+async function sponsorGame(link) {
+  const m = SPONSOR_GAME_RE.exec(link);
+  if (!m) return null;
+  const get = u => sponsorTimed(fetch(u, { cf: { cacheTtl: 300 } }).then(r => r.ok ? r.json() : null), 3000);
+  const u = await get('https://apis.roblox.com/universes/v1/places/' + m[1] + '/universe');
+  if (!u || !u.universeId) return { place: m[1] };
+  const g = await get('https://games.roblox.com/v1/games?universeIds=' + u.universeId);
+  const d = g && Array.isArray(g.data) ? g.data[0] : null;
+  if (!d) return { place: m[1], universe: u.universeId };
+  return { place: m[1], universe: u.universeId, name: sponsorText(d.name, 120), visits: Number(d.visits) || 0, playing: Number(d.playing) || 0, creator: sponsorText(d.creator && d.creator.name, 80) };
+}
+
+async function sponsorPing(env, r) {
+  const cut = (v, n) => String(v || '-').slice(0, n);
+  const game = r.game ? (r.game.name ? r.game.name + ' (' + (r.game.visits || 0).toLocaleString('en-US') + ' visits, ' + (r.game.playing || 0).toLocaleString('en-US') + ' playing)' : 'Could not look up the game') : '';
+  const fields = [
+    { name: 'Type', value: r.kind === 'game' ? 'Roblox game' : 'Product or brand', inline: true },
+    { name: 'Business', value: cut(r.business, 200), inline: true },
+    { name: 'Contact', value: cut(r.name + ' <' + r.email + '>' + (r.discord ? ' / Discord ' + r.discord : ''), 300) },
+    { name: 'Link', value: cut(r.link, 300) }
+  ];
+  if (game) fields.push({ name: 'Game', value: cut(game, 300) });
+  if (r.about) fields.push({ name: r.kind === 'game' ? 'About the game' : 'About the product', value: cut(r.about, 1000) });
+  fields.push({ name: 'Wants', value: cut(r.placements.map(p => SPONSOR_PLACES[p]).join(', ') + ' / ' + SPONSOR_LENGTHS[r.length] + ' / budget: ' + SPONSOR_BUDGETS[r.budget], 1000) });
+  if (r.notes) fields.push({ name: 'Notes', value: cut(r.notes, 1000) });
+  const body = { username: 'Sponsor requests', allowed_mentions: { parse: [] }, embeds: [{ title: 'New sponsor request', url: SITE_URL + '/sponsor-admin', color: 0xff9a4d, fields, timestamp: new Date(r.created).toISOString() }] };
+  await sponsorTimed(fetch(env.SPONSOR_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), 2500);
+}
+
+async function sponsorSubmit(request, env) {
+  if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (Number(request.headers.get('content-length') || 0) > 16000) return pushJson({ ok: false, error: 'too-big' }, 413);
+  let b = null;
+  try { b = await request.json(); } catch (e) {}
+  if (!b || typeof b !== 'object') return pushJson({ ok: false, error: 'bad-request' }, 400);
+  if (b.website) return pushJson({ ok: true });
+  if (!(Number(b.t) > 0) || Date.now() - Number(b.t) < 4000) return pushJson({ ok: false, error: 'too-fast' }, 400);
+  const kind = b.kind === 'game' || b.kind === 'product' ? b.kind : '';
+  const f = { name: sponsorText(b.name, 80), business: sponsorText(b.business, 120), email: sponsorText(b.email, 160), discord: sponsorText(b.discord, 40), link: sponsorText(b.link, 300), about: sponsorText(b.about, 1500), notes: sponsorText(b.notes, 1500) };
+  const places = (Array.isArray(b.placements) ? b.placements : []).filter((x, i, a) => SPONSOR_PLACES[x] && a.indexOf(x) === i);
+  const length = SPONSOR_LENGTHS[b.length] ? b.length : '';
+  const budget = Object.prototype.hasOwnProperty.call(SPONSOR_BUDGETS, b.budget || '') ? (b.budget || '') : '';
+  const bad = [];
+  if (!kind) bad.push('kind');
+  if (!f.name) bad.push('name');
+  if (!f.business) bad.push('business');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email)) bad.push('email');
+  if (kind === 'game' && !SPONSOR_GAME_RE.test(f.link)) bad.push('link');
+  if (kind === 'product' && !/^https?:\/\/[^\s.\/]+\.[^\s]+$/i.test(f.link)) bad.push('link');
+  if (kind === 'product' && !f.about) bad.push('about');
+  if (!places.length) bad.push('placements');
+  if (!length) bad.push('length');
+  if (b.adult !== true) bad.push('adult');
+  if (b.rules !== true) bad.push('rules');
+  if (bad.length) return pushJson({ ok: false, error: 'invalid', fields: bad }, 400);
+  const db = env.POLLS;
+  await db.prepare(SPONSOR_SCHEMA).run();
+  const who = wikiHex(await pushSha256(env.POLL_SALT + '|sponsor|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 32);
+  const now = Date.now();
+  const recent = await db.prepare('SELECT COUNT(*) AS n FROM sponsors WHERE who = ?1 AND created > ?2').bind(who, now - 86400000).first();
+  if (recent && recent.n >= 3) return pushJson({ ok: false, error: 'limit' }, 429);
+  const game = kind === 'game' ? await sponsorGame(f.link) : null;
+  const id = wikiHex(crypto.getRandomValues(new Uint8Array(12)));
+  await db.prepare('INSERT INTO sponsors (id, created, status, kind, name, business, email, discord, link, game, about, placements, length, budget, notes, who) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16)')
+    .bind(id, now, 'new', kind, f.name, f.business, f.email, f.discord, f.link, game ? JSON.stringify(game) : null, f.about, places.join(','), length, budget, f.notes, who).run();
+  if (env.SPONSOR_WEBHOOK) await sponsorPing(env, Object.assign({ id, created: now, kind, game, placements: places, length, budget }, f));
+  return pushJson({ ok: true });
+}
+
+async function sponsorPasswordOk(request, env) {
+  const want = env.SPONSOR_ADMIN_PASSWORD || '';
+  const got = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!want || !got) return false;
+  const a = await pushSha256(got);
+  const c = await pushSha256(want);
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ c[i];
+  return diff === 0;
+}
+
+async function sponsorAdmin(request, env) {
+  if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (!env.POLLS || !env.SPONSOR_ADMIN_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
+  if (!(await sponsorPasswordOk(request, env))) {
+    await new Promise(r => setTimeout(r, 1500));
+    return pushJson({ ok: false, error: 'password' }, 401);
+  }
+  let b = null;
+  try { b = await request.json(); } catch (e) {}
+  if (!b || typeof b !== 'object') return pushJson({ ok: false, error: 'bad-request' }, 400);
+  const db = env.POLLS;
+  await db.prepare(SPONSOR_SCHEMA).run();
+  if (b.mode === 'status') {
+    if (SPONSOR_STATUS.indexOf(b.status) === -1) return pushJson({ ok: false, error: 'bad-request' }, 400);
+    await db.prepare('UPDATE sponsors SET status = ?1 WHERE id = ?2').bind(b.status, String(b.id || '')).run();
+  } else if (b.mode === 'delete') {
+    await db.prepare('DELETE FROM sponsors WHERE id = ?1').bind(String(b.id || '')).run();
+  } else if (b.mode !== 'list') return pushJson({ ok: false, error: 'bad-request' }, 400);
+  await db.prepare('DELETE FROM sponsors WHERE created < ?1').bind(Date.now() - 365 * 86400000).run();
+  const rows = ((await db.prepare('SELECT id, created, status, kind, name, business, email, discord, link, game, about, placements, length, budget, notes FROM sponsors ORDER BY created DESC LIMIT 500').all()).results || []).map(r => {
+    let game = null;
+    try { game = r.game ? JSON.parse(r.game) : null; } catch (e) {}
+    return Object.assign({}, r, {
+      game,
+      placements: String(r.placements || '').split(',').filter(Boolean).map(x => SPONSOR_PLACES[x] || x),
+      length: SPONSOR_LENGTHS[r.length] || r.length || '',
+      budget: SPONSOR_BUDGETS[r.budget || ''] || r.budget || ''
+    });
+  });
+  return pushJson({ ok: true, rows, webhook: !!env.SPONSOR_WEBHOOK });
+}
+
+const SPONSOR_ADMIN_PAGE = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Sponsor requests</title>
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#07060f;color:#fff;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;font-size:16px}
+body{display:flex;justify-content:center;padding:28px 16px 60px}
+.wrap{width:min(760px,100%);display:flex;flex-direction:column;gap:18px}
+.card{border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75)}
+.stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:slide 1.1s linear infinite}
+@keyframes slide{from{background-position:0 0}to{background-position:40px 0}}
+.body{padding:22px 22px 24px}
+.kicker{font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.7;color:#ffa45b;letter-spacing:.5px;text-align:center;margin-bottom:8px}
+.sub{font-size:14px;line-height:1.6;color:#cfc8dc;text-align:center;margin-bottom:16px}
+input[type=password]{width:100%;font:inherit;font-size:15px;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:11px 12px;outline:none}
+input:focus{border-color:#ffa45b}
+.btn{font-family:'Audiowide',sans-serif;font-size:12px;letter-spacing:.5px;padding:11px 16px;border-radius:9px;cursor:pointer;border:1px solid rgba(255,164,91,.45);background:rgba(255,164,91,.07);color:#ffa45b}
+.btn:hover{background:rgba(255,164,91,.16);border-color:#ffa45b}
+.btn.full{width:100%;margin-top:14px;padding:13px 18px}
+.btn.on{background:#ffa45b;color:#15100b}
+.btn.danger{color:#ff8a8a;border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
+.btn.danger.sure{background:rgba(255,107,107,.25);border-color:#ff6b6b}
+.btn:focus-visible{outline:2px solid #ffa45b;outline-offset:2px}
+.err{margin-top:12px;font-family:'Press Start 2P',monospace;font-size:8.5px;line-height:1.8;color:#ff8a8a;text-align:center}
+.err:empty{display:none}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.note{font-size:13px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6}
+.req{padding:18px 20px;border-top:1px solid rgba(255,255,255,.08)}
+.req:first-child{border-top:0}
+.req h3{font-family:'Audiowide',sans-serif;font-size:16px;line-height:1.4;margin-bottom:4px}
+.tag{display:inline-block;margin-right:6px;padding:3px 8px;border-radius:10px;font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;border:1px solid rgba(255,164,91,.5);color:#ffa45b}
+.tag.new{background:#ffa45b;color:#15100b}
+.when{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;font-size:14px;line-height:1.5}
+dt{color:rgba(255,255,255,.55)}
+dd{color:#ece8f4;overflow-wrap:anywhere;white-space:pre-wrap}
+dd a{color:#ffa45b}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.empty{padding:24px;font-size:14px;color:rgba(255,255,255,.5);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="login">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="kicker">SPONSOR REQUESTS</div>
+      <p class="sub">Enter the sponsor admin password.</p>
+      <form id="loginForm">
+        <input type="password" id="pw" autocomplete="current-password" aria-label="Password" placeholder="Password">
+        <button class="btn full" type="submit">Open</button>
+      </form>
+      <div class="err" id="loginErr"></div>
+    </div>
+  </div>
+  <div id="main" hidden>
+    <div class="card">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="kicker">SPONSOR REQUESTS</div>
+        <div class="tabs" id="tabs"></div>
+        <p class="note" id="hook"></p>
+        <div class="err" id="err"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px"><div id="list"></div></div>
+  </div>
+</div>
+<script>
+(function () {
+  var password = '', rows = [], view = 'new', sure = '';
+  var $ = function (id) { return document.getElementById(id); };
+  var TABS = [['new', 'New'], ['replied', 'Replied'], ['archived', 'Archived'], ['all', 'All']];
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function num(n) { return Number(n || 0).toLocaleString('en-US'); }
+  function safeUrl(u) { return /^https?:/i.test(u || '') ? u : ''; }
+  function api(data) {
+    return fetch('/sponsor/admin', { method: 'POST', headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + password }, body: JSON.stringify(data) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (r.status === 401) throw new Error('Wrong password.');
+          if (r.status === 503) throw new Error('The sponsor admin password is not set up yet.');
+          if (!r.ok || !j.ok) throw new Error('Something went wrong. Try again.');
+          rows = j.rows || [];
+          $('hook').textContent = j.webhook ? 'New requests are posted to Discord.' : 'Discord pings are off (no webhook set).';
+          render();
+          return j;
+        });
+      });
+  }
+  function render() {
+    $('tabs').innerHTML = TABS.map(function (t) {
+      var n = t[0] === 'all' ? rows.length : rows.filter(function (r) { return r.status === t[0]; }).length;
+      return '<button class="btn' + (view === t[0] ? ' on' : '') + '" type="button" data-tab="' + t[0] + '">' + t[1] + ' (' + n + ')</button>';
+    }).join('');
+    var list = rows.filter(function (r) { return view === 'all' || r.status === view; });
+    if (!list.length) { $('list').innerHTML = '<p class="empty">Nothing here.</p>'; return; }
+    $('list').innerHTML = list.map(function (r) {
+      var g = r.game, link = safeUrl(r.link);
+      var items = [
+        ['Contact', esc(r.name) + ' &middot; <a href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Sponsoring the FNTD User Guide') + '">' + esc(r.email) + '</a>' + (r.discord ? ' &middot; Discord ' + esc(r.discord) : '')],
+        [r.kind === 'game' ? 'Game link' : 'Website', link ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(link) + '</a>' : esc(r.link)]
+      ];
+      if (g) items.push(['Roblox', g.name ? esc(g.name) + (g.creator ? ' by ' + esc(g.creator) : '') + ' &middot; ' + num(g.visits) + ' visits &middot; ' + num(g.playing) + ' playing' : 'Could not look up this game']);
+      if (r.about) items.push([r.kind === 'game' ? 'About the game' : 'About the product', esc(r.about)]);
+      items.push(['Placement', esc((r.placements || []).join(', '))]);
+      items.push(['Length', esc(r.length)]);
+      items.push(['Budget', esc(r.budget)]);
+      if (r.notes) items.push(['Notes', esc(r.notes)]);
+      var btns = ['new', 'replied', 'archived'].filter(function (s) { return s !== r.status; }).map(function (s) {
+        return '<button class="btn" type="button" data-id="' + esc(r.id) + '" data-status="' + s + '">Mark ' + s + '</button>';
+      }).join('') + '<button class="btn danger' + (sure === r.id ? ' sure' : '') + '" type="button" data-del="' + esc(r.id) + '">' + (sure === r.id ? 'Click again to delete' : 'Delete') + '</button>';
+      return '<div class="req"><h3><span class="tag' + (r.status === 'new' ? ' new' : '') + '">' + esc(r.status.toUpperCase()) + '</span><span class="tag">' + (r.kind === 'game' ? 'ROBLOX GAME' : 'PRODUCT') + '</span>' + esc(r.business) + '</h3>' +
+        '<p class="when">' + esc(new Date(r.created).toLocaleString()) + '</p><dl>' + items.map(function (i) { return '<dt>' + i[0] + '</dt><dd>' + i[1] + '</dd>'; }).join('') + '</dl><div class="row">' + btns + '</div></div>';
+    }).join('');
+  }
+  function fail(e, where) { $(where).textContent = e.message; }
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    password = $('pw').value;
+    $('loginErr').textContent = '';
+    api({ mode: 'list' }).then(function () { $('login').hidden = true; $('main').hidden = false; }, function (er) { fail(er, 'loginErr'); });
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('button') : null;
+    if (!t) return;
+    $('err').textContent = '';
+    if (t.getAttribute('data-tab')) { view = t.getAttribute('data-tab'); sure = ''; render(); return; }
+    if (t.getAttribute('data-status')) { api({ mode: 'status', id: t.getAttribute('data-id'), status: t.getAttribute('data-status') }).catch(function (er) { fail(er, 'err'); }); return; }
+    var del = t.getAttribute('data-del');
+    if (del) {
+      if (sure !== del) { sure = del; render(); return; }
+      sure = '';
+      api({ mode: 'delete', id: del }).catch(function (er) { fail(er, 'err'); });
+    }
+  });
+})();
+</script>
+</body>
+</html>`;
+
 const POLL_ADMIN_PAGE = `<!doctype html>
 <html lang="en">
 <head>
@@ -7332,6 +7612,8 @@ export default {
     if (url.pathname === '/poll/current') return pollCurrent(env, url);
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
+    if (url.pathname === '/sponsor/submit') return sponsorSubmit(request, env);
+    if (url.pathname === '/sponsor/admin') return sponsorAdmin(request, env);
     if (url.pathname === '/poll/image') return pollImageUpload(request, env);
     if (url.pathname.indexOf('/poll/img/') === 0) return pollImageGet(env, url);
     if (url.pathname.indexOf('/wiki/api/') === 0) return wikiApi(request, env, url);
@@ -7356,8 +7638,8 @@ export default {
         }
       });
     }
-    if (url.pathname === '/notify-send' || url.pathname === '/poll-admin') {
-      return new Response(url.pathname === '/notify-send' ? PUSH_SEND_PAGE : POLL_ADMIN_PAGE, {
+    if (url.pathname === '/notify-send' || url.pathname === '/poll-admin' || url.pathname === '/sponsor-admin') {
+      return new Response(url.pathname === '/notify-send' ? PUSH_SEND_PAGE : url.pathname === '/sponsor-admin' ? SPONSOR_ADMIN_PAGE : POLL_ADMIN_PAGE, {
         headers: {
           'content-type': 'text/html; charset=utf-8',
           'cache-control': 'no-store',
