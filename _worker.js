@@ -4813,6 +4813,8 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 .thumb{display:block;max-width:100%;max-height:140px;margin:0 0 12px;border:2px solid var(--ink)}
 .tabs{display:flex;flex-wrap:wrap;gap:10px}
 .tabs .btn{flex:none;min-width:0;padding:10px 14px;font-size:14px}
+.tabs .btn:not(.on),.row .btn:not(.danger){color:var(--text);background:var(--surface)}
+#list .empty{padding:24px}
 .hook{margin-top:14px;font-size:13px;color:var(--mute)}
 .req{padding:20px 22px;border-top:var(--bw) solid var(--ink)}
 .req:first-child{border-top:0}
