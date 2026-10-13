@@ -322,8 +322,7 @@ div:has(> #cleanModeToggle:only-child){display:none!important}
 #ug-footer a:hover{text-decoration:underline}
 </style>`;
 const FOOTER_HTML = `
-      <p>HUGE thanks to <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps</a> for the mascot art work — you can commission them and see more of their work there if you want to support them!</p>
-      <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://vgen.co/epiiepsi" target="_blank" rel="noopener noreferrer">eps Portfolio</a></p>
+      <p><a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer">Discord</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="mailto:contact@fntduserguide.com">Contact us</a></p>
       <p><a href="/privacy-policy" rel="noopener">Privacy Policy</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="/privacy-policy#your-privacy-choices" rel="noopener">Your Privacy Choices</a></p>
       <p>&copy; 2025&ndash;2026 www.fntduserguide.com</p>`;
 
