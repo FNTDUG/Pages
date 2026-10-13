@@ -3131,7 +3131,7 @@ const REWARD_TIP = `<script>
 
 const ACTIVE_SCRIPT = `<script>
 (function(){
-  var p = window.location.pathname.replace(/[/]+$/, '') || '/';
+  var p = window.location.pathname.replace(/^[/]overhaul(?=[/]|$)/, '').replace(/[/]+$/, '') || '/';
   // Score a nav href against the current path: exact match wins, otherwise
   // the longest href the path sits under (so deep links like
   // /fntd2/unit-engine/Golden-Freddy still highlight /fntd2/unit-engine).
