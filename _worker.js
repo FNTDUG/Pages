@@ -3921,6 +3921,7 @@ const PV_POPUP_SCRIPT = `<script>
   var cfg = window.PV_POP;
   if (!cfg || window.pvPopup) return;
   var host = null, prevOverflow = '';
+  try { if (cfg.first !== '404') window.localStorage.setItem('pv:lastPage', location.pathname + location.search + location.hash); } catch (e) {}
   function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
   function remove() {
@@ -3953,8 +3954,14 @@ const PV_POPUP_SCRIPT = `<script>
     if (name === '404') {
       var ov = root.querySelector('.px-overlay');
       var home = location.pathname.indexOf('/overhaul') === 0 ? '/overhaul/' : '/';
-      if (ov) ov.setAttribute('data-close-to', home);
-      Array.prototype.forEach.call(text.querySelectorAll('a.px-btn[href="/"]'), function (a) { a.setAttribute('href', home); });
+      if (ov) ov.setAttribute('data-close-to', '');
+      Array.prototype.forEach.call(text.querySelectorAll('a.px-btn[href="/"]:not([data-px-back])'), function (a) { a.setAttribute('href', home); });
+      var back = text.querySelector('a[data-px-back]'), here = location.pathname + location.search, to = load('pv:lastPage');
+      if (!to || to === here) {
+        to = '';
+        try { var ref = new URL(document.referrer); if (ref.origin === location.origin && ref.pathname + ref.search !== here) to = ref.pathname + ref.search + ref.hash; } catch (e) {}
+      }
+      if (back) { if (to) back.setAttribute('href', to); else back.parentNode.removeChild(back); }
     }
   }
   function mount(name, html, opts) {
