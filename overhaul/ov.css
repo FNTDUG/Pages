@@ -293,6 +293,7 @@ html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
   html.ov #ug-mobile-nav{width:420px!important}
   html.ov #ug-info-panel{width:420px}
   html.ov #ug-info-btn{top:14px;right:calc(24px + var(--menu-w,106px));height:44px;padding:0 18px}
+  html.ov .inf-modes{padding-top:16px!important}
   html.ov .ug-mn-header{min-height:72px;padding-right:150px}
 }
 @media (max-width:960px){
