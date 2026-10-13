@@ -479,3 +479,13 @@ html.ov:not(.ov-ready) #ug-hero-inner,html.ov:not(.ov-ready) #ug-content,html.ov
 html.ov #patchnotesMount{min-height:150vh}
 .ov-screen #mascotEyes{clip-path:inset(15% 5% 40% 15%)}
 .mascot-bubble .rest{color:transparent}
+html.ov .ug-seo{color:var(--text);font-family:var(--font-body)}
+html.ov .ug-seo>summary{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;color:var(--text);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);font-weight:700;list-style:none}
+html.ov .ug-seo>summary::-webkit-details-marker{display:none}
+html.ov .ug-seo>summary::before{content:"+";font:400 14px/1 var(--font-tag)}
+html.ov .ug-seo[open]>summary::before{content:"-"}
+html.ov .ug-seo h2,html.ov .ug-seo h3{color:var(--text);font-family:var(--font-head);font-weight:400}
+html.ov .ug-seo p,html.ov .ug-seo li,html.ov .ug-seo td{color:var(--text)}
+html.ov .ug-seo th{color:var(--mute)}
+html.ov .ug-seo th,html.ov .ug-seo td{border-bottom:2px solid var(--surface2)}
+html.ov .ug-seo a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:3px}

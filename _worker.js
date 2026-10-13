@@ -3575,7 +3575,7 @@ const SEO_PAGES = {
   '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2', 'Five Nights TD 2 tier list ranking every unit by role: starters, support, stun, slow, summon and knockback. Updated after every FNTD2 update.'],
   '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Teams for Every Mode', 'The best Five Nights TD 2 teams for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements, tested at level 100.'],
   '/fntd2/unit-engine': ['FNTD2 Unit Engine: Unit Stats, DPS & Values', 'Search every Five Nights TD 2 unit: stats, upgrades, hero paths, a DPS calculator, live Exists counts and trading values from Value Central.'],
-  '/fntd2/trade-calculator': ['FNTD2 Trade Calculator: Unit Values & Demand', 'Check Five Nights TD 2 trades with official Value Central values and demand. Add units and Souls to each side to see if a trade is fair.'],
+  '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a trade is fair.'],
   '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm Materials and Pass EXP.'],
   '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards', 'Five Nights TD 2 Endless guide: the best farthest and grind teams for each Endless game, unit placements and the rewards for every map.'],
   '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC', 'Five Nights TD 2 Boss Raids meta: the best teams, placements for every map, a modifier tier list and how to unlock OMC and the ??? modifier.'],
@@ -3628,17 +3628,19 @@ function seoMeta(pathname) {
   }
   return m ? { title: m[0], desc: m[1] } : null;
 }
-function seoHead(pathname, canonUrl) {
-  const m = seoMeta(pathname);
+function seoHead(pathname, canonUrl, over) {
+  const m = over || seoMeta(pathname);
   if (!m) return '';
-  const p = seoPath(pathname);
+  const p = seoPath(pathname), img = seoAttr(m.image || SEO_IMAGE);
   let out = '<meta name="description" content="' + seoAttr(m.desc) + '">' +
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + SITE_NAME + '">' +
     '<meta property="og:title" content="' + seoAttr(m.title) + '"><meta property="og:description" content="' + seoAttr(m.desc) + '">' +
-    '<meta property="og:url" content="' + seoAttr(canonUrl) + '"><meta property="og:image" content="' + SEO_IMAGE + '">' +
-    '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + seoAttr(m.title) + '"><meta name="twitter:description" content="' + seoAttr(m.desc) + '"><meta name="twitter:image" content="' + SEO_IMAGE + '">';
+    '<meta property="og:url" content="' + seoAttr(canonUrl) + '"><meta property="og:image" content="' + img + '">' +
+    '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + seoAttr(m.title) + '"><meta name="twitter:description" content="' + seoAttr(m.desc) + '"><meta name="twitter:image" content="' + img + '">';
   let ld;
-  if (p === '/') {
+  if (m.crumbs) {
+    ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: m.crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c[0], item: SITE_URL + c[1] })) };
+  } else if (p === '/') {
     ld = { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, alternateName: ['FNTDUG', 'FNTD Userguide'], url: SITE_URL + '/' };
   } else {
     const items = [{ '@type': 'ListItem', position: 1, name: SITE_NAME, item: SITE_URL + '/' }];
@@ -3649,6 +3651,192 @@ function seoHead(pathname, canonUrl) {
     ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items };
   }
   return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
+}
+const SEO_VALUES_URL = 'https://fntd2.com/all_units.json';
+const SEO_RARITY = ['apex', 'secret', 'nightmare', 'mythic', 'exclusive', 'hero', 'epic', 'rare', 'uncommon'];
+const SEO_LIST_NAMES = { all: 'Overall', starter: 'Starters', support: 'Support', stun: 'Stun', slow: 'Slow', summon: 'Summon', knockback: 'Knockback' };
+const SEO_CSS = '<style>.ug-seo{max-width:860px;margin:28px auto 8px;padding:0 16px;box-sizing:border-box;color:#ddd6ea;font:400 15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:left}' +
+  '.ug-seo>summary{cursor:pointer;padding:10px 0;color:#ffa45b;font-weight:700}' +
+  '.ug-seo h2{margin:14px 0 6px;color:#fff;font-size:20px;line-height:1.3}.ug-seo h3{margin:16px 0 4px;color:#fff;font-size:16px;line-height:1.3}' +
+  '.ug-seo p{margin:6px 0}.ug-seo ul{margin:4px 0;padding-left:20px}.ug-seo li{margin:2px 0}.ug-seo a{color:#ffa45b}' +
+  '.ug-seo-wrap{overflow-x:auto}.ug-seo table{width:100%;border-collapse:collapse;font-size:14px}.ug-seo th,.ug-seo td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.12);text-align:left;white-space:nowrap}' +
+  'h1.ug-page-title,h1.ug-header-title{font-weight:400}</style>';
+let seoValues = null, seoValuesAt = 0;
+
+function seoEsc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function seoKey(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+function seoUnitPath(name) { return '/fntd2/unit-engine/' + encodeURIComponent(String(name).replace(/\s+/g, '-')); }
+function seoCap(v) { v = String(v || ''); return v.charAt(0).toUpperCase() + v.slice(1); }
+function seoNum(v) { const n = Number(v); return isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 2 }) : String(v); }
+function seoTimed(p, ms) { return Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]); }
+
+async function seoLoadValues() {
+  if (seoValues && Date.now() - seoValuesAt < 600000) return seoValues;
+  const r = await fetch(SEO_VALUES_URL, { cf: { cacheTtl: 600, cacheEverything: true } });
+  if (!r.ok) return seoValues;
+  const raw = await r.json();
+  const map = {};
+  let latest = '';
+  for (const id in raw) {
+    const e = raw[id];
+    if (!e || !e.baseText || !Array.isArray(e.variants) || !e.variants.length) continue;
+    const pick = v => v && v.value && v.value !== 'N/A' ? { value: v.value, demand: v.demand && v.demand !== 'N/A' ? v.demand : '', state: v.state || '' } : null;
+    e.variants.forEach(v => { if (v && /^\d{4}-\d{2}-\d{2}/.test(v.lastUpdate || '') && v.lastUpdate > latest) latest = v.lastUpdate; });
+    map[seoKey(e.baseText)] = { name: e.baseText, normal: pick(e.variants[0]), shiny: pick(e.variants[1]) };
+  }
+  seoValues = { map, latest: latest.slice(0, 10) };
+  seoValuesAt = Date.now();
+  return seoValues;
+}
+
+function seoUnitIndex(units) {
+  const byKey = {};
+  (units || []).forEach(u => { if (u && u.name) byKey[seoKey(u.name)] = u; });
+  return byKey;
+}
+function seoLink(name, byKey) {
+  const u = byKey[seoKey(name)];
+  return u ? '<a href="' + seoUnitPath(u.name) + '">' + seoEsc(name) + '</a>' : seoEsc(name);
+}
+function seoBlock(summary, body) {
+  return '<details class="ug-seo"><summary>' + seoEsc(summary) + '</summary>' + body + '</details>';
+}
+
+function seoUnitFor(realPath, units) {
+  const m = /^\/fntd2\/unit-engine\/([^\/?#]+)\/?$/.exec(realPath);
+  if (!m) return null;
+  let slug = m[1];
+  try { slug = decodeURIComponent(slug); } catch (e) {}
+  const key = seoKey(slug);
+  return key ? (units || []).find(u => u && seoKey(u.name) === key) || null : null;
+}
+
+function seoUnitMeta(u) {
+  let title = u.name + ': FNTD2 Stats, DPS & Value';
+  if (title.length > 60) title = u.name + ': FNTD2 Unit Stats';
+  if (title.length > 60) title = u.name + ' | FNTD2';
+  const rar = seoCap(u.rarity), a = /^[aeiou]/i.test(rar) ? 'an' : 'a';
+  const lead = u.name + ' is ' + a + ' ' + rar + (u.element ? ' ' + u.element : '') + ' unit in Five Nights TD 2';
+  const tails = [
+    (u.typeMain ? ' (' + String(u.typeMain).replace(/-/g, ' / ') + ')' : '') + '. See its stats, upgrade costs, passives, tier list rank and trade value.',
+    '. See its stats, upgrade costs, passives, tier list rank and trade value.',
+    '. Stats, passives, tier list rank and trade value.',
+    '.'
+  ];
+  let desc = lead + tails[0];
+  for (let i = 1; desc.length > 160 && i < tails.length; i++) desc = lead + tails[i];
+  if (desc.length < 110) desc += ' From the FNTD User Guide.';
+  return {
+    title, desc: desc.slice(0, 160), image: u.imgNormal || SEO_IMAGE,
+    crumbs: [[SITE_NAME, '/'], ['Five Nights TD 2', '/fntd2/fntd2-directory'], ['Unit Engine', '/fntd2/unit-engine'], [u.name, seoUnitPath(u.name)]]
+  };
+}
+
+function seoUnitHtml(u, data, values) {
+  const key = parvusNorm(u.name), out = [];
+  const facts = [
+    ['Rarity', seoCap(u.rarity)], ['Element', u.element], ['Role', u.typeMain ? String(u.typeMain).replace(/-/g, ' / ') + (Array.isArray(u.typeTags) && u.typeTags.length ? ' (' + u.typeTags.join(', ') + ')' : '') : ''],
+    ['Attack type', u.attackType], ['Placements', u.placements], ['How to get', u.obtainment ? parvusText(u.obtainment, 240) : '']
+  ].filter(f => f[1] !== undefined && f[1] !== null && f[1] !== '');
+  out.push('<h2>' + seoEsc(u.name) + ' in Five Nights TD 2</h2><ul>' + facts.map(f => '<li><strong>' + f[0] + ':</strong> ' + seoEsc(f[1]) + '</li>').join('') + '</ul>');
+  const lv = Array.isArray(u.levels) ? u.levels : [];
+  if (lv.length) {
+    const cost = lv.reduce((t, l) => t + (Number(l.cost) || 0), 0);
+    out.push('<h3>Stats by level</h3><div class="ug-seo-wrap"><table><thead><tr><th>Level</th><th>Damage</th><th>Cooldown</th><th>Range</th><th>Cost</th></tr></thead><tbody>' +
+      lv.map(l => '<tr><td>' + seoEsc(l.level) + '</td><td>' + seoNum(l.damage) + '</td><td>' + seoNum(l.cd) + 's</td><td>' + seoNum(l.range) + '</td><td>' + seoNum(l.cost) + '</td></tr>').join('') +
+      '</tbody></table></div><p>Placing ' + seoEsc(u.name) + ' and buying every upgrade costs ' + seoNum(cost) + ' in total.</p>');
+  }
+  const ps = Array.isArray(u.passives) ? u.passives : [];
+  if (ps.length) out.push('<h3>Passives</h3><ul>' + ps.map(p => '<li><strong>' + seoEsc(parvusText(p.title, 80)) + ':</strong> ' + seoEsc(parvusText(p.text, 400)) + '</li>').join('') + '</ul>');
+  if (Array.isArray(u.paths) && u.paths.length) out.push('<p>' + seoEsc(u.name) + ' is a hero with ' + u.paths.length + ' upgrade paths. Open it in the Unit Engine above to compare each path.</p>');
+  const t = data.tiers[key] || [];
+  if (t.length) out.push('<h3>Tier list</h3><ul>' + t.map(x => '<li>' + seoEsc(SEO_LIST_NAMES[x.list] || x.list) + ' list: ' + seoEsc(PARVUS_TIERS[x.tier] || x.tier) + ' tier, #' + x.rank + ' in that tier</li>').join('') + '</ul><p>See the full <a href="/fntd2/tierlists-1">FNTD2 tier list</a>.</p>');
+  const m = data.inMeta[key] || [];
+  if (m.length) out.push('<h3>Meta teams</h3><p>' + seoEsc(u.name) + ' is used in these <a href="/fntd2/meta-teams">meta teams</a>: ' + seoEsc(m.join(', ')) + '.</p>');
+  const v = values && values.map[seoKey(u.name)];
+  if (v && (v.normal || v.shiny)) {
+    const line = (label, x) => x ? '<li>' + label + ': ' + seoEsc(x.value) + (x.demand ? ', demand ' + seoEsc(x.demand) : '') + (x.state ? ' (' + seoEsc(x.state) + ')' : '') + '</li>' : '';
+    out.push('<h3>Trade value</h3><ul>' + line('Normal', v.normal) + line('Shiny', v.shiny) + '</ul><p>Values from Value Central' + (values.latest ? ', last updated ' + seoEsc(values.latest) : '') + '. Check a trade with the <a href="/fntd2/trade-calculator">trade calculator</a>.</p>');
+  }
+  return seoBlock(u.name + ': stats, passives and value', out.join(''));
+}
+
+function seoUnitsHtml(units) {
+  const groups = {};
+  (units || []).forEach(u => { if (u && u.name) (groups[String(u.rarity || '').toLowerCase()] = groups[String(u.rarity || '').toLowerCase()] || []).push(u); });
+  const order = SEO_RARITY.filter(r => groups[r]).concat(Object.keys(groups).filter(r => SEO_RARITY.indexOf(r) === -1));
+  const body = '<h2>Every Five Nights TD 2 unit</h2><p>' + (units || []).length + ' units, grouped by rarity. Each one has its own page with stats, passives, tier list rank and trade value.</p>' +
+    order.map(r => '<h3>' + seoEsc(seoCap(r) || 'Other') + '</h3><p>' + groups[r].slice().sort((a, b) => a.name.localeCompare(b.name)).map(u => '<a href="' + seoUnitPath(u.name) + '">' + seoEsc(u.name) + '</a>').join(', ') + '</p>').join('');
+  return seoBlock('All FNTD2 units A to Z', body);
+}
+
+function seoTierHtml(data) {
+  const lists = data.lists || {}, byKey = seoUnitIndex(data.units);
+  const names = Object.keys(lists);
+  if (!names.length) return '';
+  const body = '<h2>FNTD2 tier list (text version)</h2>' + names.map(l => {
+    const tiers = lists[l];
+    const rows = Object.keys(PARVUS_TIERS).filter(t => tiers[t] && tiers[t].length).map(t => '<li><strong>' + PARVUS_TIERS[t] + ':</strong> ' + tiers[t].map(n => seoLink(n, byKey)).join(', ') + '</li>').join('');
+    return rows ? '<h3>' + seoEsc(SEO_LIST_NAMES[l] || seoCap(l)) + ' tier list</h3><ul>' + rows + '</ul>' : '';
+  }).join('');
+  return seoBlock('FNTD2 tier list as text', body);
+}
+
+function seoMetaHtml(data) {
+  const metas = data.metas || {}, byKey = seoUnitIndex(data.units);
+  const modes = Object.keys(metas).filter(m => metas[m] && Array.isArray(metas[m].units) && metas[m].units.length);
+  if (!modes.length) return '';
+  const body = '<h2>FNTD2 meta teams (text version)</h2>' + modes.map(m => '<h3>' + seoEsc(m) + '</h3><ul>' + metas[m].units.map(u =>
+    '<li>' + seoLink(u.name, byKey) + [u.enchant && 'enchant ' + u.enchant, u.byte && 'bytes ' + u.byte, u.chip && 'chip ' + u.chip].filter(Boolean).map(x => ', ' + seoEsc(x)).join('') +
+    (u.replacement ? ' (or ' + seoLink(u.replacement, byKey) + ')' : '') + (u.caption ? ': ' + seoEsc(u.caption) : '') + '</li>').join('') + '</ul>').join('');
+  return seoBlock('FNTD2 meta teams as text', body);
+}
+
+function seoValuesHtml(data, values) {
+  if (!values) return '';
+  const byKey = seoUnitIndex(data.units), rows = [];
+  for (const k in values.map) {
+    const v = values.map[k], u = byKey[k];
+    if (!u || !(v.normal || v.shiny)) continue;
+    rows.push({ u, v });
+  }
+  if (!rows.length) return '';
+  rows.sort((a, b) => (SEO_RARITY.indexOf(String(a.u.rarity).toLowerCase()) - SEO_RARITY.indexOf(String(b.u.rarity).toLowerCase())) || a.u.name.localeCompare(b.u.name));
+  const cell = x => x ? seoEsc(x.value) : '-';
+  const body = '<h2>FNTD2 trading values</h2><p>Normal and shiny values with demand for ' + rows.length + ' Five Nights TD 2 units, from Value Central' + (values.latest ? ', last updated ' + seoEsc(values.latest) : '') + '.</p>' +
+    '<div class="ug-seo-wrap"><table><thead><tr><th>Unit</th><th>Rarity</th><th>Value</th><th>Shiny value</th><th>Demand</th></tr></thead><tbody>' +
+    rows.map(r => '<tr><td><a href="' + seoUnitPath(r.u.name) + '">' + seoEsc(r.u.name) + '</a></td><td>' + seoEsc(seoCap(r.u.rarity)) + '</td><td>' + cell(r.v.normal) + '</td><td>' + cell(r.v.shiny) + '</td><td>' + seoEsc((r.v.normal && r.v.normal.demand) || (r.v.shiny && r.v.shiny.demand) || '-') + '</td></tr>').join('') +
+    '</tbody></table></div>';
+  return seoBlock('FNTD2 trading values list', body);
+}
+
+async function seoSsr(realPath) {
+  const p = seoPath(realPath);
+  const isUnit = p.indexOf('/fntd2/unit-engine/') === 0;
+  const want = isUnit || p === '/fntd2/unit-engine' || p === '/fntd2/tierlists-1' || p.indexOf('/fntd2/tierlists-1/') === 0 || p === '/fntd2/meta-teams' || p.indexOf('/fntd2/meta-teams/') === 0 || p === '/fntd2/trade-calculator';
+  if (!want) return null;
+  const needValues = isUnit || p === '/fntd2/trade-calculator';
+  const [data, values] = await Promise.all([seoTimed(parvusLoad(), 2500), needValues ? seoTimed(seoLoadValues(), 2500) : Promise.resolve(null)]);
+  if (!data) return null;
+  if (isUnit) {
+    const u = seoUnitFor(p, data.units);
+    if (!u) return null;
+    return { unit: u, meta: seoUnitMeta(u), canon: seoUnitPath(u.name), html: seoUnitHtml(u, data, values) };
+  }
+  let html = '';
+  if (p === '/fntd2/unit-engine') html = seoUnitsHtml(data.units);
+  else if (p.indexOf('/fntd2/tierlists-1') === 0) html = seoTierHtml(data);
+  else if (p.indexOf('/fntd2/meta-teams') === 0) html = seoMetaHtml(data);
+  else if (p === '/fntd2/trade-calculator') html = seoValuesHtml(data, values);
+  return html ? { html } : null;
+}
+
+async function seoUnitSitemap() {
+  const data = await seoTimed(parvusLoad(), 4000);
+  const units = data && Array.isArray(data.units) ? data.units : [];
+  const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    units.filter(u => u && u.name).map(u => '  <url><loc>' + seoEsc(SITE_URL + seoUnitPath(u.name)) + '</loc></url>').join('\n') + '\n</urlset>\n';
+  return new Response(body, { status: units.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
 }
 const PAGE_NOTES_SCRIPT = `<script>
 (function () {
@@ -6841,16 +7029,20 @@ async function parvusLoad() {
   const tiers = {};
   const cfg = parvusCfg(tierSrc);
   const tierTop = {};
+  const lists = {};
   if (cfg && cfg.lists) {
     for (const list in cfg.lists) {
       const rows = cfg.lists[list] || {};
       tierTop[list] = {};
+      lists[list] = {};
       for (const tier in rows) {
         if (!Array.isArray(rows[tier])) continue;
+        lists[list][tier] = [];
         rows[tier].forEach((raw, i) => {
           const e = parvusEntry(raw);
           const key = parvusNorm(e.name);
           if (!key) return;
+          lists[list][tier].push(e.name);
           (tiers[key] = tiers[key] || []).push({ list, tier, rank: i + 1, tags: e.tags });
           if (tier === 'op' || tier === 's') (tierTop[list][tier] = tierTop[list][tier] || []).push(e.name);
         });
@@ -6869,8 +7061,8 @@ async function parvusLoad() {
     });
   }
   const notes = parvusNotes(noteSrc);
-  if (units.length || cfg || Object.keys(metas).length) { parvusData = { units, tiers, tierTop, tierNotes, metas, inMeta, notes }; parvusDataAt = Date.now(); }
-  return parvusData || { units, tiers, tierTop, tierNotes, metas, inMeta, notes };
+  if (units.length || cfg || Object.keys(metas).length) { parvusData = { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists }; parvusDataAt = Date.now(); }
+  return parvusData || { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists };
 }
 
 function parvusFind(units, text) {
@@ -7256,6 +7448,8 @@ export default {
       });
     }
 
+    if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap();
+
     if (url.pathname.startsWith('/game-thumb/')) {
       const id = url.pathname.slice('/game-thumb/'.length);
       if (!GAME_UNIVERSES.includes(id)) return new Response('Not found', { status: 404 });
@@ -7323,8 +7517,10 @@ export default {
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
-    const canonUrl = (SITE_URL + seoCanon(realPath)).replace(/"/g, '%22');
-    const seo = pvMissing ? null : seoMeta(realPath);
+    const ssr = pvMissing || response.status !== 200 ? null : await seoSsr(realPath);
+    const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
+    const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
+    let h1Done = false;
     const noInfoPanel = realPath === '/privacy-policy' || realPath === '/privacy-policy.html';
     const hasInfo = !noInfoPanel && infoPanelActive(realPath);
     const isOvHome = pvOn && (realPath === '/' || pvMissing);
@@ -7332,7 +7528,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl), { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
         }
@@ -7360,7 +7556,13 @@ export default {
         element(el) { el.setInnerContent(nav.desktop, { html: true }); }
       })
       .on('footer#ug-footer', {
-        element(el) { el.setInnerContent(nav.footer, { html: true }); }
+        element(el) {
+          if (ssr && ssr.html) el.before(ssr.html, { html: true });
+          el.setInnerContent(nav.footer, { html: true });
+        }
+      })
+      .on('.ug-page-title', {
+        element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
       })
       .on('body', {
         element(el) {
@@ -7395,6 +7597,11 @@ export default {
     if (pvOn) {
       rw = rw.on('link[href*="fonts.googleapis.com/css2"]', {
         element(el) { el.setAttribute('href', OV_FONTS); }
+      });
+    }
+    if (!isOvHome && seoPath(realPath) === '/') {
+      rw = rw.on('.ug-header-title', {
+        element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
       });
     }
     if (ovLive && isOvHome) {
