@@ -93,6 +93,8 @@
     return [document.getElementById('ug-sound-btn'), document.getElementById('ntfBell'), document.getElementById('pv-theme')].filter(function (el) { return el && !el.hidden; });
   }
   function layout() {
+    var hb = document.getElementById('ug-hamburger');
+    if (hb && hb.getClientRects().length) h.style.setProperty('--menu-w', Math.round(hb.getBoundingClientRect().width) + 'px');
     var ref = document.getElementById('ug-info-btn');
     if (!ref || !ref.getClientRects().length) ref = document.getElementById('ug-hamburger');
     var top = ref && ref.getClientRects().length ? Math.round(ref.getBoundingClientRect().bottom + 6) : 116;
@@ -123,6 +125,7 @@
     layout();
     h.classList.add('pv-shell');
   });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   var resizeT = 0;
   window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(layout, 100); }, { passive: true });
   var bell = document.getElementById('ntfBell');
