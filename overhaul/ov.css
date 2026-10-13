@@ -490,6 +490,6 @@ html.ov .ug-seo th{color:var(--mute)}
 html.ov .ug-seo th,html.ov .ug-seo td{border-bottom:2px solid var(--surface2)}
 html.ov .ug-seo a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:3px}
 html.ov #ug-footer .ug-top-row{margin-bottom:14px}
-html.ov #ug-footer a.ug-top{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;color:#1d2228;background:var(--acc);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);text-decoration:none;font-weight:700;transition:transform .12s,box-shadow .12s}
+html.ov #ug-footer a.ug-top{border-radius:0;display:inline-flex;align-items:center;min-height:44px;padding:0 20px;color:#1d2228;background:var(--acc);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);text-decoration:none;font-weight:700;transition:transform .12s,box-shadow .12s}
 html.ov #ug-footer a.ug-top:hover{color:#1d2228;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
 html.ov #ug-footer a.ug-top:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
