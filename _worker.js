@@ -3649,6 +3649,28 @@ function seoHead(pathname, canonUrl) {
   }
   return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
 }
+const PAGE_NOTES_SCRIPT = `<script>
+(function () {
+  function run() {
+    if (!document.querySelector('[data-page-note]')) return;
+    fetch('https://raw.githack.com/FNTDUG/characters.json/refs/heads/main/page-notes.html', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        Array.prototype.forEach.call(document.querySelectorAll('[data-page-note]'), function (el) {
+          var key = el.getAttribute('data-page-note'), t = null;
+          Array.prototype.forEach.call(doc.querySelectorAll('template[data-page-note]'), function (c) { if (c.getAttribute('data-page-note') === key) t = c; });
+          if (t) el.replaceWith(document.importNode(t.content, true));
+          else el.remove();
+        });
+        document.dispatchEvent(new Event('pagenotes:ready'));
+      })
+      .catch(function (e) { console.error('Page notes load error:', e); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
+<\/script>`;
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
 const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><script src="/overhaul/ov.js"><\/script>';
@@ -7343,6 +7365,7 @@ export default {
         element(el) {
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
+          el.append(PAGE_NOTES_SCRIPT, { html: true });
           el.append(noInfoPanel ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
           if (!hasInfo) el.append('<style>.ntf-bell{top:85px}@media(min-width:769px){.ntf-bell{top:117px}}</style>', { html: true });
           el.append(noInfoPanel ? POLL_HTML.replace('data-auto="1"', 'data-auto="0"') : POLL_HTML, { html: true });

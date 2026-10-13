@@ -56,11 +56,41 @@
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
     pins(wrap);
-    var notes = document.createElement('div');
-    notes.className = 'ov-notes';
+    gatherNotes(wrap, area, inner);
+    document.addEventListener('pagenotes:ready', function () { gatherNotes(wrap, area, inner); });
+    sizeScreen();
+    fitTitle();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
+    window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
+    if (bare) return;
+    load('/overhaul/ov-voice.js');
+    var js = document.createElement('script');
+    js.src = '/overhaul/parvus-home.js';
+    js.onload = function () {
+      var home = document.getElementById('parvusHome');
+      sizeScreen();
+      if (home && window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(sizeScreen); }).observe(home);
+      chat();
+    };
+    document.body.appendChild(js);
+  }
+
+  function gatherNotes(wrap, area, inner) {
+    var notes = null;
+    Array.prototype.forEach.call(inner.children, function (el) { if (el.classList.contains('ov-notes')) notes = el; });
+    if (!notes) {
+      notes = document.createElement('div');
+      notes.className = 'ov-notes';
+    }
+    function lead() {
+      var first = null;
+      Array.prototype.forEach.call(notes.children, function (el) { if (!first && el.classList.contains('ug-status-inline-text')) first = el; });
+      return first;
+    }
     Array.prototype.slice.call(area.children).concat(Array.prototype.slice.call(inner.children)).forEach(function (el) {
-      if (el === wrap || el.classList.contains('ug-page-title') || el.classList.contains('ug-status-badge') || el.classList.contains('ug-page-desc') || el.classList.contains('ad-slot') || el.querySelector('#cleanModeToggle')) return;
-      if (el.classList.contains('ug-status-inline-text') || (el.tagName === 'DIV' && el.querySelector('[style*="Audiowide"]'))) notes.appendChild(el);
+      if (el === wrap || el === notes || el.classList.contains('ug-page-title') || el.classList.contains('ug-status-badge') || el.classList.contains('ug-page-desc') || el.classList.contains('ad-slot') || el.querySelector('#cleanModeToggle')) return;
+      if (el.classList.contains('ug-status-inline-text')) notes.appendChild(el);
+      else if (el.tagName === 'DIV' && el.querySelector('[style*="Audiowide"]')) notes.insertBefore(el, lead());
     });
     var head = Array.prototype.filter.call(area.children, function (el) { return /Audiowide/.test(el.getAttribute('style') || '') && /^notes:?$/i.test(el.textContent.trim()); })[0];
     if (head) {
@@ -74,21 +104,7 @@
       }
       notes.insertBefore(card, notes.firstChild);
     }
-    if (notes.children.length) inner.insertBefore(notes, wrap.nextSibling);
-    sizeScreen();
-    fitTitle();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
-    window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
-    if (bare) return;
-    var js = document.createElement('script');
-    js.src = '/overhaul/parvus-home.js';
-    js.onload = function () {
-      var home = document.getElementById('parvusHome');
-      sizeScreen();
-      if (home && window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(sizeScreen); }).observe(home);
-      chat();
-    };
-    document.body.appendChild(js);
+    if (notes.children.length && !notes.parentNode) inner.insertBefore(notes, wrap.nextSibling);
   }
 
   var SPRITES = {

@@ -133,12 +133,14 @@
     m.appendChild(shown);
     m.appendChild(rest);
     inkMsg(m);
-    play(SND.text);
+    if (!window.parvusVoice) play(SND.text);
+    else if (reduced) window.parvusVoice.say(text);
     if (reduced) { shown.textContent = text; rest.textContent = ''; if (window.parvusLinkify) window.parvusLinkify(shown); return Promise.resolve(); }
     return new Promise(function (resolve) {
       var i = 0;
       setTimeout(function step() {
         i = Math.min(text.length, i + 2);
+        if (window.parvusVoice && (i / 2) % 3 === 1) window.parvusVoice.blip();
         shown.textContent = text.slice(0, i);
         rest.textContent = text.slice(i);
         if (i < text.length) setTimeout(step, 22);
@@ -201,6 +203,7 @@
     if (!open) return;
     open = false;
     clearTimeout(blinkT);
+    if (window.parvusVoice) window.parvusVoice.stop();
     play(SND.close);
     if (!tl || reduced || !window.gsap) { afterClose(); return; }
     tl.timeScale(1.6).reverse();

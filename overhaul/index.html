@@ -557,6 +557,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
 <script src="/overhaul/ov-rows.js"></script>
 <script src="/overhaul/ov-ink.js"></script>
 <script src="/overhaul/ov-ask.js"></script>
+<script src="/overhaul/ov-voice.js"></script>
 <script>
 (function () {
   var html = document.documentElement;
@@ -740,7 +741,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
     bubble.style.top = Math.max(spot.top, spot.top - spot.room) + 'px';
     window.pxInk.point(bubble, 'b', spot.at);
     window.pxInk.splash(bubble);
-    play(SND.text);
+    if (window.parvusVoice) window.parvusVoice.say(text);
+    else play(SND.text);
     hushT = setTimeout(function () { hideBubble(false); }, ms || 3800);
   }
 
@@ -898,12 +900,14 @@ html.talk-on,html.talk-on body{overflow:hidden}
     m.appendChild(shown);
     m.appendChild(rest);
     inkMsg(m);
-    play(SND.text);
+    if (!window.parvusVoice) play(SND.text);
+    else if (reduced) window.parvusVoice.say(text);
     if (reduced) { shown.textContent = text; rest.textContent = ''; if (window.parvusLinkify) window.parvusLinkify(shown); return Promise.resolve(); }
     return new Promise(function (resolve) {
       var i = 0;
       setTimeout(function step() {
         i = Math.min(text.length, i + 2);
+        if (window.parvusVoice && (i / 2) % 3 === 1) window.parvusVoice.blip();
         shown.textContent = text.slice(0, i);
         rest.textContent = text.slice(i);
         if (i < text.length) setTimeout(step, 22);
@@ -963,6 +967,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     if (!talkOpen || !talkTl) return;
     talkOpen = false;
     clearTimeout(ptBlink);
+    if (window.parvusVoice) window.parvusVoice.stop();
     if (reduced) { afterClose(); return; }
     play(SND.close);
     talkTl.timeScale(1.6).reverse();

@@ -985,7 +985,8 @@ if (document.querySelector("[data-parvus-home]")) {
     bubble.classList.add('on');
     chatEnd = now + CFG.chatMs;
     splat();
-    play(SND.text);
+    if (window.parvusVoice) window.parvusVoice.say(line);
+    else play(SND.text);
   }
   function hush(now, quiet) {
     if (!chatEnd) return;
