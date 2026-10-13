@@ -3912,8 +3912,8 @@ const PV_TIPS = [
 ];
 function pvDev(pathname) { return pathname === '/overhaul' || pathname.indexOf('/overhaul/') === 0; }
 function ovReal(pathname) { return pvDev(pathname) ? '/' + pathname.slice(9).replace(/^\/+/, '') : pathname; }
-function pvPopupHtml(first) {
-  const cfg = { first: first || '', files: PV_POP_FILES, update: PV_UPDATE, tips: PV_TIPS, tipDays: PV_TIP_DAYS };
+function pvPopupHtml(first, quiet) {
+  const cfg = { first: first || '', quiet: !!quiet, files: PV_POP_FILES, update: PV_UPDATE, tips: PV_TIPS, tipDays: PV_TIP_DAYS };
   return '<script>window.PV_POP=' + JSON.stringify(cfg).replace(/</g, '\\u003c') + ';<\/script>' + PV_POPUP_SCRIPT;
 }
 const PV_POPUP_SCRIPT = `<script>
@@ -3921,7 +3921,7 @@ const PV_POPUP_SCRIPT = `<script>
   var cfg = window.PV_POP;
   if (!cfg || window.pvPopup) return;
   var host = null, prevOverflow = '';
-  try { if (cfg.first !== '404') window.localStorage.setItem('pv:lastPage', location.pathname + location.search + location.hash); } catch (e) {}
+  try { if (!cfg.quiet && cfg.first !== '404') window.localStorage.setItem('pv:lastPage', location.pathname + location.search + location.hash); } catch (e) {}
   function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
   function remove() {
@@ -4017,6 +4017,7 @@ const PV_POPUP_SCRIPT = `<script>
   function tipAt(i) { return { tip: cfg.tips[i], index: i }; }
   var q = /[?&]popup=([a-z0-9]+)/.exec(location.search), forced = q && cfg.files[q[1]] ? q[1] : '';
   if (forced) window.pvPopup(forced, forced === 'tip' ? tipAt(Math.floor(Math.random() * cfg.tips.length)) : {});
+  else if (cfg.quiet) {}
   else if (cfg.first) window.pvPopup(cfg.first);
   else if (cfg.update && cfg.update.version && load('pv:update') !== cfg.update.version) later('update');
   else if (cfg.tips.length) {
@@ -7589,7 +7590,7 @@ export default {
             el.append(ACTIVE_SCRIPT, { html: true });
             if (!pvOn && wipActive(realPath)) el.append(WIP_HTML, { html: true });
           }
-          if (pvOn) el.append(pvPopupHtml(pvMissing ? '404' : wipActive(realPath) ? 'wip' : ''), { html: true });
+          if (pvOn) el.append(pvPopupHtml(pvMissing ? '' : wipActive(realPath) ? 'wip' : '', pvMissing), { html: true });
           if (ovMirror) el.append(OV_MIRROR_SCRIPT, { html: true });
           if (xdActive(realPath)) el.append(XDISMISS_HTML, { html: true });
         }

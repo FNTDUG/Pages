@@ -52,8 +52,8 @@
     }
     var wrap = document.createElement('div');
     wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '');
-    var still = document.querySelector('meta[name="ov-still"]');
-    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : still ? '<div class="ov-stage"><div class="ov-screen"><img class="ov-still" src="' + esc(still.content) + '" alt="' + esc(still.getAttribute('data-alt') || '') + '"></div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
+    var own = document.querySelector('meta[name="ov-stage"]'), tpl = own && document.getElementById(own.content);
+    wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : tpl ? '<div class="ov-stage"><div class="ov-screen">' + tpl.innerHTML + '</div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
     pins(wrap);
@@ -65,7 +65,8 @@
     window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
     if (bare) return;
     load('/overhaul/ov-voice.js');
-    if (still) {
+    if (tpl) {
+      document.dispatchEvent(new Event('ov:stage'));
       load('/overhaul/ov-ask.js');
       load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
       return;
