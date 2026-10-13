@@ -1206,8 +1206,10 @@ if (document.querySelector("[data-parvus-home]")) {
 
     /* he only pipes up once he has settled, never mid-walk or mid-mood */
     if (!chatAt) chatAt = now + rand(CFG.chatMin, CFG.chatMax);
+    var talkOpen = document.documentElement.classList.contains('ovt-on');
+    if (talkOpen && chatEnd && !thinking) hush(now, true);
     if (chatEnd) { if (now >= chatEnd) hush(now); }
-    else if (CFG.chatMs > 0 && now >= chatAt && !tired && !inMood(now) && !partying &&
+    else if (CFG.chatMs > 0 && now >= chatAt && !talkOpen && !tired && !inMood(now) && !partying &&
              (state === 'rest' || state === 'idle')) say(now);
 
     var bolting = now < dashUntil;
@@ -1411,6 +1413,7 @@ if (document.querySelector("[data-parvus-home]")) {
   };
   window.mascotSay = function (line) {
     var now = performance.now();
+    if (document.documentElement.classList.contains('ovt-on')) return;
     if (thinking) { thinking = false; rest(now); }
     if (chatEnd) hush(now, true);
     say(now, line);
