@@ -39,7 +39,7 @@
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
   var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index'];
-  var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1;
+  var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]');
   function hero() {
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
     if (!inner || !area || document.querySelector('.ov-hero')) return;
