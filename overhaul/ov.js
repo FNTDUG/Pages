@@ -23,7 +23,7 @@
     document.head.appendChild(l);
   });
 
-  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', 'patch-notes': 'Patch notes', wiki: 'Community wiki' };
+  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', 'patch-notes': 'Patch notes', wiki: 'Community wiki', '404': 'Error 404' };
   var title = '';
   var PREFIX = { fntd1: /^FNTD ?1\s+/i, fntd2: /^FNTD ?2\s+/i, bbn: /^(BBN|Bite By Night)\s+/i };
   function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -528,6 +528,7 @@
       if (p && window.mascotSay && !p.thinking) {
         clearInterval(iv);
         if (window.mascotTired && window.mascotTired()) window.mascotSay("zzz. i'm out of answers for now. come back once i've had a rest.");
+        else if (document.querySelector('meta[name="ov-greet"]')) window.mascotSay(document.querySelector('meta[name="ov-greet"]').content);
         else if (title) window.mascotSay('Welcome to ' + title + '! ' + (window.matchMedia && window.matchMedia('(pointer: fine)').matches ? 'Click' : 'Tap') + ' me if you need help.');
       } else if (tries > 20) clearInterval(iv);
     }, 400);
