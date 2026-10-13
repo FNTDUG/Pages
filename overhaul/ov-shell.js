@@ -4,6 +4,7 @@
   var ROWS = ['......cccc......', '......cccc......', '..ccc.cccc.ccc..', '..cccccccccccc..', '..cccccccccccc..', '...cccccccccc...', 'ccccccc..ccccccc', 'cccccc....cccccc', 'cccccc....cccccc', 'ccccccc..ccccccc', '...cccccccccc...', '..cccccccccccc..', '..cccccccccccc..', '..ccc.cccc.ccc..', '......cccc......', '......cccc......'];
   var CUP = '<svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg>';
   var CASE = '<svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg>';
+  var PARVUS = '<svg viewBox="0 0 28 23" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h3v1H7zM6 1h1v1H6zM10 1h1v1H10zM16 1h5v1H16zM5 2h1v1H5zM8 2h1v1H8zM10 2h1v1H10zM14 2h2v1H14zM21 2h2v1H21zM5 3h1v1H5zM8 3h1v1H8zM10 3h1v1H10zM13 3h2v1H13zM22 3h2v1H22zM5 4h1v1H5zM8 4h2v1H8zM12 4h1v1H12zM24 4h1v1H24zM5 5h1v1H5zM8 5h1v1H8zM11 5h1v1H11zM25 5h1v1H25zM5 6h1v1H5zM8 6h1v1H8zM11 6h1v1H11zM15 6h1v1H15zM21 6h1v1H21zM25 6h1v1H25zM5 7h1v1H5zM9 7h1v1H9zM12 7h1v1H12zM14 7h1v1H14zM16 7h1v1H16zM20 7h1v1H20zM22 7h1v1H22zM24 7h1v1H24zM5 8h1v1H5zM9 8h1v1H9zM12 8h1v1H12zM24 8h1v1H24zM2 9h3v1H2zM9 9h4v1H9zM24 9h2v1H24zM1 10h1v1H1zM4 10h1v1H4zM9 10h1v1H9zM12 10h1v1H12zM24 10h1v1H24zM26 10h1v1H26zM0 11h1v1H0zM27 11h1v1H27zM0 12h1v1H0zM27 12h1v1H27zM0 13h1v1H0zM27 13h1v1H27zM0 14h1v1H0zM27 14h1v1H27zM0 15h1v1H0zM27 15h1v1H27zM0 16h1v1H0zM27 16h1v1H27zM0 17h1v1H0zM27 17h1v1H27zM1 18h1v1H1zM26 18h1v1H26zM2 19h1v1H2zM25 19h1v1H25zM3 20h2v1H3zM23 20h2v1H23zM5 21h3v1H5zM20 21h3v1H20zM8 22h12v1H8z"/></svg>';
   var tray = 'translate .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),scale .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),opacity .2s calc(var(--i) * 40ms)';
   var css = document.createElement('style');
   css.textContent =
@@ -20,7 +21,15 @@
     'transition:transform .12s,box-shadow .12s,' + tray + ',visibility 0s linear .45s!important}' +
     'html.ov.pv-gear-open .pv-tray{translate:0 0;scale:1;opacity:1;visibility:visible;transition:transform .12s,box-shadow .12s,' + tray + ',visibility 0s!important}' +
     'html.pv-pop-on #pv-gear,html.ovt-on #pv-gear{visibility:hidden}' +
-    '@media (prefers-reduced-motion:reduce){#pv-gear svg,html.ov .pv-tray,html.ov.pv-gear-open .pv-tray{transition:none!important}}' +
+    '#pv-ask{display:none;align-items:center;justify-content:center;position:fixed;right:calc(22px + var(--gear-size));top:var(--gear-top,116px);z-index:1048;width:var(--gear-size);height:var(--gear-size);padding:0;cursor:pointer;color:var(--text);background:var(--surface);border:var(--bw,3px) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}' +
+    'html.ov-talk-ready #pv-ask{display:flex}' +
+    '#pv-ask:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
+    '#pv-ask:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
+    '#pv-ask:focus-visible{outline:3px solid var(--yellow,#ffd23f);outline-offset:3px}' +
+    '#pv-ask svg{pointer-events:none;width:28px;height:23px;fill:currentColor}' +
+    '@media (max-width:768px){#pv-ask svg{width:21px;height:17px}}' +
+    'html.pv-pop-on #pv-ask,html.ovt-on #pv-ask,html.talk-on #pv-ask{visibility:hidden}' +
+    '@media (prefers-reduced-motion:reduce){#pv-ask,#pv-gear svg,html.ov .pv-tray,html.ov.pv-gear-open .pv-tray{transition:none!important}}' +
     '.kofi-cup{width:24px;height:14px;flex:none;fill:currentColor}' +
     'html.ov .ug-mn-kofi{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;color:#2a0f1c;background:var(--pink);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none;transition:transform .12s,box-shadow .12s}' +
     'html.ov .ug-mn-kofi:hover{color:#2a0f1c;background:#ff8fbd;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
@@ -68,6 +77,15 @@
   });
   g.innerHTML = '<svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
   document.body.appendChild(g);
+
+  var ask = document.createElement('button');
+  ask.id = 'pv-ask';
+  ask.type = 'button';
+  ask.title = 'Ask Parvus';
+  ask.setAttribute('aria-label', 'Ask Parvus');
+  ask.innerHTML = PARVUS;
+  ask.addEventListener('click', function () { if (window.ovTalkOpen) window.ovTalkOpen(ask); });
+  document.body.appendChild(ask);
 
   function items() {
     return [document.getElementById('ug-sound-btn'), document.getElementById('ntfBell'), document.getElementById('pv-theme')].filter(function (el) { return el && !el.hidden; });

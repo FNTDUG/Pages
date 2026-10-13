@@ -828,6 +828,8 @@ html.talk-on,html.talk-on body{overflow:hidden}
     if (!ready) return;
     openTalk();
   });
+  window.ovTalkOpen = function () { openTalk(); };
+  html.classList.add('ov-talk-ready');
 
   var talk = document.getElementById('pvTalk');
   var talkBox = document.getElementById('pvTalkBox');

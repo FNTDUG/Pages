@@ -242,4 +242,5 @@
   });
 
   window.ovTalkOpen = openTalk;
+  h.classList.add('ov-talk-ready');
 })();
