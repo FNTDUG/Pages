@@ -189,7 +189,7 @@
     if (window.InertiaPlugin) g.registerPlugin(window.InertiaPlugin);
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
-    var inks = null, geo = null, prevX = [];
+    var inks = null, geo = null, prevX = [], shift = 0;
     function kids() { return Array.prototype.slice.call(box.children); }
     function originals() { return kids().filter(function (el) { return !el.classList.contains('is-copy'); }); }
     function wants() {
@@ -221,6 +221,11 @@
       var base = kids();
       base.forEach(function (el) { el.style.translate = ''; });
       step = base[1].offsetLeft - base[0].offsetLeft;
+      shift = 0;
+      if (!fine) {
+        var br0 = box.getBoundingClientRect(), r0 = base[0].getBoundingClientRect();
+        shift = Math.round(box.clientLeft + (box.clientWidth - r0.width) / 2 - (r0.left - br0.left));
+      }
       total = step * base.length;
       var need = box.clientWidth + step;
       while (total < need) {
@@ -306,8 +311,9 @@
       slide.x = pos;
       g.to(slide, { x: target, duration: dur || 0.45, ease: 'power3.out', overwrite: true, onUpdate: function () { pos = slide.x; render(); } });
     }
+    function snapPos(v) { return Math.round((v + shift) / step) * step - shift; }
     function settle() {
-      var target = nearest(Math.round(pos / step) * step);
+      var target = nearest(snapPos(pos));
       if (Math.abs(target - pos) > 0.5) glideTo(target);
       idle();
     }
@@ -327,7 +333,7 @@
     function nudge() {
       if (!on || auto) return;
       if (hover || pressing || !seen || document.hidden || box.querySelector(':focus-visible') || (drag && (drag.isDragging || drag.isThrowing)) || g.isTweening(slide)) { idle(); return; }
-      var base = nearest(Math.round(pos / step) * step), d = Math.max(14, Math.min(30, step * 0.09));
+      var base = nearest(snapPos(pos)), d = Math.max(14, Math.min(30, step * 0.09));
       var move = function () { pos = slide.x; render(); };
       slide.x = pos;
       nt = g.timeline({ onComplete: function () { nt = null; idle(); } })
@@ -388,7 +394,7 @@
           setTimeout(function () { if (!self.isThrowing) settle(); }, 0);
         },
         onThrowComplete: settle,
-        snap: function (v) { return Math.round(v / step) * step; }
+        snap: function (v) { return -snapPos(-v); }
       })[0];
       if (auto) { last = 0; raf = requestAnimationFrame(tick); }
     }
