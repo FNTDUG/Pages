@@ -3692,6 +3692,8 @@ const SEO_CSS = '<style>.ug-seo{width:100%;min-width:0;max-width:860px;margin:28
   '.ug-seo h2{margin:14px 0 6px;color:#fff;font-size:20px;line-height:1.3}.ug-seo h3{margin:16px 0 4px;color:#fff;font-size:16px;line-height:1.3}' +
   '.ug-seo p{margin:6px 0}.ug-seo ul{margin:4px 0;padding-left:20px}.ug-seo li{margin:2px 0}.ug-seo a{color:#ffa45b}' +
   '.ug-seo-wrap{overflow-x:auto}.ug-seo table{width:100%;border-collapse:collapse;font-size:14px}.ug-seo th,.ug-seo td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.12);text-align:left;white-space:nowrap}' +
+  '.ug-home-discord{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.4);border-radius:10px;color:#a5aaff;font-family:Audiowide,sans-serif;font-size:11px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}.ug-home-discord:hover{background:rgba(88,101,242,.28);border-color:rgba(88,101,242,.65);color:#bdc1ff}' +
+  '.ug-home-kofi{display:inline-flex;align-items:center;gap:8px;margin-left:8px;padding:10px 22px;background:rgba(255,94,160,.13);border:1px solid rgba(255,94,160,.45);border-radius:10px;color:#ff9cc8;font-family:Audiowide,sans-serif;font-size:11px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}.ug-home-kofi:hover{background:rgba(255,94,160,.25);border-color:rgba(255,94,160,.7);color:#ffc0dc}html.ov .ug-home-kofi{margin-left:0}' +
   '.ug-codes-btn{display:inline-flex;align-items:center;gap:8px;margin:10px 0 4px;padding:8px 16px;border-radius:20px;background:rgba(255,164,91,.12);border:1px solid rgba(255,164,91,.55);color:#ffa45b;font:400 13px/1.2 Audiowide,sans-serif;text-decoration:none;transition:background .15s,border-color .15s}' +
   '.ug-codes-btn:hover{background:rgba(255,164,91,.22);border-color:#ffa45b}.ug-codes-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}' +
   '.ug-codes-ic{width:10px;height:10px;flex:none;background:#ffa45b;box-shadow:0 0 6px rgba(255,164,91,.6)}.ug-codes-n{padding:2px 8px;border-radius:10px;background:#ffa45b;color:#0b0716;font-size:11px}' +
@@ -4160,6 +4162,10 @@ async function seoLoadCodes(env, url, file) {
   const d = await r.json();
   return d && Array.isArray(d.codes) ? d : null;
 }
+const DISCORD_URL = 'https://discord.gg/6Y84tuFBB3';
+const KOFI_URL = 'https://ko-fi.com/fntdug';
+const KOFI_BTN = '<a href="' + KOFI_URL + '" target="_blank" rel="noopener noreferrer" class="ug-home-kofi">Support us</a>';
+const CTA_ROW = '<div class="ug-cta" style="text-align:center;margin-top:10px"><a href="' + DISCORD_URL + '" target="_blank" rel="noopener noreferrer" class="ug-home-discord">Discord</a>' + KOFI_BTN + '</div>';
 function seoCodesGame(p) {
   if (/-directory$/.test(p)) return null;
   const g = seoGamesFor(p)[0];
@@ -8253,6 +8259,7 @@ export default {
     const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
+    let hasDiscord = false;
     const noInfoPanel = realPath === '/privacy-policy' || realPath === '/privacy-policy.html';
     const hasInfo = !noInfoPanel && !pvMissing && infoPanelActive(realPath);
     const isOvHome = pvOn && realPath === '/';
@@ -8307,8 +8314,16 @@ export default {
       .on('div.ug-subsection-title, div.ug-info-box-title', {
         element(el) { el.tagName = 'h3'; }
       })
+      .on('.ug-page-title-area a.ug-home-discord', {
+        element(el) { hasDiscord = true; el.after(KOFI_BTN, { html: true }); }
+      })
       .on('.ug-page-title-area', {
-        element(el) { if (codesBtn) el.append(codesBtn, { html: true }); }
+        element(el) {
+          el.onEndTag(end => {
+            const html = (hasDiscord ? '' : CTA_ROW) + codesBtn;
+            if (html) end.before(html, { html: true });
+          });
+        }
       })
       .on('.ug-status-badge', {
         element(el) {

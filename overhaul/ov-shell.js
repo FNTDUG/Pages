@@ -163,9 +163,10 @@
     kf.parentNode.insertBefore(sp, kf.nextSibling);
   }
   Array.prototype.forEach.call(document.querySelectorAll('a.ug-home-discord'), function (d) {
-    if (d.parentNode.querySelector('.ug-home-kofi')) return;
+    var k = d.parentNode.querySelector('.ug-home-kofi');
     d.parentNode.classList.add('ov-cta-row');
-    d.parentNode.insertBefore(link('ug-home-kofi', 'Support us' + CUP), d.nextSibling);
+    if (!k) d.parentNode.insertBefore(link('ug-home-kofi', 'Support us' + CUP), d.nextSibling);
+    else if (!k.querySelector('.kofi-cup')) k.insertAdjacentHTML('beforeend', CUP);
   });
   var fd = document.querySelector('#ug-footer a[href*="discord.gg"]');
   if (fd) {
