@@ -4031,6 +4031,94 @@ function seoElementsHtml(data) {
   return seoBlock('FNTD2 units by element', body);
 }
 
+function seoInfText(v) {
+  const parts = String(v == null ? '' : v).split(/<br\s*\/?>/i).map(x => seoPlain(x).replace(/[{}]/g, '').replace(/^●\s*/, '').trim()).filter(Boolean);
+  const out = [];
+  let cur = null;
+  parts.forEach(x => {
+    const m = /^\[([^\]]+)\]$/.exec(x);
+    if (m) { const l = m[1] === m[1].toUpperCase() ? seoCap(m[1].toLowerCase()) : m[1]; cur = { l, items: [] }; out.push(cur); }
+    else if (cur) cur.items.push(x);
+    else out.push({ l: '', items: [x] });
+  });
+  return out.map(o => o.items.length ? (o.l ? o.l + ': ' : '') + o.items.join('; ') : o.l).filter(Boolean).join('. ');
+}
+function seoInfLi(name, text) { return '<li><strong>' + seoEsc(name) + '</strong>' + (text ? ': ' + seoEsc(text) : '') + '</li>'; }
+function seoInfSec(title, items) { return items.length ? '<h3>' + seoEsc(title) + '</h3><ul>' + items.join('') + '</ul>' : ''; }
+
+let seoInfSrc = null;
+function seoInfVars() {
+  if (seoInfSrc) return seoInfSrc;
+  const v = {};
+  ['ATTACK_TYPES', 'ELEMENTS', 'STATUS_EFFECTS', 'ENDO_CHIPS', 'ESTABLISHMENTS', 'EST_PACKS', 'MINIGAMES', 'EVOLUTIONS', 'HERO_QUESTS', 'SHOP_QUESTS', 'ENDLESS_QUESTS', 'PERMANENT_QUESTS', 'COMMUNITY_QUESTS', 'PRESTIGE_SHOP', 'PRESENTS_CFG', 'INFO_CFG', 'DESCS'].forEach(n => { v[n] = seoLit(INFO_HTML, n); });
+  const msg = /var msg="((?:[^"\\]|\\.)*)"/.exec(INFO_HTML);
+  v.SHINY = msg ? msg[1].replace(/\\(.)/g, '$1') : '';
+  seoInfSrc = v;
+  return v;
+}
+
+let seoInfFeeds = null, seoInfFeedsAt = 0;
+async function seoLoadInfFeeds() {
+  if (seoInfFeeds && Date.now() - seoInfFeedsAt < 600000) return seoInfFeeds;
+  const names = ['presents', 'skins', 'pets', 'banners', 'loading-screens', 'materials', 'titles', 'foods', 'potions'];
+  const got = await Promise.all(names.map(n => fetch(INF_PROXY[n], { cf: { cacheTtl: 300, cacheEverything: true } }).then(r => r.ok ? r.text() : '').then(t => { try { return JSON.parse(infSafeJson(t)); } catch (e) { return null; } }).catch(() => null)));
+  const out = {};
+  names.forEach((n, i) => { out[n] = got[i] && typeof got[i] === 'object' ? got[i] : null; });
+  if (names.some(n => out[n])) { seoInfFeeds = out; seoInfFeedsAt = Date.now(); }
+  return out;
+}
+
+function seoInfFeed(feeds, key, cfg) {
+  const raw = feeds[key];
+  if (!raw || Array.isArray(raw)) return {};
+  const c = (cfg && cfg[key]) || {}, hide = Array.isArray(c.hide) ? c.hide : [], ov = c.overrides || {}, out = {};
+  const extra = Object.prototype.hasOwnProperty.call(EXTRA_ITEMS, key) ? EXTRA_ITEMS[key] : {};
+  const all = Object.assign({}, extra, raw, c.add || {});
+  Object.keys(all).forEach(n => { if (hide.indexOf(n) === -1 && all[n] && typeof all[n] === 'object') out[n] = Object.assign({}, all[n], ov[n] || {}); });
+  return out;
+}
+
+function seoInfoHtml(data, feeds) {
+  const v = seoInfVars(), cfg = v.INFO_CFG || {}, D = v.DESCS || {}, sh = (data && data.shared) || {}, out = [];
+  const byName = (a, b) => a.localeCompare(b);
+  const desc = (grp, n) => D[grp] && D[grp][n] ? seoInfText(D[grp][n]) : '';
+  const tops = grp => D[grp] && D[grp]._top ? [].concat(D[grp]._top).map(seoInfText).filter(Boolean).map(t => '<p>' + seoEsc(t) + '</p>').join('') : '';
+  const presName = n => (v.PRESENTS_CFG && v.PRESENTS_CFG.overrides && v.PRESENTS_CFG.overrides[n] && v.PRESENTS_CFG.overrides[n].name) || n;
+  const rar = r => r ? seoCap(String(r).toLowerCase()) : '';
+
+  out.push('<h2>FNTD2 INFO panel</h2><p>Everything in the FNTD User Guide INFO panel for Five Nights TD 2: bytes, chips, enchants, elements, status effects, quests, evolutions, presents, pets, skins, materials and more.</p>');
+  if (Array.isArray(v.ATTACK_TYPES)) out.push(seoInfSec('Attack types', v.ATTACK_TYPES.filter(x => x && x.name).map(x => seoInfLi(x.name, seoInfText(x.desc)))));
+  if (sh.bytes) out.push(tops('bytes') + seoInfSec('Bytes', Object.keys(sh.bytes).sort(byName).map(n => seoInfLi(n, [rar(sh.bytes[n].rarity), desc('bytes', n) || sh.bytes[n].note].filter(Boolean).join('. ')))));
+  if (sh.chips) out.push(tops('chips') + seoInfSec('Chips', Object.keys(sh.chips).sort(byName).map(n => seoInfLi(n, [rar(sh.chips[n].rarity), desc('chips', n) || sh.chips[n].note].filter(Boolean).join('. ')))));
+  if (D.enchants) out.push(tops('enchants') + seoInfSec('Enchants', Object.keys(D.enchants).filter(n => n !== '_top').map(n => seoInfLi(n, desc('enchants', n)))));
+  if (Array.isArray(v.ELEMENTS)) out.push(seoInfSec('Elements', v.ELEMENTS.filter(x => x && x.name).map(x => seoInfLi(x.name, seoInfText(x.desc)))));
+  if (Array.isArray(v.STATUS_EFFECTS)) out.push(seoInfSec('Status effects', v.STATUS_EFFECTS.filter(x => x && x.name).map(x => seoInfLi(x.name, seoInfText(x.desc)))));
+  if (Array.isArray(v.ENDO_CHIPS)) out.push(seoInfSec('Stat chips', v.ENDO_CHIPS.filter(x => x && x.label).map(x => seoInfLi('Grade ' + x.label, [seoInfText(x.chance), seoInfText(x.range)].filter(Boolean).join('. ')))));
+  if (Array.isArray(v.ESTABLISHMENTS)) out.push(seoInfSec('Establishments', v.ESTABLISHMENTS.filter(x => x && x.name).map(x => seoInfLi(x.name, [rar(x.rarity), seoInfText(x.desc)].filter(Boolean).join(': ')))));
+  if (Array.isArray(v.EST_PACKS)) out.push(seoInfSec('Establishment card packs', v.EST_PACKS.filter(x => x && x.name).map(x => seoInfLi(x.name, [x.cost, x.rarities ? 'odds ' + Object.keys(x.rarities).map(r => rar(r) + ' ' + x.rarities[r] + '%').join(', ') : '', Array.isArray(x.cards) ? 'cards ' + x.cards.join(', ') : ''].filter(Boolean).join('. ')))));
+  if (Array.isArray(v.MINIGAMES)) out.push(seoInfSec('Minigames', v.MINIGAMES.filter(x => x && x.text).map(x => '<li>' + seoEsc(seoInfText(x.text)) + '</li>')));
+  if (v.SHINY) out.push('<h3>Shiny transfer</h3><p>' + seoEsc(v.SHINY) + '</p>');
+  if (Array.isArray(v.EVOLUTIONS)) out.push(seoInfSec('Evolutions', v.EVOLUTIONS.filter(x => x && x.name).map(x => seoInfLi(x.display || x.name, (Array.isArray(x.ing) ? x.ing : []).map(i => i[0] + 'x ' + i[1]).join(', ')))));
+  const quests = (title, list) => Array.isArray(list) ? seoInfSec(title, list.filter(q => q && q.unit).map(q => seoInfLi(q.unit, [q.present ? presName(q.present) : '', q.mode, q.cost != null ? 'costs ' + seoNum(q.cost) : ''].filter(Boolean).join(', ') + (Array.isArray(q.quests) && q.quests.length ? '. Quests: ' + q.quests.join('; ') : '')))) : '';
+  out.push(quests('Hero quests and paths', v.HERO_QUESTS), quests('Shop quests', v.SHOP_QUESTS), quests('Endless quests', v.ENDLESS_QUESTS), quests('Permanent quests', v.PERMANENT_QUESTS), quests('Community quests', v.COMMUNITY_QUESTS));
+  if (Array.isArray(v.PRESTIGE_SHOP)) out.push(seoInfSec('Faz-rating prestige shop', v.PRESTIGE_SHOP.filter(x => x && x.name).map(x => seoInfLi(x.name, [x.type, x.cost != null ? x.cost + ' Faz-rating' : ''].filter(Boolean).join(', ')))));
+  if (feeds) {
+    const pres = feeds.presents && !Array.isArray(feeds.presents) ? feeds.presents : {};
+    out.push(seoInfSec('Presents', Object.keys(pres).map(n => [presName(n), pres[n]]).filter(x => x[1] && typeof x[1] === 'object').sort((a, b) => byName(a[0], b[0])).map(x => seoInfLi(x[0], [rar(x[1].rarity), (Array.isArray(x[1].rewards) ? x[1].rewards : []).filter(r => r && r.name).map(r => (Number(r.amount) > 1 ? seoNum(r.amount) + 'x ' : '') + r.name + (r.type ? ' (' + r.type + (r.chance != null ? ', ' + r.chance + '%' : '') + ')' : r.chance != null ? ' (' + r.chance + '%)' : '')).join(', ')].filter(Boolean).join('. ')))));
+    const list = (title, key, fn) => { const m = seoInfFeed(feeds, key, cfg); return seoInfSec(title, Object.keys(m).sort(byName).map(n => seoInfLi(n, fn(m[n])))); };
+    out.push(list('Pets', 'pets', x => [rar(x.rarity), x.speed != null ? 'speed ' + x.speed : ''].filter(Boolean).join(', ')));
+    out.push(list('Unit skins', 'skins', x => [rar(x.rarity), x.unit ? 'skin for ' + x.unit : ''].filter(Boolean).join(', ')));
+    out.push(list('Materials', 'materials', x => [rar(x.rarity), seoInfText(x.description), x.obtainment ? 'Obtained from ' + seoInfText(x.obtainment) : ''].filter(Boolean).join('. ')));
+    out.push(list('Food', 'foods', x => [rar(x.rarity), x.exp != null ? seoNum(x.exp) + ' EXP' : ''].filter(Boolean).join(', ')));
+    out.push(list('Potions', 'potions', x => [rar(x.rarity), seoInfText(x.description)].filter(Boolean).join('. ')));
+    out.push(list('User banners', 'banners', x => rar(x.rarity)));
+    out.push(list('Loading screens', 'loading-screens', x => rar(x.rarity)));
+    const titles = feeds.titles && !Array.isArray(feeds.titles) ? Object.keys(feeds.titles).sort(byName) : [];
+    if (titles.length) out.push('<h3>Titles</h3><p>' + titles.map(seoEsc).join(', ') + '</p>');
+  }
+  return seoBlock('FNTD2 INFO panel as text', out.join(''));
+}
+
 const SEO_GUIDES = {
   '/fntd2/boss-raids-index': (src, data, nine) => seoBossHtml(src, data, nine),
   '/fntd2/endless-index': (src, data, nine) => seoEndlessHtml(src, data, nine),
@@ -4066,6 +4154,12 @@ async function seoSsr(realPath, pageSrc) {
     if (!data || !src) return null;
     let html = '';
     try { html = guide(src, data, nine); } catch (e) { html = ''; }
+    return html ? { html } : null;
+  }
+  if (p === '/fntd2/fntd2-index') {
+    const [data, feeds] = await Promise.all([seoTimed(parvusLoad(), 2500), seoTimed(seoLoadInfFeeds(), 2500)]);
+    let html = '';
+    try { html = seoInfoHtml(data, feeds); } catch (e) { html = ''; }
     return html ? { html } : null;
   }
   const isUnit = p.indexOf('/fntd2/unit-engine/') === 0;
@@ -7572,7 +7666,8 @@ async function parvusLoad() {
   }
   const tierNotes = (cfg && cfg.notes && cfg.notes.all) || {};
   let metas = {};
-  try { metas = (JSON.parse(metaSrc) || {}).metas || {}; } catch (e) {}
+  let shared = {};
+  try { const mj = JSON.parse(metaSrc) || {}; metas = mj.metas || {}; shared = mj.shared || {}; } catch (e) {}
   const inMeta = {};
   for (const mode in metas) {
     const team = metas[mode] && Array.isArray(metas[mode].units) ? metas[mode].units : [];
@@ -7582,8 +7677,8 @@ async function parvusLoad() {
     });
   }
   const notes = parvusNotes(noteSrc);
-  if (units.length || cfg || Object.keys(metas).length) { parvusData = { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists }; parvusDataAt = Date.now(); }
-  return parvusData || { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists };
+  if (units.length || cfg || Object.keys(metas).length) { parvusData = { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists, shared }; parvusDataAt = Date.now(); }
+  return parvusData || { units, tiers, tierTop, tierNotes, metas, inMeta, notes, lists, shared };
 }
 
 function parvusFind(units, text) {
