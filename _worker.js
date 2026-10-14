@@ -18,6 +18,7 @@ const MOBILE_NAV_BODY = `
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNTD2 <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
+    <a href="/fntd2/codes"            class="ug-mn-child" data-nav-href="/fntd2/codes">Codes</a>
     <a href="/fntd2/meta-teams"       class="ug-mn-child" data-nav-href="/fntd2/meta-teams">Meta Teams</a>
     <a href="/fntd2/unit-engine"         class="ug-mn-child" data-nav-href="/fntd2/unit-engine">Unit Engine</a>
     <a href="/fntd2/trade-calculator"    class="ug-mn-child" data-nav-href="/fntd2/trade-calculator">Trade Calculator</a>
@@ -26,7 +27,6 @@ const MOBILE_NAV_BODY = `
     <a href="/fntd2/endless-index"       class="ug-mn-child" data-nav-href="/fntd2/endless-index">Endless &amp; Index</a>
     <a href="/fntd2/boss-raids-index"    class="ug-mn-child" data-nav-href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a>
     <a href="/fntd2/challenges"          class="ug-mn-child" data-nav-href="/fntd2/challenges">Challenges</a>
-    <a href="/fntd2/codes"               class="ug-mn-child" data-nav-href="/fntd2/codes">Codes</a>
     <!-- HIDDEN-EVENT-SE: delete this comment wrapper to bring the link back
     <a href="/fntd2/event-story-endless" class="ug-mn-child" data-nav-href="/fntd2/event-story-endless">Event Story &amp; Endless</a>
     -->
@@ -35,6 +35,7 @@ const MOBILE_NAV_BODY = `
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">BBN <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
+    <a href="/bbn/codes"                 class="ug-mn-child" data-nav-href="/bbn/codes">Codes</a>
     <a href="/bbn/bite-by-night-tierlists" class="ug-mn-child" data-nav-href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a>
     <a href="/bbn/killer-terminal"         class="ug-mn-child" data-nav-href="/bbn/killer-terminal">Killer Terminal</a>
     <a href="/bbn/survivor-terminal"       class="ug-mn-child" data-nav-href="/bbn/survivor-terminal">Survivor Terminal</a>
@@ -71,6 +72,7 @@ const DESKTOP_NAV_INNER = `
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNTD2 <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
+    <a href="/fntd2/codes"             data-nav-href="/fntd2/codes">Codes</a>
     <a href="/fntd2/meta-teams"        data-nav-href="/fntd2/meta-teams">Meta Teams</a>
     <a href="/fntd2/unit-engine"          data-nav-href="/fntd2/unit-engine">Unit Engine</a>
     <a href="/fntd2/trade-calculator"     data-nav-href="/fntd2/trade-calculator">Trade Calculator</a>
@@ -79,7 +81,6 @@ const DESKTOP_NAV_INNER = `
     <a href="/fntd2/endless-index"        data-nav-href="/fntd2/endless-index">Endless &amp; Index</a>
     <a href="/fntd2/boss-raids-index"     data-nav-href="/fntd2/boss-raids-index">Boss Raids &amp; Index</a>
     <a href="/fntd2/challenges"           data-nav-href="/fntd2/challenges">Challenges</a>
-    <a href="/fntd2/codes"                data-nav-href="/fntd2/codes">Codes</a>
     <!-- HIDDEN-EVENT-SE: delete this comment wrapper to bring the link back
     <a href="/fntd2/event-story-endless"  data-nav-href="/fntd2/event-story-endless">Event Story &amp; Endless</a>
     -->
@@ -88,6 +89,7 @@ const DESKTOP_NAV_INNER = `
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">BBN <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
+    <a href="/bbn/codes"                 data-nav-href="/bbn/codes">Codes</a>
     <a href="/bbn/bite-by-night-tierlists" data-nav-href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a>
     <a href="/bbn/killer-terminal"         data-nav-href="/bbn/killer-terminal">Killer Terminal</a>
     <a href="/bbn/survivor-terminal"       data-nav-href="/bbn/survivor-terminal">Survivor Terminal</a>
