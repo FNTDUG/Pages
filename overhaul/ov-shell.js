@@ -157,7 +157,7 @@
     if (!a.querySelector('.discord-chat')) a.insertAdjacentHTML('beforeend', CHAT);
   });
   var dc = document.querySelector('.ug-mn-discord');
-  if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', 'Support us on Ko-fi' + CUP), dc.nextSibling);
+  if (dc && !document.querySelector('.ug-mn-kofi')) dc.parentNode.insertBefore(link('ug-mn-kofi', 'Support us' + CUP), dc.nextSibling);
   var kf = document.querySelector('.ug-mn-kofi');
   if (kf && !document.querySelector('.ug-mn-sponsor')) {
     var sp = document.createElement('a');
@@ -173,7 +173,7 @@
   });
   var fd = document.querySelector('#ug-footer a[href*="discord.gg"]');
   if (fd && !document.querySelector('#ug-footer a[href*="ko-fi.com"]')) {
-    var k = link('', 'Ko-fi');
+    var k = link('', 'Support us');
     fd.parentNode.insertBefore(k, fd.nextSibling);
     fd.parentNode.insertBefore(document.createTextNode('  |  '), k);
   }
