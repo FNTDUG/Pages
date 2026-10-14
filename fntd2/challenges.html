@@ -65,7 +65,7 @@
 .ch-diff{font-family:'Press Start 2P',monospace;font-size:8px;margin-top:5px;color:#c07bf0;text-shadow:1px 1px 0 #000}
 .ch-rewards{display:flex;flex-wrap:wrap;gap:5px}
 html.ov .ch-rewards.rowloop{flex-wrap:nowrap;justify-content:flex-start;gap:5px;margin:0 -12px;padding:6px 12px 6px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none;touch-action:pan-y}
-html.ov .ch-card .ch-rewards.rowloop{margin:0 -10px;padding:4px 10px 2px}
+.ch-card .ch-rewards{flex-wrap:nowrap;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 html.ov .ch-rewards.rowloop>*{flex:0 0 auto}
 html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
 html.ov #chPopIn{overflow-x:hidden}
@@ -230,8 +230,10 @@ function rewardTiles(withQty){
     t.style.background = RARITY[r.rarity] || '#555';
     var amt = r.qty || r.chance;
     t.setAttribute('aria-label', r.name + ' ' + (r.chance ? r.chance + ' chance' : amt));
-    t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:amt, label:r.chance ? 'Chance' : 'Amount', rarity:r.rarity, icon:r.icon}));
-    if (withQty) t.setAttribute('data-rwtip-tap','');
+    if (withQty){
+      t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:amt, label:r.chance ? 'Chance' : 'Amount', rarity:r.rarity, icon:r.icon}));
+      t.setAttribute('data-rwtip-tap','');
+    }
     var inn = el('div','chRw-in'); inn.style.background = RARITY_FILL[r.rarity] || '';
     var im = document.createElement('img'); im.src=r.icon; im.alt=r.name; inn.appendChild(im);
     t.appendChild(inn);
@@ -363,10 +365,6 @@ setInterval(tickTimer, 1000);
 
 var list = document.getElementById('chList');
 CHALLENGES.forEach(function(c){ list.appendChild(buildCard(c)); });
-(function waitRows(n){
-  if (canLoop()) loopRows(list);
-  else if (n < 60 && document.documentElement.classList.contains('ov')) setTimeout(function(){ waitRows(n + 1); }, 250);
-})(0);
 var missing = CHALLENGES.filter(function(c){ return !c.mapImg; }).length;
 document.getElementById('chNote').textContent = missing
   ? missing + ' of ' + CHALLENGES.length + ' challenges have no map art yet.'
