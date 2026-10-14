@@ -3666,7 +3666,7 @@ function seoHead(pathname, canonUrl, over) {
   const games = seoGamesFor(p);
   if (games.length) {
     const graph = [ld].concat(games.map(g => SEO_GAMES[g]));
-    if (p !== '/') graph.push({ '@type': 'WebPage', '@id': canonUrl, url: canonUrl, name: m.title, about: games.map(g => ({ '@id': SEO_GAMES[g]['@id'] })) });
+    if (p !== '/') graph.push(Object.assign({ '@type': 'WebPage', '@id': canonUrl, url: canonUrl, name: m.title, about: games.map(g => ({ '@id': SEO_GAMES[g]['@id'] })) }, m.modified ? { dateModified: m.modified } : {}));
     ld = { '@context': 'https://schema.org', '@graph': graph.map(x => { const y = Object.assign({}, x); delete y['@context']; return y; }) };
   }
   return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
@@ -3692,6 +3692,9 @@ const SEO_CSS = '<style>.ug-seo{width:100%;min-width:0;max-width:860px;margin:28
   '.ug-seo h2{margin:14px 0 6px;color:#fff;font-size:20px;line-height:1.3}.ug-seo h3{margin:16px 0 4px;color:#fff;font-size:16px;line-height:1.3}' +
   '.ug-seo p{margin:6px 0}.ug-seo ul{margin:4px 0;padding-left:20px}.ug-seo li{margin:2px 0}.ug-seo a{color:#ffa45b}' +
   '.ug-seo-wrap{overflow-x:auto}.ug-seo table{width:100%;border-collapse:collapse;font-size:14px}.ug-seo th,.ug-seo td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.12);text-align:left;white-space:nowrap}' +
+  '.ug-codes-btn{display:inline-flex;align-items:center;gap:8px;margin:10px 0 4px;padding:8px 16px;border-radius:20px;background:rgba(255,164,91,.12);border:1px solid rgba(255,164,91,.55);color:#ffa45b;font:400 13px/1.2 Audiowide,sans-serif;text-decoration:none;transition:background .15s,border-color .15s}' +
+  '.ug-codes-btn:hover{background:rgba(255,164,91,.22);border-color:#ffa45b}.ug-codes-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}' +
+  '.ug-codes-ic{width:10px;height:10px;flex:none;background:#ffa45b;box-shadow:0 0 6px rgba(255,164,91,.6)}.ug-codes-n{padding:2px 8px;border-radius:10px;background:#ffa45b;color:#0b0716;font-size:11px}' +
   'h1.ug-page-title,h1.ug-header-title{font-weight:400}:where(h2.ug-section-title,h2.update-date,h3.ug-subsection-title,h3.ug-info-box-title){font-size:inherit;font-weight:inherit}</style>';
 let seoValues = null, seoValuesAt = 0;
 
@@ -4156,6 +4159,17 @@ async function seoLoadCodes(env, url, file) {
   if (!r.ok) return null;
   const d = await r.json();
   return d && Array.isArray(d.codes) ? d : null;
+}
+function seoCodesGame(p) {
+  if (/-directory$/.test(p)) return null;
+  const g = seoGamesFor(p)[0];
+  return g && p !== '/' && CODES_PAGES['/' + g + '/codes'] ? '/' + g + '/codes' : null;
+}
+function seoCodesBtn(path, data, mirror) {
+  const now = Date.now();
+  const live = data.codes.filter(c => c && c.code && c.expired !== true && !(c.expires && Date.parse(c.expires) <= now)).length;
+  const cfg = CODES_PAGES[path];
+  return '<a class="ug-codes-btn" href="' + (mirror ? '/overhaul' : '') + path + '"><span class="ug-codes-ic" aria-hidden="true"></span>' + seoEsc(cfg.short) + ' Codes' + (live ? '<span class="ug-codes-n">' + live + ' working</span>' : '') + '<span aria-hidden="true">&rarr;</span></a>';
 }
 function seoCodeIcons(feeds) {
   const map = {};
@@ -8223,15 +8237,19 @@ export default {
     const okPage = !pvMissing && response.status === 200;
     const pageRes = okPage && SEO_GUIDES[seoPath(realPath)] ? response.clone() : null;
     const codesCfg = okPage ? CODES_PAGES[seoPath(realPath)] || null : null;
-    const [ssr, pageNotes, codesData, codesFeeds] = await Promise.all([
+    const codesGame = okPage && !codesCfg ? seoCodesGame(seoPath(realPath)) : null;
+    const [ssr, pageNotes, codesData, codesFeeds, gameCodes] = await Promise.all([
       okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve('')) : null,
       okPage && seoPath(realPath).indexOf('/fntd2/') === 0 ? seoTimed(seoLoadNotes(), 1500) : null,
       codesCfg ? seoTimed(seoLoadCodes(env, url, codesCfg.file), 2500) : null,
-      codesCfg && codesCfg.icons ? seoTimed(seoLoadInfFeeds(), 2000) : null
+      codesCfg && codesCfg.icons ? seoTimed(seoLoadInfFeeds(), 2000) : null,
+      codesGame ? seoTimed(seoLoadCodes(env, url, CODES_PAGES[codesGame].file), 1500) : null
     ]);
     let codesHtml = '';
     if (codesData) { try { codesHtml = seoCodesHtml(codesData, codesFeeds, codesCfg); } catch (e) { codesHtml = ''; } }
     const codesEmpty = !!(codesData && !codesData.codes.length);
+    const codesUpdated = codesData && codesData.updated && isFinite(Date.parse(codesData.updated)) ? new Date(Date.parse(codesData.updated)) : null;
+    const codesBtn = gameCodes && gameCodes.codes.length ? seoCodesBtn(codesGame, gameCodes, ovMirror) : '';
     const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
@@ -8242,7 +8260,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
           else if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -8288,6 +8306,17 @@ export default {
       })
       .on('div.ug-subsection-title, div.ug-info-box-title', {
         element(el) { el.tagName = 'h3'; }
+      })
+      .on('.ug-page-title-area', {
+        element(el) { if (codesBtn) el.append(codesBtn, { html: true }); }
+      })
+      .on('.ug-status-badge', {
+        element(el) {
+          if (!codesCfg || !codesData) return;
+          if (!codesUpdated) { el.remove(); return; }
+          el.removeAttribute('data-gh-file');
+          el.setInnerContent('Last updated - ' + codesUpdated.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit', timeZone: 'America/Chicago' }) + ' (Up-To-Date!)');
+        }
       })
       .on('#codes-mount', {
         element(el) { if (codesHtml) el.setInnerContent(codesHtml, { html: true }); }

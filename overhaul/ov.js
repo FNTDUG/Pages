@@ -585,7 +585,7 @@
     from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25);
     from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 60, autoAlpha: 0, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3);
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66);
-    from('.ov-copy .ug-status-badge, .ov-copy .ug-page-desc', { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58);
+    from('.ov-copy .ug-status-badge, .ov-copy .ug-page-desc, .ov-copy .ug-codes-btn', { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58);
     from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75);
     tl.call(function () { if (split) split.revert(); fitTitle(); }, null, 1.3)
       .call(function () { if (!bare) drop(g); }, null, 0.9);

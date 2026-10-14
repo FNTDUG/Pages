@@ -142,6 +142,12 @@ html.ov .ug-page-title{margin:18px 0 16px;font:400 clamp(38px,4.4vw,58px)/1.1 va
 .ov-hl-bg{position:absolute;inset:0;z-index:-1;background:var(--yellow);border:var(--bw) solid var(--ink);transform-origin:0 50%}
 html.ov .ug-status-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:6px 10px;font:700 13px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-radius:0;box-shadow:none}
 html.ov .ug-status-badge::before{content:'';width:9px;height:9px;flex:none;background:var(--green);border:2px solid var(--ink)}
+html.ov .ug-codes-btn{gap:10px;margin:0 0 16px;padding:10px 14px;border-radius:0;font:700 14px/1.2 var(--font-body);color:var(--text);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
+html.ov #ug-hero a.ug-codes-btn{color:var(--text)!important;text-decoration:none!important}
+html.ov #ug-hero a.ug-codes-btn:hover{color:var(--text)!important;background:var(--surface);transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
+html.ov .ug-codes-btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+html.ov .ug-codes-ic{width:9px;height:9px;background:var(--acc);border:2px solid var(--ink);box-shadow:none}
+html.ov .ug-codes-n{border-radius:0;color:#1d2228;background:var(--acc);border:2px solid var(--ink);font:700 12px/1.2 var(--font-body)}
 html.ov .ov-copy .ug-page-desc{max-width:34em;margin:0!important;font-size:17px;line-height:1.6;color:var(--mute);text-align:left!important}
 html.ov #ug-hero a{color:var(--text)!important;font-weight:700;text-decoration:underline!important;text-decoration-color:var(--game)!important;text-decoration-thickness:3px!important;text-underline-offset:3px}
 html.ov #ug-hero a:hover{color:var(--game-ink)!important;background:var(--game);text-decoration-color:var(--ink)!important}
