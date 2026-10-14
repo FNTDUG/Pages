@@ -673,6 +673,10 @@ const INFO_HTML = `<button id="ug-info-btn" onclick="ugInfoToggle()" aria-label=
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-evolutions-inner"></div></div>
     </div>
     <div class="inf-drop">
+      <button class="inf-drop-btn" data-lazy="faz-milestones" onclick="infToggle(this)">Faz-Rating Milestones <span class="inf-drop-arrow">/</span></button>
+      <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-faz-milestones-inner"></div></div>
+    </div>
+    <div class="inf-drop">
       <button class="inf-drop-btn" data-lazy="prestige" onclick="infToggle(this)">Faz-rating Prestige <span class="inf-drop-arrow">/</span></button>
       <div class="inf-drop-body"><div class="inf-drop-inner" id="inf-prestige-inner"></div></div>
     </div>
@@ -786,7 +790,7 @@ function infToggle(btn){
 function _infClearEnd(body){if(body._infEnd){body.removeEventListener('transitionend',body._infEnd);body._infEnd=null;}}
 function infOpen(body){if(!body)return;infTabAds(body.querySelector('.inf-drop-inner'));_infClearEnd(body);body.style.transition='max-height .3s ease';body.style.maxHeight=body.scrollHeight+'px';var f=function(){body.style.maxHeight='none';_infClearEnd(body);};body._infEnd=f;body.addEventListener('transitionend',f);var _av=body.querySelector('video[data-inf-autoplay]');if(_av){if(!_av.getAttribute('src')){var _ds=_av.getAttribute('data-src');if(_ds)_av.src=_ds;}_av.play().catch(function(){});}}
 function infClose(body){if(!body)return;var _mv=body.querySelectorAll('video');for(var _i=0;_i<_mv.length;_i++){try{_mv[_i].pause();_mv[_i].currentTime=0;}catch(e){}}body.querySelectorAll('.inf-mg-wrap.open').forEach(function(w){w.classList.remove('open');});_infClearEnd(body);body.style.transition='none';body.style.maxHeight=body.scrollHeight+'px';body.offsetHeight;body.style.transition='max-height .3s ease';body.style.maxHeight='0';}
-function infLoad(lazy){if(lazy==='titles')return infLoadTitles();if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();return infLoadCategory(lazy);}
+function infLoad(lazy){if(lazy==='titles')return infLoadTitles();if(lazy==='presents')return infLoadPresents();if(lazy==='evolutions')return infLoadEvolutions();if(lazy==='hero-quests')return infLoadHeroQuests();if(lazy==='shop-quests')return infLoadShopQuests();if(lazy==='endless-quests')return infLoadEndlessQuests();if(lazy==='permanent-quests')return infLoadPermanentQuests();if(lazy==='community-quests')return infLoadCommunityQuests();if(lazy==='prestige')return infLoadPrestige();if(lazy==='faz-milestones')return infLoadFazMilestones();return infLoadCategory(lazy);}
 function infSubToggle(btn){var s=btn.closest('.inf-subdrop');var par=s.parentElement;par.querySelectorAll('.inf-subdrop.open').forEach(function(d){if(d!==s)d.classList.remove('open');});s.classList.toggle('open');if(s.classList.contains('open'))infEntryAd(s.querySelector('.inf-subdrop-inner'));}
 // Single expandable card open at a time, across all tabs
 var _infExp=null;
@@ -1663,6 +1667,36 @@ function buildTitles(pEl,data){
     pEl.appendChild(card);
   });
   if(!names.length){var e=document.createElement('p');e.style.cssText='color:#888;font-size:11px;padding:12px 14px';e.textContent='No titles yet.';pEl.appendChild(e);}
+}
+function infLoadFazMilestones(){
+  if(_catLoaded['faz-milestones'])return;_catLoaded['faz-milestones']=true;
+  var pEl=document.getElementById('inf-faz-milestones-inner');
+  if(!pEl)return;
+  var ld=document.createElement('p');ld.style.cssText='color:#888;font-size:11px;padding:12px 14px';ld.textContent='Loading...';pEl.appendChild(ld);
+  function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function line(t){
+    var out='',re=/\\[([^\\]]+)\\]\\((?:color|style):([^)]+)\\)/g,last=0,m;
+    while((m=re.exec(t))){out+=esc(t.slice(last,m.index));out+=m[2]==='bold'?'<strong>'+esc(m[1])+'</strong>':m[2]==='italic'?'<em>'+esc(m[1])+'</em>':esc(m[1]);last=re.lastIndex;}
+    return out+esc(t.slice(last));
+  }
+  function done(){var _b=pEl.closest('.inf-drop-body');if(_b)infOpen(_b);}
+  fetch('/inf-data/faz-rating').then(function(r){return r.json();}).then(function(d){
+    var page=(d&&d.pages||[]).filter(function(x){return x&&x.slug==='faz-rating';})[0];
+    var items=[];
+    (page&&page.sections||[]).forEach(function(sec){if(/milestone/i.test(sec.title||''))(sec.blocks||[]).forEach(function(b){if(b&&Array.isArray(b.items))items=items.concat(b.items);});});
+    if(!items.length)throw new Error('none');
+    pEl.innerHTML='';
+    items.forEach(function(it){
+      var c=document.createElement('div');c.className='inf-card';
+      var h=document.createElement('div');h.style.cssText='font-family:Audiowide,sans-serif;color:#ffa45b;font-size:1.05em;margin-bottom:6px';h.textContent=it.title||'';c.appendChild(h);
+      String(it.desc||'').split('\\n').map(function(t){return t.replace(/^\\s*-\\s*/,'').trim();}).filter(Boolean).forEach(function(t){
+        var r=document.createElement('div');r.style.cssText='font-size:13px;color:#ddd;line-height:1.6';r.innerHTML='● '+line(t);c.appendChild(r);
+      });
+      pEl.appendChild(c);
+    });
+    var src=document.createElement('p');src.style.cssText='color:#888;font-size:11px;padding:4px 14px 10px';src.textContent='Milestones from FNTD Central (fntd2.com).';pEl.appendChild(src);
+    done();
+  }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);done();});
 }
 function infLoadPrestige(){
   if(_catLoaded['prestige'])return;_catLoaded['prestige']=true;
@@ -3249,7 +3283,8 @@ const INF_PROXY = {
   'materials':       'https://items.fntduserguide.com/materials.json',
   'titles':          'https://cosmetics.fntduserguide.com/titles.json',
   'foods':           'https://items.fntduserguide.com/foods.json',
-  'potions':         'https://items.fntduserguide.com/potions.json'
+  'potions':         'https://items.fntduserguide.com/potions.json',
+  'faz-rating':      'https://fntd2.com/wiki_other_sections.json'
 };
 
 const ROT_UPSTREAM = 'https://tight-forest-7fdc.eyesofheavenjojo1234.workers.dev/';
@@ -4089,7 +4124,7 @@ function seoInfVars() {
 let seoInfFeeds = null, seoInfFeedsAt = 0;
 async function seoLoadInfFeeds() {
   if (seoInfFeeds && Date.now() - seoInfFeedsAt < 600000) return seoInfFeeds;
-  const names = ['presents', 'skins', 'pets', 'banners', 'loading-screens', 'materials', 'titles', 'foods', 'potions'];
+  const names = ['presents', 'skins', 'pets', 'banners', 'loading-screens', 'materials', 'titles', 'foods', 'potions', 'faz-rating'];
   const got = await Promise.all(names.map(n => fetch(INF_PROXY[n], { cf: { cacheTtl: 300, cacheEverything: true } }).then(r => r.ok ? r.text() : '').then(t => { try { return JSON.parse(infSafeJson(t)); } catch (e) { return null; } }).catch(() => null)));
   const out = {};
   names.forEach((n, i) => { out[n] = got[i] && typeof got[i] === 'object' ? got[i] : null; });
@@ -4130,6 +4165,13 @@ function seoInfoHtml(data, feeds) {
   if (Array.isArray(v.EVOLUTIONS)) out.push(seoInfSec('Evolutions', v.EVOLUTIONS.filter(x => x && x.name).map(x => seoInfLi(x.display || x.name, (Array.isArray(x.ing) ? x.ing : []).map(i => i[0] + 'x ' + i[1]).join(', ')))));
   const quests = (title, list) => Array.isArray(list) ? seoInfSec(title, list.filter(q => q && q.unit).map(q => seoInfLi(q.unit, [q.present ? presName(q.present) : '', q.mode, q.cost != null ? 'costs ' + seoNum(q.cost) : ''].filter(Boolean).join(', ') + (Array.isArray(q.quests) && q.quests.length ? '. Quests: ' + q.quests.join('; ') : '')))) : '';
   out.push(quests('Hero quests and paths', v.HERO_QUESTS), quests('Shop quests', v.SHOP_QUESTS), quests('Endless quests', v.ENDLESS_QUESTS), quests('Permanent quests', v.PERMANENT_QUESTS), quests('Community quests', v.COMMUNITY_QUESTS));
+  const fz = feeds && feeds['faz-rating'] && Array.isArray(feeds['faz-rating'].pages) ? feeds['faz-rating'].pages.filter(x => x && x.slug === 'faz-rating')[0] : null;
+  if (fz) {
+    const items = [];
+    (fz.sections || []).forEach(sec => { if (/milestone/i.test(sec.title || '')) (sec.blocks || []).forEach(bk => { if (bk && Array.isArray(bk.items)) items.push.apply(items, bk.items); }); });
+    const clean = t => String(t || '').replace(/\[([^\]]+)\]\((?:color|style):[^)]+\)/g, '$1').replace(/^\s*-\s*/, '').trim();
+    out.push(seoInfSec('Faz-Rating milestones', items.filter(it => it && it.title).map(it => seoInfLi(clean(it.title), String(it.desc || '').split('\n').map(clean).filter(Boolean).join(', ')))));
+  }
   if (Array.isArray(v.PRESTIGE_SHOP)) out.push(seoInfSec('Faz-rating prestige shop', v.PRESTIGE_SHOP.filter(x => x && x.name).map(x => seoInfLi(x.name, [x.type, x.cost != null ? x.cost + ' Faz-rating' : ''].filter(Boolean).join(', ')))));
   if (feeds) {
     const pres = feeds.presents && !Array.isArray(feeds.presents) ? feeds.presents : {};
