@@ -8257,7 +8257,7 @@ export default {
     if (codesData) { try { codesHtml = seoCodesHtml(codesData, codesFeeds, codesCfg); } catch (e) { codesHtml = ''; } }
     const codesEmpty = !!(codesData && !codesData.codes.length);
     const codesUpdated = codesData && codesData.updated && isFinite(Date.parse(codesData.updated)) ? new Date(Date.parse(codesData.updated)) : null;
-    const codesBtn = gameCodes && gameCodes.codes.length ? seoCodesBtn(codesGame, gameCodes, ovMirror) : '';
+    const codesBtn = gameCodes ? seoCodesBtn(codesGame, gameCodes, ovMirror) : '';
     const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
