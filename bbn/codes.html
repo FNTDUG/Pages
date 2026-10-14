@@ -69,7 +69,7 @@ html.ov .cd-old .cd-code{opacity:.7;box-shadow:none}
 (function () {
   var mount = document.getElementById('codes-mount');
   if (!mount) return;
-  function fmt(d) { return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+  function day(d) { return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
   function left(ms) {
     var m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24);
     if (d >= 1) return d + 'd ' + (h % 24) + 'h';
@@ -83,7 +83,7 @@ html.ov .cd-old .cd-code{opacity:.7;box-shadow:none}
       if (!isFinite(t) || !el) return;
       var on = !!li.closest('.cd-live');
       if (t <= now && on && old) { old.insertBefore(li, old.firstChild); on = false; }
-      el.innerHTML = on ? 'Expires in <strong>' + left(t - now) + '</strong> (' + fmt(new Date(t)) + ')' : 'Expired ' + fmt(new Date(t));
+      el.innerHTML = on ? 'Expires in <strong>' + left(t - now) + '</strong>' : 'Expired ' + day(new Date(t));
     });
     [['.cd-live', 'No working codes right now. New codes usually come with updates, so check back soon.'], ['.cd-old', '']].forEach(function (p) {
       var sec = mount.querySelector(p[0]);

@@ -4021,19 +4021,13 @@ function seoStoryHtml(src, data) {
   };
   const byKey = seoUnitIndex(data.units), out = [];
   const best = Object.keys(info).filter(k => info[k] && info[k].best);
-  out.push('<h2>FNTD2 Story rewards</h2><p>Tokens, Candy Bars and XP for every night on Easy and Nightmare. Nightmare gives 1.5x. Night 7 scales with the difficulty you clear it on, from 1 to ' + maxD + '.' +
+  out.push('<h2>FNTD2 Story rewards</h2><p>Tokens, Candy Bars and XP for every night on Easy and Nightmare. Nightmare gives 1.5x. Night 7 is shown at difficulty ' + maxD + '.' +
     (best.length ? ' Best night to farm: ' + seoEsc(seoList(best.map(k => 'Game ' + k.split('-')[0] + ' Night ' + k.split('-')[1]))) + '.' : '') + '</p>');
   games.forEach(g => {
     if (coin[g] == null || candy[g] == null || exp[g] == null) return;
     const rows = [];
     for (let n = 1; n <= 7; n++) {
-      const e1 = at(g, n, false, 1), n1 = at(g, n, true, 1);
-      let e = e1.map(seoNum), nm = n1.map(seoNum);
-      if (n === 7) {
-        const e2 = at(g, n, false, maxD), n2 = at(g, n, true, maxD);
-        e = e1.map((v, i) => seoNum(v) + '-' + seoNum(e2[i]));
-        nm = n1.map((v, i) => seoNum(v) + '-' + seoNum(n2[i]));
-      }
+      const e = at(g, n, false, maxD).map(seoNum), nm = at(g, n, true, maxD).map(seoNum);
       const ni = info[g + '-' + n];
       rows.push('<tr><td>Night ' + n + '</td><td>' + e.join(' / ') + '</td><td>' + nm.join(' / ') + '</td><td>' + (ni && ni.cash ? seoNum(ni.cash) : '-') + '</td><td>' + seoEsc(ni && Array.isArray(ni.notes) ? ni.notes.join('. ') : '') + '</td></tr>');
     }
@@ -4201,13 +4195,14 @@ function seoCodesHtml(data, feeds, cfg) {
     (c.expired === true || (isFinite(t) && t <= now) ? old : live).push({ c, t });
   });
   old.sort((a, b) => (b.t || 0) - (a.t || 0));
-  const ct = t => new Date(t).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }) + ' CT';
+  const day = t => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Chicago' });
+  const left = ms => { const m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24); return d >= 1 ? d + 'd ' + (h % 24) + 'h' : h >= 1 ? h + 'h ' + (m % 60) + 'm' : m + 'm'; };
   const card = (x, on) => {
     const c = x.c, req = c.requirement && !/^none$/i.test(String(c.requirement)) ? String(c.requirement) : '';
     return '<li class="cd-code"' + (isFinite(x.t) ? ' data-exp="' + new Date(x.t).toISOString() + '"' : '') + '><div class="cd-top"><span class="cd-name">' + seoEsc(c.code) + '</span>' +
       (on ? '<button class="cd-copy" type="button" data-code="' + seoEsc(c.code) + '" aria-label="Copy code ' + seoEsc(c.code) + '">Copy</button>' : '') + '</div>' +
       '<ul class="cd-rw" aria-label="Rewards">' + (Array.isArray(c.rewards) ? c.rewards : []).map(r => { const ic = seoCodeIcon(r, icons); return '<li>' + (ic ? '<img src="' + seoEsc(ic) + '" alt="" width="22" height="22" loading="lazy">' : '') + seoEsc(r) + '</li>'; }).join('') + '</ul>' +
-      '<p class="cd-meta"><span>Requirement: <strong>' + seoEsc(req || 'None') + '</strong></span>' + (isFinite(x.t) ? '<span class="cd-exp">' + (on ? 'Expires ' : 'Expired ') + ct(x.t) + '</span>' : '') + '</p></li>';
+      '<p class="cd-meta"><span>Requirement: <strong>' + seoEsc(req || 'None') + '</strong></span>' + (isFinite(x.t) ? '<span class="cd-exp">' + (on ? 'Expires in <strong>' + left(x.t - now) + '</strong>' : 'Expired ' + day(x.t)) + '</span>' : '') + '</p></li>';
   };
   const faz = data.codes.some(c => c && /faz/i.test(String(c.requirement || '')));
   const upd = data.updated && isFinite(Date.parse(data.updated)) ? new Date(Date.parse(data.updated)).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' }) : '';

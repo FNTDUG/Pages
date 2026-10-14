@@ -103,6 +103,9 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRline{margin-bottom:3px}
 
 .ch-rewards{display:flex;gap:5px;flex-wrap:wrap}
+html.ov .ch-rewards.rowloop{flex-wrap:nowrap;justify-content:flex-start;gap:5px;margin:0 -14px;padding:6px 14px 10px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none;touch-action:pan-y}
+html.ov .ch-rewards.rowloop>*{flex:0 0 auto}
+html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
 .chRw{position:relative;width:46px;height:46px;flex:none;padding:2px;border-radius:6px;
   background:#555;display:flex;align-items:center;justify-content:center}
 .chPop .chRw{width:58px;height:58px}
@@ -188,7 +191,7 @@ body.ch-modal #ug-hamburger{display:none!important}
   </div>
 </div>
 
-<div class="chOv" id="rwOv" hidden role="dialog" aria-modal="true" aria-labelledby="rwName">
+<div class="chOv" id="rwOv" data-ov-rows hidden role="dialog" aria-modal="true" aria-labelledby="rwName">
   <div class="chPop chScan" id="rwPop">
     <div class="chVeil"></div>
     <button class="chPop-close" id="rwClose" type="button">Back</button>
@@ -482,7 +485,7 @@ function gameCard(g){
   return card;
 }
 
-var curG=null, curN=null, curTier='easy', curD=1;
+var curG=null, curN=null, curTier='easy', curD=MAX_DIFF;
 
 function openNights(g){
   curG = g;
@@ -501,7 +504,7 @@ function openNights(g){
     var inner = el('div','ch-inner'), top = el('div');
     top.appendChild(el('div','ch-name','Night '+n));
     top.appendChild(el('div','ch-diff',
-      cashText(g,n) + (n===7 ? '   •   Difficulty 1-'+MAX_DIFF : '')));
+      cashText(g,n) + (n===7 ? '   •   Difficulty '+MAX_DIFF : '')));
     inner.appendChild(top); card.appendChild(inner);
     card.addEventListener('click', function(){ openRewards(g,n); });
     box.appendChild(card);
@@ -742,22 +745,6 @@ function renderRewards(){
   });
   box.appendChild(seg);
 
-  if (n === 7){
-    box.appendChild(el('div','chSec','Night 7 Difficulty'));
-    var slide = el('div','nrSlide');
-    var lbl = el('div','nrSlideLbl','DIFFICULTY ' + curD + '/' + MAX_DIFF);
-    var rng = document.createElement('input');
-    rng.type='range'; rng.min='1'; rng.max=String(MAX_DIFF); rng.step='1';
-    rng.value=String(curD); rng.className='nrRange';
-    rng.setAttribute('aria-label','Night 7 difficulty');
-    rng.addEventListener('input', function(){
-      curD = parseInt(rng.value,10) || 1;
-      lbl.textContent = 'DIFFICULTY ' + curD + '/' + MAX_DIFF;
-      paintRewards();
-    });
-    slide.appendChild(lbl); slide.appendChild(rng);
-    box.appendChild(slide);
-  }
 
   var info = nightInfo(g,n);
   if ((info.notes && info.notes.length) || cashFor(g,n) != null){
@@ -786,11 +773,18 @@ function renderRewards(){
   if (!itemsReady) onItems.push(function(){ if (!document.getElementById('rwOv').hidden) paintRewards(); });
 }
 
+function loopRows(host){
+  if (!window.ovRowLoop || window.innerWidth > 600) return;
+  requestAnimationFrame(function(){
+    Array.prototype.forEach.call(host.querySelectorAll('.ch-rewards'), function(w){ try { window.ovRowLoop(w, { fit: 'wrap', ink: false }); } catch(e){} });
+  });
+}
 function paintRewards(){
   var host = document.getElementById('rwTiles');
   if (!host) return;
   host.innerHTML = '';
   host.appendChild(fixedTiles(rewardsFor(curG,curN,curTier,curD)));
+  loopRows(host);
   paintRng();
 }
 
@@ -808,10 +802,11 @@ function paintRng(){
   if (drops.length) host.appendChild(rngTiles(drops, curTier, curD));
   if (chips) host.appendChild(chipTiles(curG));
   if (!drops.length && !chips) host.appendChild(el('div','nrMuted','Not recorded yet.'));
+  loopRows(host);
 }
 
 function openRewards(g,n){
-  curG=g; curN=n; curD=1;
+  curG=g; curN=n; curD=MAX_DIFF;
   document.getElementById('rwPop').style.backgroundImage = 'url("'+nightArt(g,n)+'")';
   document.getElementById('rwOv').hidden = false;
   renderRewards();
