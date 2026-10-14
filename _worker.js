@@ -3997,7 +3997,7 @@ function seoChallengesHtml(src, data) {
   const list = seoLit(src, 'CHALLENGES');
   if (!Array.isArray(list) || !list.length) return '';
   const byKey = seoUnitIndex(data.units), rw = seoLit(src, 'REWARDS'), diff = (/DIFFICULTY\s*=\s*['"]([^'"]+)['"]/.exec(src) || [])[1];
-  const rewards = Array.isArray(rw) ? rw.filter(r => r && r.name).map(r => (r.qty ? String(r.qty).replace(/^x/i, '') + ' ' : '') + r.name) : [];
+  const rewards = Array.isArray(rw) ? rw.filter(r => r && r.name).map(r => r.chance ? 'a ' + r.chance + ' chance of a ' + r.name : (r.qty ? String(r.qty).replace(/^x/i, '') + ' ' : '') + r.name) : [];
   let body = '<h2>FNTD2 Special Challenges</h2><p>' + list.length + ' Special Challenges' + (diff ? ', all on ' + seoEsc(diff) : '') + (rewards.length ? '. Each one rewards ' + seoEsc(seoList(rewards)) : '') + '.</p>';
   body += list.filter(c => c && c.name).map(c => {
     const team = seoHasTeam(data.metas, c.name) ? seoTeam(data.metas, c.name, byKey, 'Recommended team').replace('<h3>', '<h4>').replace('</h3>', '</h4>') : '';

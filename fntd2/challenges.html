@@ -63,7 +63,12 @@
 .ch-name{font-family:'Press Start 2P',monospace;font-size:15px;line-height:1.2;
   text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000}
 .ch-diff{font-family:'Press Start 2P',monospace;font-size:8px;margin-top:5px;color:#c07bf0;text-shadow:1px 1px 0 #000}
-.ch-rewards{display:flex;gap:5px}
+.ch-rewards{display:flex;flex-wrap:wrap;gap:5px}
+html.ov .ch-rewards.rowloop{flex-wrap:nowrap;justify-content:flex-start;gap:5px;margin:0 -12px;padding:6px 12px 6px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none;touch-action:pan-y}
+html.ov .ch-card .ch-rewards.rowloop{margin:0 -10px;padding:4px 10px 2px}
+html.ov .ch-rewards.rowloop>*{flex:0 0 auto}
+html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
+html.ov #chPopIn{overflow-x:hidden}
 .chRw{position:relative;width:46px;height:46px;flex:none;padding:2px;border-radius:6px;
   background:#555;display:flex;align-items:center;justify-content:center}
 .chRw-in{width:100%;height:100%;border-radius:4px;overflow:hidden;background:rgba(14,11,28,.88);
@@ -126,7 +131,7 @@ body.ch-modal #ug-hamburger{display:none!important}
   <p class="chNote" id="chNote"></p>
 </div>
 
-<div class="chOv" id="chOv" hidden role="dialog" aria-modal="true" aria-labelledby="chPopName">
+<div class="chOv" id="chOv" data-ov-rows hidden role="dialog" aria-modal="true" aria-labelledby="chPopName">
   <div class="chPop chScan" id="chPop">
     <div class="chVeil"></div>
     <button class="chPop-close" id="chPopClose" type="button">Close</button>
@@ -171,7 +176,14 @@ var REWARDS = [
   {icon:MATS+'challenge-tokens.png', name:'Challenge Tokens',   rarity:'secret',    qty:'x30'},
   {icon:MATS+'endo-chip.png',        name:'Endo Chips',         rarity:'nightmare', qty:'x25'},
   {icon:MATS+'springlock.png',       name:'Springlocks',        rarity:'nightmare', qty:'x10'},
-  {icon:MATS+'soul.png',             name:'Untradeable Souls',  rarity:'nightmare', qty:'x200'}
+  {icon:MATS+'soul.png',             name:'Untradeable Souls',  rarity:'nightmare', qty:'x200'},
+  {icon:MATS+'white-crying-soul.png',  name:'White Crying Soul',  rarity:'nightmare', qty:'x5'},
+  {icon:MATS+'red-crying-soul.png',    name:'Red Crying Soul',    rarity:'nightmare', qty:'x1'},
+  {icon:MATS+'yellow-crying-soul.png', name:'Yellow Crying Soul', rarity:'nightmare', qty:'x1'},
+  {icon:MATS+'green-crying-soul.png',  name:'Green Crying Soul',  rarity:'nightmare', qty:'x1'},
+  {icon:MATS+'blue-crying-soul.png',   name:'Blue Crying Soul',   rarity:'nightmare', qty:'x1'},
+  {icon:MATS+'purple-crying-soul.png', name:'Purple Crying Soul', rarity:'nightmare', qty:'x1'},
+  {icon:'https://presents.fntduserguide.com/movie-mike-and-abby-duo-present.png', name:'Movie Mike and Abby Duo Present', rarity:'secret', chance:'5%'}
 ];
 var CHALLENGES = [
   { name:'Downpour', map:'1-2', mapImg:'https://images.fntduserguide.com/Downpour.png', restrictions:[
@@ -216,16 +228,28 @@ function rewardTiles(withQty){
   REWARDS.forEach(function(r){
     var t = el('div','chRw');
     t.style.background = RARITY[r.rarity] || '#555';
-    t.setAttribute('aria-label', r.name + ' ' + r.qty);
-    t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:r.qty, rarity:r.rarity, icon:r.icon}));
+    var amt = r.qty || r.chance;
+    t.setAttribute('aria-label', r.name + ' ' + (r.chance ? r.chance + ' chance' : amt));
+    t.setAttribute('data-rwtip', JSON.stringify({name:r.name, qty:amt, label:r.chance ? 'Chance' : 'Amount', rarity:r.rarity, icon:r.icon}));
     if (withQty) t.setAttribute('data-rwtip-tap','');
     var inn = el('div','chRw-in'); inn.style.background = RARITY_FILL[r.rarity] || '';
     var im = document.createElement('img'); im.src=r.icon; im.alt=r.name; inn.appendChild(im);
     t.appendChild(inn);
-    if (withQty) t.appendChild(el('span','chQty', r.qty));
+    if (withQty) t.appendChild(el('span','chQty', amt));
     wrap.appendChild(t);
   });
   return wrap;
+}
+
+function canLoop(){
+  var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  return !!(window.ovRowLoop && window.gsap && (fine || window.Draggable));
+}
+function loopRows(host){
+  if (!canLoop() || window.innerWidth > 640) return;
+  requestAnimationFrame(function(){
+    Array.prototype.forEach.call(host.querySelectorAll('.ch-rewards'), function(w){ try { window.ovRowLoop(w, { fit: 'wrap', ink: false }); } catch(e){} });
+  });
 }
 
 function buildCard(c){
@@ -276,6 +300,7 @@ function openPop(c){
 
   box.appendChild(el('div','chSec','Reward'));
   box.appendChild(rewardTiles(true));
+  loopRows(box);
 
   var team = borrowTeam(c.name);
   if (team){
@@ -338,6 +363,10 @@ setInterval(tickTimer, 1000);
 
 var list = document.getElementById('chList');
 CHALLENGES.forEach(function(c){ list.appendChild(buildCard(c)); });
+(function waitRows(n){
+  if (canLoop()) loopRows(list);
+  else if (n < 60 && document.documentElement.classList.contains('ov')) setTimeout(function(){ waitRows(n + 1); }, 250);
+})(0);
 var missing = CHALLENGES.filter(function(c){ return !c.mapImg; }).length;
 document.getElementById('chNote').textContent = missing
   ? missing + ' of ' + CHALLENGES.length + ' challenges have no map art yet.'
