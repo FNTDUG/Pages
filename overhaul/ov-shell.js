@@ -178,7 +178,7 @@
       if (a && !a.querySelector('svg')) a.insertAdjacentHTML('beforeend', x[1]);
     });
   }
-  var pp = document.querySelector('#ug-footer a[href^="/privacy-policy"]');
+  var pp = document.querySelector('#ug-footer a[href*="privacy-policy"]');
   var legal = pp && pp.parentNode;
   if (legal && !legal.classList.contains('ov-foot-legal') && legal.querySelectorAll('a').length === 2) {
     legal.classList.add('ov-foot-legal');
