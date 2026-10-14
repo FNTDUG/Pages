@@ -183,16 +183,24 @@
   window.ovRowLoop = function (box, opts) {
     opts = opts || {};
     var fine = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
-    if (!box || !window.gsap || (!fine && !window.Draggable)) return;
+    var still = opts.interactive === false;
+    if (!box || !window.gsap || (!fine && !still && !window.Draggable)) return;
     var g = window.gsap, SPEED = 22;
     if (window.Draggable) g.registerPlugin(window.Draggable);
     if (window.InertiaPlugin) g.registerPlugin(window.InertiaPlugin);
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
-    var inks = null, geo = null, prevX = [], shift = 0;
+    var inks = null, geo = null, prevX = [], shift = 0, edge = null, SHADOW = opts.shadow != null ? opts.shadow : 8;
     function kids() { return Array.prototype.slice.call(box.children); }
     function originals() { return kids().filter(function (el) { return !el.classList.contains('is-copy'); }); }
     function wants() {
+      if (opts.fit === 'overflow') {
+        var was = box.classList.contains('rowloop');
+        box.classList.remove('rowloop');
+        var over = originals().length > 1 && box.scrollWidth > box.clientWidth + 1;
+        if (was) box.classList.add('rowloop');
+        return over;
+      }
       if (opts.fit === 'wrap') {
         var had = box.classList.contains('rowloop');
         box.classList.remove('rowloop');
@@ -235,6 +243,8 @@
         el.setAttribute('draggable', 'false');
         Array.prototype.forEach.call(el.querySelectorAll('a,img'), function (a) { a.setAttribute('draggable', 'false'); });
       });
+      var own = items[0].offsetParent === box;
+      edge = { left0: own ? items[0].offsetLeft + box.clientLeft : items[0].offsetLeft - box.offsetLeft, w: items.map(function (el) { return el.offsetWidth; }), clip: edge ? edge.clip : null };
       if (inks) gauge();
     }
     function gauge() {
@@ -292,12 +302,17 @@
     function norm(v) { return ((v % total) + total) % total; }
     function render() {
       pos = norm(pos);
-      var lo = -step, xs = inks && geo ? [] : null;
+      var lo = -step, xs = inks && geo ? [] : null, cut = 0;
       items.forEach(function (el, i) {
         var x = norm(i * step - pos - lo) + lo;
         el.style.translate = Math.round(x - i * step) + 'px 0';
         if (xs) xs[i] = geo.left0 + Math.round(x);
+        else if (edge) { var r = edge.left0 + Math.round(x) + edge.w[i]; if (r <= 0 && r + SHADOW > cut) cut = r + SHADOW; }
       });
+      if (!xs && edge) {
+        var c = cut > 0 ? 'inset(0px 0px 0px ' + Math.ceil(cut) + 'px)' : 'none';
+        if (c !== edge.clip) { box.style.clipPath = c; edge.clip = c; }
+      }
       if (xs) inkFrame(xs);
     }
     function nearest(target) {
@@ -367,9 +382,9 @@
       measure();
       pos = 0;
       render();
-      if (fine) box.classList.remove('can-drag');
+      if (fine || still) box.classList.remove('can-drag');
       else box.classList.add('can-drag');
-      drag = fine ? null : window.Draggable.create(proxy, {
+      drag = fine || still ? null : window.Draggable.create(proxy, {
         type: 'x',
         trigger: box,
         inertia: !!window.InertiaPlugin,
@@ -398,7 +413,9 @@
     }
     function teardown() {
       on = false;
-      if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; box.style.clipPath = ''; }
+      if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; }
+      box.style.clipPath = '';
+      edge = null;
       cancelAnimationFrame(raf);
       clearTimeout(nudgeT);
       if (drag) { drag.kill(); drag = null; }

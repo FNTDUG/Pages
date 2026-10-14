@@ -103,7 +103,7 @@ body.ch-modal #ug-hamburger{display:none!important}
 .chRline{margin-bottom:3px}
 
 .ch-rewards{display:flex;gap:5px;flex-wrap:wrap}
-html.ov .ch-rewards.rowloop{flex-wrap:nowrap;justify-content:flex-start;gap:5px;margin:0 -14px;padding:6px 14px 10px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none;touch-action:pan-y}
+html.ov .ch-rewards.rowloop{flex-wrap:nowrap;justify-content:flex-start;gap:5px;margin:0 -14px;padding:6px 14px 10px;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:pan-y}
 html.ov .ch-rewards.rowloop>*{flex:0 0 auto}
 html.ov #rwIn{overflow-x:hidden}
 html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
@@ -777,7 +777,7 @@ function renderRewards(){
 function loopRows(host){
   if (!window.ovRowLoop || window.innerWidth > 600) return;
   requestAnimationFrame(function(){
-    Array.prototype.forEach.call(host.querySelectorAll('.ch-rewards'), function(w){ try { window.ovRowLoop(w, { fit: 'wrap', ink: false }); } catch(e){} });
+    Array.prototype.forEach.call(host.querySelectorAll('.ch-rewards'), function(w){ try { window.ovRowLoop(w, { fit: 'wrap', ink: false, shadow: 0 }); } catch(e){} });
   });
 }
 function paintRewards(){
