@@ -48,7 +48,7 @@ const MOBILE_NAV_BODY = `
   </div>
 </div>
 <div class="ug-mn-discord-wrap">
-  <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Join Discord</a>
+  <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-mn-discord">Discord</a>
 </div>`;
 
 const DESKTOP_NAV_INNER = `
