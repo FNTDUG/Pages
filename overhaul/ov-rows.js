@@ -220,12 +220,10 @@
       extra = [];
       var base = kids();
       base.forEach(function (el) { el.style.translate = ''; });
-      step = base[1].getBoundingClientRect().left - base[0].getBoundingClientRect().left || base[1].offsetLeft - base[0].offsetLeft;
+      var br0 = box.getBoundingClientRect(), sc = box.offsetWidth ? br0.width / box.offsetWidth || 1 : 1, r0 = base[0].getBoundingClientRect();
+      step = (base[1].getBoundingClientRect().left - r0.left) / sc || base[1].offsetLeft - base[0].offsetLeft;
       shift = 0;
-      if (!fine) {
-        var br0 = box.getBoundingClientRect(), r0 = base[0].getBoundingClientRect();
-        shift = Math.round(box.clientLeft + (box.clientWidth - r0.width) / 2 - (r0.left - br0.left));
-      }
+      if (!fine) shift = Math.round(box.clientLeft + (box.clientWidth - r0.width / sc) / 2 - (r0.left - br0.left) / sc);
       total = step * base.length;
       var need = box.clientWidth + step;
       while (total < need) {
