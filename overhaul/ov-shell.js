@@ -5,6 +5,7 @@
   var CUP = '<svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg>';
   var CASE = '<svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg>';
   var PARVUS = '<svg viewBox="0 0 28 23" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h3v1H7zM6 1h1v1H6zM10 1h1v1H10zM16 1h5v1H16zM5 2h1v1H5zM8 2h1v1H8zM10 2h1v1H10zM14 2h2v1H14zM21 2h2v1H21zM5 3h1v1H5zM8 3h1v1H8zM10 3h1v1H10zM13 3h2v1H13zM22 3h2v1H22zM5 4h1v1H5zM8 4h2v1H8zM12 4h1v1H12zM24 4h1v1H24zM5 5h1v1H5zM8 5h1v1H8zM11 5h1v1H11zM25 5h1v1H25zM5 6h1v1H5zM8 6h1v1H8zM11 6h1v1H11zM15 6h1v1H15zM21 6h1v1H21zM25 6h1v1H25zM5 7h1v1H5zM9 7h1v1H9zM12 7h1v1H12zM14 7h1v1H14zM16 7h1v1H16zM20 7h1v1H20zM22 7h1v1H22zM24 7h1v1H24zM5 8h1v1H5zM9 8h1v1H9zM12 8h1v1H12zM24 8h1v1H24zM2 9h3v1H2zM9 9h4v1H9zM24 9h2v1H24zM1 10h1v1H1zM4 10h1v1H4zM9 10h1v1H9zM12 10h1v1H12zM24 10h1v1H24zM26 10h1v1H26zM0 11h1v1H0zM27 11h1v1H27zM0 12h1v1H0zM27 12h1v1H27zM0 13h1v1H0zM27 13h1v1H27zM0 14h1v1H0zM27 14h1v1H27zM0 15h1v1H0zM27 15h1v1H27zM0 16h1v1H0zM27 16h1v1H27zM0 17h1v1H0zM27 17h1v1H27zM1 18h1v1H1zM26 18h1v1H26zM2 19h1v1H2zM25 19h1v1H25zM3 20h2v1H3zM23 20h2v1H23zM5 21h3v1H5zM20 21h3v1H20zM8 22h12v1H8z"/><path class="pv-ask-word" d="M2 15h3v1H2zM6 15h1v1H6zM9 15h1v1H9zM11 15h3v1H11zM15 15h2v1H15zM19 15h1v1H19zM21 15h1v1H21zM23 15h3v1H23zM2 16h1v1H2zM6 16h2v1H6zM9 16h1v1H9zM12 16h1v1H12zM15 16h1v1H15zM17 16h1v1H17zM19 16h1v1H19zM21 16h1v1H21zM23 16h1v1H23zM2 17h2v1H2zM6 17h1v1H6zM8 17h2v1H8zM12 17h1v1H12zM15 17h1v1H15zM17 17h1v1H17zM19 17h1v1H19zM21 17h1v1H21zM23 17h1v1H23zM25 17h1v1H25zM2 18h1v1H2zM6 18h1v1H6zM9 18h1v1H9zM12 18h1v1H12zM15 18h2v1H15zM19 18h3v1H19zM23 18h3v1H23z"/></svg>';
+  var MAIL = '<svg class="mail-icon" viewBox="0 0 12 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h12v1H0zM0 1h1v1H0zM2 1h8v1H2zM11 1h1v1H11zM0 2h2v1H0zM3 2h6v1H3zM10 2h2v1H10zM0 3h3v1H0zM4 3h4v1H4zM9 3h3v1H9zM0 4h4v1H0zM8 4h4v1H8zM0 5h12v1H0zM0 6h12v1H0zM0 7h12v1H0z"/></svg>';
   var CHAT = '<svg class="discord-chat" viewBox="0 0 12 10" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h10v1H1zM0 1h12v1H0zM0 2h12v1H0zM0 3h2v1H0zM4 3h1v1H4zM7 3h1v1H7zM10 3h2v1H10zM0 4h2v1H0zM4 4h1v1H4zM7 4h1v1H7zM10 4h2v1H10zM0 5h12v1H0zM1 6h10v1H1zM2 7h3v1H2zM2 8h2v1H2zM2 9h1v1H2z"/></svg>';
   var tray = 'translate .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),scale .36s cubic-bezier(.3,1.3,.5,1) calc(var(--i) * 40ms),opacity .2s calc(var(--i) * 40ms)';
   var css = document.createElement('style');
@@ -33,7 +34,7 @@
     '@media (max-width:768px){#pv-ask svg{width:21px;height:17px}}' +
     'html.pv-pop-on #pv-ask,html.ovt-on #pv-ask,html.talk-on #pv-ask{visibility:hidden}' +
     '@media (prefers-reduced-motion:reduce){#pv-ask,#pv-gear svg,html.ov .pv-tray,html.ov.pv-gear-open .pv-tray{transition:none!important}}' +
-    '.kofi-cup,.discord-chat,.sponsor-case,.card-bell{flex:none;fill:currentColor}.kofi-cup{width:calc(12*var(--ipx,2px));height:calc(7*var(--ipx,2px))}.discord-chat{width:calc(12*var(--ipx,2px));height:calc(10*var(--ipx,2px))}.sponsor-case{width:calc(12*var(--ipx,2px));height:calc(9*var(--ipx,2px))}.card-bell{width:calc(11*var(--ipx,2px));height:calc(12*var(--ipx,2px))}html.ov .ug-mn-kofi,html.ov .ug-mn-discord,html.ov .ug-mn-sponsor,.ov-card-go{--ipx:1.5px}' +
+    '.kofi-cup,.discord-chat,.sponsor-case,.card-bell,.mail-icon{flex:none;fill:currentColor}.kofi-cup{width:calc(12*var(--ipx,2px));height:calc(7*var(--ipx,2px))}.discord-chat{width:calc(12*var(--ipx,2px));height:calc(10*var(--ipx,2px))}.sponsor-case{width:calc(12*var(--ipx,2px));height:calc(9*var(--ipx,2px))}.card-bell{width:calc(11*var(--ipx,2px));height:calc(12*var(--ipx,2px))}.mail-icon{width:calc(12*var(--ipx,2px));height:calc(8*var(--ipx,2px))}html.ov #ug-footer p.ov-foot-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:2px 0 14px;line-height:1}html.ov #ug-footer p.ov-foot-chips a{--ipx:1.5px;display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 14px;color:var(--text);background:var(--bg);border:2px solid var(--ink);border-radius:0;box-shadow:3px 3px 0 var(--ink);text-decoration:none;font-weight:700;transition:transform .12s,box-shadow .12s}html.ov #ug-footer p.ov-foot-chips a:hover{color:var(--text);transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}html.ov #ug-footer p.ov-foot-chips a:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}html.ov #ug-footer p.ov-foot-chips a:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}html.ov .ug-mn-kofi,html.ov .ug-mn-discord,html.ov .ug-mn-sponsor,.ov-card-go{--ipx:1.5px}' +
     'html.ov a.ug-home-discord{gap:10px}' +
     'html.ov .ug-mn-kofi{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;color:#2a0f1c;background:var(--pink);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none;transition:transform .12s,box-shadow .12s}' +
     'html.ov .ug-mn-kofi:hover{color:#2a0f1c;background:#ff8fbd;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}' +
@@ -167,9 +168,14 @@
     d.parentNode.insertBefore(link('ug-home-kofi', 'Support us' + CUP), d.nextSibling);
   });
   var fd = document.querySelector('#ug-footer a[href*="discord.gg"]');
-  if (fd && !document.querySelector('#ug-footer a[href*="ko-fi.com"]')) {
-    var k = link('', 'Support us');
-    fd.parentNode.insertBefore(k, fd.nextSibling);
-    fd.parentNode.insertBefore(document.createTextNode('  |  '), k);
+  if (fd) {
+    var row = fd.parentNode;
+    if (!row.querySelector('a[href*="ko-fi.com"]')) row.insertBefore(link('', 'Support us'), fd.nextSibling);
+    row.classList.add('ov-foot-chips');
+    Array.prototype.slice.call(row.childNodes).forEach(function (n) { if (n.nodeType === 3) row.removeChild(n); });
+    [['a[href*="discord.gg"]', CHAT], ['a[href*="ko-fi.com"]', CUP], ['a[href^="mailto:"]', MAIL]].forEach(function (x) {
+      var a = row.querySelector(x[0]);
+      if (a && !a.querySelector('svg')) a.insertAdjacentHTML('beforeend', x[1]);
+    });
   }
 })();
