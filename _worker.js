@@ -3659,12 +3659,12 @@ function seoHead(pathname, canonUrl, over) {
 const SEO_VALUES_URL = 'https://fntd2.com/all_units.json';
 const SEO_RARITY = ['apex', 'secret', 'nightmare', 'mythic', 'exclusive', 'hero', 'epic', 'rare', 'uncommon'];
 const SEO_LIST_NAMES = { all: 'Overall', starter: 'Starters', support: 'Support', stun: 'Stun', slow: 'Slow', summon: 'Summon', knockback: 'Knockback' };
-const SEO_CSS = '<style>.ug-seo{max-width:860px;margin:28px auto 8px;padding:0 16px;box-sizing:border-box;color:#ddd6ea;font:400 15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:left}' +
+const SEO_CSS = '<style>.ug-seo{width:100%;min-width:0;max-width:860px;margin:28px auto 8px;padding:0 16px;box-sizing:border-box;color:#ddd6ea;font:400 15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:left}' +
   '.ug-seo>summary{cursor:pointer;padding:10px 0;color:#ffa45b;font-weight:700}' +
   '.ug-seo h2{margin:14px 0 6px;color:#fff;font-size:20px;line-height:1.3}.ug-seo h3{margin:16px 0 4px;color:#fff;font-size:16px;line-height:1.3}' +
   '.ug-seo p{margin:6px 0}.ug-seo ul{margin:4px 0;padding-left:20px}.ug-seo li{margin:2px 0}.ug-seo a{color:#ffa45b}' +
   '.ug-seo-wrap{overflow-x:auto}.ug-seo table{width:100%;border-collapse:collapse;font-size:14px}.ug-seo th,.ug-seo td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.12);text-align:left;white-space:nowrap}' +
-  'h1.ug-page-title,h1.ug-header-title{font-weight:400}</style>';
+  'h1.ug-page-title,h1.ug-header-title{font-weight:400}:where(h2.ug-section-title,h2.update-date,h3.ug-subsection-title,h3.ug-info-box-title){font-size:inherit;font-weight:inherit}</style>';
 let seoValues = null, seoValuesAt = 0;
 
 function seoEsc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -3786,15 +3786,258 @@ function seoTierHtml(data) {
   return seoBlock('FNTD2 tier list as text', body);
 }
 
+function seoHasTeam(metas, m) { return !!(metas && metas[m] && Array.isArray(metas[m].units) && metas[m].units.length); }
+function seoTeam(metas, m, byKey, label) {
+  if (!seoHasTeam(metas, m)) return '';
+  return '<h3>' + seoEsc(label || m) + '</h3><ul>' + metas[m].units.map(u =>
+    '<li>' + seoLink(u.name, byKey) + [u.enchant && 'enchant ' + u.enchant, u.byte && 'bytes ' + u.byte, u.chip && 'chip ' + u.chip].filter(Boolean).map(x => ', ' + seoEsc(x)).join('') +
+    (u.replacement ? ' (or ' + seoLink(u.replacement, byKey) + ')' : '') + (u.caption ? ': ' + seoEsc(u.caption) : '') + '</li>').join('') + '</ul>';
+}
+
 function seoMetaHtml(data) {
   const metas = data.metas || {}, byKey = seoUnitIndex(data.units);
-  const modes = Object.keys(metas).filter(m => metas[m] && Array.isArray(metas[m].units) && metas[m].units.length);
+  const modes = Object.keys(metas).filter(m => seoHasTeam(metas, m));
   if (!modes.length) return '';
-  const body = '<h2>FNTD2 meta teams (text version)</h2>' + modes.map(m => '<h3>' + seoEsc(m) + '</h3><ul>' + metas[m].units.map(u =>
-    '<li>' + seoLink(u.name, byKey) + [u.enchant && 'enchant ' + u.enchant, u.byte && 'bytes ' + u.byte, u.chip && 'chip ' + u.chip].filter(Boolean).map(x => ', ' + seoEsc(x)).join('') +
-    (u.replacement ? ' (or ' + seoLink(u.replacement, byKey) + ')' : '') + (u.caption ? ': ' + seoEsc(u.caption) : '') + '</li>').join('') + '</ul>').join('');
+  const body = '<h2>FNTD2 meta teams (text version)</h2>' + modes.map(m => seoTeam(metas, m, byKey)).join('');
   return seoBlock('FNTD2 meta teams as text', body);
 }
+
+function seoLit(src, name) {
+  const m = new RegExp('\\b(?:var|let|const)\\s+' + name + '\\s*=\\s*(?=[\\[{])').exec(src || '');
+  if (!m) return null;
+  const s = src, toks = [];
+  let i = m.index + m[0].length, depth = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '/' && s[i + 1] === '/') { while (i < s.length && s[i] !== '\n') i++; continue; }
+    if (c === '/' && s[i + 1] === '*') { const e = s.indexOf('*/', i + 2); i = e < 0 ? s.length : e + 2; continue; }
+    if (c === '"' || c === "'" || c === '`') {
+      let j = i + 1, v = '';
+      while (j < s.length && s[j] !== c) {
+        if (s[j] === '\\') { const n = s[j + 1]; v += n === 'n' ? '\n' : n === 't' ? '\t' : n; j += 2; } else v += s[j++];
+      }
+      toks.push({ t: 's', v });
+      i = j + 1;
+      continue;
+    }
+    if (c === '[' || c === '{') { depth++; toks.push({ t: c }); i++; continue; }
+    if (c === ']' || c === '}') { depth--; toks.push({ t: c }); i++; if (!depth) break; continue; }
+    if (c === ',' || c === ':' || c === '+') { toks.push({ t: c }); i++; continue; }
+    const w = /^-?[\w$.]+/.exec(s.slice(i, i + 120));
+    if (!w) return null;
+    const n = Number(w[0]);
+    if (w[0] === 'true' || w[0] === 'false' || w[0] === 'null') toks.push({ t: 'v', v: JSON.parse(w[0]) });
+    else if (isFinite(n)) toks.push({ t: 'n', v: n });
+    else toks.push({ t: 'x', v: w[0] });
+    i += w[0].length;
+  }
+  let k = 0;
+  function one() {
+    const tk = toks[k++];
+    if (!tk) throw new Error('end');
+    if (tk.t === '[') {
+      const a = [];
+      while (toks[k] && toks[k].t !== ']') { if (toks[k].t === ',') { k++; continue; } a.push(val()); }
+      k++;
+      return a;
+    }
+    if (tk.t === '{') {
+      const o = {};
+      while (toks[k] && toks[k].t !== '}') {
+        if (toks[k].t === ',') { k++; continue; }
+        const key = toks[k++];
+        if (!toks[k] || toks[k].t !== ':') throw new Error('key');
+        k++;
+        o[String(key.v)] = val();
+      }
+      k++;
+      return o;
+    }
+    if (tk.t === 'x') return null;
+    if (tk.t === 's' || tk.t === 'n' || tk.t === 'v') return tk.v;
+    throw new Error('token');
+  }
+  function val() {
+    let v = one();
+    while (toks[k] && toks[k].t === '+') { k++; const r = one(); v = (v == null ? '' : String(v)) + (r == null ? '' : String(r)); }
+    return v;
+  }
+  try { return val(); } catch (e) { return null; }
+}
+
+let seoNine = null, seoNineAt = 0, seoNotes = null, seoNotesAt = 0;
+async function seoTemplates(file, attr) {
+  const r = await fetch(PARVUS_RAW + file, { cf: { cacheTtl: 300, cacheEverything: true } });
+  if (!r.ok) return null;
+  const src = await r.text(), map = {};
+  const re = new RegExp('<template\\b[^>]*\\b' + attr + '="([^"]+)"[^>]*>([\\s\\S]*?)<\\/template>', 'g');
+  let m;
+  while ((m = re.exec(src))) map[m[1]] = m[2].trim();
+  return map;
+}
+async function seoLoadNotes() {
+  if (seoNotes && Date.now() - seoNotesAt < 300000) return seoNotes;
+  const map = await seoTemplates('page-notes.html', 'data-page-note');
+  if (map) { seoNotes = map; seoNotesAt = Date.now(); }
+  return seoNotes;
+}
+async function seoLoadNine() {
+  if (seoNine && Date.now() - seoNineAt < 300000) return seoNine;
+  const map = await seoTemplates('nine-slice-panel.html', 'data-note');
+  if (map) { seoNine = map; seoNineAt = Date.now(); }
+  return seoNine;
+}
+
+function seoPlain(html) {
+  return String(html || '').replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;|&rsquo;/g, '’').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim();
+}
+function seoNineHtml(src, nine) {
+  if (!nine) return '';
+  const out = [], re = /data-note="([^"'+]+)"/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const t = nine[m[1]];
+    if (!t) continue;
+    const h = /<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/i.exec(t);
+    const body = seoPlain(h ? t.replace(h[0], '') : t);
+    if (body) out.push('<h3>' + seoEsc(h ? seoPlain(h[1]) : 'Notes') + '</h3><p>' + seoEsc(body) + '</p>');
+  }
+  return out.join('');
+}
+function seoPageModes(src, metas) {
+  const out = [], re = /data-meta="([^"'+]+)"/g;
+  let m;
+  while ((m = re.exec(src))) if (seoHasTeam(metas, m[1]) && out.indexOf(m[1]) === -1) out.push(m[1]);
+  return out;
+}
+function seoDropNames(src) {
+  return (seoLit(src, 'drops') || []).map(d => Array.isArray(d) ? d[0] : '').filter(Boolean);
+}
+function seoList(items) {
+  if (items.length < 2) return items.join('');
+  return items.slice(0, -1).join(', ') + ' and ' + items[items.length - 1];
+}
+
+function seoBossHtml(src, data, nine) {
+  const byKey = seoUnitIndex(data.units), out = [];
+  const teams = seoPageModes(src, data.metas).map(m => seoTeam(data.metas, m, byKey, m + ' team')).join('');
+  if (teams) out.push('<h2>FNTD2 Boss Raids meta teams</h2>' + teams);
+  const notes = seoNineHtml(src, nine);
+  if (notes) out.push(notes);
+  const drops = seoDropNames(src);
+  if (drops.length) out.push('<h2>Boss Raids placements</h2><p>Placement charts for every Boss Raids map:</p><ul>' + drops.map(d => '<li>' + seoEsc(d) + '</li>').join('') + '</ul>');
+  const rw = seoLit(src, 'REWARDS'), wave = (/TARGET_WAVE\s*=\s*(\d+)/.exec(src) || [])[1];
+  if (Array.isArray(rw) && rw.length && wave) {
+    const rare = rw.filter(r => r && r.rare).map(r => r.name);
+    out.push('<h2>Boss Raids rewards</h2><p>Reaching wave ' + seoEsc(wave) + ' at 1x luck gives about ' + seoEsc(seoList(rw.filter(r => r && r.name).map(r => seoNum(r.amount) + ' ' + r.name))) + '. Rewards scale with the wave you reach' + (rare.length ? ', and ' + seoEsc(seoList(rare)) + ' are multiplied by your luck.' : '.') + '</p>');
+  }
+  return out.length ? seoBlock('FNTD2 Boss Raids guide as text', out.join('')) : '';
+}
+
+function seoEndlessHtml(src, data, nine) {
+  const byKey = seoUnitIndex(data.units), out = [];
+  const teams = seoPageModes(src, data.metas).map(m => seoTeam(data.metas, m, byKey, m + ' team')).join('');
+  if (teams) out.push('<h2>FNTD2 Endless meta teams</h2>' + teams);
+  const notes = seoNineHtml(src, nine);
+  if (notes) out.push(notes);
+  const drops = seoDropNames(src);
+  if (drops.length) out.push('<h2>Endless placements</h2><ul>' + drops.map(d => '<li>' + seoEsc(d) + '</li>').join('') + '</ul>');
+  const gr = seoLit(src, 'GAME_REWARDS');
+  if (gr && typeof gr === 'object') {
+    const games = Object.keys(gr).filter(g => gr[g] && Array.isArray(gr[g].rewards));
+    const names = [];
+    games.forEach(g => gr[g].rewards.forEach(r => { if (r && r.name && names.indexOf(r.name) === -1) names.push(r.name); }));
+    if (games.length && names.length) {
+      out.push('<h2>Endless rewards by game</h2><p>Rewards for reaching wave ' + seoEsc(gr[games[0]].targetWave || 100) + ' in each Endless game. Presents are random and not shown.</p><div class="ug-seo-wrap"><table><thead><tr><th>Game</th>' + names.map(n => '<th>' + seoEsc(n) + '</th>').join('') + '</tr></thead><tbody>' +
+        games.map(g => '<tr><td>Game ' + seoEsc(g.replace(/^G/, '')) + '</td>' + names.map(n => { const r = gr[g].rewards.find(x => x && x.name === n); return '<td>' + (r ? seoNum(r.amount) : '-') + '</td>'; }).join('') + '</tr>').join('') +
+        '</tbody></table></div>');
+    }
+  }
+  return out.length ? seoBlock('FNTD2 Endless guide as text', out.join('')) : '';
+}
+
+function seoChallengesHtml(src, data) {
+  const list = seoLit(src, 'CHALLENGES');
+  if (!Array.isArray(list) || !list.length) return '';
+  const byKey = seoUnitIndex(data.units), rw = seoLit(src, 'REWARDS'), diff = (/DIFFICULTY\s*=\s*['"]([^'"]+)['"]/.exec(src) || [])[1];
+  const rewards = Array.isArray(rw) ? rw.filter(r => r && r.name).map(r => (r.qty ? String(r.qty).replace(/^x/i, '') + ' ' : '') + r.name) : [];
+  let body = '<h2>FNTD2 Special Challenges</h2><p>' + list.length + ' Special Challenges' + (diff ? ', all on ' + seoEsc(diff) : '') + (rewards.length ? '. Each one rewards ' + seoEsc(seoList(rewards)) : '') + '.</p>';
+  body += list.filter(c => c && c.name).map(c => {
+    const team = seoHasTeam(data.metas, c.name) ? seoTeam(data.metas, c.name, byKey, 'Recommended team').replace('<h3>', '<h4>').replace('</h3>', '</h4>') : '';
+    return '<h3>' + seoEsc(c.name) + (c.map ? ' (map ' + seoEsc(c.map) + ')' : '') + '</h3>' +
+      (Array.isArray(c.restrictions) && c.restrictions.length ? '<ul>' + c.restrictions.map(r => '<li>' + seoEsc(r) + '</li>').join('') + '</ul>' : '') + team;
+  }).join('');
+  return seoBlock('FNTD2 Challenges as text', body);
+}
+
+function seoStoryHtml(src, data) {
+  const coin = seoLit(src, 'COIN_BASE'), candy = seoLit(src, 'CANDY_BASE'), exp = seoLit(src, 'EXP_BASE'), curve = seoLit(src, 'EXP_CURVE');
+  const info = seoLit(src, 'NIGHT_INFO') || {}, games = seoLit(src, 'GAMES'), gt = seoLit(src, 'GAME_TEAM') || {};
+  const maxD = Number((/MAX_DIFF\s*=\s*(\d+)/.exec(src) || [])[1]) || 20;
+  if (!coin || !candy || !exp || !curve || !Array.isArray(games) || !games.length) return '';
+  const xp = (g, n) => curve[g] === 'A' ? exp[g] + Math.floor((n - 1) / 2) : n === 1 ? exp[g] : exp[g] + 1 + 2 * (n - 2);
+  const at = (g, n, nm, d) => {
+    const m = n < 7 ? n : 6, t = nm ? 1.5 : 1;
+    let c = Math.round((coin[g] + 10 * (m - 1)) * t), y = Math.round(candy[g] * t), e = Math.round(xp(g, m) * t);
+    if (n === 7) { const k = 40 + d; c = Math.round(c * k / 40); y = Math.round(y * k / 40); e = Math.round(e * k / 40); }
+    return [c, y, e];
+  };
+  const byKey = seoUnitIndex(data.units), out = [];
+  const best = Object.keys(info).filter(k => info[k] && info[k].best);
+  out.push('<h2>FNTD2 Story rewards</h2><p>Tokens, Candy Bars and XP for every night on Easy and Nightmare. Nightmare gives 1.5x. Night 7 scales with the difficulty you clear it on, from 1 to ' + maxD + '.' +
+    (best.length ? ' Best night to farm: ' + seoEsc(seoList(best.map(k => 'Game ' + k.split('-')[0] + ' Night ' + k.split('-')[1]))) + '.' : '') + '</p>');
+  games.forEach(g => {
+    if (coin[g] == null || candy[g] == null || exp[g] == null) return;
+    const rows = [];
+    for (let n = 1; n <= 7; n++) {
+      const e1 = at(g, n, false, 1), n1 = at(g, n, true, 1);
+      let e = e1.map(seoNum), nm = n1.map(seoNum);
+      if (n === 7) {
+        const e2 = at(g, n, false, maxD), n2 = at(g, n, true, maxD);
+        e = e1.map((v, i) => seoNum(v) + '-' + seoNum(e2[i]));
+        nm = n1.map((v, i) => seoNum(v) + '-' + seoNum(n2[i]));
+      }
+      const ni = info[g + '-' + n];
+      rows.push('<tr><td>Night ' + n + '</td><td>' + e.join(' / ') + '</td><td>' + nm.join(' / ') + '</td><td>' + (ni && ni.cash ? seoNum(ni.cash) : '-') + '</td><td>' + seoEsc(ni && Array.isArray(ni.notes) ? ni.notes.join('. ') : '') + '</td></tr>');
+    }
+    out.push('<h3>Game ' + seoEsc(g) + '</h3><div class="ug-seo-wrap"><table><thead><tr><th>Night</th><th>Easy (Tokens / Candy / XP)</th><th>Nightmare (Tokens / Candy / XP)</th><th>Starting cash</th><th>Map</th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>');
+  });
+  const modes = [];
+  Object.keys(gt).forEach(k => {
+    const v = gt[k];
+    if (typeof v === 'string') modes.push([v, v + ' team']);
+    else if (v && typeof v === 'object') Object.keys(v).forEach(t => modes.push([v[t], v[t] + ' team']));
+  });
+  const teams = modes.filter((m, i) => modes.findIndex(x => x[0] === m[0]) === i).map(m => seoTeam(data.metas, m[0], byKey, m[1])).join('');
+  if (teams) out.push('<h2>FNTD2 Story teams</h2>' + teams);
+  return seoBlock('FNTD2 Story guide as text', out.join(''));
+}
+
+function seoEventHtml(src, data) {
+  const byKey = seoUnitIndex(data.units);
+  const teams = seoPageModes(src, data.metas).map(m => seoTeam(data.metas, m, byKey, m + ' team')).join('');
+  return teams ? seoBlock('FNTD2 event teams as text', '<h2>FNTD2 event meta teams</h2>' + teams) : '';
+}
+
+function seoElementsHtml(data) {
+  const groups = {};
+  (data.units || []).forEach(u => { if (u && u.name && u.element) String(u.element).split('/').map(e => e.trim()).filter(Boolean).forEach(e => (groups[e] = groups[e] || []).push(u)); });
+  const els = Object.keys(groups).sort();
+  if (!els.length) return '';
+  const body = '<h2>FNTD2 units by element</h2><p>Clan Wars bans, buffs and debuffs units by element. These are the Five Nights TD 2 units in each element.</p>' +
+    els.map(e => '<h3>' + seoEsc(e) + ' (' + groups[e].length + ')</h3><p>' + groups[e].slice().sort((a, b) => a.name.localeCompare(b.name)).map(u => '<a href="' + seoUnitPath(u.name) + '">' + seoEsc(u.name) + '</a>').join(', ') + '</p>').join('');
+  return seoBlock('FNTD2 units by element', body);
+}
+
+const SEO_GUIDES = {
+  '/fntd2/boss-raids-index': (src, data, nine) => seoBossHtml(src, data, nine),
+  '/fntd2/endless-index': (src, data, nine) => seoEndlessHtml(src, data, nine),
+  '/fntd2/challenges': (src, data) => seoChallengesHtml(src, data),
+  '/fntd2/story-index': (src, data) => seoStoryHtml(src, data),
+  '/fntd2/event-story-endless': (src, data) => seoEventHtml(src, data),
+  '/fntd2/clan-wars': (src, data) => seoElementsHtml(data)
+};
 
 function seoValuesHtml(data, values) {
   if (!values) return '';
@@ -3814,8 +4057,16 @@ function seoValuesHtml(data, values) {
   return seoBlock('FNTD2 trading values list', body);
 }
 
-async function seoSsr(realPath) {
+async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
+  const guide = SEO_GUIDES[p];
+  if (guide) {
+    const [data, src, nine] = await Promise.all([seoTimed(parvusLoad(), 2500), seoTimed(pageSrc(), 2500), seoTimed(seoLoadNine(), 2500)]);
+    if (!data || !src) return null;
+    let html = '';
+    try { html = guide(src, data, nine); } catch (e) { html = ''; }
+    return html ? { html } : null;
+  }
   const isUnit = p.indexOf('/fntd2/unit-engine/') === 0;
   const want = isUnit || p === '/fntd2/unit-engine' || p === '/fntd2/tierlists-1' || p.indexOf('/fntd2/tierlists-1/') === 0 || p === '/fntd2/meta-teams' || p.indexOf('/fntd2/meta-teams/') === 0 || p === '/fntd2/trade-calculator';
   if (!want) return null;
@@ -7789,7 +8040,12 @@ export default {
     const ct = response.headers.get('content-type') || '';
     if (!ct.includes('text/html')) return response;
 
-    const ssr = pvMissing || response.status !== 200 ? null : await seoSsr(realPath);
+    const okPage = !pvMissing && response.status === 200;
+    const pageRes = okPage && SEO_GUIDES[seoPath(realPath)] ? response.clone() : null;
+    const [ssr, pageNotes] = await Promise.all([
+      okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve('')) : null,
+      okPage && seoPath(realPath).indexOf('/fntd2/') === 0 ? seoTimed(seoLoadNotes(), 1500) : null
+    ]);
     const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
@@ -7836,6 +8092,18 @@ export default {
       })
       .on('.ug-page-title', {
         element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
+      })
+      .on('div#ug-content', {
+        element(el) { el.tagName = 'main'; }
+      })
+      .on('div.ug-section-title, div.update-date', {
+        element(el) { el.tagName = 'h2'; }
+      })
+      .on('div.ug-subsection-title, div.ug-info-box-title', {
+        element(el) { el.tagName = 'h3'; }
+      })
+      .on('[data-page-note]', {
+        element(el) { const h = pageNotes && pageNotes[el.getAttribute('data-page-note')]; if (h) el.replace(h, { html: true }); }
       })
       .on('body', {
         element(el) {

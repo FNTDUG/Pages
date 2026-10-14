@@ -326,8 +326,8 @@ html.ov .bbn-dir-label{font-size:18px;margin-bottom:4px}
 html.ov #ug-content .ug-subsection-title{margin:20px 0 10px;font:400 15px/1.3 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text)}
 html.ov #ug-content .ug-section{margin-bottom:40px}
 html.ov #ug-content .ug-note{font:400 16px/1.6 var(--font-body);color:var(--text)}
-html.ov #ug-content .ug-note a,html.ov .faq-a a,html.ov .ug-info-box a,html.ov .update-description a,html.ov .pp-wrap a,html.ov body>main a,html.ov .chart-drop-body a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--game);text-decoration-thickness:3px;text-underline-offset:3px}
-html.ov #ug-content .ug-note a:hover,html.ov .faq-a a:hover,html.ov .ug-info-box a:hover,html.ov .update-description a:hover,html.ov body>main a:hover,html.ov .chart-drop-body a:hover{color:var(--game-ink);background:var(--game)}
+html.ov #ug-content .ug-note a,html.ov .faq-a a,html.ov .ug-info-box a,html.ov .update-description a,html.ov .pp-wrap a,html.ov body>main:not(#ug-content) a,html.ov .chart-drop-body a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--game);text-decoration-thickness:3px;text-underline-offset:3px}
+html.ov #ug-content .ug-note a:hover,html.ov .faq-a a:hover,html.ov .ug-info-box a:hover,html.ov .update-description a:hover,html.ov body>main:not(#ug-content) a:hover,html.ov .chart-drop-body a:hover{color:var(--game-ink);background:var(--game)}
 html.ov .ug-starry-panel{width:auto;margin:0 0 28px;background:var(--surface)!important;border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
 html.ov .ug-starry-panel::before{display:none}
 html.ov .ug-starry-panel-inner{padding:28px 24px 20px}
@@ -384,9 +384,9 @@ html.ov .pp-header{max-width:780px;box-sizing:border-box;margin:72px auto 0;padd
 html.ov .pp-header h1{font:400 clamp(32px,5vw,48px)/1.1 var(--font-head);letter-spacing:0;text-transform:uppercase;text-shadow:none;color:var(--text)}
 html.ov .pp-header .pp-home{margin-top:18px;padding:10px 16px;font:700 14px/1 var(--font-body);color:var(--game-ink);background:var(--game);border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
 html.ov .pp-header .pp-home:hover{color:var(--game-ink);background:var(--game);transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
-html.ov body>main{max-width:780px;box-sizing:border-box;margin:28px auto 72px;padding:32px 36px;color:var(--text);font:400 16px/1.7 var(--font-body);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
-html.ov body>main h2{margin-top:34px;font:400 20px/1.25 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text)}
-html.ov body>main li::marker{color:var(--game)}
+html.ov body>main:not(#ug-content){max-width:780px;box-sizing:border-box;margin:28px auto 72px;padding:32px 36px;color:var(--text);font:400 16px/1.7 var(--font-body);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+html.ov body>main:not(#ug-content) h2{margin-top:34px;font:400 20px/1.25 var(--font-head);letter-spacing:0;text-transform:uppercase;color:var(--text)}
+html.ov body>main:not(#ug-content) li::marker{color:var(--game)}
 html.ov .pp-updated{font:700 13px/1.4 var(--font-body);color:var(--mute)}
 html.ov .pp-note{padding:16px 18px;color:var(--text);background:var(--surface2);border:2px solid var(--ink);border-left:10px solid var(--game);border-radius:0;font:500 15px/1.6 var(--font-body)}
 @media (max-width:600px){
@@ -394,7 +394,7 @@ html.ov .pp-note{padding:16px 18px;color:var(--text);background:var(--surface2);
   html.ov #ug-content .ug-section-title,html.ov .ug-chart-col .ug-section-title,html.ov .ug-wither-wrap .ug-section-title{font-size:18px}
   html.ov .ug-info-box,html.ov .bbn-dir-desc,html.ov .ug-attack-type,html.ov .faq-item,html.ov .ug-discontinued{padding:14px 16px}
   html.ov .pp-header{margin:62px 16px 0;padding:22px 18px}
-  html.ov body>main{margin:20px 16px 60px;padding:22px 18px}
+  html.ov body>main:not(#ug-content){margin:20px 16px 60px;padding:22px 18px}
   html.ov .update-entry{padding:14px 16px}
   html.ov .update-log-wrapper{padding:18px 16px 4px}
 }
@@ -406,13 +406,13 @@ html.ov #ug-hero{overflow-x:clip}
 html.ov #ug-content div[style*="Audiowide"][style*="nowrap"]{display:flex;align-items:center;gap:12px;font:400 22px/1.2 var(--font-head)!important;letter-spacing:0!important;text-transform:uppercase;text-shadow:none!important;color:var(--text)!important}
 html.ov #ug-content div[style*="Audiowide"][style*="nowrap"]::before{content:'';width:12px;height:12px;flex:none;background:var(--game);border:2px solid var(--ink)}
 html.ov #ug-content div[style*="linear-gradient(to right,transparent,rgba(255,164,91"],html.ov #ug-content div[style*="linear-gradient(to left,transparent,rgba(255,164,91"]{height:0!important;background:none!important;border-top:var(--bw) solid var(--ink)}
-html.ov body>main strong{color:var(--text)}
+html.ov body>main:not(#ug-content) strong{color:var(--text)}
 html.ov[data-theme="light"] .ov-notes span[style*="color"],html.ov[data-theme="light"] .ov-copy span[style*="color"]{filter:brightness(.55) saturate(1.6)}
-html.ov body>main footer,html.ov body>footer{margin-top:28px;padding:22px 0 0;color:var(--mute);border-top:var(--bw) dashed var(--surface2);font:500 14px/1.8 var(--font-body)}
+html.ov body>main:not(#ug-content) footer,html.ov body>footer{margin-top:28px;padding:22px 0 0;color:var(--mute);border-top:var(--bw) dashed var(--surface2);font:500 14px/1.8 var(--font-body)}
 html.ov .ov-copy div:has(>.ug-home-discord){text-align:left!important;margin-top:18px!important}
 html.ov #ug-hero a.ug-home-discord{display:inline-flex;align-items:center;padding:11px 16px;color:#fff!important;background:#5865f2;border:var(--bw) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm);font:700 14px/1 var(--font-body);text-decoration:none!important;transition:transform .15s,box-shadow .15s}
 html.ov #ug-hero a.ug-home-discord:hover{color:#fff!important;background:#4752c4;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
-html.ov body>main p,html.ov body>main ul{max-width:68ch}
+html.ov body>main:not(#ug-content) p,html.ov body>main:not(#ug-content) ul{max-width:68ch}
 html.ov #ug-content{color-scheme:light}
 html.ov-noads #ug-main .ad-slot:not(.ug-rail){height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
 html.ov .ov-copy .ug-page-title div{white-space:nowrap}

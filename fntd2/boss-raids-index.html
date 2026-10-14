@@ -117,7 +117,7 @@
   <div class="bri-panel" id="bri-mods">
     <div class="bri-ph"><h3>Mods TierLists</h3></div>
     <div class="bri-pb" style="text-align:center">
-      <img src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/br-modifiers-high-rp3d23.png?enable-io=true&crop=0.7772%3A1&width=1920"
+      <img alt="FNTD2 Boss Raids modifier tier list" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/br-modifiers-high-rp3d23.png?enable-io=true&crop=0.7772%3A1&width=1920"
         style="max-width:100%;border:2px solid rgba(255,164,91,.55);border-radius:10px;display:block;margin:0 auto">
     </div>
   </div>
@@ -155,6 +155,7 @@
     var body = document.createElement('div'); body.className = 'bri-drop-body';
     var img  = new Image();
     img.src  = d[1];
+    img.alt  = d[0] + ' placements';
     img.onload = function(){ img.classList.add('bri-loaded'); };
     body.appendChild(img);
     btn.onclick = function(){

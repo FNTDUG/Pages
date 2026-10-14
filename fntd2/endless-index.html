@@ -151,7 +151,7 @@
     var btn  = document.createElement('div'); btn.className  = 'ei-drop-btn';
     btn.innerHTML = d[0] + ' <span class="ei-arrow">▼</span>';
     var body = document.createElement('div'); body.className = 'ei-drop-body';
-    var img  = new Image(); img.src = d[1];
+    var img  = new Image(); img.src = d[1]; img.alt = d[0] + ' placements';
     img.onload = function(){ img.classList.add('ei-loaded'); };
     body.appendChild(img);
     btn.onclick = function(){
@@ -206,7 +206,7 @@
     if (src){
       gameImg.style.opacity = '0';
       setTimeout(function(){
-        gameImg.src = src;
+        gameImg.src = src; gameImg.alt = gameEl.options[gameEl.selectedIndex].text + ' Endless map';
         gameImg.style.display = 'block';
         gameImg.style.opacity = '1';
       }, 100);
