@@ -3702,7 +3702,8 @@ function seoLink(name, byKey) {
   const u = byKey[seoKey(name)];
   return u ? '<a href="' + seoUnitPath(u.name) + '">' + seoEsc(name) + '</a>' : seoEsc(name);
 }
-function seoBlock(summary, body) {
+function seoBlock(summary, body, shown) {
+  if (!shown) return '<div class="ug-seo" hidden>' + body + '</div>';
   return '<details class="ug-seo"><summary>' + seoEsc(summary) + '</summary>' + body + '</details>';
 }
 
@@ -3762,7 +3763,7 @@ function seoUnitHtml(u, data, values) {
     const line = (label, x) => x ? '<li>' + label + ': ' + seoEsc(x.value) + (x.demand ? ', demand ' + seoEsc(x.demand) : '') + (x.state ? ' (' + seoEsc(x.state) + ')' : '') + '</li>' : '';
     out.push('<h3>Trade value</h3><ul>' + line('Normal', v.normal) + line('Shiny', v.shiny) + '</ul><p>Values from Value Central' + (values.latest ? ', last updated ' + seoEsc(values.latest) : '') + '. Check a trade with the <a href="/fntd2/trade-calculator">trade calculator</a>.</p>');
   }
-  return seoBlock(u.name + ': stats, passives and value', out.join(''));
+  return seoBlock(u.name + ': stats, passives and value', out.join(''), true);
 }
 
 function seoUnitsHtml(units) {
