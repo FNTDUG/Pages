@@ -362,6 +362,9 @@ const SOUND_GOVERNOR = `<script>
   if(MP&&MP.play){
     var nativePlay=MP.play;
     MP.play=function(){
+      if(navigator.getAutoplayPolicy){
+        try{if(navigator.getAutoplayPolicy(this)==='disallowed')return Promise.reject(new DOMException('Autoplay is not allowed yet','NotAllowedError'));}catch(e){}
+      }
       if(muted){
         if(this.tagName==='VIDEO'){silence(this);}
         // Resolve rather than reject: callers treat a rejection as "autoplay was
@@ -8068,6 +8071,13 @@ export default {
 
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap();
     if (url.pathname === '/llms.txt') return seoLlms();
+    if (url.pathname === '/meta-engine.js') {
+      const up = await fetch(PARVUS_RAW + 'metas.html', { cf: { cacheTtl: 300, cacheEverything: true } });
+      return new Response(up.ok ? up.body : '', {
+        status: up.ok ? 200 : 502,
+        headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' }
+      });
+    }
 
     if (url.pathname.startsWith('/game-thumb/')) {
       const id = url.pathname.slice('/game-thumb/'.length);

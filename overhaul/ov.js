@@ -578,17 +578,18 @@
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
     var split = null;
     try { if (window.SplitText) split = window.SplitText.create('.ov-copy .ug-page-title', { type: 'words,chars' }); } catch (e) { split = null; }
-    tl.from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0)
-      .from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25)
-      .from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 60, autoAlpha: 0, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3)
-      .from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66)
-      .from(['.ov-copy .ug-status-badge', '.ov-copy .ug-page-desc'], { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58)
-      .from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75)
-      .call(function () { if (split) split.revert(); fitTitle(); }, null, 1.3)
+    function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
+    from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0);
+    from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25);
+    from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 60, autoAlpha: 0, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3);
+    from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66);
+    from('.ov-copy .ug-status-badge, .ov-copy .ug-page-desc', { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58);
+    from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75);
+    tl.call(function () { if (split) split.revert(); fitTitle(); }, null, 1.3)
       .call(function () { if (!bare) drop(g); }, null, 0.9);
-    if (!bare) tl.from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35);
-    if (window.ScrollTrigger) {
-      var items = g.utils.toArray('.info-card.rowloop, .info-card:not(.rowloop) > .info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader');
+    if (!bare) from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35);
+    var items = window.ScrollTrigger ? g.utils.toArray('.info-card.rowloop, .info-card:not(.rowloop) > .info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader') : [];
+    if (items.length) {
       g.set(items, { autoAlpha: 0, y: 36 });
       window.ScrollTrigger.batch(items, { start: 'top 92%', once: true, onEnter: function (els) {
         g.to(els, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'back.out(1.7)', clearProps: keep });

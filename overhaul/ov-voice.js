@@ -16,7 +16,8 @@
       });
     }).then(function (b) { buf = b; }, function () { loading = null; });
   }
-  function wake() {
+  function wake(e) {
+    if (e && e.isTrusted === false) return;
     var C = window.AudioContext || window.webkitAudioContext;
     if (!C) return;
     if (!ctx) {
