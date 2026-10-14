@@ -87,7 +87,7 @@
     for (var x = 0; x < r.length; x++) if (r.charAt(x) !== '.') rects += '<rect x="' + x + '" y="' + y + '" width="1" height="1"/>';
   });
   g.innerHTML = '<svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
-  document.body.appendChild(g);
+  if (document.getElementById('ug-hamburger')) document.body.appendChild(g);
 
   var ask = document.createElement('button');
   ask.id = 'pv-ask';
