@@ -4018,8 +4018,12 @@ const PV_POPUP_SCRIPT = `<script>
     });
     var overlay = box.querySelector('.px-overlay');
     new MutationObserver(function () { if (overlay.hidden && host === box) remove(); }).observe(overlay, { attributes: true, attributeFilter: ['hidden'] });
-    var btns = overlay.querySelectorAll('.px-text .px-btn'), f = btns[btns.length - 1] || overlay.querySelector('[data-px-close]');
-    if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    var f = overlay.querySelector('.px-pop') || overlay.querySelector('[data-px-close]');
+    if (f) {
+      if (!f.hasAttribute('tabindex')) f.setAttribute('tabindex', '-1');
+      f.style.outline = 'none';
+      try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); }
+    }
     return true;
   }
   window.pvPopup = function (name, opts) {

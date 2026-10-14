@@ -36,7 +36,7 @@
   padding: 6px;
   clip-path: polygon(0 12px, 6px 12px, 6px 6px, 12px 6px, 12px 0, calc(100% - 12px) 0, calc(100% - 12px) 6px, calc(100% - 6px) 6px, calc(100% - 6px) 12px, 100% 12px, 100% calc(100% - 12px), calc(100% - 6px) calc(100% - 12px), calc(100% - 6px) calc(100% - 6px), calc(100% - 12px) calc(100% - 6px), calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 6px), 6px calc(100% - 6px), 6px calc(100% - 12px), 0 calc(100% - 12px));
   box-shadow: inset 6px 6px 0 var(--px-light), inset -6px -6px 0 var(--px-dark);
-  animation: px-open .18s steps(3) both;
+  animation: px-open .18s steps(3) backwards;
 }
 @keyframes px-open { from { transform: scale(.9); opacity: 0; } }
 
@@ -239,7 +239,7 @@ html[data-theme="light"] .px-overlay {
   animation: n-rise .5s cubic-bezier(.34, 1.56, .64, 1) .22s both;
 }
 .px-hl { position: relative; display: inline-block; isolation: isolate; padding: calc(.1em + 3px) calc(.12em + 3px) calc(.07em + 3px); line-height: 1; color: #1d2228; }
-.px-hl-bg { position: absolute; inset: 0; z-index: -1; background: var(--n-yellow); border: 3px solid var(--n-ink); transform-origin: 0 50%; animation: n-wipe .42s steps(6) .55s both; }
+.px-hl-bg { position: absolute; inset: 0; z-index: -1; background: var(--n-yellow); border: 3px solid var(--n-ink); transform-origin: 0 50%; animation: n-wipe .42s steps(6) .55s backwards; }
 @keyframes n-wipe { from { transform: scaleX(0); } }
 @keyframes n-rise { from { transform: translateY(22px); opacity: 0; } }
 .px-text > p, .px-text > ul, .px-text > .px-actions, .px-text > .px-btn { animation: n-rise .5s cubic-bezier(.34, 1.56, .64, 1) .42s both; }
