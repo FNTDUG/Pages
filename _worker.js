@@ -3575,37 +3575,37 @@ const SEO_SECTIONS = {
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
-  '/': ['FNTD User Guide: Five Nights TD 2 & Bite By Night Guides', 'Community guides for the Roblox games Five Nights TD 2, Five Nights TD and Bite By Night: tier lists, meta teams, unit stats, trade values and patch notes.'],
-  '/fntd2/fntd2-directory': ['Five Nights TD 2 (FNTD2) Guide | FNTD User Guide', 'The Five Nights TD 2 hub: FNTD2 tier lists, meta teams, unit stats, trade values and guides for Story, Endless, Boss Raids and Challenges.'],
-  '/fntd2/fntd2-index': ['FNTD2 Metas & Info: Unit Stats, Values & Guides', 'Everything for Five Nights TD 2 in one place: the Unit Engine, trade calculator, meta teams and guides for Story, Endless, Boss Raids and Challenges.'],
-  '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2', 'Five Nights TD 2 tier list ranking every unit by role: starters, support, stun, slow, summon and knockback. Updated after every FNTD2 update.'],
-  '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Teams for Every Mode', 'The best Five Nights TD 2 teams for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements, tested at level 100.'],
-  '/fntd2/unit-engine': ['FNTD2 Unit Engine: Unit Stats, DPS & Values', 'Search every Five Nights TD 2 unit: stats, upgrades, hero paths, a DPS calculator, live Exists counts and trading values from Value Central.'],
-  '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a trade is fair.'],
-  '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm Materials and Pass EXP.'],
-  '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards', 'Five Nights TD 2 Endless guide: the best farthest and grind teams for each Endless game, unit placements and the rewards for every map.'],
-  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC', 'Five Nights TD 2 Boss Raids meta: the best teams, placements for every map, a modifier tier list and how to unlock OMC and the ??? modifier.'],
-  '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge with its map, restrictions, rewards and the recommended team to clear it.'],
-  '/fntd2/event-story-endless': ['FNTD2 Event Story & Endless: Best Event Teams', 'The current Five Nights TD 2 event: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
-  '/fntd2/clan-wars': ['FNTD2 Clan Wars Team Builder | FNTD User Guide', 'Set the Clan Wars objective, restriction and banned, buffed and debuffed elements to see every Five Nights TD 2 unit you can still use.'],
+  '/': ['FNTD User Guide: Roblox FNaF Tower Defense & BBN Guides', 'Guides for the Roblox FNaF games Five Nights TD 2, Five Nights TD and Bite By Night: tier lists, meta teams, unit stats, trade values and patch notes.'],
+  '/fntd2/fntd2-directory': ['Five Nights TD 2 Guide: Roblox FNaF Tower Defense', 'The Five Nights TD 2 (FNTD2) hub for the Roblox FNaF tower defense game: tier lists, meta teams, unit stats, trade values and guides for every mode.'],
+  '/fntd2/fntd2-index': ['FNTD2 Metas & Info: Five Nights TD 2 Roblox Guide', 'Everything for Five Nights TD 2 on Roblox: the Unit Engine, trade calculator, meta teams, quests, presents, evolutions and guides for every game mode.'],
+  '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2 Roblox', 'Five Nights TD 2 tier list for the Roblox FNaF tower defense game, ranking every unit by role: starters, support, stun, slow, summon and knockback.'],
+  '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Five Nights TD 2 Teams (Roblox)', 'The best Five Nights TD 2 teams on Roblox for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements, tested at level 100.'],
+  '/fntd2/unit-engine': ["FNTD2 Unit Engine: Every Unit's Stats, DPS & Value", 'Search every unit in Five Nights TD 2, the Roblox FNaF tower defense game: stats, upgrades, hero paths, a DPS calculator, Exists counts and trade values.'],
+  '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator (Roblox)', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a Roblox trade is fair.'],
+  '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm.'],
+  '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams for each Endless game, unit placements and the rewards for every map.'],
+  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams, placements for every map, a modifier tier list and how to unlock OMC and the ??? modifier.'],
+  '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
+  '/fntd2/event-story-endless': ['FNTD2 Event Guide: Best Event Teams (Roblox)', 'The current Five Nights TD 2 event on Roblox: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
+  '/fntd2/clan-wars': ['FNTD2 Clan Wars Team Builder | Five Nights TD 2', 'Set the Clan Wars objective, restriction and banned, buffed and debuffed elements to see every Five Nights TD 2 unit you can still use on Roblox.'],
   '/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
   '/fntd2/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
-  '/fntd1': ['Five Nights TD (FNTD1) Guide | FNTD User Guide', 'The original Five Nights TD guide: FNTD1 charts, tier lists, meta teams, PvP, Boss Raids, Endless, Night Shift and an FAQ with every code.'],
-  '/fntd1/charts-tierlists': ['FNTD1 Unit Charts: Midgame, Endgame, Stun & Slow', 'Five Nights TD unit charts ranking the top units for midgame, starters, endgame, slow, stun, booster, anti-regen and wither, with DPS and placements.'],
-  '/fntd1/other-charts': ['FNTD1 Title Chart & Attack Types Explained', 'The Five Nights TD title chart and every attack type explained with pictures: AOE, splash, pierce, pierce spread, nuke, chain, cone AOE and single.'],
-  '/fntd1/tierlists': ['FNTD1 Tier Lists: PvP & Boss Raids by Slot', 'Five Nights TD tier lists for every team slot (starter, stun, slow, endgame and booster) for PvP/Ranked and Boss Raids, with a team builder.'],
-  '/fntd1/meta-teams': ['FNTD1 Meta Teams: Best Five Nights TD Teams', 'The best Five Nights TD teams for Boss Raids, Endless, PvP, Event Endless and Night Shift, with the enchant for every unit.'],
-  '/fntd1/pvp-ranked': ['FNTD1 PvP & Ranked: Final Tier List & Cooldowns', 'Five Nights TD PvP and Ranked guide: the final PvP tier list and the cooldown chart. Shiny boosters are a must for the Top 250.'],
-  '/fntd1/boss-raids': ['FNTD1 Boss Raids: Meta Teams & Map Chart', 'Five Nights TD Boss Raids guide: solo meta teams with and without map select, the map chart, tier list, modifier priorities and multiplayer teams.'],
-  '/fntd1/endless': ['FNTD1 Endless Guide: Meta Team & Map Rewards', 'Five Nights TD Endless guide: the meta team for Endless 5+ and the starting cash, wave 100 tokens, souls and presents for every Endless game.'],
-  '/fntd1/event-endless': ['FNTD1 Event Endless: Meta Team & Rewards', 'Five Nights TD Event Endless meta team, the strategy to reach wave 200 and its rewards: 56.4k Beachballs, 259 Souls, 21.2k Stars and a Strawbaby present.'],
-  '/fntd1/night-shift': ['FNTD1 Night Shift: Best Teams & Placements', 'Five Nights TD Night Shift guide: the best teams for Night 1 and Night 2 and map layouts with unit placements for macroing.'],
-  '/fntd1/faq-fntd1': ['FNTD1 FAQ & Codes: Five Nights TD Questions', 'Five Nights TD FAQ: every code, rare unit drop rates, the best enchants, stun vs true stun, unit transfers and whether FNTD1 still gets updates.'],
+  '/fntd1': ['Five Nights TD (FNTD1) Guide: Roblox FNaF Tower Defense', 'The original Five Nights TD guide for the Roblox FNaF tower defense game: charts, tier lists, meta teams, PvP, Boss Raids, Endless and an FAQ with codes.'],
+  '/fntd1/charts-tierlists': ['FNTD1 Unit Charts: Midgame, Endgame, Stun & Slow', 'Five Nights TD (Roblox) unit charts ranking the top units for midgame, starters, endgame, slow, stun, booster, anti-regen and wither, with DPS.'],
+  '/fntd1/other-charts': ['FNTD1 Title Chart & Attack Types Explained', 'The Five Nights TD (Roblox) title chart and every attack type explained with pictures: AOE, splash, pierce, pierce spread, nuke, chain, cone and single.'],
+  '/fntd1/tierlists': ['FNTD1 Tier Lists: PvP & Boss Raids by Slot (Roblox)', 'Five Nights TD tier lists for every team slot (starter, stun, slow, endgame and booster) for Roblox PvP/Ranked and Boss Raids, with a team builder.'],
+  '/fntd1/meta-teams': ['FNTD1 Meta Teams: Best Five Nights TD Teams (Roblox)', 'The best Five Nights TD teams on Roblox for Boss Raids, Endless, PvP, Event Endless and Night Shift, with the enchant for every unit.'],
+  '/fntd1/pvp-ranked': ['FNTD1 PvP & Ranked: Final Tier List & Cooldowns', 'Five Nights TD (Roblox) PvP and Ranked guide: the final PvP tier list and the cooldown chart. Shiny boosters are a must for the Top 250.'],
+  '/fntd1/boss-raids': ['FNTD1 Boss Raids: Meta Teams & Map Chart (Roblox)', 'Five Nights TD Boss Raids guide for Roblox: solo meta teams with and without map select, the map chart, tier list, modifier priorities and multiplayer teams.'],
+  '/fntd1/endless': ['FNTD1 Endless Guide: Meta Team & Map Rewards', 'Five Nights TD (Roblox) Endless guide: the meta team for Endless 5+ and the starting cash, wave 100 tokens, souls and presents for every Endless game.'],
+  '/fntd1/event-endless': ['FNTD1 Event Endless: Meta Team & Rewards', 'Five Nights TD (Roblox) Event Endless meta team, the strategy to reach wave 200 and its rewards: 56.4k Beachballs, 259 Souls, 21.2k Stars and a present.'],
+  '/fntd1/night-shift': ['FNTD1 Night Shift: Best Teams & Placements', 'Five Nights TD (Roblox) Night Shift guide: the best teams for Night 1 and Night 2 and map layouts with unit placements for macroing.'],
+  '/fntd1/faq-fntd1': ['FNTD1 FAQ & Codes: Five Nights TD Roblox Questions', 'Five Nights TD (Roblox) FAQ: every code, rare unit drop rates, the best enchants, stun vs true stun, unit transfers and whether FNTD1 still gets updates.'],
   '/patch-notes/fntd1-1': ['FNTD1 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD pages of the FNTD User Guide: chart, tier list and meta team updates, newest first.'],
-  '/bbn/bite-by-night-directory': ['Bite By Night (BBN) Guide | FNTD User Guide', 'Bite By Night guide for Roblox: Killer and Survivor tier lists, map tier lists and the Killer and Survivor Terminals with stats, costs and tips.'],
-  '/bbn/bite-by-night-tierlists': ['Bite By Night Tier List: Killers, Survivors & Maps', 'Bite By Night tier lists for Killers, Solo and Team Survivors, plus killer and survivor map tier lists, ranked by mid to high skill players.'],
-  '/bbn/killer-terminal': ['Bite By Night Killer Terminal: Killer Stats & Info', 'A Bite By Night killer wiki styled as a retro terminal: Mimic, Springtrap and Ennard abilities, passives, hardware, voice lines and skins.'],
-  '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
+  '/bbn/bite-by-night-directory': ['Bite By Night Guide: Roblox FNaF Horror Game (BBN)', 'Bite By Night guide for the Roblox FNaF horror game: Killer and Survivor tier lists, map tier lists and Killer and Survivor Terminals with stats and tips.'],
+  '/bbn/bite-by-night-tierlists': ['Bite By Night Tier List: Killers, Survivors & Maps', 'Bite By Night (Roblox) tier lists for Killers, Solo and Team Survivors, plus killer and survivor map tier lists, ranked by mid to high skill players.'],
+  '/bbn/killer-terminal': ['Bite By Night Killer Terminal: Killer Stats & Info', 'A Bite By Night (Roblox) killer wiki styled as a retro terminal: Mimic, Springtrap and Ennard abilities, passives, hardware, voice lines and skins.'],
+  '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
@@ -3657,7 +3657,26 @@ function seoHead(pathname, canonUrl, over) {
     items.push({ '@type': 'ListItem', position: items.length + 1, name: m.title.split(/ \| |: /)[0], item: canonUrl });
     ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items };
   }
+  const games = seoGamesFor(p);
+  if (games.length) {
+    const graph = [ld].concat(games.map(g => SEO_GAMES[g]));
+    if (p !== '/') graph.push({ '@type': 'WebPage', '@id': canonUrl, url: canonUrl, name: m.title, about: games.map(g => ({ '@id': SEO_GAMES[g]['@id'] })) });
+    ld = { '@context': 'https://schema.org', '@graph': graph.map(x => { const y = Object.assign({}, x); delete y['@context']; return y; }) };
+  }
   return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
+}
+const SEO_GAMES = {
+  fntd2: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd2', name: 'Five Nights TD 2', alternateName: ['FNTD2', 'FNTD 2', 'Five Nights Tower Defense 2', 'FNaF TD 2'], description: 'A FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/70400654680508' },
+  fntd1: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd1', name: 'Five Nights TD', alternateName: ['FNTD', 'FNTD1', 'Five Nights Tower Defense', 'FNaF TD'], description: 'The original FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/15846919378' },
+  bbn: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-bbn', name: 'Bite By Night', alternateName: ['BBN'], description: 'A FNaF-inspired multiplayer horror game on Roblox with killers and survivors.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Horror', 'Survival'] }
+};
+function seoGamesFor(p) {
+  if (p === '/') return ['fntd2', 'fntd1', 'bbn'];
+  if (p === '/patch-notes/fntd1-1') return ['fntd1'];
+  if (p === '/patch-notes/bbn-patch-notes') return ['bbn'];
+  if (p === '/patch-notes') return ['fntd2'];
+  const s = p.split('/')[1];
+  return SEO_GAMES[s] ? [s] : [];
 }
 const SEO_VALUES_URL = 'https://fntd2.com/all_units.json';
 const SEO_RARITY = ['apex', 'secret', 'nightmare', 'mythic', 'exclusive', 'hero', 'epic', 'rare', 'uncommon'];
@@ -3724,7 +3743,7 @@ function seoUnitMeta(u) {
   if (title.length > 60) title = u.name + ': FNTD2 Unit Stats';
   if (title.length > 60) title = u.name + ' | FNTD2';
   const rar = seoCap(u.rarity), a = /^[aeiou]/i.test(rar) ? 'an' : 'a';
-  const lead = u.name + ' is ' + a + ' ' + rar + (u.element ? ' ' + u.element : '') + ' unit in Five Nights TD 2';
+  const lead = u.name + ' is ' + a + ' ' + rar + (u.element ? ' ' + u.element : '') + ' unit in Five Nights TD 2 (Roblox)';
   const tails = [
     (u.typeMain ? ' (' + String(u.typeMain).replace(/-/g, ' / ') + ')' : '') + '. See its stats, upgrade costs, passives, tier list rank and trade value.',
     '. See its stats, upgrade costs, passives, tier list rank and trade value.',
@@ -3773,7 +3792,7 @@ function seoUnitsHtml(units) {
   const groups = {};
   (units || []).forEach(u => { if (u && u.name) (groups[String(u.rarity || '').toLowerCase()] = groups[String(u.rarity || '').toLowerCase()] || []).push(u); });
   const order = SEO_RARITY.filter(r => groups[r]).concat(Object.keys(groups).filter(r => SEO_RARITY.indexOf(r) === -1));
-  const body = '<h2>Every Five Nights TD 2 unit</h2><p>' + (units || []).length + ' units, grouped by rarity. Each one has its own page with stats, passives, tier list rank and trade value.</p>' +
+  const body = '<h2>Every Five Nights TD 2 unit</h2><p>' + (units || []).length + ' units in Five Nights TD 2, the Roblox FNaF tower defense game, grouped by rarity. Each one has its own page with stats, passives, tier list rank and trade value.</p>' +
     order.map(r => '<h3>' + seoEsc(seoCap(r) || 'Other') + '</h3><p>' + groups[r].slice().sort((a, b) => a.name.localeCompare(b.name)).map(u => '<a href="' + seoUnitPath(u.name) + '">' + seoEsc(u.name) + '</a>').join(', ') + '</p>').join('');
   return seoBlock('All FNTD2 units A to Z', body);
 }
@@ -3782,7 +3801,7 @@ function seoTierHtml(data) {
   const lists = data.lists || {}, byKey = seoUnitIndex(data.units);
   const names = Object.keys(lists);
   if (!names.length) return '';
-  const body = '<h2>FNTD2 tier list (text version)</h2>' + names.map(l => {
+  const body = '<h2>FNTD2 tier list (text version)</h2><p>Every unit in Five Nights TD 2, the Roblox FNaF tower defense game, ranked by role.</p>' + names.map(l => {
     const tiers = lists[l];
     const rows = Object.keys(PARVUS_TIERS).filter(t => tiers[t] && tiers[t].length).map(t => '<li><strong>' + PARVUS_TIERS[t] + ':</strong> ' + tiers[t].map(n => seoLink(n, byKey)).join(', ') + '</li>').join('');
     return rows ? '<h3>' + seoEsc(SEO_LIST_NAMES[l] || seoCap(l)) + ' tier list</h3><ul>' + rows + '</ul>' : '';
@@ -4089,7 +4108,7 @@ function seoInfoHtml(data, feeds) {
   const presName = n => (v.PRESENTS_CFG && v.PRESENTS_CFG.overrides && v.PRESENTS_CFG.overrides[n] && v.PRESENTS_CFG.overrides[n].name) || n;
   const rar = r => r ? seoCap(String(r).toLowerCase()) : '';
 
-  out.push('<h2>FNTD2 INFO panel</h2><p>Everything in the FNTD User Guide INFO panel for Five Nights TD 2: bytes, chips, enchants, elements, status effects, quests, evolutions, presents, pets, skins, materials and more.</p>');
+  out.push('<h2>FNTD2 INFO panel</h2><p>Everything in the FNTD User Guide INFO panel for Five Nights TD 2, the Roblox FNaF tower defense game: bytes, chips, enchants, elements, status effects, quests, evolutions, presents, pets, skins, materials and more.</p>');
   if (Array.isArray(v.ATTACK_TYPES)) out.push(seoInfSec('Attack types', v.ATTACK_TYPES.filter(x => x && x.name).map(x => seoInfLi(x.name, seoInfText(x.desc)))));
   if (sh.bytes) out.push(tops('bytes') + seoInfSec('Bytes', Object.keys(sh.bytes).sort(byName).map(n => seoInfLi(n, [rar(sh.bytes[n].rarity), desc('bytes', n) || sh.bytes[n].note].filter(Boolean).join('. ')))));
   if (sh.chips) out.push(tops('chips') + seoInfSec('Chips', Object.keys(sh.chips).sort(byName).map(n => seoInfLi(n, [rar(sh.chips[n].rarity), desc('chips', n) || sh.chips[n].note].filter(Boolean).join('. ')))));
@@ -4199,7 +4218,7 @@ function seoLlms() {
     '',
     '> ' + SEO_PAGES['/'][1],
     '',
-    'The FNTD User Guide (fntduserguide.com) is a fan-made community guide for the Roblox tower defense games Five Nights TD 2 (FNTD2) and Five Nights TD (FNTD1), and the Roblox horror game Bite By Night (BBN). Tier lists, meta teams and unit data are kept up to date after each game update. Trading values come from Value Central. Contact: contact@fntduserguide.com.',
+    'The FNTD User Guide (fntduserguide.com) is a fan-made community guide for the Roblox FNaF tower defense games Five Nights TD 2 (FNTD2) and Five Nights TD (FNTD1), and the Roblox FNaF horror game Bite By Night (BBN). Tier lists, meta teams and unit data are kept up to date after each game update. Trading values come from Value Central. Contact: contact@fntduserguide.com.',
     ''
   ];
   groups.forEach(g => {
