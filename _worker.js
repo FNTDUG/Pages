@@ -3142,7 +3142,7 @@ const ACTIVE_SCRIPT = `<script>
     if(!href) return -1;
     href = href.replace(/[/]+$/, '') || '/';
     if(href === p) return href.length + 1;
-    if(href !== '/' && p.indexOf(href + '/') === 0) return href.length;
+    if(href !== '/' && href !== '/overhaul' && p.indexOf(href + '/') === 0) return href.length;
     return -1;
   }
   function markBest(sel, onMatch){
