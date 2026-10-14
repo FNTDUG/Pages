@@ -1,0 +1,47 @@
+{
+  "updated": "2026-10-12T14:11:00-05:00",
+  "codes": [
+    {
+      "code": "NEWLOBBY",
+      "rewards": ["25,000 Tokens", "2,500 Untradable Souls"],
+      "requirement": "None",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "NEWINVENTORY",
+      "rewards": ["50,000 Tokens", "2,500 Untradable Souls", "50 Seasonal Presents", "50 Endo Chips", "10 Remnant"],
+      "requirement": "25,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "PARTSANDSERVICES",
+      "rewards": ["25,000 Tokens", "1,500 Untradable Souls", "10 Endo Chips", "5 Springlocks"],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "CHIPSTACKING",
+      "rewards": ["2,500 Untradable Souls", "150 Apocalypse Presents", "50 Slumber Presents"],
+      "requirement": "20,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "DOUBLEJUMP",
+      "rewards": ["50,000 Tokens", "200 Apocalypse Presents", "50 Springlocks", "10 Remnant"],
+      "requirement": "35,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "SORRY4DELAY5",
+      "rewards": ["50,000 Tokens", "1 XP Potion 2", "1,000 Season XP", "100 Raid Coins", "50 Endo Chips", "15 Springlocks"],
+      "requirement": "None",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "MONDAYUPDATE",
+      "rewards": ["50,000 Tokens", "1 XP Potion 2", "1,000 Season XP", "100 Raid Coins", "50 Endo Chips", "15 Springlocks"],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    }
+  ]
+}

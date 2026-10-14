@@ -3590,6 +3590,7 @@ const SEO_PAGES = {
   '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
   '/fntd2/event-story-endless': ['FNTD2 Event Guide: Best Event Teams (Roblox)', 'The current Five Nights TD 2 event on Roblox: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
   '/fntd2/codes': ['FNTD2 Codes ({MONTH}): Five Nights TD 2 Roblox Codes', 'All working Five Nights TD 2 codes for Roblox in {MONTH}: free Tokens, Souls, presents and Endo Chips, with requirements and expiry times.'],
+  '/bbn/codes': ['Bite By Night Codes ({MONTH}): Roblox BBN Codes', 'All working Bite By Night codes for Roblox in {MONTH}, with their rewards, requirements and expiry times, plus how to redeem them in BBN.'],
   '/fntd2/clan-wars': ['FNTD2 Clan Wars Team Builder | Five Nights TD 2', 'Set the Clan Wars objective, restriction and banned, buffed and debuffed elements to see every Five Nights TD 2 unit you can still use on Roblox.'],
   '/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
   '/fntd2/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
@@ -4146,14 +4147,15 @@ function seoInfoHtml(data, feeds) {
   return seoBlock('FNTD2 INFO panel as text', out.join(''));
 }
 
-let seoCodes = null, seoCodesAt = 0;
-async function seoLoadCodes() {
-  if (seoCodes && Date.now() - seoCodesAt < 60000) return seoCodes;
-  const r = await fetch(PARVUS_RAW + 'codes.json', { cf: { cacheTtl: 60, cacheEverything: true } });
-  if (!r.ok) return seoCodes;
+const CODES_PAGES = {
+  '/fntd2/codes': { file: '/codes/fntd2.json', game: 'Five Nights TD 2', short: 'FNTD2', icons: true, note: 'Most codes last 48 hours, so use them quickly.' },
+  '/bbn/codes': { file: '/codes/bbn.json', game: 'Bite By Night', short: 'BBN', icons: false, note: '' }
+};
+async function seoLoadCodes(env, url, file) {
+  const r = await env.ASSETS.fetch(new Request(new URL(file, url).toString()));
+  if (!r.ok) return null;
   const d = await r.json();
-  if (d && Array.isArray(d.codes)) { seoCodes = d; seoCodesAt = Date.now(); }
-  return seoCodes;
+  return d && Array.isArray(d.codes) ? d : null;
 }
 function seoCodeIcons(feeds) {
   const map = {};
@@ -4168,7 +4170,7 @@ function seoCodeIcon(reward, icons) {
   const name = String(reward).replace(/^[\d,.]+\s*x?\s+/i, '').replace(/^untrad(e)?able\s+/i, '').trim().toLowerCase();
   return icons[name] || icons[name.replace(/s$/, '')] || '';
 }
-function seoCodesHtml(data, feeds) {
+function seoCodesHtml(data, feeds, cfg) {
   if (!data || !Array.isArray(data.codes)) return '';
   const now = Date.now(), icons = seoCodeIcons(feeds), live = [], old = [];
   data.codes.forEach(c => {
@@ -4185,11 +4187,13 @@ function seoCodesHtml(data, feeds) {
       '<ul class="cd-rw" aria-label="Rewards">' + (Array.isArray(c.rewards) ? c.rewards : []).map(r => { const ic = seoCodeIcon(r, icons); return '<li>' + (ic ? '<img src="' + seoEsc(ic) + '" alt="" width="22" height="22" loading="lazy">' : '') + seoEsc(r) + '</li>'; }).join('') + '</ul>' +
       '<p class="cd-meta"><span>Requirement: <strong>' + seoEsc(req || 'None') + '</strong></span>' + (isFinite(x.t) ? '<span class="cd-exp">' + (on ? 'Expires ' : 'Expired ') + ct(x.t) + '</span>' : '') + '</p></li>';
   };
+  const faz = data.codes.some(c => c && /faz/i.test(String(c.requirement || '')));
   const upd = data.updated && isFinite(Date.parse(data.updated)) ? new Date(Date.parse(data.updated)).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' }) : '';
   return '<section class="cd-sec cd-live" aria-labelledby="cd-live-h"><h2 class="cd-h" id="cd-live-h">Working codes <span class="cd-count">' + live.length + '</span></h2>' +
-    (live.length ? '<ul class="cd-list">' + live.map(x => card(x, true)).join('') + '</ul>' : '<ul class="cd-list"></ul><p class="cd-none">No working codes right now. New codes usually come with updates, so check back soon.</p>') + '</section>' +
+    (live.length ? '<ul class="cd-list">' + live.map(x => card(x, true)).join('') + '</ul>' : '<ul class="cd-list"></ul><p class="cd-none">No working ' + seoEsc(cfg.short) + ' codes right now. New codes usually come with updates, so check back soon.</p>') + '</section>' +
     '<section class="cd-sec cd-old" aria-labelledby="cd-old-h"' + (old.length ? '' : ' hidden') + '><h2 class="cd-h" id="cd-old-h">Expired codes <span class="cd-count">' + old.length + '</span></h2><ul class="cd-list">' + old.map(x => card(x, false)).join('') + '</ul></section>' +
-    '<section class="cd-sec" aria-labelledby="cd-how-h"><h2 class="cd-h" id="cd-how-h">How to redeem FNTD2 codes</h2><div class="cd-how"><ol><li>Open Five Nights TD 2 on Roblox.</li><li>Open the Codes menu in the game.</li><li>Type or paste the code exactly as shown, then redeem it.</li></ol><p>Codes with a Faz-Rating requirement only work once your Faz-Rating is at least that high. Most codes last 48 hours, so use them quickly.' + (upd ? ' This list was last checked on ' + seoEsc(upd) + '.' : '') + '</p></div></section>';
+    '<section class="cd-sec" aria-labelledby="cd-how-h"><h2 class="cd-h" id="cd-how-h">How to redeem ' + seoEsc(cfg.short) + ' codes</h2><div class="cd-how"><ol><li>Open ' + seoEsc(cfg.game) + ' on Roblox.</li><li>Open the Codes menu in the game.</li><li>Type or paste the code exactly as shown, then redeem it.</li></ol>' +
+    (faz || cfg.note || upd ? '<p>' + [faz ? 'Codes with a Faz-Rating requirement only work once your Faz-Rating is at least that high.' : '', cfg.note, upd ? 'This list was last checked on ' + seoEsc(upd) + '.' : ''].filter(Boolean).join(' ') + '</p>' : '') + '</div></section>';
 }
 
 const SEO_GUIDES = {
@@ -4261,7 +4265,7 @@ function seoLlms() {
     ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
     ['About the site', p => p === '/sponsor' || p === '/privacy-policy']
   ];
-  const skip = ['/', '/wiki', '/fntd2/patch-notes'];
+  const skip = ['/', '/wiki', '/fntd2/patch-notes', '/bbn/codes'];
   const pages = Object.keys(SEO_PAGES).filter(p => skip.indexOf(p) === -1);
   const line = p => { const m = seoMeta(p); return '- [' + m.title.replace(/ \| FNTD User Guide$/, '') + '](' + SITE_URL + (p === '/fntd1' ? '/fntd1/' : p) + '): ' + m.desc; };
   const out = [
@@ -8218,15 +8222,16 @@ export default {
 
     const okPage = !pvMissing && response.status === 200;
     const pageRes = okPage && SEO_GUIDES[seoPath(realPath)] ? response.clone() : null;
-    const isCodes = okPage && seoPath(realPath) === '/fntd2/codes';
+    const codesCfg = okPage ? CODES_PAGES[seoPath(realPath)] || null : null;
     const [ssr, pageNotes, codesData, codesFeeds] = await Promise.all([
       okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve('')) : null,
       okPage && seoPath(realPath).indexOf('/fntd2/') === 0 ? seoTimed(seoLoadNotes(), 1500) : null,
-      isCodes ? seoTimed(seoLoadCodes(), 2500) : null,
-      isCodes ? seoTimed(seoLoadInfFeeds(), 2000) : null
+      codesCfg ? seoTimed(seoLoadCodes(env, url, codesCfg.file), 2500) : null,
+      codesCfg && codesCfg.icons ? seoTimed(seoLoadInfFeeds(), 2000) : null
     ]);
     let codesHtml = '';
-    if (codesData) { try { codesHtml = seoCodesHtml(codesData, codesFeeds); } catch (e) { codesHtml = ''; } }
+    if (codesData) { try { codesHtml = seoCodesHtml(codesData, codesFeeds, codesCfg); } catch (e) { codesHtml = ''; } }
+    const codesEmpty = !!(codesData && !codesData.codes.length);
     const canonUrl = (SITE_URL + (ssr && ssr.canon ? ssr.canon : seoCanon(realPath))).replace(/"/g, '%22');
     const seo = pvMissing ? null : ssr && ssr.meta ? ssr.meta : seoMeta(realPath);
     let h1Done = false;
@@ -8240,6 +8245,7 @@ export default {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
+          else if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
         }
       })
       .on('link[rel="icon"]', {

@@ -171,7 +171,9 @@
     '/fntd2/tierlists-1': { tint: 'yellow', go: 'Open TierLists' },
     '/fntd2/fntd2-index': { tint: 'blue', go: 'Open Metas & Info' },
     '/bbn/bite-by-night-tierlists': { tint: 'pink', go: 'Open TierLists & Maps' },
-    '/bbn/killer-terminal': { tint: 'green', go: 'Open the Terminals' }
+    '/bbn/killer-terminal': { tint: 'green', go: 'Open the Terminals' },
+    '/fntd2/codes': { tint: 'green', go: 'Open Codes' },
+    '/bbn/codes': { tint: 'blue', go: 'Open Codes' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
@@ -185,7 +187,7 @@
       var href = a.getAttribute('href'), sc = SCENES[href.replace(/^\/overhaul/, '')] || { tint: 'yellow' };
       var name = label ? label.textContent.trim() : (a.querySelector('img') || {}).alt || '';
       var card = document.createElement('a');
-      card.className = 'ov-card ov-card--term';
+      card.className = 'ov-card ov-card--term' + (col.classList.contains('bbn-dir-col--wide') ? ' ov-card--wide' : '');
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
       card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-c" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';

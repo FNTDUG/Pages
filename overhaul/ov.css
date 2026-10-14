@@ -434,6 +434,7 @@ html.ov .info-card.rowloop.can-drag{cursor:grab}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
 
 .ov-dir{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:8px}
+.ov-dir .ov-card--wide{grid-column:1/-1}
 html.ov .f1-dir-grid.ov-quick{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:none;text-align:left}
 html.ov .ov-card.ov-card--row{flex-direction:row;align-items:center;gap:16px;padding:16px 18px}
 html.ov .ov-card.ov-card--row .ov-card-ic--px{width:52px;height:52px;background:var(--surface2)}
