@@ -220,7 +220,7 @@
       extra = [];
       var base = kids();
       base.forEach(function (el) { el.style.translate = ''; });
-      step = base[1].offsetLeft - base[0].offsetLeft;
+      step = base[1].getBoundingClientRect().left - base[0].getBoundingClientRect().left || base[1].offsetLeft - base[0].offsetLeft;
       shift = 0;
       if (!fine) {
         var br0 = box.getBoundingClientRect(), r0 = base[0].getBoundingClientRect();
