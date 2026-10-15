@@ -232,7 +232,7 @@ a.game:hover .game-top img{transform:scale(1.05)}
 html.ov[data-theme="light"]{--star-off:#dccdb5}
 html.ov[data-theme="dark"]{--star-off:#4a4462}
 .rate{--rs:24px;--rs-h:22px;--rs-gap:4px;--rs-sh:2px;display:flex;align-items:center;gap:14px;margin-top:26px}
-.rate-txt{min-width:0;padding-top:var(--rs-sh);font-size:15px;line-height:1.3;color:var(--mute)}
+.rate-txt{min-width:0;font-size:15px;line-height:1.3;color:var(--mute)}
 .rate-txt span{white-space:nowrap}
 .rate-txt.is-bad{color:var(--red)}
 .rs-row{position:relative;display:flex;gap:var(--rs-gap);width:max-content}
@@ -248,7 +248,7 @@ html.ov[data-theme="dark"]{--star-off:#4a4462}
 .rate:has(:focus:not(:focus-visible)) .rs-row{outline:0}
 .rate.is-busy label{cursor:progress}
 @media (pointer:coarse){.rate{--rs:36px;--rs-h:33px;--rs-gap:6px;--rs-sh:3px}}
-@media (max-width:600px){.rate{flex-direction:column;align-items:flex-start;gap:10px}.rate-txt{padding-top:0}}
+@media (max-width:600px){.rate{flex-direction:column;gap:10px;text-align:center}}
 
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
