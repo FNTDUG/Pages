@@ -35,9 +35,7 @@
 
   function avgText() {
     if (!loaded) return 'Loading ratings...';
-    var t = n ? '<b>' + avg.toFixed(1) + '</b> from ' + n.toLocaleString() + (n === 1 ? ' rating' : ' ratings') : 'No ratings yet. Be the first!';
-    if (saved) t += ' &middot; yours ' + saved / 2;
-    return t;
+    return n ? n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') : 'No votes yet. Be the first!';
   }
   function paint() {
     var v = hover || (focused ? chosen : 0);
