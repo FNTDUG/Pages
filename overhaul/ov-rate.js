@@ -38,7 +38,7 @@
   }
   function avgText() {
     if (!loaded) return 'Loading ratings...';
-    var t = n ? '<span>' + n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') + '</span>' : 'No votes yet. Be the first!';
+    var t = n ? '<span class="rate-n">' + n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') + '</span>' : 'No votes yet. Be the first!';
     if (saved) t += ' &middot; <span>' + mine(saved) + '</span>';
     return t;
   }
