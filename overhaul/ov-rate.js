@@ -35,7 +35,9 @@
 
   function avgText() {
     if (!loaded) return 'Loading ratings...';
-    return n ? n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') : 'No votes yet. Be the first!';
+    var t = n ? '<span>' + n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') + '</span>' : 'No votes yet. Be the first!';
+    if (saved) t += ' &middot; <span>Your vote: ' + words(saved) + '</span>';
+    return t;
   }
   function paint() {
     var v = hover || (focused ? chosen : 0);
@@ -48,7 +50,7 @@
     txt.className = 'rate-txt' + (/^!/.test(note) && !tip ? ' is-bad' : '');
     if (tip) txt.textContent = 'Rate it ' + words(hover);
     else if (note) txt.textContent = note.replace(/^!/, '');
-    else if (focused && chosen) txt.textContent = 'Your rating: ' + words(chosen);
+    else if (focused && chosen) txt.textContent = 'Your vote: ' + words(chosen);
     else txt.innerHTML = avgText();
   }
   function flash(text) {
