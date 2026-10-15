@@ -3234,7 +3234,7 @@ const HOME_ICONS =
   '<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">' +
   '<link rel="manifest" href="/site.webmanifest">' +
   '<meta name="apple-mobile-web-app-title" content="FNTD Guide">' +
-  '<meta name="theme-color" content="#681f62">';
+  '<meta name="theme-color" content="#ff8a3d">';
 
 const ANALYTICS =
   '<script>' +
@@ -3603,7 +3603,16 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_IMAGE = SITE_URL + '/icon-512.png';
+const SEO_OG_V = 1;
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide' };
+function seoOgName(p) {
+  if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
+  if (p === '/patch-notes') return 'fntd2';
+  if (p === '/patch-notes/fntd1-1') return 'fntd1';
+  if (p === '/patch-notes/bbn-patch-notes') return 'bbn';
+  const g = p.split('/')[1];
+  return g === 'fntd1' || g === 'fntd2' || g === 'bbn' ? g : 'home';
+}
 const SEO_CANON = { '/fntd2/patch-notes': '/patch-notes' };
 const SEO_DEEP = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams'];
 const SEO_SECTIONS = {
@@ -3677,15 +3686,16 @@ function seoMeta(pathname) {
   const month = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'America/Chicago' });
   return { title: m[0].replace('{MONTH}', month), desc: m[1].replace('{MONTH}', month) };
 }
-function seoHead(pathname, canonUrl, over) {
+function seoHead(pathname, canonUrl, over, origin) {
   const m = over || seoMeta(pathname);
   if (!m) return '';
-  const p = seoPath(pathname), img = seoAttr(m.image || SEO_IMAGE);
+  const p = seoPath(pathname), og = seoOgName(p), wide = !m.image, img = seoAttr(m.image || (origin || SITE_URL) + '/og/' + og + '.png?v=' + SEO_OG_V);
   let out = '<meta name="description" content="' + seoAttr(m.desc) + '">' +
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + SITE_NAME + '">' +
     '<meta property="og:title" content="' + seoAttr(m.title) + '"><meta property="og:description" content="' + seoAttr(m.desc) + '">' +
     '<meta property="og:url" content="' + seoAttr(canonUrl) + '"><meta property="og:image" content="' + img + '">' +
-    '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + seoAttr(m.title) + '"><meta name="twitter:description" content="' + seoAttr(m.desc) + '"><meta name="twitter:image" content="' + img + '">';
+    (wide ? '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="' + SEO_OG_ALT[og] + '">' : '') +
+    '<meta name="twitter:card" content="' + (wide ? 'summary_large_image' : 'summary') + '"><meta name="twitter:title" content="' + seoAttr(m.title) + '"><meta name="twitter:description" content="' + seoAttr(m.desc) + '"><meta name="twitter:image" content="' + img + '">';
   let ld;
   if (m.crumbs) {
     ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: m.crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c[0], item: SITE_URL + c[1] })) };
@@ -3801,7 +3811,7 @@ function seoUnitMeta(u) {
   for (let i = 1; desc.length > 160 && i < tails.length; i++) desc = lead + tails[i];
   if (desc.length < 110) desc += ' From the FNTD User Guide.';
   return {
-    title, desc: desc.slice(0, 160), image: u.imgNormal || SEO_IMAGE,
+    title, desc: desc.slice(0, 160), image: u.imgNormal || '',
     crumbs: [[SITE_NAME, '/'], ['Five Nights TD 2', '/fntd2/fntd2-directory'], ['Unit Engine', '/fntd2/unit-engine'], [u.name, seoUnitPath(u.name)]]
   };
 }
@@ -4342,12 +4352,133 @@ function seoLlms() {
   return new Response(out.join('\n'), { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600', 'x-robots-tag': 'noindex' } });
 }
 
-async function seoUnitSitemap() {
-  const data = await seoTimed(parvusLoad(), 4000);
-  const units = data && Array.isArray(data.units) ? data.units : [];
-  const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    units.filter(u => u && u.name).map(u => '  <url><loc>' + seoEsc(SITE_URL + seoUnitPath(u.name)) + '</loc></url>').join('\n') + '\n</urlset>\n';
-  return new Response(body, { status: units.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+const SITEMAP_RAW = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/';
+const SITEMAP_DATA = {
+  '/fntd2/tierlists-1': ['tierlist.js'],
+  '/fntd2/clan-wars': ['tierlist.js'],
+  '/fntd2/meta-teams': ['metas.json'],
+  '/fntd2/story-index': ['metas.json'],
+  '/fntd2/endless-index': ['metas.json'],
+  '/fntd2/boss-raids-index': ['metas.json'],
+  '/fntd2/challenges': ['metas.json'],
+  '/fntd2/event-story-endless': ['metas.json'],
+  '/fntd2/unit-engine': ['json', 'Unit-Engine'],
+  '/fntd2/trade-calculator': ['trade-calculator', 'json'],
+  '/patch-notes': ['patchnotesfntd2.html']
+};
+const SITEMAP_SEED = {
+  'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',
+  'a:/fntd2/tierlists-1': '2026-10-14T03:09:51Z', 'a:/fntd2/meta-teams': '2026-10-14T08:26:05Z', 'a:/fntd2/unit-engine': '2026-10-13T04:44:52Z', 'a:/fntd2/trade-calculator': '2026-10-13T04:44:52Z',
+  'a:/fntd2/story-index': '2026-10-14T21:11:03Z', 'a:/fntd2/endless-index': '2026-10-14T04:20:43Z', 'a:/fntd2/boss-raids-index': '2026-10-14T04:20:43Z', 'a:/fntd2/challenges': '2026-10-14T21:11:03Z',
+  'a:/fntd2/event-story-endless': '2026-10-13T04:44:52Z', 'a:/fntd2/clan-wars': '2026-09-23T05:04:14Z', 'a:/fntd2/codes': '2026-10-14T20:39:46Z', 'a:/bbn/codes': '2026-10-14T20:39:46Z',
+  'a:/patch-notes': '2026-10-13T23:18:35Z', 'a:/bbn/bite-by-night-directory': '2026-10-14T20:39:46Z', 'a:/sponsor': '2026-10-13T21:22:29Z', 'a:/privacy-policy': '2026-10-15T18:02:15Z',
+  'r:json': '2026-10-14T18:32:29Z', 'r:metas.json': '2026-10-15T20:16:06Z', 'r:tierlist.js': '2026-10-15T19:42:00Z', 'r:Unit-Engine': '2026-10-08T18:55:55Z',
+  'r:trade-calculator': '2026-09-30T00:29:12Z', 'r:patchnotesfntd2.html': '2026-10-07T01:30:58Z', '*': '2026-09-20T00:07:03Z'
+};
+
+function sitemapIso(t) { return new Date(t).toISOString().slice(0, 19) + 'Z'; }
+
+async function sitemapState(env, key) {
+  if (!env.PUSH_SUBS) return null;
+  try { return JSON.parse((await env.PUSH_SUBS.get(key)) || '{}'); } catch (e) { return {}; }
+}
+
+function sitemapStamp(st, key, sig, now, seed) {
+  const cur = st.map[key];
+  const base = seed || Date.parse(SITEMAP_SEED[key] || SITEMAP_SEED['*']);
+  if (!sig) return cur ? cur[1] : base;
+  if (!cur) {
+    st.map[key] = [sig, st.first ? base : now];
+    st.dirty = true;
+  } else if (cur[0] !== sig) {
+    st.map[key] = [sig, now];
+    st.dirty = true;
+  }
+  return st.map[key][1];
+}
+
+async function sitemapCached(url, name, build) {
+  const key = new Request(url.origin + '/__' + name);
+  try {
+    const hit = await caches.default.match(key);
+    if (hit) return new Response(hit.body, hit);
+  } catch (e) {}
+  const res = await build();
+  if (res.status === 200) {
+    try { await caches.default.put(key, res.clone()); } catch (e) {}
+  }
+  return res;
+}
+
+async function seoSitemap(env, url) {
+  return sitemapCached(url, 'sitemap.xml', async () => {
+    const base = await env.ASSETS.fetch(new Request(new URL('/sitemap.xml', url).toString()));
+    const paths = [];
+    ((await base.text()).match(/<loc>[^<]+<\/loc>/g) || []).forEach(l => {
+      const p = l.slice(5, -6).replace(SITE_URL, '') || '/';
+      if (paths.indexOf(p) === -1) paths.push(p);
+    });
+    const codes = {};
+    await Promise.all(Object.keys(CODES_PAGES).map(async p => { codes[p] = await seoTimed(seoLoadCodes(env, url, CODES_PAGES[p].file), 2500); }));
+    Object.keys(codes).forEach(p => {
+      const i = paths.indexOf(p);
+      if (codes[p] && !codes[p].codes.length && i !== -1) paths.splice(i, 1);
+      else if (codes[p] && codes[p].codes.length && i === -1) paths.push(p);
+    });
+    const ovLive = env.OV_LIVE === '1';
+    const remote = [];
+    paths.forEach(p => (SITEMAP_DATA[p] || []).forEach(f => { if (remote.indexOf(f) === -1) remote.push(f); }));
+    const sigs = {};
+    await Promise.all(paths.map(async p => {
+      const a = p === '/' && ovLive ? '/overhaul/' : p;
+      try {
+        const r = await env.ASSETS.fetch(new Request(new URL(a, url).toString(), { method: 'HEAD' }));
+        sigs['a:' + a] = r.ok ? r.headers.get('etag') : null;
+      } catch (e) { sigs['a:' + a] = null; }
+    }).concat(remote.map(async f => {
+      try {
+        const r = await seoTimed(fetch(SITEMAP_RAW + f, { method: 'HEAD', cf: { cacheTtl: 300 } }), 3000);
+        sigs['r:' + f] = r && r.ok ? r.headers.get('etag') : null;
+      } catch (e) { sigs['r:' + f] = null; }
+    })));
+    const now = Date.now();
+    const st = { map: (await sitemapState(env, 'sitemap:lm')) || {}, dirty: false };
+    st.first = !Object.keys(st.map).length;
+    const rows = paths.map(p => {
+      const a = p === '/' && ovLive ? '/overhaul/' : p;
+      let t = sitemapStamp(st, 'a:' + a, sigs['a:' + a], now);
+      (SITEMAP_DATA[p] || []).forEach(f => { t = Math.max(t, sitemapStamp(st, 'r:' + f, sigs['r:' + f], now)); });
+      const up = codes[p] && codes[p].updated ? Date.parse(codes[p].updated) : NaN;
+      if (isFinite(up)) t = Math.max(t, up);
+      return '  <url><loc>' + seoEsc(SITE_URL + p) + '</loc><lastmod>' + sitemapIso(t) + '</lastmod></url>';
+    });
+    if (st.dirty && env.PUSH_SUBS) {
+      try { await env.PUSH_SUBS.put('sitemap:lm', JSON.stringify(st.map)); } catch (e) {}
+    }
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+    return new Response(body, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  });
+}
+
+async function seoUnitSitemap(env, url) {
+  return sitemapCached(url, 'sitemap-units.xml', async () => {
+    const data = await seoTimed(parvusLoad(), 4000);
+    const units = (data && Array.isArray(data.units) ? data.units : []).filter(u => u && u.name);
+    const now = Date.now();
+    const st = { map: (await sitemapState(env, 'sitemap:lmu')) || {}, dirty: false };
+    st.first = !Object.keys(st.map).length;
+    const enc = new TextEncoder();
+    const sigs = await Promise.all(units.map(async u => wikiHex(new Uint8Array(await crypto.subtle.digest('SHA-1', enc.encode(JSON.stringify(u))))).slice(0, 16)));
+    const rows = units.map((u, i) => {
+      const t = sitemapStamp(st, u.name, sigs[i], now, Date.parse(SITEMAP_SEED['r:json']));
+      return '  <url><loc>' + seoEsc(SITE_URL + seoUnitPath(u.name)) + '</loc><lastmod>' + sitemapIso(t) + '</lastmod></url>';
+    });
+    if (st.dirty && env.PUSH_SUBS && units.length) {
+      try { await env.PUSH_SUBS.put('sitemap:lmu', JSON.stringify(st.map)); } catch (e) {}
+    }
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+    return new Response(body, { status: units.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  });
 }
 const PAGE_NOTES_SCRIPT = `<script>
 (function () {
@@ -8270,7 +8401,8 @@ export default {
       });
     }
 
-    if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap();
+    if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap(env, url);
+    if (url.pathname === '/sitemap.xml') return seoSitemap(env, url);
     if (url.pathname === '/llms.txt') return seoLlms();
     if (url.pathname === '/meta-engine.js') {
       const up = await fetch(PARVUS_RAW + 'metas.html', { cf: { cacheTtl: 300, cacheEverything: true } });
@@ -8374,7 +8506,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
           else if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
