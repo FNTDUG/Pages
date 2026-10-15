@@ -229,6 +229,34 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .rowloop>*{flex:0 0 var(--row-item)}
 .rowloop img{-webkit-user-drag:none;pointer-events:none}
 
+html.ov[data-theme="light"]{--star-off:#dccdb5}
+html.ov[data-theme="dark"]{--star-off:#4a4462}
+.rate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);max-width:860px}
+.rate-now,.rate-pick{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:30px 32px}
+.rate-now{background:var(--surface2);border-right:var(--bw) solid var(--ink)}
+.rate-big{display:flex;align-items:baseline;gap:10px;font:400 64px/1 var(--font-head)}
+.rate-big small{font:700 20px/1 var(--font-body);color:var(--mute)}
+.rate-count{font-weight:700;color:var(--mute);font-size:15px}
+.rate-label{font:400 11px/1.4 var(--font-tag);text-transform:uppercase;letter-spacing:.04em}
+.rate-msg{min-height:3.2em;font-size:15px;color:var(--mute)}
+.rate-msg.is-ok{color:var(--text)}
+.rate-msg.is-bad{color:var(--red)}
+.rs-row{display:flex;gap:var(--rs-gap)}
+.rs-show{--rs:24px;--rs-h:22px;--rs-gap:6px;--rs-sh:2px}
+.rs-input{--rs:48px;--rs-h:44px;--rs-gap:10px;--rs-sh:3px;position:relative;width:max-content}
+.rs{position:relative;flex:none;width:var(--rs);height:var(--rs-h);filter:drop-shadow(var(--rs-sh) var(--rs-sh) 0 var(--ink))}
+.rs svg{position:absolute;left:0;top:0;width:var(--rs);height:var(--rs-h);fill:var(--star-off)}
+.rs-on{position:absolute;inset:0 auto 0 0;width:var(--f,0%);overflow:hidden}
+.rs-on svg{fill:var(--yellow)}
+.rs-input .rs{transition:transform .12s}
+.rs-input .rs.is-hot{transform:translateY(-3px)}
+.rs-input label{position:absolute;top:-6px;bottom:-6px;width:50%;cursor:pointer;z-index:1}
+.rs-input label.rs-l{left:-5px}
+.rs-input label.rs-r{right:-5px}
+.rate-pick:focus-within .rs-input{outline:3px solid var(--acc);outline-offset:8px}
+.rate-pick:has(:focus:not(:focus-visible)) .rs-input{outline:0}
+.rate-pick.is-busy label{cursor:progress}
+
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
 .talk-veil{position:absolute;inset:0;background:var(--overlay)}
@@ -331,9 +359,14 @@ html.talk-on,html.talk-on body{overflow:hidden}
   .band-item{font-size:14px;padding:12px 10px;gap:20px}
   .band-item::after{width:9px;height:9px}
   .sec{padding:56px 0}
+  .rate{grid-template-columns:minmax(0,1fr)}
+  .rate-now{border-right:0;border-bottom:var(--bw) solid var(--ink)}
+  .rate-now,.rate-pick{padding:24px 20px}
+  .rate-big{font-size:52px}
+  .rs-input{--rs:48px;--rs-h:44px;--rs-gap:8px}
 }
 @media (prefers-reduced-motion:reduce){
-  .btn,.game,.game-top img,.arrow,html.ov #ug-mobile-nav{transition:none}
+  .btn,.game,.game-top img,.arrow,html.ov #ug-mobile-nav,.rs-input .rs{transition:none}
 }
 </style>
 </head>
@@ -513,6 +546,26 @@ html.talk-on,html.talk-on body{overflow:hidden}
             <a class="ov-card reveal" href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" style="--c:#5865f2"><span class="ov-card-ic"><i></i></span><h3>Discord</h3><p>Chat, ask questions and help out.</p><span class="ov-card-go">Join the Discord <svg class="discord-chat" viewBox="0 0 12 10" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h10v1H1zM0 1h12v1H0zM0 2h12v1H0zM0 3h2v1H0zM4 3h1v1H4zM7 3h1v1H7zM10 3h2v1H10zM0 4h2v1H0zM4 4h1v1H4zM7 4h1v1H7zM10 4h2v1H10zM0 5h12v1H0zM1 6h10v1H1zM2 7h3v1H2zM2 8h2v1H2zM2 9h1v1H2z"/></svg></span></a>
             <a class="ov-card reveal" href="https://ko-fi.com/fntdug" target="_blank" rel="noopener noreferrer" style="--c:var(--pink)"><span class="ov-card-ic"><i></i></span><h3>Support us</h3><p>Help keep the guide free and up to date.</p><span class="ov-card-go">Support us <svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg></span></a>
             <a class="ov-card reveal" href="/sponsor" style="--c:var(--green)"><span class="ov-card-ic"><i></i></span><h3>Sponsor</h3><p>Partner with the guide and reach its users.</p><span class="ov-card-go">Get in touch <svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg></span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="rate" aria-labelledby="rateTitle">
+        <div class="wrap">
+          <div class="sec-head reveal">
+            <h2 id="rateTitle">Rate the guide</h2>
+          </div>
+          <div class="rate blk reveal">
+            <div class="rate-now">
+              <p class="rate-big"><span id="rateAvg">--</span><small>/ 5</small></p>
+              <div class="rs-row rs-show" id="rateShow" role="img" aria-label="No ratings yet"></div>
+              <p class="rate-count" id="rateCount">Loading ratings...</p>
+            </div>
+            <div class="rate-pick" id="ratePick" role="radiogroup" aria-labelledby="ratePickLabel">
+              <p class="rate-label" id="ratePickLabel">Your rating</p>
+              <div class="rs-row rs-input" id="rateStars"></div>
+              <p class="rate-msg" id="rateMsg" role="status">Pick from half a star up to 5 stars.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -1134,12 +1187,12 @@ html.talk-on,html.talk-on body{overflow:hidden}
   function reveals() {
     if (reduced) return;
     var items = gsap.utils.toArray('.reveal');
-    gsap.set(items, { autoAlpha: 0, y: 36 });
+    gsap.set(items, { opacity: 0, y: 36 });
     ScrollTrigger.batch(items, {
       start: 'top 90%',
       once: true,
       onEnter: function (batch) {
-        gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.45, ease: 'back.out(1.7)', stagger: 0.08, clearProps: 'transform,opacity,visibility' });
+        gsap.to(batch, { opacity: 1, y: 0, duration: 0.45, ease: 'back.out(1.7)', stagger: 0.08, clearProps: 'transform,opacity' });
       }
     });
   }
@@ -1243,5 +1296,6 @@ html.talk-on,html.talk-on body{overflow:hidden}
 })();
 </script>
 <script src="/overhaul/ov-shell.js" defer onerror="document.documentElement.classList.add('pv-shell')"></script>
+<script src="/overhaul/ov-rate.js" defer></script>
 </body>
 </html>

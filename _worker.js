@@ -5872,6 +5872,70 @@ async function pollVote(request, env, url) {
   }
 }
 
+const RATING_SCHEMA = [
+  'CREATE TABLE IF NOT EXISTS rating_votes (who TEXT PRIMARY KEY, ip TEXT NOT NULL, v INTEGER NOT NULL, at INTEGER NOT NULL, win INTEGER NOT NULL, c INTEGER NOT NULL DEFAULT 1)',
+  'CREATE TABLE IF NOT EXISTS rating_totals (id INTEGER PRIMARY KEY, n INTEGER NOT NULL DEFAULT 0, s INTEGER NOT NULL DEFAULT 0)',
+  'INSERT OR IGNORE INTO rating_totals (id, n, s) VALUES (1, 0, 0)'
+];
+const RATING_MAX_PER_IP = 3;
+const RATING_MAX_CHANGES = 20;
+
+function ratingOut(row) {
+  const n = row ? row.n : 0;
+  return { n, avg: n ? Math.round(row.s / n * 5) / 10 : 0 };
+}
+
+async function ratingCurrent(env, url) {
+  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
+  if (!env.POLLS) return new Response('{"n":0,"avg":0}', { headers });
+  const key = new Request(url.origin + '/rating/__current');
+  try {
+    const hit = await caches.default.match(key);
+    if (hit) return new Response(await hit.text(), { headers });
+  } catch (e) {}
+  let row = null;
+  try { row = await env.POLLS.prepare('SELECT n, s FROM rating_totals WHERE id = 1').first(); } catch (e) {}
+  const body = JSON.stringify(ratingOut(row));
+  try {
+    await caches.default.put(key, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=30' } }));
+  } catch (e) {}
+  return new Response(body, { headers });
+}
+
+async function ratingVote(request, env, url) {
+  if (request.method !== 'POST' || request.headers.get('origin') !== url.origin) return pushJson({ ok: false }, 403);
+  if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false }, 503);
+  const body = await pushReadBody(request);
+  const v = Number(body && body.v);
+  const b = String((body && body.b) || '');
+  if (!Number.isInteger(v) || v < 1 || v > 10 || !/^[0-9a-f]{16,32}$/.test(b)) return pushJson({ ok: false }, 400);
+  const db = env.POLLS;
+  const addr = request.headers.get('cf-connecting-ip') || '';
+  const ip = wikiHex(await pushSha256(env.POLL_SALT + '|rating|' + addr)).slice(0, 32);
+  const who = wikiHex(await pushSha256(env.POLL_SALT + '|rating|' + addr + '|' + b)).slice(0, 32);
+  const now = Date.now();
+  const day = Math.floor(now / 86400000);
+  try {
+    await db.batch(RATING_SCHEMA.map(q => db.prepare(q)));
+    const mine = await db.prepare('SELECT v, win, c FROM rating_votes WHERE who = ?1').bind(who).first();
+    if (mine && mine.win === day && mine.c >= RATING_MAX_CHANGES) return pushJson({ ok: false, error: 'changes' }, 429);
+    if (!mine) {
+      const seats = await db.prepare('SELECT COUNT(*) AS n FROM rating_votes WHERE ip = ?1').bind(ip).first();
+      if (seats && seats.n >= RATING_MAX_PER_IP) return pushJson({ ok: false, error: 'limit' }, 409);
+    }
+    const res = await db.batch([
+      db.prepare('UPDATE rating_totals SET s = s - COALESCE((SELECT v FROM rating_votes WHERE who = ?1), 0) + ?2, n = n + (CASE WHEN EXISTS (SELECT 1 FROM rating_votes WHERE who = ?1) THEN 0 ELSE 1 END) WHERE id = 1').bind(who, v),
+      db.prepare('INSERT INTO rating_votes (who, ip, v, at, win, c) VALUES (?1, ?2, ?3, ?4, ?5, 1) ON CONFLICT(who) DO UPDATE SET v = ?3, at = ?4, c = CASE WHEN win = ?5 THEN c + 1 ELSE 1 END, win = ?5').bind(who, ip, v, now, day),
+      db.prepare('SELECT n, s FROM rating_totals WHERE id = 1')
+    ]);
+    const last = res[res.length - 1];
+    try { await caches.default.delete(new Request(url.origin + '/rating/__current')); } catch (e) {}
+    return pushJson(Object.assign({ ok: true, v }, ratingOut(last.results && last.results[0])));
+  } catch (e) {
+    return pushJson({ ok: false }, 503);
+  }
+}
+
 async function pollAdmin(request, env, url) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.POLLS || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
@@ -8079,6 +8143,8 @@ export default {
     if (url.pathname === '/poll/current') return pollCurrent(env, url);
     if (url.pathname === '/poll/vote') return pollVote(request, env, url);
     if (url.pathname === '/poll/admin') return pollAdmin(request, env, url);
+    if (url.pathname === '/rating') return ratingCurrent(env, url);
+    if (url.pathname === '/rating/vote') return ratingVote(request, env, url);
     if (url.pathname === '/sponsor/submit') return sponsorSubmit(request, env);
     if (url.pathname === '/sponsor/admin') return sponsorAdmin(request, env);
     if (url.pathname === '/poll/image') return pollImageUpload(request, env);
