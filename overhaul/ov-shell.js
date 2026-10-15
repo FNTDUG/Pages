@@ -146,6 +146,8 @@
   if (window.pvA11y && document.getElementById('ug-hamburger')) {
     ab = document.createElement('button');
     ab.id = 'pv-a11y';
+    ab.className = 'pv-tray';
+    ab.style.setProperty('--i', '3');
     ab.type = 'button';
     ab.title = 'Accessibility';
     ab.setAttribute('aria-label', 'Accessibility settings');
