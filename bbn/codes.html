@@ -72,6 +72,7 @@ html.ov .cd-old .cd-code{opacity:.7;box-shadow:none}
   function day(d) { return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
   function left(ms) {
     var m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    if (d >= 365) return String(new Date(Date.now() + ms).getFullYear());
     if (d >= 1) return d + 'd ' + (h % 24) + 'h';
     if (h >= 1) return h + 'h ' + (m % 60) + 'm';
     return m + 'm';

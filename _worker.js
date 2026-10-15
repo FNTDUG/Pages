@@ -4247,7 +4247,7 @@ function seoCodesHtml(data, feeds, cfg) {
   });
   old.sort((a, b) => (b.t || 0) - (a.t || 0));
   const day = t => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Chicago' });
-  const left = ms => { const m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24); return d >= 1 ? d + 'd ' + (h % 24) + 'h' : h >= 1 ? h + 'h ' + (m % 60) + 'm' : m + 'm'; };
+  const left = ms => { const m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24); return d >= 365 ? String(new Date(now + ms).getUTCFullYear()) : d >= 1 ? d + 'd ' + (h % 24) + 'h' : h >= 1 ? h + 'h ' + (m % 60) + 'm' : m + 'm'; };
   const card = (x, on) => {
     const c = x.c, req = c.requirement && !/^none$/i.test(String(c.requirement)) ? String(c.requirement) : '';
     return '<li class="cd-code"' + (isFinite(x.t) ? ' data-exp="' + new Date(x.t).toISOString() + '"' : '') + '><div class="cd-top"><span class="cd-name">' + seoEsc(c.code) + '</span>' +
