@@ -1,0 +1,9 @@
+@font-face{font-family:'OpenDyslexic';src:url(/overhaul/fonts/opendyslexic-400-normal.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'OpenDyslexic';src:url(/overhaul/fonts/opendyslexic-400-italic.woff2) format('woff2');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'OpenDyslexic';src:url(/overhaul/fonts/opendyslexic-700-normal.woff2) format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'OpenDyslexic';src:url(/overhaul/fonts/opendyslexic-700-italic.woff2) format('woff2');font-weight:700;font-style:italic;font-display:swap}
+html.ov[data-font="dyslexic"],html[data-font="dyslexic"]{--font-head:'OpenDyslexic',system-ui,sans-serif;--font-body:'OpenDyslexic',system-ui,sans-serif}
+html[data-font="dyslexic"] body,html[data-font="dyslexic"] body *{font-family:'OpenDyslexic',system-ui,sans-serif!important;letter-spacing:0!important}
+html[data-cvd="protan"]{filter:url(#pv-cvd-protan)}
+html[data-cvd="deutan"]{filter:url(#pv-cvd-deutan)}
+html[data-cvd="tritan"]{filter:url(#pv-cvd-tritan)}
