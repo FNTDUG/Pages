@@ -1694,7 +1694,6 @@ function infLoadFazMilestones(){
       });
       pEl.appendChild(c);
     });
-    var src=document.createElement('p');src.style.cssText='color:#888;font-size:11px;padding:4px 14px 10px';src.textContent='Milestones from FNTD Central (fntd2.com).';pEl.appendChild(src);
     done();
   }).catch(function(){pEl.innerHTML='';var e=document.createElement('p');e.style.cssText='color:#f66;font-size:11px;padding:12px 14px';e.textContent='Failed to load.';pEl.appendChild(e);done();});
 }
