@@ -8,7 +8,7 @@ if (document.querySelector("[data-parvus-home]")) {
   var U = 12;     /* one art pixel */
   var M = 7;      /* how many art pixels of room the puddle gets around the box */
   var T = 3;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce = window.matchMedia && (window.pvRealMatchMedia || window.matchMedia)('(prefers-reduced-motion: reduce)').matches;
 
   /* the splat: the ink hits small, overshoots with droplets flying out, then settles.
      s = puddle size, drop = how far past their resting spot the droplets are (null = not out yet),
@@ -1340,7 +1340,7 @@ if (document.querySelector("[data-parvus-home]")) {
   });
   window.mascotTired = function () { return tired; };
 
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduced = window.matchMedia && (window.pvRealMatchMedia || window.matchMedia)('(prefers-reduced-motion: reduce)').matches;
   if (!reduced) {
     until = performance.now() + rand(CFG.restMin, CFG.restMax);
     requestAnimationFrame(tick);

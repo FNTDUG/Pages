@@ -120,7 +120,8 @@
 
   var A11Y = [
     ['font', 'Text font', [['', 'Standard'], ['dyslexic', 'OpenDyslexic', '', 'pv-a11y-dys']]],
-    ['cvd', 'Colour blindness', [['', 'Off'], ['protan', 'Protanopia', 'Red-blind'], ['deutan', 'Deuteranopia', 'Green-blind'], ['tritan', 'Tritanopia', 'Blue-blind']]]
+    ['cvd', 'Colour blindness', [['', 'Off'], ['protan', 'Protanopia', 'Red-blind'], ['deutan', 'Deuteranopia', 'Green-blind'], ['tritan', 'Tritanopia', 'Blue-blind']]],
+    ['motion', 'Motion', [['', 'Full'], ['calm', 'Reduced', 'Parvus still moves. Reloads the page.']]]
   ];
   var ab = null, ap = null;
   function a11yOpen() { return !!ap && !ap.hidden; }
@@ -175,7 +176,10 @@
     ap.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('.pv-a11y-opt');
       if (!b) return;
-      window.pvA11y.set(b.getAttribute('data-k'), b.getAttribute('data-v'));
+      var k = b.getAttribute('data-k'), v = b.getAttribute('data-v');
+      if (window.pvA11y.get(k) === v) return;
+      window.pvA11y.set(k, v);
+      if (k === 'motion') { location.reload(); return; }
       a11ySync();
       a11yPlace();
     });

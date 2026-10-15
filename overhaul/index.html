@@ -571,6 +571,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
 (function () {
   var html = document.documentElement;
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pvReduced = (window.pvRealMatchMedia || window.matchMedia)('(prefers-reduced-motion: reduce)').matches;
   gsap.registerPlugin(ScrollTrigger, SplitText, Draggable, InertiaPlugin);
 
   var CW = 210, CH = 222;
@@ -765,7 +766,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     window.pxInk.splash(bubble);
     play(SND.text);
     var stay = ms || 3800;
-    if (reduced || !window.parvusVoice) {
+    if (pvReduced || !window.parvusVoice) {
       shown.textContent = text;
       rest.textContent = '';
       hushT = setTimeout(function () { hideBubble(false); }, stay);
@@ -790,7 +791,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
   }
   function startIdle() {
     ready = true;
-    if (!reduced) idle.push(gsap.to(bob, { y: -12, duration: 1.3, ease: 'steps(1)', repeat: -1, yoyo: true }));
+    if (!pvReduced) idle.push(gsap.to(bob, { y: -12, duration: 1.3, ease: 'steps(1)', repeat: -1, yoyo: true }));
     scheduleBlink();
   }
   function stopIdle() {
@@ -944,7 +945,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     inkMsg(m);
     play(SND.text);
     var done = function () { if (window.parvusLinkify) window.parvusLinkify(shown); };
-    if (reduced || !window.parvusVoice) { shown.textContent = text; rest.textContent = ''; done(); return Promise.resolve(); }
+    if (pvReduced || !window.parvusVoice) { shown.textContent = text; rest.textContent = ''; done(); return Promise.resolve(); }
     return new Promise(function (resolve) {
       var wait = setTimeout(function () {
         pvTyping = window.parvusVoice.type(shown, rest, text, function () { pvTyping = null; done(); resolve(); });
@@ -980,7 +981,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
       onComplete: afterOpen,
       onReverseComplete: afterClose
     });
-    if (reduced) talkTl.set(talkBox, { autoAlpha: 1 });
+    if (pvReduced) talkTl.set(talkBox, { autoAlpha: 1 });
     else {
       talkTl.fromTo(talkVeil, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: 'none' }, 0)
         .fromTo(talkBox, { scale: 0.06, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.55, ease: 'expo.out' }, 0)
@@ -1005,7 +1006,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     talkOpen = false;
     clearTimeout(ptBlink);
     if (pvTyping) pvTyping.finish();
-    if (reduced) { afterClose(); return; }
+    if (pvReduced) { afterClose(); return; }
     play(SND.close);
     talkTl.timeScale(1.6).reverse();
   }
@@ -1036,7 +1037,7 @@ html.talk-on,html.talk-on body{overflow:hidden}
     var wait = thinking();
     var done = function (text) {
       return new Promise(function (resolve) {
-        if (!window.pxInk || reduced) { resolve(); return; }
+        if (!window.pxInk || pvReduced) { resolve(); return; }
         window.pxInk.unsplash(wait, resolve);
       }).then(function () {
         wait.remove();
@@ -1064,6 +1065,11 @@ html.talk-on,html.talk-on body{overflow:hidden}
     stopIdle();
     hideBubble(true);
     clearTimeout(wake);
+    if (reduced && !pvReduced) {
+      gsap.set(pv, { x: 0, y: -480 });
+      tl = gsap.timeline().add(jumpIn(), 0.2).call(function () { say(tiredNow() ? TIRED_HELLO : HELLO, 7000); startIdle(); }, null, '+=0.1');
+      return;
+    }
     if (reduced) {
       rest();
       startIdle();
