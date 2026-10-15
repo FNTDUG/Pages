@@ -229,11 +229,10 @@ a.game:hover .game-top img{transform:scale(1.05)}
 .rowloop>*{flex:0 0 var(--row-item)}
 .rowloop img{-webkit-user-drag:none;pointer-events:none}
 
-html.ov[data-theme="light"]{--star-off:#dccdb5;--rate-n:#b84d00}
-html.ov[data-theme="dark"]{--star-off:#4a4462;--rate-n:var(--acc)}
-.rate{--rs:24px;--rs-h:22px;--rs-gap:4px;--rs-sh:2px;display:flex;align-items:center;gap:15px;margin-top:26px}
+html.ov[data-theme="light"]{--star-off:#dccdb5}
+html.ov[data-theme="dark"]{--star-off:#4a4462}
+.rate{--rs:24px;--rs-h:22px;--rs-gap:4px;--rs-sh:2px;display:flex;align-items:center;gap:15px;width:max-content;max-width:100%;margin-top:30px;padding:12px 18px 12px 16px;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm)}
 .rate-txt{position:relative;top:calc(var(--rs-sh) * 1.25);min-width:0;font-size:16px;line-height:1.3;color:var(--mute)}
-.rate-n{color:var(--rate-n);font-weight:700}
 .rate-you{color:var(--yellow);font-weight:700;text-shadow:1px 1px 0 var(--ink)}
 .rate-txt span{white-space:nowrap}
 .rate-txt.is-bad{color:var(--red)}
@@ -246,11 +245,11 @@ html.ov[data-theme="dark"]{--star-off:#4a4462;--rate-n:var(--acc)}
 .rs-row label{position:absolute;top:-8px;bottom:-8px;width:calc(50% + var(--rs-gap) / 2);cursor:pointer;z-index:1}
 .rs-row label.rs-l{left:calc(var(--rs-gap) / -2)}
 .rs-row label.rs-r{right:calc(var(--rs-gap) / -2)}
-.rate:focus-within .rs-row{outline:3px solid var(--acc);outline-offset:6px}
-.rate:has(:focus:not(:focus-visible)) .rs-row{outline:0}
+.rate:focus-within{outline:3px solid var(--acc);outline-offset:3px}
+.rate:has(:focus:not(:focus-visible)){outline:0}
 .rate.is-busy label{cursor:progress}
 @media (pointer:coarse){.rate{--rs:36px;--rs-h:33px;--rs-gap:6px;--rs-sh:3px}}
-@media (max-width:600px){.rate{flex-direction:column;gap:10px;text-align:center}.rate-txt{top:0}}
+@media (max-width:600px){.rate{flex-direction:column;gap:10px;margin:30px auto 0;text-align:center}.rate-txt{top:0}}
 
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
