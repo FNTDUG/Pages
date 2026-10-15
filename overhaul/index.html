@@ -248,6 +248,7 @@ html.ov[data-theme="dark"]{--star-off:#4a4462}
 .rate:has(:focus:not(:focus-visible)) .rs-row{outline:0}
 .rate.is-busy label{cursor:progress}
 @media (pointer:coarse){.rate{--rs:36px;--rs-h:33px;--rs-gap:6px;--rs-sh:3px}}
+@media (max-width:600px){.rate{flex-direction:column;align-items:flex-start;gap:10px}.rate-txt{padding-top:0}}
 
 .talk{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .talk[hidden]{display:none}
