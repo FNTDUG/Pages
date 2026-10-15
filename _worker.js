@@ -2273,7 +2273,7 @@ var MINIGAMES=[
       var vw=document.createElement('div');vw.className='inf-mg-video-wrap';
       var v=document.createElement('video');v.className='inf-mg-video';v.loop=true;v.playsInline=true;
       v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='metadata';
-      var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent='Tap to fullscreen';
+      var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent=(window.matchMedia&&matchMedia('(hover: hover) and (pointer: fine)').matches?'Click':'Tap')+' to fullscreen';
       vw.appendChild(v);vw.appendChild(hint);drop.appendChild(vw);
       // Click the button: slide the inline preview open (or closed) and play it.
       b.addEventListener('click',function(){
@@ -2308,7 +2308,7 @@ var MINIGAMES=[
   var v=document.createElement('video');v.className='inf-mg-video';v.loop=true;v.playsInline=true;
   v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='none';
   v.setAttribute('data-inf-autoplay','1');v.setAttribute('data-src','https://images.fntduserguide.com/shinytransfer.mp4');
-  var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent='Tap to fullscreen';
+  var hint=document.createElement('span');hint.className='inf-mg-fs-hint';hint.textContent=(window.matchMedia&&matchMedia('(hover: hover) and (pointer: fine)').matches?'Click':'Tap')+' to fullscreen';
   vw.appendChild(v);vw.appendChild(hint);el.appendChild(vw);
   // Tap the preview: fullscreen at the same spot; resume inline on exit if the tab is still open.
   vw.addEventListener('click',function(){
@@ -4409,15 +4409,16 @@ const PV_UPDATE = {
   version: '2026-10-11',
   items: [
     'A brand new look for the whole site',
-    'Light and dark mode: switch with the sun and moon button',
+    'Light and dark mode: switch with the sun and moon button in the settings cog',
     'Meet Parvus, our new mascot'
   ]
 };
 const PV_TIP_DAYS = 3;
 const PV_TIPS = [
-  'Tap the bell to get a notification when Metas, TierLists or Patch Notes are updated.',
-  'Switch between light and dark mode with the sun and moon button under the bell.',
-  'The speaker button mutes every sound on the site.',
+  'Use the bell in the settings cog to get a notification when Metas, TierLists or Patch Notes are updated.',
+  'Switch between light and dark mode with the sun and moon button in the settings cog.',
+  'The speaker button in the settings cog mutes every sound on the site.',
+  'The eye button in the settings cog turns on a dyslexia-friendly font or colour blindness filters.',
   'On FNTD2 pages, the INFO button opens a panel you can search.',
   'Click or tap Parvus to open his chat window.'
 ];
@@ -4702,6 +4703,8 @@ const NOTIFY_HTML = `
   }
 
   var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
+  var BELLW = document.documentElement.classList.contains('ov') ? 'the bell in the settings cog' : 'the bell';
+  var PRESS = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches ? 'Click' : 'Tap';
   var SHARE = '<svg class="ntf-share" viewBox="0 0 14 16" aria-hidden="true"><path d="M7 1v9M3.5 4.5 7 1l3.5 3.5M2 7.5v7h10v-7" fill="none" stroke="#ffa45b" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   var ERR = '<p class="ntf-err" id="ntfErr" role="alert" hidden></p>';
   var UNBLOCK = isIOS
@@ -4709,23 +4712,23 @@ const NOTIFY_HTML = `
       '<ol class="ntf-steps">' +
         '<li>Open the <b>Settings</b> app</li>' +
         '<li>Tap <b>Notifications</b>, then <b>FNTD Guide</b></li>' +
-        '<li>Turn on <b>Allow Notifications</b>, then come back and tap the bell</li>' +
+        '<li>Turn on <b>Allow Notifications</b>, then come back and tap ' + BELLW + '</li>' +
       '</ol>'
     : isAndroid && standalone
     ? '<p class="ntf-msg" id="ntfMsg">Notifications are blocked for this app, so the site can&#39;t ask again. You can turn them back on:</p>' +
       '<ol class="ntf-steps">' +
         '<li>Press and hold the <b>FNTD Guide</b> icon, then tap <b>App info</b></li>' +
         '<li>Tap <b>Notifications</b> and turn them on</li>' +
-        '<li>Come back and tap the bell</li>' +
+        '<li>Come back and tap ' + BELLW + '</li>' +
       '</ol>'
     : isAndroid
     ? '<p class="ntf-msg" id="ntfMsg">Notifications are blocked for this site, so it can&#39;t ask again. You can turn them back on:</p>' +
       '<ol class="ntf-steps">' +
         '<li>Tap the icon to the left of the web address</li>' +
         '<li>Tap <b>Permissions</b> or <b>Notifications</b> and set it to <b>Allow</b></li>' +
-        '<li>Tap the bell again</li>' +
+        '<li>Tap ' + BELLW + ' again</li>' +
       '</ol>'
-    : '<p class="ntf-msg" id="ntfMsg">Your browser is blocking notifications from this site. Click the icon to the left of the web address, set <b>Notifications</b> to <b>Allow</b>, then tap the bell again.</p>';
+    : '<p class="ntf-msg" id="ntfMsg">Your browser is blocking notifications from this site. Click the icon to the left of the web address, set <b>Notifications</b> to <b>Allow</b>, then click ' + BELLW + ' again.</p>';
 
   var SCREENS = {
     ask: {
@@ -4740,7 +4743,7 @@ const NOTIFY_HTML = `
           '<button class="ntf-btn" type="button" data-go="on" data-need-topic>Turn on</button>' +
           '<button class="ntf-btn secondary" type="button" data-go="sureSkip">No thanks</button>' +
         '</div>' +
-        '<p class="ntf-fine">You can turn them off anytime with the bell.</p>'
+        '<p class="ntf-fine">You can turn them off anytime with ' + BELLW + '.</p>'
     },
     ios: {
       cls: 'ios',
@@ -4750,7 +4753,7 @@ const NOTIFY_HTML = `
         '<ol class="ntf-steps">' +
           '<li>Tap Share ' + SHARE + ' in the browser</li>' +
           '<li>Tap <b>Add to Home Screen</b></li>' +
-          '<li>Open the site from your Home Screen and tap the bell</li>' +
+          '<li>Open the site from your Home Screen and tap ' + BELLW + '</li>' +
         '</ol></div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn" type="button" data-go="snooze">Got it</button>' +
@@ -4760,7 +4763,7 @@ const NOTIFY_HTML = `
       cls: 'ok',
       html: '<div class="ntf-body">' + BELL +
         '<div class="ntf-kicker" id="ntfKicker">YOU&#39;RE IN!</div>' +
-        '<p class="ntf-msg" id="ntfMsg">You&#39;ll get a notification next time something is updated. Tap the bell anytime to change games or turn them off.</p>' +
+        '<p class="ntf-msg" id="ntfMsg">You&#39;ll get a notification next time something is updated. ' + PRESS + ' ' + BELLW + ' anytime to change games or turn them off.</p>' +
         ERR + '</div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn" type="button" data-go="close">Done</button>' +
@@ -4784,7 +4787,7 @@ const NOTIFY_HTML = `
       cls: 'sure',
       html: '<div class="ntf-body">' + BELL +
         '<div class="ntf-kicker" id="ntfKicker">ARE YOU SURE?</div>' +
-        '<p class="ntf-msg" id="ntfMsg">You won&#39;t be notified when <b>Metas</b>, <b>TierLists</b> or <b>Patch Notes</b> are updated. You can always turn them on later with the bell.</p>' +
+        '<p class="ntf-msg" id="ntfMsg">You won&#39;t be notified when <b>Metas</b>, <b>TierLists</b> or <b>Patch Notes</b> are updated. You can always turn them on later with ' + BELLW + '.</p>' +
         '</div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn" type="button" data-go="snooze">Yes, I&#39;m sure</button>' +
