@@ -1,14 +1,12 @@
 (function () {
-  var pick = document.getElementById('ratePick');
+  var box = document.getElementById('rate');
   var row = document.getElementById('rateStars');
-  var show = document.getElementById('rateShow');
-  if (!pick || !row || !show) return;
-  var avgEl = document.getElementById('rateAvg');
-  var countEl = document.getElementById('rateCount');
-  var msg = document.getElementById('rateMsg');
+  var txt = document.getElementById('rateTxt');
+  if (!box || !row || !txt) return;
   var PATH = 'M5 0h2v2H5zM4 2h4v1H4zM0 3h12v1H0zM1 4h10v1H1zM2 5h8v1H2zM3 6h6v1H3zM2 7h8v1H2zM2 8h3v1H2zM7 8h3v1H7zM1 9h3v1H1zM8 9h3v1H8zM1 10h2v1H1zM9 10h2v1H9z';
   var SVG = '<svg viewBox="0 0 12 11" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><path d="' + PATH + '"/></svg>';
-  var saved = 0, chosen = 0, sent = 0, busy = false, timer = 0;
+  var saved = 0, chosen = 0, sent = 0, busy = false, timer = 0, noteT = 0;
+  var avg = 0, n = 0, loaded = false, hover = 0, focused = false, note = '', ptr = 0;
 
   function store(k, v) {
     try {
@@ -18,48 +16,61 @@
     return null;
   }
   function words(v) {
-    var n = v / 2;
-    return n + (n === 1 ? ' star' : ' stars');
+    var s = v / 2;
+    return s + (s === 1 ? ' star' : ' stars');
   }
-  function stars(input) {
-    var h = '';
-    for (var i = 0; i < 5; i++) {
-      h += '<span class="rs">' + SVG + '<span class="rs-on">' + SVG + '</span>';
-      if (input) h += '<label class="rs-l" for="pvRate' + (i * 2 + 1) + '"><span class="sr">' + words(i * 2 + 1) + '</span></label><label class="rs-r" for="pvRate' + (i * 2 + 2) + '"><span class="sr">' + words(i * 2 + 2) + '</span></label>';
-      h += '</span>';
-    }
-    return h;
+  var h = '';
+  for (var r = 1; r <= 10; r++) h += '<input class="sr" type="radio" name="pvRate" id="pvRate' + r + '" value="' + r + '">';
+  for (var i = 0; i < 5; i++) {
+    h += '<span class="rs">' + SVG + '<span class="rs-on">' + SVG + '</span>';
+    h += '<label class="rs-l" for="pvRate' + (i * 2 + 1) + '"><span class="sr">' + words(i * 2 + 1) + '</span></label>';
+    h += '<label class="rs-r" for="pvRate' + (i * 2 + 2) + '"><span class="sr">' + words(i * 2 + 2) + '</span></label></span>';
   }
-  var radios = '';
-  for (var r = 1; r <= 10; r++) radios += '<input class="sr" type="radio" name="pvRate" id="pvRate' + r + '" value="' + r + '">';
-  row.insertAdjacentHTML('beforebegin', radios);
-  row.innerHTML = stars(true);
-  show.innerHTML = stars(false);
-  var pickStars = row.querySelectorAll('.rs');
-  var showStars = show.querySelectorAll('.rs');
+  row.innerHTML = h;
+  var live = document.createElement('p');
+  live.className = 'sr';
+  live.setAttribute('role', 'status');
+  box.appendChild(live);
+  var stars = row.querySelectorAll('.rs');
 
-  function fillPick(v, hot) {
+  function avgText() {
+    if (!loaded) return 'Loading ratings...';
+    var t = n ? '<b>' + avg.toFixed(1) + '</b> from ' + n.toLocaleString() + (n === 1 ? ' rating' : ' ratings') : 'No ratings yet. Be the first!';
+    if (saved) t += ' &middot; yours ' + saved / 2;
+    return t;
+  }
+  function paint() {
+    var v = hover || (focused ? chosen : 0);
     for (var i = 0; i < 5; i++) {
-      pickStars[i].style.setProperty('--f', Math.max(0, Math.min(2, v - i * 2)) * 50 + '%');
-      pickStars[i].classList.toggle('is-hot', hot && Math.ceil(v / 2) - 1 === i);
+      var f = v ? Math.max(0, Math.min(2, v - i * 2)) * 50 : Math.round(Math.max(0, Math.min(1, avg - i)) * 12) / 12 * 100;
+      stars[i].style.setProperty('--f', f + '%');
+      stars[i].classList.toggle('is-hot', !!hover && Math.ceil(hover / 2) - 1 === i);
     }
+    var tip = hover && !(note && hover === chosen);
+    txt.className = 'rate-txt' + (/^!/.test(note) && !tip ? ' is-bad' : '');
+    if (tip) txt.textContent = 'Rate it ' + words(hover);
+    else if (note) txt.textContent = note.replace(/^!/, '');
+    else if (focused && chosen) txt.textContent = 'Your rating: ' + words(chosen);
+    else txt.innerHTML = avgText();
+  }
+  function flash(text) {
+    note = text;
+    live.textContent = text.replace(/^!/, '');
+    clearTimeout(noteT);
+    if (text && text !== 'Saving...') noteT = setTimeout(function () { note = ''; paint(); }, 4500);
+    paint();
   }
   function check(v) {
     var el = v ? document.getElementById('pvRate' + v) : null;
     if (el) el.checked = true;
-    else Array.prototype.forEach.call(pick.querySelectorAll('input'), function (x) { x.checked = false; });
+    else Array.prototype.forEach.call(row.querySelectorAll('input'), function (x) { x.checked = false; });
   }
   function totals(j) {
-    var n = j && j.n > 0 ? j.n : 0;
-    var avg = n ? Number(j.avg) || 0 : 0;
-    for (var i = 0; i < 5; i++) showStars[i].style.setProperty('--f', Math.round(Math.max(0, Math.min(1, avg - i)) * 12) / 12 * 100 + '%');
-    avgEl.textContent = n ? avg.toFixed(1) : '--';
-    countEl.textContent = n ? 'From ' + n.toLocaleString() + (n === 1 ? ' rating' : ' ratings') : 'No ratings yet. Be the first!';
-    show.setAttribute('aria-label', n ? 'Rated ' + avg.toFixed(1) + ' out of 5' : 'No ratings yet');
-  }
-  function say(text, kind) {
-    msg.textContent = text;
-    msg.className = 'rate-msg' + (kind ? ' is-' + kind : '');
+    loaded = true;
+    n = j && j.n > 0 ? j.n : 0;
+    avg = n ? Number(j.avg) || 0 : 0;
+    row.setAttribute('aria-label', n ? 'Rate the guide. Rated ' + avg.toFixed(1) + ' out of 5 from ' + n + (n === 1 ? ' rating' : ' ratings') : 'Rate the guide. No ratings yet');
+    paint();
   }
   function browserId() {
     var id = store('pv-rate-id');
@@ -71,17 +82,22 @@
     store('pv-rate-id', id);
     return id;
   }
+  function fail(text) {
+    chosen = sent = saved;
+    check(saved);
+    flash('!' + text);
+  }
   function done() {
     busy = false;
-    pick.classList.remove('is-busy');
+    box.classList.remove('is-busy');
     if (chosen && chosen !== sent) send();
   }
   function send() {
     if (busy) return;
     busy = true;
     sent = chosen;
-    pick.classList.add('is-busy');
-    say('Saving...');
+    box.classList.add('is-busy');
+    flash('Saving...');
     fetch('/rating/vote', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -92,52 +108,57 @@
       if (j && j.ok) {
         saved = j.v;
         store('pv-rate', String(saved));
+        loaded = true;
+        n = j.n;
+        avg = Number(j.avg) || 0;
         totals(j);
-        if (chosen === sent) say('Thanks! You rated the guide ' + words(saved) + '. You can change it any time.', 'ok');
-      } else {
-        chosen = sent = saved;
-        check(saved);
-        fillPick(saved);
-        if (j && j.error === 'limit') say('This internet connection has already used all its ratings.', 'bad');
-        else if (j && j.error === 'changes') say('You have changed your rating a lot today. Try again tomorrow.', 'bad');
-        else say('Your rating could not be saved. Try again.', 'bad');
-      }
+        if (chosen === sent) flash('Thanks! You gave the guide ' + words(saved) + '.');
+      } else if (j && j.error === 'limit') fail('This internet connection has already used all its ratings.');
+      else if (j && j.error === 'changes') fail('You have changed your rating a lot today. Try again tomorrow.');
+      else fail('Your rating could not be saved. Try again.');
       done();
     }, function () {
-      chosen = sent = saved;
-      check(saved);
-      fillPick(saved);
-      say('Your rating could not be saved. Check your connection and try again.', 'bad');
+      fail('Your rating could not be saved. Check your connection.');
       done();
     });
   }
 
-  pick.addEventListener('change', function (e) {
+  row.addEventListener('change', function (e) {
     var v = Number(e.target.value);
     if (!(v >= 1 && v <= 10)) return;
     chosen = v;
-    fillPick(v);
-    say('You picked ' + words(v) + '.');
+    note = '';
+    paint();
     clearTimeout(timer);
     timer = setTimeout(function () { if (chosen !== sent || chosen !== saved) send(); }, 700);
   });
   row.addEventListener('pointerover', function (e) {
     var l = e.target.closest ? e.target.closest('label') : null;
-    if (l) fillPick(Number(l.htmlFor.slice(6)), true);
+    if (!l) return;
+    hover = Number(l.htmlFor.slice(6));
+    paint();
   });
-  row.addEventListener('pointerleave', function () { fillPick(chosen); });
+  row.addEventListener('pointerleave', function () {
+    hover = 0;
+    paint();
+  });
+  row.addEventListener('pointerdown', function () { ptr = Date.now(); });
+  row.addEventListener('focusin', function () {
+    focused = Date.now() - ptr > 600;
+    paint();
+  });
+  row.addEventListener('focusout', function () {
+    focused = false;
+    paint();
+  });
 
   saved = Number(store('pv-rate')) || 0;
   if (!(saved >= 1 && saved <= 10)) saved = 0;
   chosen = sent = saved;
-  if (saved) {
-    check(saved);
-    say('You rated the guide ' + words(saved) + '. Pick again to change it.');
-  }
-  fillPick(saved);
-  totals(null);
-  countEl.textContent = 'Loading ratings...';
+  check(saved);
+  paint();
   fetch('/rating', { cache: 'no-store' }).then(function (res) { return res.json(); }).then(totals, function () {
-    countEl.textContent = 'Ratings are unavailable right now.';
+    loaded = true;
+    txt.textContent = 'Ratings are unavailable right now.';
   });
 })();
