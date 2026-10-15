@@ -33,10 +33,13 @@
   box.appendChild(live);
   var stars = row.querySelectorAll('.rs');
 
+  function mine(v) {
+    return 'Your vote: <b class="rate-you">' + v / 2 + '</b>' + (v === 2 ? ' star' : ' stars');
+  }
   function avgText() {
     if (!loaded) return 'Loading ratings...';
     var t = n ? '<span>' + n.toLocaleString() + (n === 1 ? ' Vote' : ' Votes') + '</span>' : 'No votes yet. Be the first!';
-    if (saved) t += ' &middot; <span>Your vote: ' + words(saved) + '</span>';
+    if (saved) t += ' &middot; <span>' + mine(saved) + '</span>';
     return t;
   }
   function paint() {
@@ -50,7 +53,7 @@
     txt.className = 'rate-txt' + (/^!/.test(note) && !tip ? ' is-bad' : '');
     if (tip) txt.textContent = 'Rate it ' + words(hover);
     else if (note) txt.textContent = note.replace(/^!/, '');
-    else if (focused && chosen) txt.textContent = 'Your vote: ' + words(chosen);
+    else if (focused && chosen) txt.innerHTML = mine(chosen);
     else txt.innerHTML = avgText();
   }
   function flash(text) {
