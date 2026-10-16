@@ -42,6 +42,12 @@ const MOBILE_NAV_BODY = `
   </div>
 </div>
 <div class="ug-mn-section">
+  <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FNaF World <span class="ug-mn-section-arrow">/</span></button>
+  <div class="ug-mn-section-items">
+    <a href="/fnaf-world/characters"     class="ug-mn-child" data-nav-href="/fnaf-world/characters">Characters</a>
+  </div>
+</div>
+<div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
     <a href="/patch-notes/fntd1-1"        class="ug-mn-child" data-nav-href="/patch-notes/fntd1-1">FNTD1</a>
@@ -93,6 +99,12 @@ const DESKTOP_NAV_INNER = `
     <a href="/bbn/bite-by-night-tierlists" data-nav-href="/bbn/bite-by-night-tierlists">TierLists &amp; Maps</a>
     <a href="/bbn/killer-terminal"         data-nav-href="/bbn/killer-terminal">Killer Terminal</a>
     <a href="/bbn/survivor-terminal"       data-nav-href="/bbn/survivor-terminal">Survivor Terminal</a>
+  </div>
+</div>
+<div class="ug-tn-item">
+  <button class="ug-tn-btn" onclick="ugTnToggle(this)">FNaF World <span class="ug-tn-arrow">/</span></button>
+  <div class="ug-tn-drop">
+    <a href="/fnaf-world/characters"     data-nav-href="/fnaf-world/characters">Characters</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3619,6 +3631,7 @@ const SEO_SECTIONS = {
   fntd1: { name: 'Five Nights TD', path: '/fntd1/' },
   fntd2: { name: 'Five Nights TD 2', path: '/fntd2/fntd2-directory' },
   bbn: { name: 'Bite By Night', path: '/bbn/bite-by-night-directory' },
+  'fnaf-world': { name: 'FNaF World', path: '/fnaf-world/characters' },
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
@@ -3657,6 +3670,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
+  '/fnaf-world/characters': ['FNaF World Characters: Party, Bosses & Enemies', 'Every FNaF World character: all 48 party members with their health, attacks and how to unlock them, plus every boss, enemy and NPC by world.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
@@ -3720,7 +3734,8 @@ function seoHead(pathname, canonUrl, over, origin) {
 const SEO_GAMES = {
   fntd2: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd2', name: 'Five Nights TD 2', alternateName: ['FNTD2', 'FNTD 2', 'Five Nights Tower Defense 2', 'FNaF TD 2'], description: 'A FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/70400654680508' },
   fntd1: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd1', name: 'Five Nights TD', alternateName: ['FNTD', 'FNTD1', 'Five Nights Tower Defense', 'FNaF TD'], description: 'The original FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/15846919378' },
-  bbn: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-bbn', name: 'Bite By Night', alternateName: ['BBN'], description: 'A FNaF-inspired multiplayer horror game on Roblox with killers and survivors.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Horror', 'Survival'] }
+  bbn: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-bbn', name: 'Bite By Night', alternateName: ['BBN'], description: 'A FNaF-inspired multiplayer horror game on Roblox with killers and survivors.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Horror', 'Survival'] },
+  'fnaf-world': { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fnaf-world', name: 'FNaF World', alternateName: ['FNAF World', "Five Nights at Freddy's World"], description: "A Five Nights at Freddy's RPG by Scott Cawthon, starring Adventure versions of the animatronics.", gamePlatform: 'PC', applicationCategory: 'Game', genre: ['RPG'] }
 };
 function seoGamesFor(p) {
   if (p === '/') return ['fntd2', 'fntd1', 'bbn'];
@@ -4331,6 +4346,7 @@ function seoLlms() {
     ['Five Nights TD 2', p => p.indexOf('/fntd2/') === 0 || p === '/patch-notes'],
     ['Five Nights TD', p => p === '/fntd1' || p.indexOf('/fntd1/') === 0 || p === '/patch-notes/fntd1-1'],
     ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
+    ['FNaF World', p => p.indexOf('/fnaf-world/') === 0],
     ['About the site', p => p === '/sponsor' || p === '/privacy-policy']
   ];
   const skip = ['/', '/wiki', '/fntd2/patch-notes', '/bbn/codes'];
