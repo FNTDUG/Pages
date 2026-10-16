@@ -1,7 +1,6 @@
 (function (g) {
   var FW = g.FW || (g.FW = {});
   var IMG = '/fnaf-world/img/';
-  var WIKI = 'https://five-nights-at-freddys-world.fandom.com/wiki/';
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
   var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC' };
   FW.TABS = [['party', 'Party'], ['boss', 'Bosses'], ['enemy', 'Enemies'], ['npc', 'NPCs']];
@@ -120,10 +119,6 @@
     }).join('');
   };
 
-  function wikiUrl(t) {
-    var p = String(t || '').split('#');
-    return WIKI + encodeURIComponent(p[0].replace(/ /g, '_')).replace(/%2F/g, '/') + (p[1] ? '#' + encodeURIComponent(p[1].replace(/ /g, '_')) : '');
-  }
   function panel(title, body) {
     return '<section class="fwd-panel"><h3 class="fwd-h">' + title + '</h3>' + body + '</section>';
   }
@@ -182,7 +177,6 @@
     if (c.tips) about += '<h3 class="fwd-h fwd-h2">Tips</h3><p>' + esc(c.tips) + '</p>';
     if (about) h += panel('About', about);
     if (w.about && worldsOf(c).length) h += panel('About ' + esc(w.name), '<p>' + esc(w.about) + '</p>');
-    h += '<p class="fwd-src">Info and art from the <a href="' + esc(wikiUrl(c.wiki)) + '" target="_blank" rel="noopener noreferrer">FNaF World Wiki</a> on Fandom (<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>).</p>';
     return h + '</div>';
   };
 
