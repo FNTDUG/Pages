@@ -193,8 +193,9 @@
   if (typeof document === 'undefined') return;
   var root = document.getElementById('fw');
   if (!root) return;
-  var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortEl = root.querySelector('.fw-sort'), qEl = root.querySelector('.fw-q');
+  var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortBtn = root.querySelector('.fw-sort'), menu = root.querySelector('.fw-menu'), sortVal = root.querySelector('.fw-sort-v'), qEl = root.querySelector('.fw-q');
   var data = null, ix = null, state = { tab: 'party', sort: 'world', q: '' };
+  var activeOpt = null;
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0;
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
@@ -210,9 +211,50 @@
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
     });
-    var game = sortEl.querySelector('option[value="game"]');
-    if (game) game.disabled = state.tab !== 'party';
-    if (state.tab !== 'party' && state.sort === 'game') { state.sort = 'world'; sortEl.value = 'world'; }
+    syncSort();
+  }
+  function allOpts() {
+    return Array.prototype.slice.call(menu.querySelectorAll('[role="option"]'));
+  }
+  function opts() {
+    return allOpts().filter(function (o) { return !o.hidden; });
+  }
+  function syncSort() {
+    if (state.tab !== 'party' && state.sort === 'game') state.sort = 'world';
+    allOpts().forEach(function (o) {
+      var v = o.getAttribute('data-v');
+      o.hidden = v === 'game' && state.tab !== 'party';
+      o.setAttribute('aria-selected', v === state.sort ? 'true' : 'false');
+      if (v === state.sort) sortVal.textContent = o.getAttribute('data-l');
+    });
+  }
+  function setActive(o) {
+    if (activeOpt) activeOpt.classList.remove('is-active');
+    activeOpt = o || null;
+    if (activeOpt) {
+      activeOpt.classList.add('is-active');
+      menu.setAttribute('aria-activedescendant', activeOpt.id);
+    } else menu.removeAttribute('aria-activedescendant');
+  }
+  function openMenu() {
+    syncSort();
+    menu.hidden = false;
+    sortBtn.setAttribute('aria-expanded', 'true');
+    setActive(menu.querySelector('[aria-selected="true"]') || opts()[0]);
+    menu.focus();
+  }
+  function closeMenu(focus) {
+    if (menu.hidden) return;
+    menu.hidden = true;
+    sortBtn.setAttribute('aria-expanded', 'false');
+    setActive(null);
+    if (focus) sortBtn.focus();
+  }
+  function choose(o) {
+    if (!o || o.hidden) return;
+    state.sort = o.getAttribute('data-v');
+    closeMenu(true);
+    render();
   }
   function pickTab(t, focus) {
     if (!t) return;
@@ -234,7 +276,42 @@
       pickTab(tabs[j], true);
     });
   });
-  sortEl.addEventListener('change', function () { state.sort = sortEl.value; render(); });
+  sortBtn.addEventListener('click', function () {
+    if (menu.hidden) openMenu();
+    else closeMenu(true);
+  });
+  sortBtn.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    openMenu();
+  });
+  menu.addEventListener('keydown', function (e) {
+    var list = opts(), i = list.indexOf(activeOpt), k = e.key;
+    if (k === 'ArrowDown' || k === 'ArrowUp') {
+      e.preventDefault();
+      setActive(list[(i + (k === 'ArrowDown' ? 1 : -1) + list.length) % list.length]);
+    } else if (k === 'Home' || k === 'End') {
+      e.preventDefault();
+      setActive(list[k === 'Home' ? 0 : list.length - 1]);
+    } else if (k === 'Enter' || k === ' ') {
+      e.preventDefault();
+      choose(activeOpt);
+    } else if (k === 'Escape') {
+      e.preventDefault();
+      closeMenu(true);
+    } else if (k === 'Tab') closeMenu(false);
+  });
+  menu.addEventListener('click', function (e) {
+    choose(e.target.closest ? e.target.closest('[role="option"]') : null);
+  });
+  menu.addEventListener('pointermove', function (e) {
+    var o = e.target.closest ? e.target.closest('[role="option"]') : null;
+    if (o && o !== activeOpt) setActive(o);
+  });
+  document.addEventListener('pointerdown', function (e) {
+    if (!menu.hidden && !menu.parentNode.contains(e.target)) closeMenu(false);
+  });
+  window.addEventListener('blur', function () { closeMenu(false); });
   qEl.addEventListener('input', function () {
     clearTimeout(qT);
     qT = setTimeout(function () { state.q = qEl.value.trim(); render(); }, 120);

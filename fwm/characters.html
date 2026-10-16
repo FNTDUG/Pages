@@ -46,9 +46,26 @@
 .fw-q::placeholder{color:#b8c9f6;opacity:1}
 .fw-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .fw-sortw{position:relative;flex:none}
-.fw-sortw::after{content:'';position:absolute;top:50%;right:13px;width:10px;height:6px;margin-top:-3px;background:#fff;clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
-.fw-sort{height:46px;padding:0 34px 0 12px;color:#fff;font:400 17px/1 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:linear-gradient(180deg,#63adff,#2f78e4);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi);cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none}
-.fw-sort option{color:#111;text-shadow:none;font-family:system-ui,sans-serif}
+.fw-sort{display:inline-flex;align-items:center;gap:7px;height:46px;margin:0;padding:0 14px 0 13px;color:#fff;font:400 17px/1 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:linear-gradient(180deg,#63adff,#2f78e4);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .12s;-webkit-tap-highlight-color:transparent}
+.fw-sort:hover{filter:brightness(1.08)}
+.fw-sort:active{transform:translateY(3px);box-shadow:0 1px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35)}
+.fw-sort-k{color:#dbe9ff}
+.fw-sort-c{flex:none;width:11px;height:7px;margin-left:2px;background:#fff;clip-path:polygon(0 0,100% 0,50% 100%);filter:drop-shadow(0 1.5px 0 var(--fwi));transition:transform .15s}
+.fw-sort[aria-expanded="true"] .fw-sort-c{transform:rotate(180deg)}
+.fw-menu{position:absolute;top:calc(100% + 10px);right:0;z-index:30;min-width:200px;margin:0;padding:7px;list-style:none;background:#14205a;border:3px solid var(--fwi);border-radius:14px;box-shadow:0 5px 0 var(--fwi),0 14px 28px rgba(0,0,0,.4);transform-origin:top right;animation:fwMenu .14s ease-out}
+.fw-menu[hidden]{display:none}
+.fw-menu:focus{outline:none}
+.fw-menu>li{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:44px;margin:0;padding:0 12px 0 14px;color:#fff;font:400 18px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.02em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);border:2px solid transparent;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fw-menu>li::before,.fw-menu>li::marker{content:none}
+.fw-menu>li+li{margin-top:4px}
+.fw-menu>li[hidden]{display:none}
+.fw-menu>li.is-active{background:rgba(99,173,255,.28);border-color:rgba(255,255,255,.18)}
+.fw-menu:focus-visible>li.is-active{border-color:#fff}
+.fw-menu>li[aria-selected="true"]{background:linear-gradient(180deg,#ffe866,#ffbf14);border-color:var(--fwi);box-shadow:0 3px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.5)}
+.fw-menu:focus-visible>li[aria-selected="true"].is-active{outline:3px solid #fff;outline-offset:1px}
+.fw-ck{flex:none;width:16px;height:12px;fill:#fff;stroke:var(--fwi);stroke-width:1.1px;paint-order:stroke;shape-rendering:crispEdges;overflow:visible;visibility:hidden}
+.fw-menu>li[aria-selected="true"] .fw-ck{visibility:visible}
+@keyframes fwMenu{from{opacity:0;transform:translateY(-6px) scale(.96)}to{opacity:1;transform:none}}
 .fw-sec{margin-top:18px}
 .fw-sec-h{position:relative;display:flex;align-items:center;gap:10px;min-height:48px;margin:0 0 12px;padding:0 10px 0 20px;overflow:hidden;color:#fff;font:400 22px/1.1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-transform:uppercase;text-shadow:0 2px 0 var(--fwi),2px 0 0 var(--fwi),-2px 0 0 var(--fwi),0 -2px 0 var(--fwi),1.5px 1.5px 0 var(--fwi),-1.5px 1.5px 0 var(--fwi),1.5px -1.5px 0 var(--fwi),-1.5px -1.5px 0 var(--fwi),0 3px 0 var(--fwi);background:#16224d;border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi)}
 .fw-sec-bg{position:absolute;inset:0;background-position:center 62%;background-size:cover;background-repeat:no-repeat}
@@ -82,6 +99,7 @@
 .fw-card-no{font-size:12.5px;top:5px;right:5px}
 .fw-card-art{padding:22px 4px 2px}
 }
+@media (max-width:600px){.fw-sort-k{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.fw-q{padding-left:36px;background-position:11px 50%}}
 @media (max-width:360px){.fw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 html.fwd-on,html.fwd-on body{overflow:hidden}
 html.fwd-on #ug-hamburger,html.fwd-on #ug-overlay,html.fwd-on #ug-mobile-nav,html.fwd-on #ug-info-btn,html.fwd-on #ug-info-panel,html.fwd-on #ug-info-overlay,html.fwd-on #ug-sound-btn{visibility:hidden!important}
@@ -190,12 +208,13 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 }
 @media (prefers-reduced-motion:reduce){
 .fwd-pop,.fwd-pop .fwd-char,.fwd-go-r .fwd-stage,.fwd-go-l .fwd-stage,.fwd-go-r .fwd-info,.fwd-go-l .fwd-info{animation:none}
-.fw-tab,.fw .fw-card,.fwd-btn,.fwd-anim{transition:none}
+.fw-tab,.fw .fw-card,.fwd-btn,.fwd-anim,.fw-sort,.fw-sort-c{transition:none}
+.fw-menu{animation:none}
 }
 </style>
 <div class="fw" id="fw">
 <div class="fw-tabs" role="tablist" aria-label="Character types"><button type="button" role="tab" class="fw-tab" id="fw-tab-party" data-tab="party" aria-controls="fw-panel" aria-selected="true">Party <span class="fw-tab-n">48</span></button><button type="button" role="tab" class="fw-tab" id="fw-tab-boss" data-tab="boss" aria-controls="fw-panel" aria-selected="false" tabindex="-1">Bosses <span class="fw-tab-n">21</span></button><button type="button" role="tab" class="fw-tab" id="fw-tab-enemy" data-tab="enemy" aria-controls="fw-panel" aria-selected="false" tabindex="-1">Enemies <span class="fw-tab-n">43</span></button><button type="button" role="tab" class="fw-tab" id="fw-tab-npc" data-tab="npc" aria-controls="fw-panel" aria-selected="false" tabindex="-1">NPCs <span class="fw-tab-n">6</span></button></div>
-<div class="fw-tools"><label class="fw-sr" for="fw-q">Search characters</label><input id="fw-q" class="fw-q" type="search" placeholder="Search characters" autocomplete="off" spellcheck="false"><label class="fw-sr" for="fw-sort">Sort by</label><span class="fw-sortw"><select id="fw-sort" class="fw-sort"><option value="world">World</option><option value="hp">Health</option><option value="az">A to Z</option><option value="game">Game</option></select></span></div>
+<div class="fw-tools"><label class="fw-sr" for="fw-q">Search characters</label><input id="fw-q" class="fw-q" type="search" placeholder="Search characters" autocomplete="off" spellcheck="false"><div class="fw-sortw"><button type="button" class="fw-sort" id="fw-sort" aria-haspopup="listbox" aria-expanded="false" aria-controls="fw-sort-menu"><span class="fw-sort-k">Sort:</span> <span class="fw-sort-v">World</span><span class="fw-sort-c" aria-hidden="true"></span></button><ul class="fw-menu" id="fw-sort-menu" role="listbox" aria-label="Sort by" tabindex="-1" hidden><li role="option" id="fw-opt-world" data-v="world" data-l="World" aria-selected="true"><span>World</span><svg class="fw-ck" viewBox="0 0 8 6" aria-hidden="true" focusable="false"><path d="M7 0h1v2H7v1H6v1H5v1H4v1H3V5H2V4H1V3H0V2h2v1h1v1h1V3h1V2h1V1h1z"/></svg></li><li role="option" id="fw-opt-hp" data-v="hp" data-l="Health" aria-selected="false"><span>Health</span><svg class="fw-ck" viewBox="0 0 8 6" aria-hidden="true" focusable="false"><path d="M7 0h1v2H7v1H6v1H5v1H4v1H3V5H2V4H1V3H0V2h2v1h1v1h1V3h1V2h1V1h1z"/></svg></li><li role="option" id="fw-opt-az" data-v="az" data-l="A to Z" aria-selected="false"><span>A to Z</span><svg class="fw-ck" viewBox="0 0 8 6" aria-hidden="true" focusable="false"><path d="M7 0h1v2H7v1H6v1H5v1H4v1H3V5H2V4H1V3H0V2h2v1h1v1h1V3h1V2h1V1h1z"/></svg></li><li role="option" id="fw-opt-game" data-v="game" data-l="Game" aria-selected="false"><span>Game</span><svg class="fw-ck" viewBox="0 0 8 6" aria-hidden="true" focusable="false"><path d="M7 0h1v2H7v1H6v1H5v1H4v1H3V5H2V4H1V3H0V2h2v1h1v1h1V3h1V2h1V1h1z"/></svg></li></ul></div></div>
 <div class="fw-grids" id="fw-panel" role="tabpanel" aria-labelledby="fw-tab-party"><p class="fw-none">Loading characters...</p></div>
 </div>
 <script src="/fwm/fw.js" defer></script>
