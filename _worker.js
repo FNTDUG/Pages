@@ -4380,7 +4380,8 @@ const SITEMAP_DATA = {
   '/fntd2/event-story-endless': ['metas.json'],
   '/fntd2/unit-engine': ['json', 'Unit-Engine'],
   '/fntd2/trade-calculator': ['trade-calculator', 'json'],
-  '/patch-notes': ['patchnotesfntd2.html']
+  '/patch-notes': ['patchnotesfntd2.html'],
+  '/fnaf-world/characters': ['fnafworld.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',

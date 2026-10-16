@@ -1,6 +1,7 @@
 (function (g) {
   var FW = g.FW || (g.FW = {});
-  var IMG = '/fnaf-world/img/';
+  var DATA = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/fnafworld.json';
+  var LISTS = [['party', 'party'], ['bosses', 'boss'], ['enemies', 'enemy'], ['npcs', 'npc']];
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
   var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC' };
   FW.TABS = [['party', 'Party'], ['boss', 'Bosses'], ['enemy', 'Enemies'], ['npc', 'NPCs']];
@@ -22,9 +23,12 @@
     return c.worlds || [];
   }
   function hpOf(c) {
-    if (c.kind === 'party') return c.health;
-    if (c.hp) return num(c.hp[0] || c.hp[1]);
-    return num(c.hp_text);
+    if (c.kind === 'party') return num(c.health);
+    if (!c.health) return null;
+    return num(c.health.normal != null ? c.health.normal : c.health.hard);
+  }
+  function slug(s) {
+    return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
   }
   function gameOf(c) {
     return c.game || 'FNaF World';
@@ -32,17 +36,23 @@
   function index(data) {
     if (data._ix) return data._ix;
     var ix = { world: {}, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [] } };
-    data.worlds.forEach(function (w, i) { w.i = i; ix.world[w.key] = w; });
-    data.party.concat(data.others).forEach(function (c) {
-      ix.byId[c.id] = c;
-      ix.tabs[c.kind].push(c);
+    (data.worlds || []).forEach(function (w, i) { w.i = i; ix.world[w.name] = w; });
+    LISTS.forEach(function (l) {
+      (data[l[0]] || []).forEach(function (c) {
+        if (!c || !c.name) return;
+        c.kind = l[1];
+        if (!c.id) c.id = slug(c.name);
+        while (ix.byId[c.id] && ix.byId[c.id] !== c) c.id += '-' + l[1];
+        ix.byId[c.id] = c;
+        ix.tabs[l[1]].push(c);
+      });
     });
     data._ix = ix;
     return ix;
   }
   function worldOf(data, c) {
     var ix = index(data), w = worldsOf(c)[0];
-    return (w && ix.world[w]) || data.worlds[0];
+    return (w && ix.world[w]) || data.worlds[0] || { name: '', color: '#ffce1f', i: 99 };
   }
   function byName(a, b) {
     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : a.name.toLowerCase() > b.name.toLowerCase() ? 1 : 0;
@@ -50,7 +60,7 @@
   function match(c, q) {
     if (!q) return true;
     q = q.toLowerCase();
-    return c.name.toLowerCase().indexOf(q) !== -1 || worldsOf(c).join(' ').toLowerCase().indexOf(q) !== -1 || (c.kind === 'party' && (c.attacks.join(' ') + ' ' + gameOf(c)).toLowerCase().indexOf(q) !== -1);
+    return c.name.toLowerCase().indexOf(q) !== -1 || worldsOf(c).join(' ').toLowerCase().indexOf(q) !== -1 || (c.kind === 'party' && ((c.attacks || []).join(' ') + ' ' + gameOf(c)).toLowerCase().indexOf(q) !== -1);
   }
 
   FW.groups = function (data, tab, sort, q) {
@@ -72,7 +82,7 @@
     }
     var out = [], map = {};
     items.forEach(function (c) {
-      var k = sort === 'game' ? gameOf(c) : worldOf(data, c).key;
+      var k = sort === 'game' ? gameOf(c) : worldOf(data, c).name;
       if (!map[k]) { map[k] = { key: k, items: [] }; out.push(map[k]); }
       map[k].items.push(c);
     });
@@ -81,7 +91,7 @@
         gr.title = gr.key;
         gr.rank = GAME_ORDER.indexOf(gr.key) === -1 ? 50 : GAME_ORDER.indexOf(gr.key);
       } else {
-        var w = ix.world[gr.key];
+        var w = ix.world[gr.key] || worldOf(data, gr.items[0]);
         gr.title = w.name;
         gr.world = w;
         gr.rank = w.i;
@@ -100,9 +110,9 @@
   FW.card = function (data, c) {
     var w = worldOf(data, c), hp = hpOf(c);
     var h = '<li><a class="fw-card" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + w.color + '">';
-    h += '<span class="fw-card-art">' + (c.card ? '<img src="' + IMG + esc(c.card) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
+    h += '<span class="fw-card-art">' + (c.card ? '<img src="' + esc(c.card) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
     if (c.kind !== 'npc') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
-    if (c.n) h += '<span class="fw-card-no">#' + c.n + '</span>';
+    if (c.number) h += '<span class="fw-card-no">#' + esc(c.number) + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
     return h;
   };
@@ -113,7 +123,7 @@
     return gs.map(function (gr) {
       var w = gr.world, col = w ? w.color : '#ffce1f';
       var h = '<section class="fw-sec" style="--wc:' + col + '">';
-      h += '<h2 class="fw-sec-h">' + (w && w.bg ? '<span class="fw-sec-bg" style="background-image:url(' + IMG + esc(w.bg) + ')"></span>' : '') + '<span class="fw-sec-t">' + esc(gr.title) + '</span><span class="fw-sec-n">' + gr.items.length + '</span></h2>';
+      h += '<h2 class="fw-sec-h">' + (w && w.background ? '<span class="fw-sec-bg" style="background-image:url(&quot;' + esc(w.background) + '&quot;)"></span>' : '') + '<span class="fw-sec-t">' + esc(gr.title) + '</span><span class="fw-sec-n">' + gr.items.length + '</span></h2>';
       h += '<ul class="fw-grid">' + gr.items.map(function (c) { return FW.card(data, c); }).join('') + '</ul></section>';
       return h;
     }).join('');
@@ -125,18 +135,19 @@
 
   FW.detail = function (data, c, still) {
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
-    var src = still ? c.card : (party ? c.idle : c.img);
+    var anim = party && c.attackAnimation && !still;
+    var src = still ? c.card : (party ? c.idle : c.image) || c.card;
     var h = '<div class="fwd-stage">';
     h += '<div class="fwd-char-wrap">';
-    if (party && c.atk && !still) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s attack animation">';
+    if (anim) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s attack animation">';
     else h += '<div class="fwd-char">';
-    h += '<img class="fwd-anim" src="' + IMG + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
-    h += party && c.atk && !still ? '</button>' : '</div>';
+    h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
+    h += anim ? '</button>' : '</div>';
     h += '<span class="fwd-ground" aria-hidden="true"></span></div>';
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
-    if (party && c.atk && !still) h += '<p class="fwd-hint">Tap them to see their attack</p>';
+    if (anim) h += '<p class="fwd-hint">Tap them to see their attack</p>';
     h += '</div><div class="fwd-info">';
-    h += '<p class="fwd-kicker">' + KIND[c.kind] + (c.n ? ' #' + c.n : '') + ' &middot; ' + esc(c.update) + '</p>';
+    h += '<p class="fwd-kicker">' + KIND[c.kind] + (c.number ? ' #' + esc(c.number) : '') + (c.update ? ' &middot; ' + esc(c.update) : '') + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
     worldsOf(c).forEach(function (k) {
       var ww = ix.world[k];
@@ -145,31 +156,30 @@
     if (party) h += '<span class="fwd-chip">From ' + esc(gameOf(c)) + '</span>';
     h += '</div>';
     if (party) {
-      var max = 0;
-      data.party.forEach(function (p) { if (p.health > max) max = p.health; });
+      var max = 0, hp = num(c.health);
+      ix.tabs.party.forEach(function (p) { var v = num(p.health); if (v > max) max = v; });
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health <span>at level 0</span></p>';
-      h += '<p class="fwd-stat-v">' + (c.health == null ? '?' : c.health) + '</p>';
-      h += c.health == null ? '<p class="fwd-stat-note">The wiki doesn\'t list this one yet.</p>' : '<span class="fwd-bar"><span style="width:' + Math.round(c.health / max * 100) + '%"></span></span>';
+      h += '<p class="fwd-stat-v">' + (hp == null ? '?' : fmt(hp)) + '</p>';
+      h += hp == null ? '<p class="fwd-stat-note">Not known yet.</p>' : '<span class="fwd-bar"><span style="width:' + Math.round(hp / max * 100) + '%"></span></span>';
       h += '</div></section>';
-      h += panel('Attacks', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
+      if (c.attacks && c.attacks.length) h += panel('Attacks', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
         var a = data.attacks[n] || {};
-        var li = '<li class="fwd-atk" style="--c:' + (a.color || '#888') + '">';
-        li += a.icon ? '<img src="' + IMG + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
-        li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.colorName ? ' <span class="fwd-tag">' + esc(a.colorName) + (a.kind ? ' &middot; ' + esc(a.kind) : '') + '</span>' : '') + '</p>';
-        if (a.desc) li += '<p class="fwd-atk-d">' + esc(a.desc) + '</p>';
-        if (a.formula) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.formula) + '</code></p>';
+        var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
+        li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
+        li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.color ? ' <span class="fwd-tag">' + esc(a.color) + (a.type ? ' &middot; ' + esc(a.type) : '') + '</span>' : '') + '</p>';
+        if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
+        if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';
         return li + '</div></li>';
       }).join('') + '</ul>');
       if (c.unlock) h += panel('How to get', '<p>' + esc(c.unlock) + '</p>');
     } else if (c.kind !== 'npc') {
       var rows = '';
-      if (c.hp || c.atk) {
+      var hs = c.health || {}, at = c.attack || {};
+      if (c.health || c.attack) {
         rows += '<table class="fwd-tbl"><thead><tr><th scope="col"><span class="fw-sr">Stat</span></th><th scope="col">Normal</th><th scope="col">Hard</th></tr></thead><tbody>';
-        rows += '<tr><th scope="row">Health</th><td>' + fmt(c.hp && c.hp[0]) + '</td><td>' + fmt(c.hp && c.hp[1]) + '</td></tr>';
-        rows += '<tr><th scope="row">Attack</th><td>' + fmt(c.atk && c.atk[0]) + '</td><td>' + fmt(c.atk && c.atk[1]) + '</td></tr></tbody></table>';
-      } else if (c.hp_text || c.atk_text) {
-        rows += '<table class="fwd-tbl"><tbody>' + (c.hp_text ? '<tr><th scope="row">Health</th><td>' + esc(fmt(c.hp_text)) + '</td></tr>' : '') + (c.atk_text ? '<tr><th scope="row">Attack</th><td>' + esc(c.atk_text) + '</td></tr>' : '') + '</tbody></table>';
-      } else rows = '<p class="fwd-stat-note">The wiki doesn\'t list stats for this one yet.</p>';
+        rows += '<tr><th scope="row">Health</th><td>' + esc(fmt(hs.normal)) + '</td><td>' + esc(fmt(hs.hard)) + '</td></tr>';
+        rows += '<tr><th scope="row">Attack</th><td>' + esc(fmt(at.normal)) + '</td><td>' + esc(fmt(at.hard)) + '</td></tr></tbody></table>';
+      } else rows = '<p class="fwd-stat-note">Stats aren\'t known for this one yet.</p>';
       h += panel('Stats', rows);
     }
     var about = '';
@@ -195,7 +205,8 @@
     mount.innerHTML = FW.grid(data, state.tab, state.sort, state.q);
     mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
     Array.prototype.forEach.call(tabs, function (t) {
-      var on = t.getAttribute('data-tab') === state.tab;
+      var on = t.getAttribute('data-tab') === state.tab, n = t.querySelector('.fw-tab-n');
+      if (n) n.textContent = ix.tabs[t.getAttribute('data-tab')].length;
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
     });
@@ -287,27 +298,28 @@
     sc.addEventListener('pointercancel', function () { swipeX = null; });
   }
   function attack(b) {
-    if (!cur || !cur.atk) return;
-    var img = b.querySelector('img');
+    if (!cur || !cur.attackAnimation) return;
+    var img = b.querySelector('img'), back = cur.idle || cur.card;
     clearTimeout(atkT);
-    img.src = IMG + cur.atk;
+    img.src = cur.attackAnimation;
     b.classList.add('is-atk');
     atkT = setTimeout(function () {
-      img.src = IMG + cur.idle;
+      img.src = back;
       b.classList.remove('is-atk');
     }, 2400);
   }
   function preload(c) {
-    if (!c) return;
+    var u = c && (c.kind === 'party' ? c.idle : c.image);
+    if (!u) return;
     var i = new Image();
-    i.src = IMG + (c.kind === 'party' ? c.idle : c.img);
+    i.src = u;
   }
   function show(c, dir) {
     cur = c;
     clearTimeout(atkT);
     var w = worldOf(data, c), still = reduced();
     dlg.style.setProperty('--wc', w.color);
-    dlg.querySelector('.fwd-bg').style.backgroundImage = 'url(' + IMG + w.bg + ')';
+    dlg.querySelector('.fwd-bg').style.backgroundImage = w.background ? 'url("' + String(w.background).replace(/["\\]/g, '') + '")' : 'none';
     var inner = dlg.querySelector('.fwd-in');
     inner.innerHTML = FW.detail(data, c, still);
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
@@ -386,7 +398,7 @@
   window.addEventListener('popstate', fromHash);
   window.addEventListener('hashchange', fromHash);
 
-  fetch('/fnaf-world/characters.json').then(function (r) {
+  fetch(DATA, { cache: 'no-cache' }).then(function (r) {
     if (!r.ok) throw new Error(r.status);
     return r.json();
   }).then(function (d) {
@@ -396,9 +408,6 @@
     render();
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
-    var p = document.createElement('p');
-    p.className = 'fw-none';
-    p.textContent = 'The character details could not load. Refresh the page to try again.';
-    mount.insertBefore(p, mount.firstChild);
+    mount.innerHTML = '<p class="fw-none">The characters could not load. Refresh the page to try again.</p>';
   });
 })(typeof window !== 'undefined' ? window : this);
