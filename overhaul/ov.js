@@ -38,7 +38,7 @@
   if (SECTIONS[game]) h.setAttribute('data-game', game);
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
-  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index'];
+  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
   var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]');
   function hero() {
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
@@ -173,7 +173,9 @@
     '/bbn/bite-by-night-tierlists': { tint: 'pink', go: 'Open TierLists & Maps' },
     '/bbn/killer-terminal': { tint: 'green', go: 'Open the Terminals' },
     '/fntd2/codes': { tint: 'green', go: 'Open Codes' },
-    '/bbn/codes': { tint: 'blue', go: 'Open Codes' }
+    '/bbn/codes': { tint: 'blue', go: 'Open Codes' },
+    '/fwm/roster': { tint: 'yellow', go: 'Open the Roster' },
+    '/fwm/tech-specs': { tint: 'green', go: 'Open Tech Specs' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');

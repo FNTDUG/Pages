@@ -3618,11 +3618,12 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 3;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
   if (p === '/fwm/tech-specs') return 'fwm-specs';
+  if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
   if (p === '/patch-notes/bbn-patch-notes') return 'bbn';
@@ -3635,7 +3636,7 @@ const SEO_SECTIONS = {
   fntd1: { name: 'Five Nights TD', path: '/fntd1/' },
   fntd2: { name: 'Five Nights TD 2', path: '/fntd2/fntd2-directory' },
   bbn: { name: 'Bite By Night', path: '/bbn/bite-by-night-directory' },
-  fwm: { name: 'FNaF World Multiplayer', path: '/fwm/roster' },
+  fwm: { name: 'FNaF World Multiplayer', path: '/fwm/fwm-directory' },
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
@@ -3674,6 +3675,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, plus every Byte and Chip in Tech Specs.'],
   '/fwm/tech-specs': ['FWM Tech Specs: Every FNaF World Multiplayer Byte & Chip', 'Every Byte and Chip in FNaF World Multiplayer on Roblox: what each one does, what Bytes cost from Lolbit, and where to find every Green, Gold and Red chip.'],
   '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
