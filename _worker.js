@@ -3616,10 +3616,11 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 1;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Characters on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
+  if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
   if (p === '/patch-notes/bbn-patch-notes') return 'bbn';
   const g = p.split('/')[1];
@@ -4306,8 +4307,44 @@ function seoValuesHtml(data, values) {
   return seoBlock('FNTD2 trading values list', body);
 }
 
+let seoFwm = null, seoFwmAt = 0;
+async function seoLoadFwm() {
+  if (seoFwm && Date.now() - seoFwmAt < 300000) return seoFwm;
+  const r = await fetch(PARVUS_RAW + 'fnafworld.json', { cf: { cacheTtl: 300, cacheEverything: true } });
+  if (!r.ok) return seoFwm;
+  seoFwm = await r.json();
+  seoFwmAt = Date.now();
+  return seoFwm;
+}
+function seoFwmHtml(d) {
+  if (!d || !Array.isArray(d.party)) return '';
+  const link = c => '<a href="/fwm/characters#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
+  const val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
+  const pair = o => o ? val(o.normal) + ' / ' + val(o.hard) : '?';
+  const out = ['<h2>FNaF World Multiplayer characters</h2><p>' + d.party.length + ' party members, ' + (d.bosses || []).length + ' bosses, ' + (d.enemies || []).length + ' enemies and ' + (d.npcs || []).length + ' NPCs in FNaF World Multiplayer on Roblox.</p>'];
+  out.push('<h3>Party members</h3><div class="ug-seo-wrap"><table><thead><tr><th>Character</th><th>World</th><th>Health</th><th>Attacks</th><th>How to get</th></tr></thead><tbody>' +
+    d.party.filter(c => c && c.name).map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.world || '') + '</td><td>' + val(c.health) + '</td><td>' + seoEsc((c.attacks || []).join(', ')) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') +
+    '</tbody></table></div>');
+  [['bosses', 'Bosses'], ['enemies', 'Enemies']].forEach(k => {
+    const list = (d[k[0]] || []).filter(c => c && c.name);
+    if (!list.length) return;
+    out.push('<h3>' + k[1] + '</h3><div class="ug-seo-wrap"><table><thead><tr><th>Name</th><th>World</th><th>Health (Normal / Hard)</th><th>Attack (Normal / Hard)</th></tr></thead><tbody>' +
+      list.map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc((c.worlds || []).join(', ')) + '</td><td>' + pair(c.health) + '</td><td>' + pair(c.attack) + '</td></tr>').join('') +
+      '</tbody></table></div>');
+  });
+  const npcs = (d.npcs || []).filter(c => c && c.name);
+  if (npcs.length) out.push('<h3>NPCs</h3><ul>' + npcs.map(c => '<li>' + link(c) + (c.about ? ': ' + seoEsc(c.about) : '') + '</li>').join('') + '</ul>');
+  return seoBlock('FNaF World Multiplayer characters as text', out.join(''));
+}
+
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
+  if (p === '/fwm/characters') {
+    const d = await seoTimed(seoLoadFwm(), 2500);
+    let html = '';
+    try { html = seoFwmHtml(d); } catch (e) { html = ''; }
+    return html ? { html } : null;
+  }
   const guide = SEO_GUIDES[p];
   if (guide) {
     const [data, src, nine] = await Promise.all([seoTimed(parvusLoad(), 2500), seoTimed(pageSrc(), 2500), seoTimed(seoLoadNine(), 2500)]);
