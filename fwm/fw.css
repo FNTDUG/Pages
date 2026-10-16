@@ -185,8 +185,13 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fw-card-cost{background:#d98a00}
 .fw-card-cost svg{width:11px;height:11px}
 .fwd-char--byte .fwd-anim{width:min(300px,26vw)}
+.fw-card--armor .fw-card-art img,#ug-content .fw .fw-card--armor .fw-card-art img{width:auto;height:auto;max-width:68%;max-height:86%;filter:drop-shadow(0 4px 0 rgba(7,11,28,.4))}
+.fw-card--armor .fw-card-art{padding:24px 6px 8px;align-items:center}
+.fwd-char--armor .fwd-anim{width:auto;height:min(240px,34vh);aspect-ratio:auto}
+.fwd-shield{fill:#6fa8ff}
+.fwd-bar--blue span{background:linear-gradient(180deg,#9cc8ff,#3f6fe6)}
 .fwd-char--chip .fwd-anim{width:auto;height:min(240px,34vh);aspect-ratio:auto;image-rendering:pixelated}
 .fwd-banner{display:block;width:min(400px,84vw);height:auto;margin:6px 0 0;image-rendering:pixelated;border:3px solid var(--fwi);border-radius:6px;box-shadow:0 4px 0 var(--fwi)}
 .fwd-coin{fill:#ffc21a}
 .fwd-bar--gold span{background:linear-gradient(180deg,#ffe866,#f0a500)}
-@media (max-width:860px){.fwd-char--byte .fwd-anim{width:min(230px,60vw)}.fwd-char--chip .fwd-anim{height:min(180px,30vh)}}
+@media (max-width:860px){.fwd-char--byte .fwd-anim{width:min(230px,60vw)}.fwd-char--chip .fwd-anim,.fwd-char--armor .fwd-anim{height:min(180px,30vh)}}

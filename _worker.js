@@ -3675,8 +3675,8 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, plus every Byte and Chip in Tech Specs.'],
-  '/fwm/tech-specs': ['FWM Tech Specs: Every FNaF World Multiplayer Byte & Chip', 'Every Byte and Chip in FNaF World Multiplayer on Roblox: what each one does, what Bytes cost from Lolbit, and where to find every Green, Gold and Red chip.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, plus every Byte, Chip and armor upgrade in Tech Specs.'],
+  '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -4325,12 +4325,14 @@ async function seoLoadFwm(file) {
 function seoFwmSpecsHtml(d) {
   if (!d || !Array.isArray(d.bytes)) return '';
   const link = c => '<a href="/fwm/tech-specs#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
-  const bytes = d.bytes.filter(c => c && c.name), chips = (d.chips || []).filter(c => c && c.name);
-  const out = ['<h2>FNaF World Multiplayer tech specs</h2><p>' + bytes.length + ' Bytes and ' + chips.length + ' Chips in FNaF World Multiplayer on Roblox.</p>'];
+  const bytes = d.bytes.filter(c => c && c.name), chips = (d.chips || []).filter(c => c && c.name), armor = (d.armor || []).filter(c => c && c.name);
+  const out = ['<h2>FNaF World Multiplayer tech specs</h2><p>' + bytes.length + ' Bytes, ' + chips.length + ' Chips and ' + armor.length + ' Mendo-Armor upgrades in FNaF World Multiplayer on Roblox.</p>'];
   out.push('<h3>Bytes</h3><div class="ug-seo-wrap"><table><thead><tr><th>Byte</th><th>Type</th><th>Price (Faz Tokens)</th><th>What it does</th><th>How to get</th></tr></thead><tbody>' +
     bytes.map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.group || '') + '</td><td>' + (c.price == null ? '-' : seoNum(c.price)) + '</td><td>' + seoEsc(c.effect || '') + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') + '</tbody></table></div>');
   if (chips.length) out.push('<h3>Chips</h3><div class="ug-seo-wrap"><table><thead><tr><th>Chip</th><th>Tier</th><th>What it does</th><th>Where to find it</th></tr></thead><tbody>' +
     chips.map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.group || '') + '</td><td>' + seoEsc(c.effect || '') + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') + '</tbody></table></div>');
+  if (armor.length) out.push('<h3>Mendo-Armor</h3><div class="ug-seo-wrap"><table><thead><tr><th>Armor</th><th>Defense</th><th>Price (Faz Tokens)</th><th>How to get</th></tr></thead><tbody>' +
+    armor.map(c => '<tr><td>' + link(c) + '</td><td>' + (c.defense == null ? '-' : '+' + seoNum(c.defense)) + '</td><td>' + (c.price == null ? '-' : c.price === 0 ? 'Free' : seoNum(c.price)) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') + '</tbody></table></div>');
   return seoBlock('FNaF World Multiplayer tech specs as text', out.join(''));
 }
 function seoFwmHtml(d) {

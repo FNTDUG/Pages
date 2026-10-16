@@ -1,12 +1,13 @@
 (function (g) {
   var FW = g.FW || (g.FW = {});
   var DATA = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/fnafworld.json';
-  var LISTS = [['party', 'party'], ['bosses', 'boss'], ['enemies', 'enemy'], ['npcs', 'npc'], ['bytes', 'byte'], ['chips', 'chip']];
-  var GROUPS = { byte: 'bytes', chip: 'chips' };
+  var LISTS = [['party', 'party'], ['bosses', 'boss'], ['enemies', 'enemy'], ['npcs', 'npc'], ['bytes', 'byte'], ['chips', 'chip'], ['armor', 'armor']];
+  var GROUPS = { byte: 'bytes', chip: 'chips', armor: 'armor' };
   var ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
-  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip' };
+  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor' };
   var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
+  var SHIELD = '<path d="M0 0h7v4H6v1H5v1H4v1H3V6H2V5H1V4H0z"/>';
   var COIN = '<path d="M2 0h3v1h1v1h1v3H6v1H5v1H2V6H1V5H0V2h1V1h1zm1 2v3h1V2z"/>';
 
   function esc(s) {
@@ -25,7 +26,7 @@
     return c.worlds || [];
   }
   function hpOf(c) {
-    if (c.kind === 'byte') return num(c.price);
+    if (c.kind === 'byte' || c.kind === 'armor') return num(c.price);
     if (c.kind === 'party') return num(c.health);
     if (!c.health) return null;
     return num(c.health.normal != null ? c.health.normal : c.health.hard);
@@ -38,7 +39,7 @@
   }
   function index(data) {
     if (data._ix) return data._ix;
-    var ix = { world: {}, group: { byte: {}, chip: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [] } };
+    var ix = { world: {}, group: { byte: {}, chip: {}, armor: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [], armor: [] } };
     (data.worlds || []).forEach(function (w, i) { w.i = i; ix.world[w.name] = w; });
     Object.keys(GROUPS).forEach(function (k) {
       ((data.groups || {})[GROUPS[k]] || []).forEach(function (gr, i) { gr.i = i; ix.group[k][gr.name] = gr; });
@@ -145,8 +146,9 @@
     var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '');
     var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
     h += '<span class="fw-card-art">' + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
-    if (c.kind === 'byte') {
-      if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
+    if (c.kind === 'byte' || c.kind === 'armor') {
+      if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
+      else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
     } else if (c.kind !== 'npc' && c.kind !== 'chip') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
     if (c.number) h += '<span class="fw-card-no">#' + esc(c.number) + '</span>';
     else if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
@@ -171,14 +173,14 @@
   }
 
   function specDetail(data, c, still) {
-    var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip';
+    var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip', armor = c.kind === 'armor';
     var src = chip ? (gr && gr.icon) : (still ? c.card : c.image || c.card);
-    var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char' + (chip ? ' fwd-char--chip' : ' fwd-char--byte') + '">';
+    var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char' + (chip ? ' fwd-char--chip' : armor ? ' fwd-char--armor' : ' fwd-char--byte') + '">';
     if (src) h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
     h += '</div><span class="fwd-ground" aria-hidden="true"></span></div>';
     if (chip && c.image) h += '<img class="fwd-banner" src="' + esc(c.image) + '" alt="" width="400" height="100" decoding="async">';
     h += '</div><div class="fwd-info">';
-    h += '<p class="fwd-kicker">' + (chip ? esc(c.group || '') + ' chip' : 'Byte' + (c.tier ? ' &middot; Tier ' + esc(c.tier) : c.group ? ' &middot; ' + esc(c.group) : '')) + '</p>';
+    h += '<p class="fwd-kicker">' + (chip ? esc(c.group || '') + ' chip' : (armor ? KIND.armor : 'Byte') + (c.tier ? ' &middot; Tier ' + esc(c.tier) : c.group ? ' &middot; ' + esc(c.group) : '')) + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
     worldsOf(c).forEach(function (k) {
       var ww = ix.world[k];
@@ -186,11 +188,17 @@
     });
     if (gr) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + esc(gr.color || '#2b3870') + '">' + esc(gr.name) + '</span>';
     h += '</div>';
-    if (c.kind === 'byte' && num(c.price) != null) {
+    if (armor && num(c.defense) != null) {
+      var dmax = 0, df = num(c.defense);
+      ix.tabs.armor.forEach(function (b) { var v = num(b.defense); if (v > dmax) dmax = v; });
+      h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart fwd-shield" viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + SHIELD + '</svg><div class="fwd-stat-b"><p class="fwd-stat-l">Defense</p>';
+      h += '<p class="fwd-stat-v">+' + fmt(df) + '</p><span class="fwd-bar fwd-bar--blue"><span style="width:' + Math.max(3, Math.round(df / (dmax || 1) * 100)) + '%"></span></span></div></section>';
+    }
+    if ((c.kind === 'byte' || armor) && num(c.price) != null) {
       var max = 0, pr = num(c.price);
-      ix.tabs.byte.forEach(function (b) { var v = num(b.price); if (v > max) max = v; });
+      ix.tabs[c.kind].forEach(function (b) { var v = num(b.price); if (v > max) max = v; });
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart fwd-coin" viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg><div class="fwd-stat-b"><p class="fwd-stat-l">Price <span>in Faz Tokens</span></p>';
-      h += '<p class="fwd-stat-v">' + fmt(pr) + '</p><span class="fwd-bar fwd-bar--gold"><span style="width:' + Math.max(3, Math.round(pr / max * 100)) + '%"></span></span></div></section>';
+      h += '<p class="fwd-stat-v">' + (pr === 0 ? 'Free' : fmt(pr)) + '</p><span class="fwd-bar fwd-bar--gold"><span style="width:' + Math.max(3, Math.round(pr / (max || 1) * 100)) + '%"></span></span></div></section>';
     }
     if (c.effect) h += panel('What it does', '<p>' + esc(c.effect) + '</p>');
     if (c.unlock) h += panel(chip ? 'Where to find it' : 'How to get', '<p>' + esc(c.unlock) + '</p>');
