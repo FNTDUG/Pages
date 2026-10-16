@@ -1,11 +1,13 @@
 (function (g) {
   var FW = g.FW || (g.FW = {});
   var DATA = 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/fnafworld.json';
-  var LISTS = [['party', 'party'], ['bosses', 'boss'], ['enemies', 'enemy'], ['npcs', 'npc']];
+  var LISTS = [['party', 'party'], ['bosses', 'boss'], ['enemies', 'enemy'], ['npcs', 'npc'], ['bytes', 'byte'], ['chips', 'chip']];
+  var GROUPS = { byte: 'bytes', chip: 'chips' };
+  var ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
-  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC' };
-  FW.TABS = [['party', 'Party'], ['boss', 'Bosses'], ['enemy', 'Enemies'], ['npc', 'NPCs']];
-  FW.SORTS = [['world', 'World'], ['hp', 'Health'], ['az', 'A to Z'], ['game', 'Game']];
+  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip' };
+  var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
+  var COIN = '<path d="M2 0h3v1h1v1h1v3H6v1H5v1H2V6H1V5H0V2h1V1h1zm1 2v3h1V2z"/>';
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -19,10 +21,11 @@
     return String(v).replace(/\d{4,}/g, function (d) { return d.replace(/\B(?=(\d{3})+(?!\d))/g, ','); });
   }
   function worldsOf(c) {
-    if (c.kind === 'party') return c.world ? [c.world] : [];
+    if (c.world) return [c.world];
     return c.worlds || [];
   }
   function hpOf(c) {
+    if (c.kind === 'byte') return num(c.price);
     if (c.kind === 'party') return num(c.health);
     if (!c.health) return null;
     return num(c.health.normal != null ? c.health.normal : c.health.hard);
@@ -35,8 +38,11 @@
   }
   function index(data) {
     if (data._ix) return data._ix;
-    var ix = { world: {}, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [] } };
+    var ix = { world: {}, group: { byte: {}, chip: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [] } };
     (data.worlds || []).forEach(function (w, i) { w.i = i; ix.world[w.name] = w; });
+    Object.keys(GROUPS).forEach(function (k) {
+      ((data.groups || {})[GROUPS[k]] || []).forEach(function (gr, i) { gr.i = i; ix.group[k][gr.name] = gr; });
+    });
     LISTS.forEach(function (l) {
       (data[l[0]] || []).forEach(function (c) {
         if (!c || !c.name) return;
@@ -54,18 +60,38 @@
     var ix = index(data), w = worldsOf(c)[0];
     return (w && ix.world[w]) || data.worlds[0] || { name: '', color: '#ffce1f', i: 99 };
   }
+  function groupOf(data, c) {
+    var gs = index(data).group[c.kind];
+    return gs && c.group ? gs[c.group] || null : null;
+  }
+  function colorOf(data, c) {
+    var gr = groupOf(data, c);
+    return gr && gr.color ? gr.color : worldOf(data, c).color;
+  }
   function byName(a, b) {
     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : a.name.toLowerCase() > b.name.toLowerCase() ? 1 : 0;
   }
   function match(c, q) {
     if (!q) return true;
     q = q.toLowerCase();
-    return c.name.toLowerCase().indexOf(q) !== -1 || worldsOf(c).join(' ').toLowerCase().indexOf(q) !== -1 || (c.kind === 'party' && ((c.attacks || []).join(' ') + ' ' + gameOf(c)).toLowerCase().indexOf(q) !== -1);
+    var extra = c.kind === 'party' ? (c.attacks || []).join(' ') + ' ' + gameOf(c) : (c.group || '') + ' ' + (c.effect || '');
+    return (c.name + ' ' + worldsOf(c).join(' ') + ' ' + extra).toLowerCase().indexOf(q) !== -1;
   }
 
   FW.groups = function (data, tab, sort, q) {
     var ix = index(data), items = ix.tabs[tab].filter(function (c) { return match(c, q); });
     if (sort === 'game' && tab !== 'party') sort = 'world';
+    if (sort === 'group' && !GROUPS[tab]) sort = 'world';
+    if (sort === 'price') {
+      items = items.slice().sort(function (a, b) {
+        var x = num(a.price), y = num(b.price);
+        if (x == null && y == null) return byName(a, b);
+        if (x == null) return 1;
+        if (y == null) return -1;
+        return x - y || byName(a, b);
+      });
+      return items.length ? [{ key: 'price', title: 'Cheapest first', items: items }] : [];
+    }
     if (sort === 'hp') {
       items = items.slice().sort(function (a, b) {
         var x = hpOf(a), y = hpOf(b);
@@ -82,7 +108,8 @@
     }
     var out = [], map = {};
     items.forEach(function (c) {
-      var k = sort === 'game' ? gameOf(c) : worldOf(data, c).name;
+      var gr = sort === 'group' ? groupOf(data, c) : null;
+      var k = sort === 'game' ? gameOf(c) : sort === 'group' ? (gr ? gr.name : c.group || 'Other') : worldOf(data, c).name;
       if (!map[k]) { map[k] = { key: k, items: [] }; out.push(map[k]); }
       map[k].items.push(c);
     });
@@ -90,6 +117,13 @@
       if (sort === 'game') {
         gr.title = gr.key;
         gr.rank = GAME_ORDER.indexOf(gr.key) === -1 ? 50 : GAME_ORDER.indexOf(gr.key);
+      } else if (sort === 'group') {
+        var g2 = ix.group[tab][gr.key], w0 = worldsOf(gr.items[0])[0], same = gr.items.every(function (c) { return worldsOf(c)[0] === w0; });
+        gr.title = gr.key;
+        gr.color = g2 && g2.color;
+        gr.icon = g2 && g2.icon;
+        gr.world = same && ix.world[w0] ? { name: gr.key, color: gr.color || ix.world[w0].color, background: ix.world[w0].background } : { name: gr.key, color: gr.color || '#ffce1f' };
+        gr.rank = g2 ? g2.i : 99;
       } else {
         var w = ix.world[gr.key] || worldOf(data, gr.items[0]);
         gr.title = w.name;
@@ -108,18 +142,21 @@
   };
 
   FW.card = function (data, c) {
-    var w = worldOf(data, c), hp = hpOf(c);
-    var h = '<li><a class="fw-card" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + w.color + '">';
-    h += '<span class="fw-card-art">' + (c.card ? '<img src="' + esc(c.card) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
-    if (c.kind !== 'npc') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
+    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '');
+    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
+    h += '<span class="fw-card-art">' + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
+    if (c.kind === 'byte') {
+      if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
+    } else if (c.kind !== 'npc' && c.kind !== 'chip') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
     if (c.number) h += '<span class="fw-card-no">#' + esc(c.number) + '</span>';
+    else if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
     return h;
   };
 
   FW.grid = function (data, tab, sort, q) {
     var gs = FW.groups(data, tab, sort, q);
-    if (!gs.length) return '<p class="fw-none">No characters match that search.</p>';
+    if (!gs.length) return '<p class="fw-none">Nothing matches that search.</p>';
     return gs.map(function (gr) {
       var w = gr.world, col = w ? w.color : '#ffce1f';
       var h = '<section class="fw-sec" style="--wc:' + col + '">';
@@ -133,7 +170,37 @@
     return '<section class="fwd-panel"><h3 class="fwd-h">' + title + '</h3>' + body + '</section>';
   }
 
+  function specDetail(data, c, still) {
+    var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip';
+    var src = chip ? (gr && gr.icon) : (still ? c.card : c.image || c.card);
+    var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char' + (chip ? ' fwd-char--chip' : ' fwd-char--byte') + '">';
+    if (src) h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
+    h += '</div><span class="fwd-ground" aria-hidden="true"></span></div>';
+    if (chip && c.image) h += '<img class="fwd-banner" src="' + esc(c.image) + '" alt="" width="400" height="100" decoding="async">';
+    h += '</div><div class="fwd-info">';
+    h += '<p class="fwd-kicker">' + (chip ? esc(c.group || '') + ' chip' : 'Byte' + (c.tier ? ' &middot; Tier ' + esc(c.tier) : c.group ? ' &middot; ' + esc(c.group) : '')) + '</p>';
+    h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
+    worldsOf(c).forEach(function (k) {
+      var ww = ix.world[k];
+      if (ww) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + ww.color + '">' + esc(ww.name) + '</span>';
+    });
+    if (gr) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + esc(gr.color || '#2b3870') + '">' + esc(gr.name) + '</span>';
+    h += '</div>';
+    if (c.kind === 'byte' && num(c.price) != null) {
+      var max = 0, pr = num(c.price);
+      ix.tabs.byte.forEach(function (b) { var v = num(b.price); if (v > max) max = v; });
+      h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart fwd-coin" viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg><div class="fwd-stat-b"><p class="fwd-stat-l">Price <span>in Faz Tokens</span></p>';
+      h += '<p class="fwd-stat-v">' + fmt(pr) + '</p><span class="fwd-bar fwd-bar--gold"><span style="width:' + Math.max(3, Math.round(pr / max * 100)) + '%"></span></span></div></section>';
+    }
+    if (c.effect) h += panel('What it does', '<p>' + esc(c.effect) + '</p>');
+    if (c.unlock) h += panel(chip ? 'Where to find it' : 'How to get', '<p>' + esc(c.unlock) + '</p>');
+    if (gr && gr.about) h += panel('About ' + esc(gr.name) + (chip ? ' chips' : ''), '<p>' + esc(gr.about) + '</p>');
+    if (w.about && worldsOf(c).length) h += panel('About ' + esc(w.name), '<p>' + esc(w.about) + '</p>');
+    return h + '</div>';
+  }
+
   FW.detail = function (data, c, still) {
+    if (GROUPS[c.kind]) return specDetail(data, c, still);
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
     var anim = party && c.attackAnimation && !still;
     var src = still ? c.card : (party ? c.idle : c.image) || c.card;
@@ -194,7 +261,9 @@
   var root = document.getElementById('fw');
   if (!root) return;
   var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortBtn = root.querySelector('.fw-sort'), menu = root.querySelector('.fw-menu'), sortVal = root.querySelector('.fw-sort-v'), qEl = root.querySelector('.fw-q');
-  var data = null, ix = null, state = { tab: 'party', sort: 'world', q: '' };
+  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab');
+  var baseSort = root.getAttribute('data-sort') || 'world';
+  var data = null, ix = null, state = { tab: firstTab || 'party', sort: baseSort, q: '' };
   var activeOpt = null;
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0;
   function reduced() {
@@ -203,6 +272,7 @@
 
   function render() {
     if (!data) return;
+    syncSort();
     mount.innerHTML = FW.grid(data, state.tab, state.sort, state.q);
     mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
     Array.prototype.forEach.call(tabs, function (t) {
@@ -219,11 +289,16 @@
   function opts() {
     return allOpts().filter(function (o) { return !o.hidden; });
   }
+  function fits(o) {
+    var t = o.getAttribute('data-tabs');
+    return !t || (' ' + t + ' ').indexOf(' ' + state.tab + ' ') !== -1;
+  }
   function syncSort() {
-    if (state.tab !== 'party' && state.sort === 'game') state.sort = 'world';
+    var ok = allOpts().some(function (o) { return o.getAttribute('data-v') === state.sort && fits(o); });
+    if (!ok) state.sort = baseSort;
     allOpts().forEach(function (o) {
       var v = o.getAttribute('data-v');
-      o.hidden = v === 'game' && state.tab !== 'party';
+      o.hidden = !fits(o);
       o.setAttribute('aria-selected', v === state.sort ? 'true' : 'false');
       if (v === state.sort) sortVal.textContent = o.getAttribute('data-l');
     });
@@ -333,9 +408,9 @@
     dlg.setAttribute('aria-modal', 'true');
     dlg.setAttribute('aria-labelledby', 'fwd-name');
     dlg.innerHTML = '<div class="fwd-bg"></div><div class="fwd-shade"></div><div class="fwd-scroll"><div class="fwd-in"></div></div>' +
-      '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to all characters">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
-      '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous character">' + ICON_L + '</button>' +
-      '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next character">' + ICON_R + '</button></div>';
+      '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
+      '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
+      '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next">' + ICON_R + '</button></div>';
     document.body.appendChild(dlg);
     dlg.querySelector('.fwd-back').addEventListener('click', close);
     dlg.querySelector('.fwd-prev').addEventListener('click', function () { step(-1); });
@@ -475,7 +550,7 @@
   window.addEventListener('popstate', fromHash);
   window.addEventListener('hashchange', fromHash);
 
-  fetch(DATA, { cache: 'no-cache' }).then(function (r) {
+  fetch(root.getAttribute('data-src') || DATA, { cache: 'no-cache' }).then(function (r) {
     if (!r.ok) throw new Error(r.status);
     return r.json();
   }).then(function (d) {
