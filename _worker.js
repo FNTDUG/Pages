@@ -44,7 +44,7 @@ const MOBILE_NAV_BODY = `
 <div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">FWM <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
-    <a href="/fwm/characters"            class="ug-mn-child" data-nav-href="/fwm/characters">Characters</a>
+    <a href="/fwm/roster"                class="ug-mn-child" data-nav-href="/fwm/roster">Roster</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -104,7 +104,7 @@ const DESKTOP_NAV_INNER = `
 <div class="ug-tn-item">
   <button class="ug-tn-btn" onclick="ugTnToggle(this)">FWM <span class="ug-tn-arrow">/</span></button>
   <div class="ug-tn-drop">
-    <a href="/fwm/characters"            data-nav-href="/fwm/characters">Characters</a>
+    <a href="/fwm/roster"                data-nav-href="/fwm/roster">Roster</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3615,8 +3615,8 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_OG_V = 1;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Characters on the FNTD User Guide' };
+const SEO_OG_V = 2;
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
@@ -3632,7 +3632,7 @@ const SEO_SECTIONS = {
   fntd1: { name: 'Five Nights TD', path: '/fntd1/' },
   fntd2: { name: 'Five Nights TD 2', path: '/fntd2/fntd2-directory' },
   bbn: { name: 'Bite By Night', path: '/bbn/bite-by-night-directory' },
-  fwm: { name: 'FNaF World Multiplayer', path: '/fwm/characters' },
+  fwm: { name: 'FNaF World Multiplayer', path: '/fwm/roster' },
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
@@ -3671,7 +3671,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/characters': ['FNaF World Multiplayer Characters (FWM) on Roblox', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
+  '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
@@ -4318,10 +4318,10 @@ async function seoLoadFwm() {
 }
 function seoFwmHtml(d) {
   if (!d || !Array.isArray(d.party)) return '';
-  const link = c => '<a href="/fwm/characters#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
+  const link = c => '<a href="/fwm/roster#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
   const val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
   const pair = o => o ? val(o.normal) + ' / ' + val(o.hard) : '?';
-  const out = ['<h2>FNaF World Multiplayer characters</h2><p>' + d.party.length + ' party members, ' + (d.bosses || []).length + ' bosses, ' + (d.enemies || []).length + ' enemies and ' + (d.npcs || []).length + ' NPCs in FNaF World Multiplayer on Roblox.</p>'];
+  const out = ['<h2>FNaF World Multiplayer roster</h2><p>' + d.party.length + ' party members, ' + (d.bosses || []).length + ' bosses, ' + (d.enemies || []).length + ' enemies and ' + (d.npcs || []).length + ' NPCs in FNaF World Multiplayer on Roblox.</p>'];
   out.push('<h3>Party members</h3><div class="ug-seo-wrap"><table><thead><tr><th>Character</th><th>World</th><th>Health</th><th>Attacks</th><th>How to get</th></tr></thead><tbody>' +
     d.party.filter(c => c && c.name).map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.world || '') + '</td><td>' + val(c.health) + '</td><td>' + seoEsc((c.attacks || []).join(', ')) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') +
     '</tbody></table></div>');
@@ -4334,12 +4334,12 @@ function seoFwmHtml(d) {
   });
   const npcs = (d.npcs || []).filter(c => c && c.name);
   if (npcs.length) out.push('<h3>NPCs</h3><ul>' + npcs.map(c => '<li>' + link(c) + (c.about ? ': ' + seoEsc(c.about) : '') + '</li>').join('') + '</ul>');
-  return seoBlock('FNaF World Multiplayer characters as text', out.join(''));
+  return seoBlock('FNaF World Multiplayer roster as text', out.join(''));
 }
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
-  if (p === '/fwm/characters') {
+  if (p === '/fwm/roster') {
     const d = await seoTimed(seoLoadFwm(), 2500);
     let html = '';
     try { html = seoFwmHtml(d); } catch (e) { html = ''; }
@@ -4418,7 +4418,7 @@ const SITEMAP_DATA = {
   '/fntd2/unit-engine': ['json', 'Unit-Engine'],
   '/fntd2/trade-calculator': ['trade-calculator', 'json'],
   '/patch-notes': ['patchnotesfntd2.html'],
-  '/fwm/characters': ['fnafworld.json']
+  '/fwm/roster': ['fnafworld.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',
