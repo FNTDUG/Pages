@@ -46,6 +46,7 @@ const MOBILE_NAV_BODY = `
   <div class="ug-mn-section-items">
     <a href="/fwm/roster"                class="ug-mn-child" data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            class="ug-mn-child" data-nav-href="/fwm/tech-specs">Tech Specs</a>
+    <a href="/fwm/tier-list"             class="ug-mn-child" data-nav-href="/fwm/tier-list">Tier List</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
@@ -108,6 +109,7 @@ const DESKTOP_NAV_INNER = `
   <div class="ug-tn-drop">
     <a href="/fwm/roster"                data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            data-nav-href="/fwm/tech-specs">Tech Specs</a>
+    <a href="/fwm/tier-list"             data-nav-href="/fwm/tier-list">Tier List</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
@@ -3620,12 +3622,13 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 3;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM Tier List on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
   if (p === '/fwm/tech-specs') return 'fwm-specs';
   if (p === '/fwm/meta-teams') return 'fwm-meta';
+  if (p === '/fwm/tier-list') return 'fwm-tiers';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3678,8 +3681,9 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, every Byte, Chip and armor upgrade in Tech Specs, and the best Meta Teams.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: the full Roster, every Byte, Chip and armor upgrade in Tech Specs, a Tier List and the best Meta Teams.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
+  '/fwm/tier-list': ['FWM Tier List: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
   '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
@@ -4339,6 +4343,22 @@ function seoFwmSpecsHtml(d) {
     armor.map(c => '<tr><td>' + link(c) + '</td><td>' + (c.defense == null ? '-' : '+' + seoNum(c.defense)) + '</td><td>' + (c.price == null ? '-' : c.price === 0 ? 'Free' : seoNum(c.price)) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') + '</tbody></table></div>');
   return seoBlock('FNaF World Multiplayer tech specs as text', out.join(''));
 }
+function seoFwmTierHtml(d) {
+  if (!d || !d.lists) return '';
+  const tiers = Array.isArray(d.tiers) && d.tiers.length ? d.tiers : ['s', 'a', 'b', 'c', 'd'].map(id => ({ id, name: id.toUpperCase() }));
+  const tabs = [['party', 'Characters'], ['bytes', 'Bytes'], ['chips', 'Chips'], ['armor', 'Mendo-Armor']];
+  const out = ['<h2>FNaF World Multiplayer tier list</h2>'];
+  tabs.forEach(([k, label]) => {
+    const l = d.lists[k];
+    if (!l) return;
+    const rows = tiers.map(t => {
+      const n = (l[t.id] || []).map(x => x && typeof x === 'object' ? x.name : x).filter(Boolean);
+      return n.length ? '<li><strong>' + seoEsc(t.name || t.id) + ' tier:</strong> ' + n.map(seoEsc).join(', ') + '</li>' : '';
+    }).join('');
+    if (rows) out.push('<h3>' + label + '</h3>' + (d.notes && d.notes[k] ? '<p>' + seoEsc(d.notes[k]) + '</p>' : '') + '<ul>' + rows + '</ul>');
+  });
+  return out.length > 1 ? seoBlock('FNaF World Multiplayer tier list as text', out.join('')) : '';
+}
 function seoFwmMetaHtml(d) {
   if (!d || !d.metas) return '';
   const names = v => (Array.isArray(v) ? v : []).map(x => x && typeof x === 'object' ? x.name : x).filter(Boolean).map(seoEsc).join(', ');
@@ -4378,11 +4398,11 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
-  if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams') {
-    const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams';
-    const d = await seoTimed(seoLoadFwm(metas ? 'fnafworldmeta.json' : specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
+  if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams' || p === '/fwm/tier-list') {
+    const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams', tiers = p === '/fwm/tier-list';
+    const d = await seoTimed(seoLoadFwm(tiers ? 'fnafworldtiers.json' : metas ? 'fnafworldmeta.json' : specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
     let html = '';
-    try { html = metas ? seoFwmMetaHtml(d) : specs ? seoFwmSpecsHtml(d) : seoFwmHtml(d); } catch (e) { html = ''; }
+    try { html = tiers ? seoFwmTierHtml(d) : metas ? seoFwmMetaHtml(d) : specs ? seoFwmSpecsHtml(d) : seoFwmHtml(d); } catch (e) { html = ''; }
     return html ? { html } : null;
   }
   const guide = SEO_GUIDES[p];
@@ -4460,7 +4480,8 @@ const SITEMAP_DATA = {
   '/patch-notes': ['patchnotesfntd2.html'],
   '/fwm/roster': ['fnafworld.json'],
   '/fwm/tech-specs': ['fnafworldspecs.json'],
-  '/fwm/meta-teams': ['fnafworldmeta.json']
+  '/fwm/meta-teams': ['fnafworldmeta.json'],
+  '/fwm/tier-list': ['fnafworldtiers.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',

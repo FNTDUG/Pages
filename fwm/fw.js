@@ -8,6 +8,8 @@
   var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor' };
   var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
   var SHIELD = '<path d="M0 0h7v4H6v1H5v1H4v1H3V6H2V5H1V4H0z"/>';
+  var TIER_TABS = [['party', 'party', 'Characters'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
+  var TIERS = [{ id: 's', name: 'S', color: '#ff4d6a' }, { id: 'a', name: 'A', color: '#ff9a2e' }, { id: 'b', name: 'B', color: '#ffd93b' }, { id: 'c', name: 'C', color: '#5ccf4f' }, { id: 'd', name: 'D', color: '#4fb4ff' }];
   var COIN = '<path d="M2 0h3v1h1v1h1v3H6v1H5v1H2V6H1V5H0V2h1V1h1zm1 2v3h1V2z"/>';
 
   function esc(s) {
@@ -150,8 +152,7 @@
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
     } else if (c.kind !== 'npc' && c.kind !== 'chip') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
-    if (c.number) h += '<span class="fw-card-no">#' + esc(c.number) + '</span>';
-    else if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
+    if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
     return h;
   };
@@ -172,7 +173,7 @@
     return '<section class="fwd-panel"><h3 class="fwd-h">' + title + '</h3>' + body + '</section>';
   }
 
-  function specDetail(data, c, still) {
+  function specDetail(data, c, still, extra) {
     var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip', armor = c.kind === 'armor';
     var src = chip ? (gr && gr.icon) : (still ? c.card : c.image || c.card);
     var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char' + (chip ? ' fwd-char--chip' : armor ? ' fwd-char--armor' : ' fwd-char--byte') + '">';
@@ -187,7 +188,7 @@
       if (ww) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + ww.color + '">' + esc(ww.name) + '</span>';
     });
     if (gr) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + esc(gr.color || '#2b3870') + '">' + esc(gr.name) + '</span>';
-    h += '</div>';
+    h += '</div>' + (extra || '');
     if (armor && num(c.defense) != null) {
       var dmax = 0, df = num(c.defense);
       ix.tabs.armor.forEach(function (b) { var v = num(b.defense); if (v > dmax) dmax = v; });
@@ -207,8 +208,8 @@
     return h + '</div>';
   }
 
-  FW.detail = function (data, c, still) {
-    if (GROUPS[c.kind]) return specDetail(data, c, still);
+  FW.detail = function (data, c, still, extra) {
+    if (GROUPS[c.kind]) return specDetail(data, c, still, extra);
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
     var anim = party && c.attackAnimation && !still;
     var src = still ? c.card : (party ? c.idle : c.image) || c.card;
@@ -229,7 +230,7 @@
       if (ww) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + ww.color + '">' + esc(ww.name) + '</span>';
     });
     if (party) h += '<span class="fwd-chip">From ' + esc(gameOf(c)) + '</span>';
-    h += '</div>';
+    h += '</div>' + (extra || '');
     if (party) {
       var max = 0, hp = num(c.health);
       ix.tabs.party.forEach(function (p) { var v = num(p.health); if (v > max) max = v; });
@@ -314,11 +315,59 @@
     return names.map(function (n) { return FW.team(data, n, m[n]); }).join('');
   };
 
+  function tierRows(tl) {
+    return tl && tl.tiers && tl.tiers.length ? tl.tiers : TIERS;
+  }
+  function slotName(v) {
+    return String(v && typeof v === 'object' ? v.name || '' : v || '').trim().toLowerCase();
+  }
+  FW.tierTabs = function (tl) {
+    var ls = (tl && tl.lists) || {};
+    return TIER_TABS.filter(function (t) { return ls[t[0]]; });
+  };
+  FW.tierCount = function (tl, key) {
+    var l = ((tl && tl.lists) || {})[key] || {}, n = 0;
+    tierRows(tl).forEach(function (t) { n += (l[t.id] || []).length; });
+    return n;
+  };
+  FW.tierOf = function (tl, c) {
+    var want = c.name.toLowerCase(), out = null;
+    FW.tierTabs(tl).forEach(function (tt) {
+      if (out || tt[1] !== c.kind) return;
+      var l = tl.lists[tt[0]] || {}, ms = (tl.msg || {})[tt[0]] || {};
+      tierRows(tl).forEach(function (t) {
+        if (out || !(l[t.id] || []).some(function (v) { return slotName(v) === want || slotName(v) === c.id; })) return;
+        out = { tier: t, msg: '' };
+        for (var k in ms) if (k.toLowerCase() === want) out.msg = ms[k];
+      });
+    });
+    return out;
+  };
+  FW.tierPanel = function (tl, c) {
+    var r = FW.tierOf(tl, c);
+    if (!r) return '';
+    var n = r.tier.name || r.tier.id;
+    return '<section class="fwd-panel fwd-stat fwd-tierp" style="--tc:' + esc(r.tier.color || '#ffce1f') + '"><span class="fwd-tier-b" aria-hidden="true">' + esc(n) + '</span><div class="fwd-stat-b"><p class="fwd-stat-l">' + esc(n) + ' tier</p>' + (r.msg ? '<p class="fwd-tier-m">' + esc(r.msg) + '</p>' : '') + '</div></section>';
+  };
+  FW.tiers = function (data, tl, key) {
+    var tt = FW.tierTabs(tl).filter(function (t) { return t[0] === key; })[0];
+    if (!tt) return '<p class="fw-none">Nothing ranked here yet.</p>';
+    var l = tl.lists[key] || {}, note = (tl.notes || {})[key], h = '';
+    tierRows(tl).forEach(function (t) {
+      var items = l[t.id] || [];
+      if (!items.length) return;
+      h += '<section class="fw-tier" style="--tc:' + esc(t.color || '#ffce1f') + '"><h2 class="fw-tier-h"><span class="fw-tier-l">' + esc(t.name || t.id) + '</span><span class="fw-sr"> tier</span></h2>';
+      h += '<ul class="fw-grid fw-tier-grid">' + items.map(function (v) { return slot(data, tt[1], v); }).join('') + '</ul></section>';
+    });
+    if (!h) return '<p class="fw-none">Nothing ranked here yet.</p>';
+    return (note ? '<p class="fw-tier-note">' + esc(note) + '</p>' : '') + h;
+  };
+
   if (typeof document === 'undefined') return;
   var root = document.getElementById('fw');
   if (!root) return;
   var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortBtn = root.querySelector('.fw-sort'), menu = root.querySelector('.fw-menu'), sortVal = root.querySelector('.fw-sort-v'), qEl = root.querySelector('.fw-q');
-  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), metaSrc = root.getAttribute('data-meta'), meta = null, scope = null;
+  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), tierMode = !!root.getAttribute('data-tiers'), metaSrc = root.getAttribute('data-meta') || root.getAttribute('data-tiers'), meta = null, scope = null;
   var baseSort = root.getAttribute('data-sort') || 'world';
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null;
@@ -330,7 +379,7 @@
   function render() {
     if (!data) return;
     if (meta) {
-      mount.innerHTML = FW.teams(data, meta, +state.tab);
+      mount.innerHTML = tierMode ? FW.tiers(data, meta, state.tab) : FW.teams(data, meta, +state.tab);
       if (tabs.length) mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
       Array.prototype.forEach.call(tabs, function (t) {
         var on = t.getAttribute('data-tab') === state.tab;
@@ -422,13 +471,16 @@
   }
   bindTabs();
   function metaTabs() {
-    var ps = FW.pages(meta), wrap = root.querySelector('.fw-tabs');
+    var wrap = root.querySelector('.fw-tabs'), ps;
+    if (tierMode) ps = FW.tierTabs(meta).map(function (t) { return [t[0], t[2], FW.tierCount(meta, t[0])]; });
+    else ps = FW.pages(meta).map(function (p, i) { return [String(i), p.pageTitle, p.order.filter(function (n) { return meta.metas && meta.metas[n]; }).length]; });
+    if (ps.length) state.tab = ps[0][0];
     if (ps.length < 2 || !wrap) {
       mount.removeAttribute('role');
       return;
     }
     wrap.innerHTML = ps.map(function (p, i) {
-      return '<button type="button" role="tab" class="fw-tab" id="fw-tab-' + i + '" data-tab="' + i + '" aria-controls="fw-panel" aria-selected="' + (i ? 'false' : 'true') + '"' + (i ? ' tabindex="-1"' : '') + '>' + esc(p.pageTitle) + ' <span class="fw-tab-n">' + p.order.filter(function (n) { return meta.metas && meta.metas[n]; }).length + '</span></button>';
+      return '<button type="button" role="tab" class="fw-tab" id="fw-tab-' + esc(p[0]) + '" data-tab="' + esc(p[0]) + '" aria-controls="fw-panel" aria-selected="' + (i ? 'false' : 'true') + '"' + (i ? ' tabindex="-1"' : '') + '>' + esc(p[1]) + ' <span class="fw-tab-n">' + p[2] + '</span></button>';
     }).join('');
     wrap.hidden = false;
     tabs = wrap.querySelectorAll('.fw-tab');
@@ -480,7 +532,7 @@
     var a = e.target.closest ? e.target.closest('.fw-card') : null;
     if (!a || !data || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
-    scope = meta ? a.closest('.fw-team') : null;
+    scope = meta ? (tierMode ? mount : a.closest('.fw-team')) : null;
     open(a.getAttribute('data-id'), true);
   });
 
@@ -559,7 +611,7 @@
     dlg.style.setProperty('--wc', w.color);
     dlg.querySelector('.fwd-bg').style.backgroundImage = w.background ? 'url("' + String(w.background).replace(/["\\]/g, '') + '")' : 'none';
     var inner = dlg.querySelector('.fwd-in');
-    inner.innerHTML = FW.detail(data, c, still);
+    inner.innerHTML = FW.detail(data, c, still, tierMode ? FW.tierPanel(meta, c) : '');
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
@@ -628,7 +680,12 @@
     if (id && ix && ix.byId[id]) {
       var c = ix.byId[id];
       if (!meta && state.tab !== c.kind && (!dlg || dlg.hidden)) { state.tab = c.kind; render(); }
-      if (meta && (!dlg || dlg.hidden)) scope = null;
+      if (meta && (!dlg || dlg.hidden)) {
+        scope = null;
+        var tt = tierMode ? FW.tierTabs(meta).filter(function (t) { return t[1] === c.kind; })[0] : null;
+        if (tt && tt[0] !== state.tab) { state.tab = tt[0]; render(); }
+        if (tt) scope = mount;
+      }
       open(id, false);
     } else {
       pushed = false;
@@ -657,6 +714,6 @@
     render();
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
-    mount.innerHTML = '<p class="fw-none">The characters could not load. Refresh the page to try again.</p>';
+    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The tier list' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
   });
 })(typeof window !== 'undefined' ? window : this);

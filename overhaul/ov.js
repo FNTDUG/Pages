@@ -176,6 +176,7 @@
     '/bbn/codes': { tint: 'blue', go: 'Open Codes' },
     '/fwm/roster': { tint: 'yellow', go: 'Open the Roster' },
     '/fwm/tech-specs': { tint: 'green', go: 'Open Tech Specs' },
+    '/fwm/tier-list': { tint: 'pink', go: 'Open the Tier List' },
     '/fwm/meta-teams': { tint: 'blue', go: 'Open Meta Teams' }
   };
   function directory() {
