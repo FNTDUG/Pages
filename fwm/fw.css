@@ -129,9 +129,9 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-tbl td{white-space:nowrap;color:#fff;font:400 22px/1.1 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);font-variant-numeric:tabular-nums}
 .fwd-top{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;gap:10px;padding:16px 20px;pointer-events:none}
 .fwd-top>*{pointer-events:auto}
-.fwd-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:48px;min-height:48px;margin:0;padding:0 16px 0 13px;color:#fff;font:400 19px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi),1px 1px 0 var(--fwi),-1px -1px 0 var(--fwi);background:linear-gradient(180deg,#ffe866,#ffbf14);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.55);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .12s;-webkit-tap-highlight-color:transparent}
-.fwd-btn:hover{filter:brightness(1.06)}
-.fwd-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.55)}
+.fwd-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:48px;min-height:48px;margin:0;padding:0 16px 0 13px;color:#fff;font:400 19px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi),1px 1px 0 var(--fwi),-1px -1px 0 var(--fwi);background:linear-gradient(180deg,#63adff,#2f78e4);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .12s;-webkit-tap-highlight-color:transparent}
+.fwd-btn:hover{filter:brightness(1.08)}
+.fwd-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35)}
 .fwd-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .fwd-btn svg{flex:none;width:12px;height:18px;fill:#fff;stroke:var(--fwi);stroke-width:1.1px;paint-order:stroke;shape-rendering:crispEdges;overflow:visible}
 .fwd-count{margin-left:auto;padding:7px 12px;font:400 17px/1 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:rgba(7,11,28,.6);border-radius:999px}
