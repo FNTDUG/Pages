@@ -8,7 +8,7 @@
   var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor', move: 'Move' };
   var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
   var SHIELD = '<path d="M0 0h7v4H6v1H5v1H4v1H3V6H2V5H1V4H0z"/>';
-  var TIER_TABS = [['party', 'party', 'Characters'], ['moves', 'move', 'Moves'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
+  var TIER_TABS = [['party', 'party', 'Party'], ['moves', 'move', 'Moves'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
   var TIERS = [{ id: 's', name: 'S', color: '#ff4d6a' }, { id: 'a', name: 'A', color: '#ff9a2e' }, { id: 'b', name: 'B', color: '#ffd93b' }, { id: 'c', name: 'C', color: '#5ccf4f' }, { id: 'd', name: 'D', color: '#4fb4ff' }];
   var COIN = '<path d="M2 0h3v1h1v1h1v3H6v1H5v1H2V6H1V5H0V2h1V1h1zm1 2v3h1V2z"/>';
 
@@ -302,9 +302,9 @@
     for (var i = 0; i < list.length; i++) if (list[i].name.toLowerCase() === n || list[i].id === n) return list[i];
     return null;
   }
-  function slot(data, kind, v) {
+  function slot(data, kind, v, body) {
     var c = pick(data, kind, v), name = v && typeof v === 'object' ? v.name : v;
-    var h = c ? FW.card(data, c, kind === 'party') : '<li><span class="fw-card fw-card--empty"><span class="fw-card-art"></span><span class="fw-card-name">' + (name ? esc(name) : 'Empty') + '</span></span></li>';
+    var h = c ? FW.card(data, c, kind === 'party' && !body) : '<li><span class="fw-card fw-card--empty"><span class="fw-card-art"></span><span class="fw-card-name">' + (name ? esc(name) : 'Empty') + '</span></span></li>';
     if (v && v.caption) h = h.slice(0, -5) + '<span class="fw-slot-cap">' + esc(v.caption) + '</span></li>';
     return h;
   }
@@ -386,7 +386,7 @@
       var items = l[t.id] || [];
       if (!items.length) return;
       h += '<section class="fw-tier" style="--tc:' + esc(t.color || '#ffce1f') + '"><h2 class="fw-tier-h"><span class="fw-tier-l">' + esc(t.name || t.id) + '</span><span class="fw-sr"> tier</span></h2>';
-      h += '<ul class="fw-grid fw-tier-grid fw-tier-grid--' + tt[1] + '">' + items.map(function (v) { return slot(data, tt[1], v); }).join('') + '</ul></section>';
+      h += '<ul class="fw-grid fw-tier-grid fw-tier-grid--' + tt[1] + '">' + items.map(function (v) { return slot(data, tt[1], v, true); }).join('') + '</ul></section>';
     });
     if (!h) return '<p class="fw-none">Nothing ranked here yet.</p>';
     return (note ? '<p class="fw-tier-note">' + esc(note) + '</p>' : '') + h;

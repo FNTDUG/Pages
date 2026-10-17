@@ -4355,7 +4355,7 @@ function seoFwmLink(name, page) {
 function seoFwmTierHtml(d) {
   if (!d || !d.lists) return '';
   const tiers = Array.isArray(d.tiers) && d.tiers.length ? d.tiers : ['s', 'a', 'b', 'c', 'd'].map(id => ({ id, name: id.toUpperCase() }));
-  const tabs = [['party', 'Characters', 'roster'], ['moves', 'Moves', ''], ['bytes', 'Bytes', 'tech-specs'], ['chips', 'Chips', 'tech-specs'], ['armor', 'Mendo-Armor', 'tech-specs']];
+  const tabs = [['party', 'Party', 'roster'], ['moves', 'Moves', ''], ['bytes', 'Bytes', 'tech-specs'], ['chips', 'Chips', 'tech-specs'], ['armor', 'Mendo-Armor', 'tech-specs']];
   const out = ['<h2>FNaF World Multiplayer TierList</h2>'];
   tabs.forEach(([k, label, page]) => {
     const l = d.lists[k];
