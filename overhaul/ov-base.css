@@ -1,0 +1,4 @@
+:root{--ug-accent:#ffa45b;--ug-purple:#681f62}
+.ug-mn-section{border-bottom:1px solid rgba(255,255,255,.05)}
+.ug-mn-brand-logo{filter:drop-shadow(0 0 6px rgba(255,164,91,.45))}
+.ug-mn-child.active::after,.ug-mn-link.active::after{color:#ffa45b}

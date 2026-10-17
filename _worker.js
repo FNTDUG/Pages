@@ -4621,8 +4621,91 @@ const PAGE_NOTES_SCRIPT = `<script>
 <\/script>`;
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
-const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><link rel="stylesheet" href="/overhaul/ov-a11y.css"><script src="/overhaul/ov-a11y.js"><\/script><script src="/overhaul/ov.js"><\/script>';
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css"><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><link rel="stylesheet" href="/overhaul/ov-a11y.css"><script src="/overhaul/ov-a11y.js"><\/script><script src="/overhaul/ov.js"><\/script>';
 const OV_FONTS = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
+const OV_OLD_CSS = /#ug-header\s*\{|\.ug-tn-inner\s*\{|#ug-hamburger\s*\{/;
+const OV_OLD_SEL = /^(?:html|body|:root|body::-webkit-scrollbar(?:-thumb)?|body\.ug-cursor-off\b.*|#ug-(?:header|topnav|hamburger|overlay|mobile-nav|hero|main|footer)\b.*|\.ug-(?:header|tn|mn|page|status|home)-[\w-]*\b.*|\.clean-(?:pill|text)\b.*|#cleanModeToggle\b.*|\.ad-slot)$/;
+function ovCssBlocks(css) {
+  const out = [];
+  let i = 0;
+  const n = css.length;
+  while (i < n) {
+    while (i < n && /\s/.test(css[i])) i++;
+    if (i >= n) break;
+    if (css.startsWith('/*', i)) { const e = css.indexOf('*/', i + 2); i = e < 0 ? n : e + 2; continue; }
+    let j = i, q = '';
+    while (j < n) {
+      const c = css[j];
+      if (q) { if (c === '\\') j++; else if (c === q) q = ''; }
+      else if (c === '"' || c === "'") q = c;
+      else if (c === '{' || c === ';') break;
+      j++;
+    }
+    if (j >= n) { out.push({ raw: css.slice(i) }); break; }
+    if (css[j] === ';') { out.push({ raw: css.slice(i, j + 1) }); i = j + 1; continue; }
+    let d = 1, k = j + 1;
+    q = '';
+    while (k < n && d) {
+      const c = css[k];
+      if (q) { if (c === '\\') k++; else if (c === q) q = ''; }
+      else if (c === '"' || c === "'") q = c;
+      else if (c === '{') d++;
+      else if (c === '}') d--;
+      k++;
+    }
+    out.push({ sel: css.slice(i, j).trim(), body: css.slice(j + 1, k - 1) });
+    i = k;
+  }
+  return out;
+}
+const OV_GONE_SEL = /^(?:#ug-header\b.*|\.ug-header-[\w-]*\b.*|#ug-topnav\b.*|\.ug-tn-[\w-]*\b.*|body\.ug-cursor-off \.ug-tn-.*|\.clean-(?:pill|text)\b.*|#cleanModeToggle\b.*)$/;
+const OV_LOOK_PROP = /^(?:color|background(?:-color|-image|-size|-position|-repeat|-attachment)?|box-shadow|text-shadow|font|font-family|filter|-webkit-backdrop-filter|backdrop-filter|scrollbar-color|animation|-webkit-text-fill-color|-webkit-background-clip|background-clip)$/i;
+const OV_LOOK_VAL = /#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|gradient\(/i;
+function ovDecls(body) {
+  const out = [];
+  let cur = '', depth = 0, q = '';
+  for (let i = 0; i < body.length; i++) {
+    const c = body[i];
+    if (q) { cur += c; if (c === '\\') { cur += body[++i] || ''; } else if (c === q) q = ''; continue; }
+    if (c === '"' || c === "'") { q = c; cur += c; continue; }
+    if (c === '(') depth++;
+    else if (c === ')') depth--;
+    if (c === ';' && depth <= 0) { if (cur.trim()) out.push(cur.trim()); cur = ''; continue; }
+    cur += c;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+function ovIsLook(d) {
+  const k = d.indexOf(':');
+  if (k < 0) return false;
+  return OV_LOOK_PROP.test(d.slice(0, k).trim()) || OV_LOOK_VAL.test(d.slice(k + 1));
+}
+function ovStripCss(css) {
+  return ovCssBlocks(css).map(b => {
+    if (b.raw != null) return b.raw;
+    if (/^@(media|supports)\b/i.test(b.sel)) {
+      const inner = ovStripCss(b.body);
+      return inner.trim() ? b.sel + '{' + inner + '}' : '';
+    }
+    if (/^@keyframes\s+flicker$/i.test(b.sel)) return '';
+    if (b.sel.charAt(0) === '@') return b.sel + '{' + b.body + '}';
+    const sels = b.sel.split(',').map(x => x.trim()).filter(x => !OV_GONE_SEL.test(x));
+    if (!sels.length) return '';
+    const old = sels.filter(x => OV_OLD_SEL.test(x)), own = sels.filter(x => !OV_OLD_SEL.test(x));
+    let out = own.length ? own.join(',') + '{' + b.body + '}' : '';
+    if (old.length) {
+      const keep = ovDecls(b.body).filter(d => !ovIsLook(d));
+      if (keep.length) out += old.join(',') + '{' + keep.join(';') + '}';
+    }
+    return out;
+  }).join('');
+}
+let ovNavCss = null;
+function ovNavCssClean() {
+  if (ovNavCss == null) ovNavCss = NAV_CSS.replace(/<style>([\s\S]*?)<\/style>/g, (m, c) => { const t = ovStripCss(c); return t.trim() ? '<style>' + t + '</style>' : ''; });
+  return ovNavCss;
+}
 const OV_SKIP = /^\/(overhaul|push|poll|inf-data|game-thumb|rotations|gh-health|_up|notify-send|poll-admin|sponsor-admin|sponsor\/submit|sponsor\/admin|wiki-edit|wiki\/api|wiki\/img)(\/|$)/;
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 function ovHref(href) {
@@ -8623,7 +8706,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(pvOn ? ovNavCssClean() : NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
           else if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -8726,8 +8809,19 @@ export default {
       });
     }
     if (pvOn) {
+      let styleBuf = '';
       rw = rw.on('link[href*="fonts.googleapis.com/css2"]', {
         element(el) { el.setAttribute('href', OV_FONTS); }
+      }).on('style', {
+        text(t) {
+          styleBuf += t.text;
+          if (!t.lastInTextNode) { t.remove(); return; }
+          const css = styleBuf;
+          styleBuf = '';
+          t.replace(!isOvHome && OV_OLD_CSS.test(css) ? ovStripCss(css) : css, { html: true });
+        }
+      }).on('header#ug-header, div[style="text-align:center;margin-bottom:18px"], div.clean-text', {
+        element(el) { el.remove(); }
       });
     }
     if (!isOvHome && seoPath(realPath) === '/') {
