@@ -265,13 +265,52 @@
     return h + '</div>';
   };
 
+  function pick(data, kind, v) {
+    var n = String(v && typeof v === 'object' ? v.name || '' : v || '').trim().toLowerCase();
+    if (!n) return null;
+    var list = index(data).tabs[kind] || [];
+    for (var i = 0; i < list.length; i++) if (list[i].name.toLowerCase() === n || list[i].id === n) return list[i];
+    return null;
+  }
+  function slot(data, kind, v) {
+    var c = pick(data, kind, v), name = v && typeof v === 'object' ? v.name : v;
+    var h = c ? FW.card(data, c) : '<li><span class="fw-card fw-card--empty"><span class="fw-card-art"></span><span class="fw-card-name">' + (name ? esc(name) : 'Empty') + '</span></span></li>';
+    if (v && v.caption) h = h.slice(0, -5) + '<span class="fw-slot-cap">' + esc(v.caption) + '</span></li>';
+    return h;
+  }
+  function part(data, title, kind, list) {
+    var items = (list || []).slice(0, 4);
+    while (items.length < 4) items.push('');
+    return '<div class="fw-team-part"><h3 class="fw-team-h">' + title + '</h3><ul class="fw-grid fw-team-grid">' + items.map(function (v) { return slot(data, kind, v); }).join('') + '</ul></div>';
+  }
+  FW.pages = function (meta) {
+    var ps = ((meta && meta.pages) || []).filter(function (p) { return p && p.pageTitle && p.order; });
+    return ps.length ? ps : [{ pageTitle: 'Meta Teams', order: Object.keys((meta && meta.metas) || {}) }];
+  };
+  FW.team = function (data, name, t) {
+    var ix = index(data), first = pick(data, 'party', (t.party1 || [])[0]);
+    var w = ix.world[t.world] || (first ? worldOf(data, first) : data.worlds[0]);
+    var h = '<section class="fw-sec fw-team" style="--wc:' + esc(w.color) + '">';
+    h += '<h2 class="fw-sec-h">' + (w.background ? '<span class="fw-sec-bg" style="background-image:url(&quot;' + esc(w.background) + '&quot;)"></span>' : '') + '<span class="fw-sec-t">' + esc(name) + '</span></h2>';
+    if (t.caption) h += '<p class="fw-team-cap">' + esc(t.caption) + '</p>';
+    h += '<div class="fw-team-body">' + part(data, 'Party 1', 'party', t.party1) + part(data, 'Party 2', 'party', t.party2) + part(data, 'Bytes', 'byte', t.bytes) + part(data, 'Chips', 'chip', t.chips) + '</div>';
+    if (t.notes) h += '<p class="fw-team-note">' + esc(t.notes) + '</p>';
+    return h + '</section>';
+  };
+  FW.teams = function (data, meta, page) {
+    var m = (meta && meta.metas) || {}, ps = FW.pages(meta), p = ps[page] || ps[0];
+    var names = p.order.filter(function (n) { return m[n]; });
+    if (!names.length) return '<p class="fw-none">No teams here yet.</p>';
+    return names.map(function (n) { return FW.team(data, n, m[n]); }).join('');
+  };
+
   if (typeof document === 'undefined') return;
   var root = document.getElementById('fw');
   if (!root) return;
   var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortBtn = root.querySelector('.fw-sort'), menu = root.querySelector('.fw-menu'), sortVal = root.querySelector('.fw-sort-v'), qEl = root.querySelector('.fw-q');
-  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab');
+  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), metaSrc = root.getAttribute('data-meta'), meta = null, scope = null;
   var baseSort = root.getAttribute('data-sort') || 'world';
-  var data = null, ix = null, state = { tab: firstTab || 'party', sort: baseSort, q: '' };
+  var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null;
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0;
   function reduced() {
@@ -280,6 +319,16 @@
 
   function render() {
     if (!data) return;
+    if (meta) {
+      mount.innerHTML = FW.teams(data, meta, +state.tab);
+      if (tabs.length) mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
+      Array.prototype.forEach.call(tabs, function (t) {
+        var on = t.getAttribute('data-tab') === state.tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      return;
+    }
     syncSort();
     mount.innerHTML = FW.grid(data, state.tab, state.sort, state.q);
     mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
@@ -346,56 +395,74 @@
     if (focus) t.focus();
   }
 
-  Array.prototype.forEach.call(tabs, function (t, i) {
-    t.addEventListener('click', function () { pickTab(t); });
-    t.addEventListener('keydown', function (e) {
-      var k = e.key, n = tabs.length, j = -1;
-      if (k === 'ArrowRight') j = (i + 1) % n;
-      else if (k === 'ArrowLeft') j = (i - 1 + n) % n;
-      else if (k === 'Home') j = 0;
-      else if (k === 'End') j = n - 1;
-      if (j < 0) return;
-      e.preventDefault();
-      pickTab(tabs[j], true);
+  function bindTabs() {
+    Array.prototype.forEach.call(tabs, function (t, i) {
+      t.addEventListener('click', function () { pickTab(t); });
+      t.addEventListener('keydown', function (e) {
+        var k = e.key, n = tabs.length, j = -1;
+        if (k === 'ArrowRight') j = (i + 1) % n;
+        else if (k === 'ArrowLeft') j = (i - 1 + n) % n;
+        else if (k === 'Home') j = 0;
+        else if (k === 'End') j = n - 1;
+        if (j < 0) return;
+        e.preventDefault();
+        pickTab(tabs[j], true);
+      });
     });
-  });
-  sortBtn.addEventListener('click', function () {
-    if (menu.hidden) openMenu();
-    else closeMenu(true);
-  });
-  sortBtn.addEventListener('keydown', function (e) {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-    e.preventDefault();
-    openMenu();
-  });
-  menu.addEventListener('keydown', function (e) {
-    var list = opts(), i = list.indexOf(activeOpt), k = e.key;
-    if (k === 'ArrowDown' || k === 'ArrowUp') {
+  }
+  bindTabs();
+  function metaTabs() {
+    var ps = FW.pages(meta), wrap = root.querySelector('.fw-tabs');
+    if (ps.length < 2 || !wrap) {
+      mount.removeAttribute('role');
+      return;
+    }
+    wrap.innerHTML = ps.map(function (p, i) {
+      return '<button type="button" role="tab" class="fw-tab" id="fw-tab-' + i + '" data-tab="' + i + '" aria-controls="fw-panel" aria-selected="' + (i ? 'false' : 'true') + '"' + (i ? ' tabindex="-1"' : '') + '>' + esc(p.pageTitle) + ' <span class="fw-tab-n">' + p.order.filter(function (n) { return meta.metas && meta.metas[n]; }).length + '</span></button>';
+    }).join('');
+    wrap.hidden = false;
+    tabs = wrap.querySelectorAll('.fw-tab');
+    bindTabs();
+  }
+  if (sortBtn) {
+    sortBtn.addEventListener('click', function () {
+      if (menu.hidden) openMenu();
+      else closeMenu(true);
+    });
+    sortBtn.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
       e.preventDefault();
-      setActive(list[(i + (k === 'ArrowDown' ? 1 : -1) + list.length) % list.length]);
-    } else if (k === 'Home' || k === 'End') {
-      e.preventDefault();
-      setActive(list[k === 'Home' ? 0 : list.length - 1]);
-    } else if (k === 'Enter' || k === ' ') {
-      e.preventDefault();
-      choose(activeOpt);
-    } else if (k === 'Escape') {
-      e.preventDefault();
-      closeMenu(true);
-    } else if (k === 'Tab') closeMenu(false);
-  });
-  menu.addEventListener('click', function (e) {
-    choose(e.target.closest ? e.target.closest('[role="option"]') : null);
-  });
-  menu.addEventListener('pointermove', function (e) {
-    var o = e.target.closest ? e.target.closest('[role="option"]') : null;
-    if (o && o !== activeOpt) setActive(o);
-  });
-  document.addEventListener('pointerdown', function (e) {
-    if (!menu.hidden && !menu.parentNode.contains(e.target)) closeMenu(false);
-  });
-  window.addEventListener('blur', function () { closeMenu(false); });
-  qEl.addEventListener('input', function () {
+      openMenu();
+    });
+    menu.addEventListener('keydown', function (e) {
+      var list = opts(), i = list.indexOf(activeOpt), k = e.key;
+      if (k === 'ArrowDown' || k === 'ArrowUp') {
+        e.preventDefault();
+        setActive(list[(i + (k === 'ArrowDown' ? 1 : -1) + list.length) % list.length]);
+      } else if (k === 'Home' || k === 'End') {
+        e.preventDefault();
+        setActive(list[k === 'Home' ? 0 : list.length - 1]);
+      } else if (k === 'Enter' || k === ' ') {
+        e.preventDefault();
+        choose(activeOpt);
+      } else if (k === 'Escape') {
+        e.preventDefault();
+        closeMenu(true);
+      } else if (k === 'Tab') closeMenu(false);
+    });
+    menu.addEventListener('click', function (e) {
+      choose(e.target.closest ? e.target.closest('[role="option"]') : null);
+    });
+    menu.addEventListener('pointermove', function (e) {
+      var o = e.target.closest ? e.target.closest('[role="option"]') : null;
+      if (o && o !== activeOpt) setActive(o);
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (!menu.hidden && !menu.parentNode.contains(e.target)) closeMenu(false);
+    });
+    window.addEventListener('blur', function () { closeMenu(false); });
+  }
+  if (qEl) qEl.addEventListener('input', function () {
     clearTimeout(qT);
     qT = setTimeout(function () { state.q = qEl.value.trim(); render(); }, 120);
   });
@@ -403,6 +470,7 @@
     var a = e.target.closest ? e.target.closest('.fw-card') : null;
     if (!a || !data || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
+    scope = meta ? a.closest('.fw-team') : null;
     open(a.getAttribute('data-id'), true);
   });
 
@@ -498,8 +566,9 @@
     var c = ix && ix.byId[id];
     if (!c) return;
     if (!dlg) build();
-    order = FW.order(data, state.tab, state.sort, state.q);
-    if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
+    if (meta) order = scope ? Array.prototype.map.call(scope.querySelectorAll('.fw-card--' + c.kind + '[data-id]'), function (x) { return ix.byId[x.getAttribute('data-id')]; }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }) : [c];
+    else order = FW.order(data, state.tab, state.sort, state.q);
+    if (order.indexOf(c) === -1) order = meta ? [c] : FW.order(data, c.kind, 'world', '');
     var was = !dlg.hidden;
     if (!was) {
       lastFocus = document.activeElement;
@@ -523,7 +592,7 @@
     clearTimeout(atkT);
     dlg.hidden = true;
     document.documentElement.classList.remove('fwd-on');
-    var back = cur && mount.querySelector('.fw-card[data-id="' + cur.id + '"]');
+    var back = cur && (scope || mount).querySelector('.fw-card[data-id="' + cur.id + '"]');
     if (back) back.focus();
     else if (lastFocus && lastFocus.focus) lastFocus.focus();
     cur = null;
@@ -548,7 +617,8 @@
     var id = decodeURIComponent(location.hash.slice(1));
     if (id && ix && ix.byId[id]) {
       var c = ix.byId[id];
-      if (state.tab !== c.kind && (!dlg || dlg.hidden)) { state.tab = c.kind; render(); }
+      if (!meta && state.tab !== c.kind && (!dlg || dlg.hidden)) { state.tab = c.kind; render(); }
+      if (meta && (!dlg || dlg.hidden)) scope = null;
       open(id, false);
     } else {
       pushed = false;
@@ -558,10 +628,19 @@
   window.addEventListener('popstate', fromHash);
   window.addEventListener('hashchange', fromHash);
 
-  fetch(root.getAttribute('data-src') || DATA, { cache: 'no-cache' }).then(function (r) {
-    if (!r.ok) throw new Error(r.status);
-    return r.json();
-  }).then(function (d) {
+  function get(u) {
+    return fetch(u, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  }
+  Promise.all([root.getAttribute('data-src') || DATA].concat(metaSrc ? [root.getAttribute('data-specs'), metaSrc] : []).map(get)).then(function (r) {
+    var d = r[0];
+    if (metaSrc) {
+      ['bytes', 'chips', 'armor', 'groups'].forEach(function (k) { d[k] = r[1][k]; });
+      meta = r[2] || {};
+      metaTabs();
+    }
     data = d;
     ix = index(d);
     root.classList.add('fw-ready');

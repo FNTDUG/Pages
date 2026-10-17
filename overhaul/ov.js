@@ -175,7 +175,8 @@
     '/fntd2/codes': { tint: 'green', go: 'Open Codes' },
     '/bbn/codes': { tint: 'blue', go: 'Open Codes' },
     '/fwm/roster': { tint: 'yellow', go: 'Open the Roster' },
-    '/fwm/tech-specs': { tint: 'green', go: 'Open Tech Specs' }
+    '/fwm/tech-specs': { tint: 'green', go: 'Open Tech Specs' },
+    '/fwm/meta-teams': { tint: 'blue', go: 'Open Meta Teams' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');

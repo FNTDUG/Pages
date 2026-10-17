@@ -46,6 +46,7 @@ const MOBILE_NAV_BODY = `
   <div class="ug-mn-section-items">
     <a href="/fwm/roster"                class="ug-mn-child" data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            class="ug-mn-child" data-nav-href="/fwm/tech-specs">Tech Specs</a>
+    <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -107,6 +108,7 @@ const DESKTOP_NAV_INNER = `
   <div class="ug-tn-drop">
     <a href="/fwm/roster"                data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            data-nav-href="/fwm/tech-specs">Tech Specs</a>
+    <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3618,11 +3620,12 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 3;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
   if (p === '/fwm/tech-specs') return 'fwm-specs';
+  if (p === '/fwm/meta-teams') return 'fwm-meta';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3675,8 +3678,9 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, plus every Byte, Chip and armor upgrade in Tech Specs.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: every party member, boss and enemy in the Roster, every Byte, Chip and armor upgrade in Tech Specs, and the best Meta Teams.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
+  '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
   '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -4335,6 +4339,22 @@ function seoFwmSpecsHtml(d) {
     armor.map(c => '<tr><td>' + link(c) + '</td><td>' + (c.defense == null ? '-' : '+' + seoNum(c.defense)) + '</td><td>' + (c.price == null ? '-' : c.price === 0 ? 'Free' : seoNum(c.price)) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') + '</tbody></table></div>');
   return seoBlock('FNaF World Multiplayer tech specs as text', out.join(''));
 }
+function seoFwmMetaHtml(d) {
+  if (!d || !d.metas) return '';
+  const names = v => (Array.isArray(v) ? v : []).map(x => x && typeof x === 'object' ? x.name : x).filter(Boolean).map(seoEsc).join(', ');
+  const pages = Array.isArray(d.pages) && d.pages.length ? d.pages : [{ pageTitle: 'Meta Teams', order: Object.keys(d.metas) }];
+  const out = ['<h2>FNaF World Multiplayer meta teams</h2>'];
+  pages.forEach(pg => {
+    const teams = (pg.order || []).filter(n => d.metas[n]);
+    if (!teams.length) return;
+    if (pages.length > 1) out.push('<h3>' + seoEsc(pg.pageTitle) + '</h3>');
+    out.push('<ul>' + teams.map(n => {
+      const t = d.metas[n];
+      return '<li><strong>' + seoEsc(n) + '</strong>' + (t.caption ? ': ' + seoEsc(t.caption) : '') + '. Party 1: ' + names(t.party1) + '. Party 2: ' + names(t.party2) + '. Bytes: ' + names(t.bytes) + '. Chips: ' + names(t.chips) + '.' + (t.notes ? ' ' + seoEsc(t.notes) : '') + '</li>';
+    }).join('') + '</ul>');
+  });
+  return out.length > 1 ? seoBlock('FNaF World Multiplayer meta teams as text', out.join('')) : '';
+}
 function seoFwmHtml(d) {
   if (!d || !Array.isArray(d.party)) return '';
   const link = c => '<a href="/fwm/roster#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
@@ -4358,11 +4378,11 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
-  if (p === '/fwm/roster' || p === '/fwm/tech-specs') {
-    const specs = p === '/fwm/tech-specs';
-    const d = await seoTimed(seoLoadFwm(specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
+  if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams') {
+    const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams';
+    const d = await seoTimed(seoLoadFwm(metas ? 'fnafworldmeta.json' : specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
     let html = '';
-    try { html = specs ? seoFwmSpecsHtml(d) : seoFwmHtml(d); } catch (e) { html = ''; }
+    try { html = metas ? seoFwmMetaHtml(d) : specs ? seoFwmSpecsHtml(d) : seoFwmHtml(d); } catch (e) { html = ''; }
     return html ? { html } : null;
   }
   const guide = SEO_GUIDES[p];
@@ -4439,7 +4459,8 @@ const SITEMAP_DATA = {
   '/fntd2/trade-calculator': ['trade-calculator', 'json'],
   '/patch-notes': ['patchnotesfntd2.html'],
   '/fwm/roster': ['fnafworld.json'],
-  '/fwm/tech-specs': ['fnafworldspecs.json']
+  '/fwm/tech-specs': ['fnafworldspecs.json'],
+  '/fwm/meta-teams': ['fnafworldmeta.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',
