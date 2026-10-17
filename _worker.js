@@ -46,7 +46,7 @@ const MOBILE_NAV_BODY = `
   <div class="ug-mn-section-items">
     <a href="/fwm/roster"                class="ug-mn-child" data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            class="ug-mn-child" data-nav-href="/fwm/tech-specs">Tech Specs</a>
-    <a href="/fwm/tier-list"             class="ug-mn-child" data-nav-href="/fwm/tier-list">TierList</a>
+    <a href="/fwm/tierlist"             class="ug-mn-child" data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
@@ -109,7 +109,7 @@ const DESKTOP_NAV_INNER = `
   <div class="ug-tn-drop">
     <a href="/fwm/roster"                data-nav-href="/fwm/roster">Roster</a>
     <a href="/fwm/tech-specs"            data-nav-href="/fwm/tech-specs">Tech Specs</a>
-    <a href="/fwm/tier-list"             data-nav-href="/fwm/tier-list">TierList</a>
+    <a href="/fwm/tierlist"             data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
   </div>
 </div>
@@ -3628,7 +3628,7 @@ function seoOgName(p) {
   if (p === '/patch-notes') return 'fntd2';
   if (p === '/fwm/tech-specs') return 'fwm-specs';
   if (p === '/fwm/meta-teams') return 'fwm-meta';
-  if (p === '/fwm/tier-list') return 'fwm-tiers';
+  if (p === '/fwm/tierlist') return 'fwm-tiers';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3683,9 +3683,9 @@ const SEO_PAGES = {
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
   '/fwm/fwm-directory': ['FNaF World Multiplayer Guide: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) guide for Roblox: the full Roster, every Byte, Chip and armor upgrade in Tech Specs, a TierList and the best Meta Teams.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
-  '/fwm/tier-list': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
+  '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
-  '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, attacks and how to unlock them, plus every boss, enemy and NPC.'],
+  '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
@@ -4349,12 +4349,13 @@ function seoFwmSlug(s) {
   return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
 }
 function seoFwmLink(name, page) {
+  if (!page) return seoEsc(name);
   return '<a href="/fwm/' + page + '#' + encodeURIComponent(seoFwmSlug(name)) + '">' + seoEsc(name) + '</a>';
 }
 function seoFwmTierHtml(d) {
   if (!d || !d.lists) return '';
   const tiers = Array.isArray(d.tiers) && d.tiers.length ? d.tiers : ['s', 'a', 'b', 'c', 'd'].map(id => ({ id, name: id.toUpperCase() }));
-  const tabs = [['party', 'Characters', 'roster'], ['bytes', 'Bytes', 'tech-specs'], ['chips', 'Chips', 'tech-specs'], ['armor', 'Mendo-Armor', 'tech-specs']];
+  const tabs = [['party', 'Characters', 'roster'], ['moves', 'Moves', ''], ['bytes', 'Bytes', 'tech-specs'], ['chips', 'Chips', 'tech-specs'], ['armor', 'Mendo-Armor', 'tech-specs']];
   const out = ['<h2>FNaF World Multiplayer TierList</h2>'];
   tabs.forEach(([k, label, page]) => {
     const l = d.lists[k];
@@ -4392,7 +4393,7 @@ function seoFwmHtml(d) {
   const val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
   const pair = o => o ? val(o.normal) + ' / ' + val(o.hard) : '?';
   const out = ['<h2>FNaF World Multiplayer roster</h2><p>' + d.party.length + ' party members, ' + (d.bosses || []).length + ' bosses, ' + (d.enemies || []).length + ' enemies and ' + (d.npcs || []).length + ' NPCs in FNaF World Multiplayer on Roblox.</p>'];
-  out.push('<h3>Party members</h3><div class="ug-seo-wrap"><table><thead><tr><th>Character</th><th>World</th><th>Health</th><th>Attacks</th><th>How to get</th></tr></thead><tbody>' +
+  out.push('<h3>Party members</h3><div class="ug-seo-wrap"><table><thead><tr><th>Character</th><th>World</th><th>Health</th><th>Moves</th><th>How to get</th></tr></thead><tbody>' +
     d.party.filter(c => c && c.name).map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.world || '') + '</td><td>' + val(c.health) + '</td><td>' + seoEsc((c.attacks || []).join(', ')) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') +
     '</tbody></table></div>');
   [['bosses', 'Bosses'], ['enemies', 'Enemies']].forEach(k => {
@@ -4409,8 +4410,8 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
-  if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams' || p === '/fwm/tier-list') {
-    const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams', tiers = p === '/fwm/tier-list';
+  if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams' || p === '/fwm/tierlist') {
+    const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams', tiers = p === '/fwm/tierlist';
     const d = await seoTimed(seoLoadFwm(tiers ? 'fnafworldtiers.json' : metas ? 'fnafworldmeta.json' : specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
     let html = '';
     try { html = tiers ? seoFwmTierHtml(d) : metas ? seoFwmMetaHtml(d) : specs ? seoFwmSpecsHtml(d) : seoFwmHtml(d); } catch (e) { html = ''; }
@@ -4492,7 +4493,7 @@ const SITEMAP_DATA = {
   '/fwm/roster': ['fnafworld.json'],
   '/fwm/tech-specs': ['fnafworldspecs.json'],
   '/fwm/meta-teams': ['fnafworldmeta.json'],
-  '/fwm/tier-list': ['fnafworldtiers.json']
+  '/fwm/tierlist': ['fnafworldtiers.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',
@@ -4631,6 +4632,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 })();
 <\/script>`;
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
+const PAGE_MOVED = { '/fwm/tier-list': '/fwm/tierlist' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
 const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css"><link rel="stylesheet" href="/overhaul/ov.css"><link rel="stylesheet" href="/overhaul/ov-kit.css"><link rel="stylesheet" href="/overhaul/ov-a11y.css"><script src="/overhaul/ov-a11y.js"><\/script><script src="/overhaul/ov.js"><\/script>';
 const OV_FONTS = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap';
@@ -8617,6 +8619,8 @@ export default {
       });
     }
 
+    const pageMoved = PAGE_MOVED[url.pathname.replace(/^\/overhaul(?=\/)/, '').replace(/(\.html|\/)$/, '')];
+    if (pageMoved) return Response.redirect(new URL((url.pathname.indexOf('/overhaul/') === 0 ? '/overhaul' : '') + pageMoved + url.search + url.hash, url).toString(), 301);
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap(env, url);
     if (url.pathname === '/sitemap.xml') return seoSitemap(env, url);
     if (url.pathname === '/llms.txt') return seoLlms();

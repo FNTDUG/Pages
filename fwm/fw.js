@@ -5,10 +5,10 @@
   var GROUPS = { byte: 'bytes', chip: 'chips', armor: 'armor' };
   var ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
-  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor' };
+  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor', move: 'Move' };
   var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
   var SHIELD = '<path d="M0 0h7v4H6v1H5v1H4v1H3V6H2V5H1V4H0z"/>';
-  var TIER_TABS = [['party', 'party', 'Characters'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
+  var TIER_TABS = [['party', 'party', 'Characters'], ['moves', 'move', 'Moves'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
   var TIERS = [{ id: 's', name: 'S', color: '#ff4d6a' }, { id: 'a', name: 'A', color: '#ff9a2e' }, { id: 'b', name: 'B', color: '#ffd93b' }, { id: 'c', name: 'C', color: '#5ccf4f' }, { id: 'd', name: 'D', color: '#4fb4ff' }];
   var COIN = '<path d="M2 0h3v1h1v1h1v3H6v1H5v1H2V6H1V5H0V2h1V1h1zm1 2v3h1V2z"/>';
 
@@ -41,7 +41,7 @@
   }
   function index(data) {
     if (data._ix) return data._ix;
-    var ix = { world: {}, group: { byte: {}, chip: {}, armor: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [], armor: [] } };
+    var ix = { world: {}, group: { byte: {}, chip: {}, armor: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [], armor: [], move: [] } };
     (data.worlds || []).forEach(function (w, i) { w.i = i; ix.world[w.name] = w; });
     Object.keys(GROUPS).forEach(function (k) {
       ((data.groups || {})[GROUPS[k]] || []).forEach(function (gr, i) { gr.i = i; ix.group[k][gr.name] = gr; });
@@ -56,6 +56,16 @@
         ix.tabs[l[1]].push(c);
       });
     });
+    var users = {};
+    (data.party || []).forEach(function (c) { (c.attacks || []).forEach(function (n) { (users[n] = users[n] || []).push(c); }); });
+    Object.keys(data.attacks || {}).forEach(function (n) {
+      var a = data.attacks[n] || {}, c = { name: n, kind: 'move', icon: a.icon, hex: a.hex, color: a.color, type: a.type, description: a.description, damage: a.damage, users: users[n] || [] };
+      c.world = c.users[0] && c.users[0].world;
+      c.id = slug(n);
+      while (ix.byId[c.id]) c.id += '-move';
+      ix.byId[c.id] = c;
+      ix.tabs.move.push(c);
+    });
     data._ix = ix;
     return ix;
   }
@@ -68,6 +78,7 @@
     return gs && c.group ? gs[c.group] || null : null;
   }
   function colorOf(data, c) {
+    if (c.kind === 'move') return c.hex || '#5b6894';
     var gr = groupOf(data, c);
     return gr && gr.color ? gr.color : worldOf(data, c).color;
   }
@@ -145,13 +156,13 @@
   };
 
   FW.card = function (data, c, head) {
-    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : ''), hd = head && c.head && art;
+    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : ''), hd = head && c.head && art;
     var h = '<li><a class="fw-card fw-card--' + c.kind + (hd ? ' fw-card--head' : '') + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
     h += '<span class="fw-card-art">' + (hd ? '<picture><source media="(max-width:600px)" srcset="' + esc(c.head) + '">' : '') + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + (hd ? '</picture>' : '') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
-    } else if (c.kind !== 'npc' && c.kind !== 'chip') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
+    } else if (c.kind !== 'npc' && c.kind !== 'chip' && c.kind !== 'move') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
     if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
     return h;
@@ -208,20 +219,38 @@
     return h + '</div>';
   }
 
+  function moveDetail(data, c, extra) {
+    var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char fwd-char--move">';
+    if (c.icon) h += '<img class="fwd-anim" src="' + esc(c.icon) + '" alt="' + esc(c.name) + '" decoding="async">';
+    h += '</div></div></div><div class="fwd-info">';
+    h += '<p class="fwd-kicker">' + KIND.move + (c.type ? ' &middot; ' + esc(c.type) : '') + '</p>';
+    h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
+    if (c.color) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + esc(colorOf(data, c)) + '">' + esc(c.color) + '</span>';
+    h += '<span class="fwd-chip">' + c.users.length + (c.users.length === 1 ? ' character has it' : ' characters have it') + '</span>';
+    h += '</div>' + (extra || '');
+    if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
+    if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
+    if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
+      return '<li><a href="roster#' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.head || u.card ? '<img src="' + esc(u.head || u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
+    }).join('') + '</ul>');
+    return h + '</div>';
+  }
+
   FW.detail = function (data, c, still, extra) {
+    if (c.kind === 'move') return moveDetail(data, c, extra);
     if (GROUPS[c.kind]) return specDetail(data, c, still, extra);
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
     var anim = party && c.attackAnimation && !still;
     var src = still ? c.card : (party ? c.idle : c.image) || c.card;
     var h = '<div class="fwd-stage">';
     h += '<div class="fwd-char-wrap">';
-    if (anim) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s attack animation">';
+    if (anim) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s move animation">';
     else h += '<div class="fwd-char">';
     h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
     h += anim ? '</button>' : '</div>';
     h += '<span class="fwd-ground" aria-hidden="true"></span></div>';
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
-    if (anim) h += '<p class="fwd-hint">Tap them to see their attack</p>';
+    if (anim) h += '<p class="fwd-hint">Tap them to see a move</p>';
     h += '</div><div class="fwd-info">';
     h += '<p class="fwd-kicker">' + KIND[c.kind] + (c.number ? ' #' + esc(c.number) : '') + (c.update ? ' &middot; ' + esc(c.update) : '') + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
@@ -238,7 +267,7 @@
       h += '<p class="fwd-stat-v">' + (hp == null ? '?' : fmt(hp)) + '</p>';
       h += hp == null ? '<p class="fwd-stat-note">Not known yet.</p>' : '<span class="fwd-bar"><span style="width:' + Math.round(hp / max * 100) + '%"></span></span>';
       h += '</div></section>';
-      if (c.attacks && c.attacks.length) h += panel('Attacks', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
+      if (c.attacks && c.attacks.length) h += panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
         var a = data.attacks[n] || {};
         var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
         li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
@@ -357,7 +386,7 @@
       var items = l[t.id] || [];
       if (!items.length) return;
       h += '<section class="fw-tier" style="--tc:' + esc(t.color || '#ffce1f') + '"><h2 class="fw-tier-h"><span class="fw-tier-l">' + esc(t.name || t.id) + '</span><span class="fw-sr"> tier</span></h2>';
-      h += '<ul class="fw-grid fw-tier-grid">' + items.map(function (v) { return slot(data, tt[1], v); }).join('') + '</ul></section>';
+      h += '<ul class="fw-grid fw-tier-grid fw-tier-grid--' + tt[1] + '">' + items.map(function (v) { return slot(data, tt[1], v); }).join('') + '</ul></section>';
     });
     if (!h) return '<p class="fw-none">Nothing ranked here yet.</p>';
     return (note ? '<p class="fw-tier-note">' + esc(note) + '</p>' : '') + h;
