@@ -233,7 +233,7 @@
     if (party) {
       var max = 0, hp = num(c.health);
       ix.tabs.party.forEach(function (p) { var v = num(p.health); if (v > max) max = v; });
-      h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health <span>at level 0</span></p>';
+      h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health</p>';
       h += '<p class="fwd-stat-v">' + (hp == null ? '?' : fmt(hp)) + '</p>';
       h += hp == null ? '<p class="fwd-stat-note">Not known yet.</p>' : '<span class="fwd-bar"><span style="width:' + Math.round(hp / max * 100) + '%"></span></span>';
       h += '</div></section>';
@@ -287,9 +287,19 @@
     var ps = ((meta && meta.pages) || []).filter(function (p) { return p && p.pageTitle && p.order; });
     return ps.length ? ps : [{ pageTitle: 'Meta Teams', order: Object.keys((meta && meta.metas) || {}) }];
   };
+  function teamWorld(data, t) {
+    var ix = index(data), want = String(t.world || '').trim().toLowerCase(), n = {}, best = null;
+    for (var k in ix.world) if (k.toLowerCase() === want) return ix.world[k];
+    (t.party1 || []).concat(t.party2 || []).forEach(function (v) {
+      var c = pick(data, 'party', v), w = c && worldOf(data, c);
+      if (!w || !w.name) return;
+      n[w.name] = (n[w.name] || 0) + 1;
+      if (!best || n[w.name] > n[best.name]) best = w;
+    });
+    return best || data.worlds[0];
+  }
   FW.team = function (data, name, t) {
-    var ix = index(data), first = pick(data, 'party', (t.party1 || [])[0]);
-    var w = ix.world[t.world] || (first ? worldOf(data, first) : data.worlds[0]);
+    var w = teamWorld(data, t);
     var h = '<section class="fw-sec fw-team" style="--wc:' + esc(w.color) + '">';
     h += '<h2 class="fw-sec-h">' + (w.background ? '<span class="fw-sec-bg" style="background-image:url(&quot;' + esc(w.background) + '&quot;)"></span>' : '') + '<span class="fw-sec-t">' + esc(name) + '</span></h2>';
     if (t.caption) h += '<p class="fw-team-cap">' + esc(t.caption) + '</p>';
