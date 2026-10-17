@@ -698,7 +698,9 @@
   function get(u) {
     return fetch(u, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
-      return r.json();
+      return r.text();
+    }).then(function (t) {
+      return JSON.parse(t.replace(/,(\s*[\]}])/g, '$1'));
     });
   }
   Promise.all([root.getAttribute('data-src') || DATA].concat(metaSrc ? [root.getAttribute('data-specs'), metaSrc] : []).map(get)).then(function (r) {
@@ -714,6 +716,6 @@
     render();
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
-    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The tier list' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
+    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
   });
 })(typeof window !== 'undefined' ? window : this);
