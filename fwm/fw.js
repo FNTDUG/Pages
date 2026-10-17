@@ -231,7 +231,7 @@
     if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
     if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
     if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
-      return '<li><a href="roster#' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.head || u.card ? '<img src="' + esc(u.head || u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
+      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.head || u.card ? '<img src="' + esc(u.head || u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
     }).join('') + '</ul>');
     return h + '</div>';
   }
@@ -585,6 +585,14 @@
     dlg.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('.fwd-char') : null;
       if (b && b.tagName === 'BUTTON') attack(b);
+      var u = e.target.closest ? e.target.closest('.fwd-users a[data-id]') : null;
+      var c = u && ix.byId[u.getAttribute('data-id')];
+      if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
+      e.preventDefault();
+      order = (cur.users || [c]).slice();
+      show(c, 1);
+      history.replaceState(history.state, '', '#' + c.id);
+      dlg.querySelector('.fwd-back').focus();
     });
     document.addEventListener('keydown', function (e) {
       if (dlg.hidden) return;
