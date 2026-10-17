@@ -204,15 +204,20 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fw-team-h{margin:0 0 8px 2px;color:#ffe866;font:400 17px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi)}
 .fw .fw-team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .fw-team-grid .fw-card-no{display:none}
+.fw .fw-team-grid .fw-card{height:auto}
 .fw-team-grid .fw-card-name{min-height:36px;padding:4px;font-size:13px}
-.fw-team-grid .fw-card-hp{top:4px;left:4px;font-size:12.5px;padding:2px 5px 2px 4px}
-.fw-team-grid .fw-card-art{padding:22px 4px 2px}
-.fw-team-grid .fw-card--chip .fw-card-art{padding:24px 4px 10px}
-.fw-team-grid .fw-card--chip .fw-card-art img,#ug-content .fw .fw-team-grid .fw-card--chip .fw-card-art img{max-width:38%}
+.fw-team-grid .fw-card-hp{display:none}
+.fw-team-grid .fw-card-art{padding:10px 4px 2px}
+.fw .fw-team-grid--sm{grid-template-columns:repeat(4,minmax(0,74px));gap:8px}
+.fw .fw-team-grid--sm .fw-card{aspect-ratio:auto}
+.fw-team-grid--sm .fw-card-art,.fw-team-grid--sm .fw-card--chip .fw-card-art{flex:none;height:54px;padding:6px 4px 4px;align-items:center}
+.fw-team-grid--sm .fw-card-name{min-height:30px;padding:3px 2px;font-size:11.5px;line-height:1.05}
+.fw-team-grid--sm .fw-card-art img,#ug-content .fw .fw-team-grid--sm .fw-card-art img{width:auto;max-width:86%;max-height:100%}
+.fw-team-grid--sm .fw-card--chip .fw-card-art img,#ug-content .fw .fw-team-grid--sm .fw-card--chip .fw-card-art img{max-width:60%}
 .fw .fw-card--empty{background:rgba(7,11,28,.35);border-style:dashed;border-color:rgba(201,216,255,.45);box-shadow:none}
 .fw .fw-card--empty:hover,.fw .fw-card--empty:active{transform:none;box-shadow:none}
 .fw-card--empty .fw-card-name{color:#c9d8ff;background:transparent;border-top-color:transparent}
 .fw-slot-cap{display:block;margin:5px 0 0;font:400 13px/1.15 'Lilita One',system-ui,sans-serif;text-align:center;text-shadow:0 2px 0 var(--fwi)}
 .fw-team-note{margin:12px 0 0;padding:11px 14px;font-size:15px;line-height:1.5;background:rgba(7,11,28,.4);border:3px solid var(--fwi);border-radius:12px}
 @media (max-width:760px){.fw-team-body{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:600px){.fw .fw-team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.fw-team-part{padding:8px 7px 10px}.fw-team-grid .fw-card-name{font-size:12px;min-height:34px;padding:3px}.fw-team-grid .fw-card-hp{display:none}.fw-team-grid .fw-card-art,.fw-team-grid .fw-card--chip .fw-card-art{padding:8px 3px 3px}.fw-team-cap{font-size:16px}}
+@media (max-width:600px){.fw .fw-team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.fw-team-part{padding:8px 7px 10px}.fw-team-grid .fw-card-name{font-size:12px;min-height:34px;padding:3px}.fw-team-grid .fw-card-art{padding:8px 3px 3px}.fw .fw-team-grid--sm{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.fw .fw-team-grid--sm .fw-card{flex-direction:row;align-items:stretch;min-height:42px;border-radius:10px}.fw-team-grid--sm .fw-card-art,.fw-team-grid--sm .fw-card--chip .fw-card-art{width:40px;height:auto;padding:4px}.fw-team-grid--sm .fw-card-name{flex:1 1 auto;justify-content:flex-start;min-width:0;min-height:0;padding:3px 7px;font-size:12.5px;text-align:left;border-top:0;border-left:3px solid var(--fwi)}.fw-team-cap{font-size:16px}}

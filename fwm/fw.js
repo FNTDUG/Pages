@@ -281,7 +281,7 @@
   function part(data, title, kind, list) {
     var items = (list || []).slice(0, 4);
     while (items.length < 4) items.push('');
-    return '<div class="fw-team-part"><h3 class="fw-team-h">' + title + '</h3><ul class="fw-grid fw-team-grid">' + items.map(function (v) { return slot(data, kind, v); }).join('') + '</ul></div>';
+    return '<div class="fw-team-part fw-team-part--' + kind + '"><h3 class="fw-team-h">' + title + '</h3><ul class="fw-grid fw-team-grid' + (kind === 'party' ? '' : ' fw-team-grid--sm') + '">' + items.map(function (v) { return slot(data, kind, v); }).join('') + '</ul></div>';
   }
   FW.pages = function (meta) {
     var ps = ((meta && meta.pages) || []).filter(function (p) { return p && p.pageTitle && p.order; });
