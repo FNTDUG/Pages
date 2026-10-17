@@ -4681,18 +4681,18 @@ function ovIsLook(d) {
   if (k < 0) return false;
   return OV_LOOK_PROP.test(d.slice(0, k).trim()) || OV_LOOK_VAL.test(d.slice(k + 1));
 }
-function ovStripCss(css) {
+function ovStripCss(css, all) {
   return ovCssBlocks(css).map(b => {
     if (b.raw != null) return b.raw;
     if (/^@(media|supports)\b/i.test(b.sel)) {
-      const inner = ovStripCss(b.body);
+      const inner = ovStripCss(b.body, all);
       return inner.trim() ? b.sel + '{' + inner + '}' : '';
     }
     if (/^@keyframes\s+flicker$/i.test(b.sel)) return '';
     if (b.sel.charAt(0) === '@') return b.sel + '{' + b.body + '}';
     const sels = b.sel.split(',').map(x => x.trim()).filter(x => !OV_GONE_SEL.test(x));
     if (!sels.length) return '';
-    const old = sels.filter(x => OV_OLD_SEL.test(x)), own = sels.filter(x => !OV_OLD_SEL.test(x));
+    const old = sels.filter(x => all || OV_OLD_SEL.test(x)), own = sels.filter(x => !all && !OV_OLD_SEL.test(x));
     let out = own.length ? own.join(',') + '{' + b.body + '}' : '';
     if (old.length) {
       const keep = ovDecls(b.body).filter(d => !ovIsLook(d));
@@ -4700,6 +4700,11 @@ function ovStripCss(css) {
     }
     return out;
   }).join('');
+}
+const ovLookless = {};
+function ovNoLook(name, html) {
+  if (ovLookless[name] == null) ovLookless[name] = html.replace(/<style>([\s\S]*?)<\/style>/g, (m, c) => '<style>' + ovStripCss(c, true) + '</style>');
+  return ovLookless[name];
 }
 let ovNavCss = null;
 function ovNavCssClean() {
@@ -8783,9 +8788,10 @@ export default {
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           el.append(PAGE_NOTES_SCRIPT, { html: true });
-          el.append(noInfoPanel || pvMissing ? NOTIFY_HTML.replace('data-auto="1"', 'data-auto="0"') : NOTIFY_HTML, { html: true });
+          const ntfHtml = pvOn ? ovNoLook('ntf', NOTIFY_HTML) : NOTIFY_HTML, pollHtml = pvOn ? ovNoLook('poll', POLL_HTML) : POLL_HTML;
+          el.append(noInfoPanel || pvMissing ? ntfHtml.replace('data-auto="1"', 'data-auto="0"') : ntfHtml, { html: true });
           if (!hasInfo) el.append('<style>.ntf-bell{top:85px}@media(min-width:769px){.ntf-bell{top:117px}}</style>', { html: true });
-          el.append(noInfoPanel || pvMissing ? POLL_HTML.replace('data-auto="1"', 'data-auto="0"') : POLL_HTML, { html: true });
+          el.append(noInfoPanel || pvMissing ? pollHtml.replace('data-auto="1"', 'data-auto="0"') : pollHtml, { html: true });
           if (!pvOn) el.append(OUTAGE_HTML, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
