@@ -72,6 +72,7 @@
 #rwOv{z-index:2147483005}
 #metaTip{z-index:2147483010!important}
 body.ch-modal #ug-hamburger{display:none!important}
+.chPop:focus{outline:none}
 .chPop{position:relative;width:min(860px,100%);max-height:88vh;max-height:88dvh;overflow:hidden;
   display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.8);
   border-radius:2px;background:#150c28 center/cover no-repeat;animation:chPopIn .18s ease-out}
@@ -185,7 +186,7 @@ html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
 </div>
 
 <div class="chOv" id="nsOv" hidden role="dialog" aria-modal="true" aria-labelledby="nsName">
-  <div class="chPop chScan" id="nsPop">
+  <div class="chPop chScan" id="nsPop" tabindex="-1">
     <div class="chVeil"></div>
     <button class="chPop-close" id="nsClose" type="button">Close</button>
     <div class="chPop-in" id="nsIn"></div>
@@ -193,7 +194,7 @@ html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
 </div>
 
 <div class="chOv" id="rwOv" data-ov-rows hidden role="dialog" aria-modal="true" aria-labelledby="rwName">
-  <div class="chPop chScan" id="rwPop">
+  <div class="chPop chScan" id="rwPop" tabindex="-1">
     <div class="chVeil"></div>
     <button class="chPop-close" id="rwClose" type="button">Back</button>
     <div class="chPop-in" id="rwIn"></div>
@@ -513,7 +514,7 @@ function openNights(g){
   document.getElementById('nsOv').hidden = false;
   document.body.style.overflow='hidden';
   document.body.classList.add('ch-modal');
-  document.getElementById('nsClose').focus();
+  document.getElementById('nsPop').focus({ preventScroll: true });
 }
 function closeNights(){
   document.getElementById('nsOv').hidden = true;
@@ -813,7 +814,7 @@ function openRewards(g,n){
   renderRewards();
   document.body.style.overflow='hidden';
   document.body.classList.add('ch-modal');
-  document.getElementById('rwClose').focus();
+  document.getElementById('rwPop').focus({ preventScroll: true });
 }
 function closeRewards(){
   returnTeam();
@@ -823,7 +824,7 @@ function closeRewards(){
     document.body.style.overflow='';
     document.body.classList.remove('ch-modal');
   } else {
-    document.getElementById('nsClose').focus();
+    document.getElementById('nsPop').focus({ preventScroll: true });
   }
 }
 

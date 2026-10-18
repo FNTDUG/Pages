@@ -33,7 +33,7 @@
   talk.setAttribute('aria-labelledby', 'ovtTitle');
   talk.innerHTML =
     '<div class="ovt-veil"></div>' +
-    '<div class="ovt-box">' +
+    '<div class="ovt-box" tabindex="-1">' +
       '<div class="ovt-side">' +
         '<div class="ovt-view" aria-hidden="true"><div class="ovt-zoom"><div class="ovt-sprite"><div class="ovt-body"></div><div class="ovt-eyes"></div></div></div></div>' +
         '<div class="ovt-side-text"><span class="ovt-name">Parvus</span><p class="ovt-note">Ask me about units, tier lists or meta teams. I\'m an AI, so I can get things wrong.</p></div>' +
@@ -164,7 +164,7 @@
     eyesAt(baseEye());
     blinkLoop();
     if (window.matchMedia('(pointer: fine)').matches && !input.disabled) input.focus();
-    else closeBtn.focus();
+    else box.focus({ preventScroll: true });
     if (!greeted) {
       greeted = true;
       pvLine(limit().tired ? TIRED_HELLO : 'Hi! What can I help you with?');

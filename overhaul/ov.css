@@ -248,6 +248,7 @@ html.ov[data-theme="light"] .ov-far{opacity:.32}
 .ovt{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .ovt[hidden]{display:none}
 .ovt-veil{position:absolute;inset:0;background:var(--overlay)}
+.ovt-box:focus{outline:none}
 .ovt-box{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);width:min(1000px,100%);height:min(580px,calc(100vh - 48px));color:var(--text);font-family:var(--font-body);background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:12px 12px 0 var(--ink)}
 .ovt-side{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px;background:var(--surface2);border-right:var(--bw) solid var(--ink)}
 .ovt-view{position:relative;width:400px;height:340px;overflow:hidden;flex:none;background:#070b14 var(--ph-tile-back) 0 0/1536px 288px repeat;image-rendering:pixelated;border:var(--bw) solid var(--ink)}

@@ -2945,6 +2945,7 @@ function wipActive(pathname) {
 const WIP_HTML = `
 <style>
 .wip-veil{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.wip-panel:focus{outline:none}
 .wip-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:wipIn .22s ease-out}
 @keyframes wipIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .wip-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:wipSlide 1.1s linear infinite}
@@ -2963,7 +2964,7 @@ const WIP_HTML = `
 @media (max-width:520px){.wip-kicker{font-size:9px}.wip-msg{font-size:13.5px}.wip-btn{width:100%}}
 </style>
 <div class="wip-veil" id="wipVeil" role="dialog" aria-modal="true" aria-labelledby="wipKicker" aria-describedby="wipMsg">
-  <div class="wip-panel">
+  <div class="wip-panel" tabindex="-1">
     <div class="wip-stripe" aria-hidden="true"></div>
     <div class="wip-body">
       <div class="wip-kicker" id="wipKicker">WORK IN PROGRESS</div>
@@ -2996,7 +2997,7 @@ const WIP_HTML = `
     if(document.referrer&&history.length>1)history.back();
     else window.location.href='/fntd2';
   });
-  document.getElementById('wipContinue').focus();
+  document.querySelector('#wipVeil .wip-panel').focus({ preventScroll: true });
 })();
 <\/script>`;
 
@@ -3004,6 +3005,7 @@ const OUTAGE_HTML = `
 <style>
 .gho-veil{position:fixed;inset:0;z-index:9001;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,3,10,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .gho-veil[hidden]{display:none}
+.gho-panel:focus{outline:none}
 .gho-panel{position:relative;width:min(520px,100%);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:ghoIn .22s ease-out}
 @keyframes ghoIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .gho-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:ghoSlide 1.1s linear infinite}
@@ -3022,7 +3024,7 @@ const OUTAGE_HTML = `
 @media (max-width:520px){.gho-kicker{font-size:9px}.gho-msg{font-size:13.5px}.gho-btn{width:100%}}
 </style>
 <div class="gho-veil" id="ghoVeil" hidden role="dialog" aria-modal="true" aria-labelledby="ghoKicker" aria-describedby="ghoMsg">
-  <div class="gho-panel">
+  <div class="gho-panel" tabindex="-1">
     <div class="gho-stripe" aria-hidden="true"></div>
     <div class="gho-body">
       <div class="gho-kicker" id="ghoKicker">GITHUB IS DOWN</div>
@@ -3080,7 +3082,7 @@ const OUTAGE_SCRIPT = `<script>
     document.addEventListener('keydown',onKey);
     document.getElementById('ghoDismiss').addEventListener('click',dismiss);
     document.getElementById('ghoRetry').addEventListener('click',function(){ location.reload(); });
-    document.getElementById('ghoRetry').focus();
+    document.querySelector('#ghoVeil .gho-panel').focus({ preventScroll: true });
   }
 
   // Observe fetch without changing it: the caller still receives the original
@@ -4904,6 +4906,7 @@ const NOTIFY_HTML = `
 .ntf-veil[hidden],.ntf-bell[hidden]{display:none}
 .ntf-veil *,.ntf-veil *::before,.ntf-veil *::after{box-sizing:border-box}
 .ntf-veil p,.ntf-veil ol,.ntf-veil li{margin:0;padding:0}
+.ntf-panel:focus{outline:none}
 .ntf-panel{position:relative;width:min(520px,100%);max-height:100%;overflow-y:auto;overscroll-behavior:contain;border-radius:16px;overflow-x:hidden;background:linear-gradient(135deg,rgba(58,10,56,.96),rgba(18,3,38,.96));border:1px solid rgba(255,164,91,.45);box-shadow:0 18px 60px rgba(0,0,0,.75);animation:ntfIn .22s ease-out;font-family:'Franklin Gothic Medium','Franklin Gothic','ITC Franklin Gothic',Arial,sans-serif;color:#fff;text-align:center;line-height:normal}
 @keyframes ntfIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .ntf-stripe{height:5px;opacity:.85;background-image:repeating-linear-gradient(45deg,#ffa45b 0 14.142px,#3a2410 14.142px 28.284px);animation:ntfSlide 1.1s linear infinite}
@@ -4997,7 +5000,7 @@ const NOTIFY_HTML = `
   </symbol>
 </svg>
 <div class="ntf-veil" id="ntfVeil" data-auto="1" role="dialog" aria-modal="true" aria-labelledby="ntfKicker" aria-describedby="ntfMsg" hidden>
-  <div class="ntf-panel" id="ntfPanel">
+  <div class="ntf-panel" id="ntfPanel" tabindex="-1">
     <div class="ntf-stripe" aria-hidden="true"></div>
     <div id="ntfContent"></div>
   </div>
@@ -5141,7 +5144,7 @@ const NOTIFY_HTML = `
         '</div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn" type="button" data-go="snooze">Yes, I&#39;m sure</button>' +
-          '<button class="ntf-btn secondary" type="button" data-go="back" data-focus>Go back</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="back">Go back</button>' +
         '</div>'
     },
     sureOff: {
@@ -5152,7 +5155,7 @@ const NOTIFY_HTML = `
         ERR + '</div>' +
         '<div class="ntf-actions">' +
           '<button class="ntf-btn danger" type="button" data-go="off">Yes, turn off</button>' +
-          '<button class="ntf-btn secondary" type="button" data-go="back" data-focus>Go back</button>' +
+          '<button class="ntf-btn secondary" type="button" data-go="back">Go back</button>' +
         '</div>'
     },
     bad: {
@@ -5218,10 +5221,7 @@ const NOTIFY_HTML = `
     void panel.offsetWidth;
     panel.style.animation = '';
     if (focus) {
-      var first = content.querySelector('[data-focus]') || content.querySelector('.ntf-btn');
-      if (first) {
-        try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
-      }
+      try { panel.focus({ preventScroll: true }); } catch (e) { panel.focus(); }
     }
   }
 

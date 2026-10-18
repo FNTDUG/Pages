@@ -573,6 +573,7 @@
     dlg.setAttribute('role', 'dialog');
     dlg.setAttribute('aria-modal', 'true');
     dlg.setAttribute('aria-labelledby', 'fwd-name');
+    dlg.tabIndex = -1;
     dlg.innerHTML = '<div class="fwd-bg"></div><div class="fwd-shade"></div><div class="fwd-scroll"><div class="fwd-in"></div></div>' +
       '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
       '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
@@ -591,7 +592,7 @@
       order = (cur.users || [c]).slice();
       show(c, 1);
       history.replaceState(history.state, '', '#' + c.id);
-      dlg.querySelector('.fwd-back').focus();
+      dlg.focus({ preventScroll: true });
     });
     document.addEventListener('keydown', function (e) {
       if (dlg.hidden) return;
@@ -605,7 +606,8 @@
       var f = Array.prototype.filter.call(dlg.querySelectorAll('button, a[href]'), function (x) { return x.offsetParent !== null || x === document.activeElement; });
       if (!f.length) return;
       var first = f[0], last = f[f.length - 1];
-      if (!dlg.contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+      if (document.activeElement === dlg) { e.preventDefault(); (e.shiftKey ? last : dlg.querySelector('.fwd-back')).focus(); }
+      else if (!dlg.contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
       else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
@@ -683,7 +685,7 @@
       history.pushState({ fw: 1 }, '', '#' + id);
       pushed = true;
     } else if (location.hash !== '#' + id) history.replaceState(history.state, '', '#' + id);
-    if (!was) dlg.querySelector('.fwd-back').focus();
+    if (!was) dlg.focus({ preventScroll: true });
   }
   function hide() {
     if (!dlg || dlg.hidden) return;

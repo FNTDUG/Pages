@@ -72,6 +72,7 @@
 html.fwd-on,html.fwd-on body{overflow:hidden}
 html.fwd-on #ug-hamburger,html.fwd-on #ug-overlay,html.fwd-on #ug-mobile-nav,html.fwd-on #ug-info-btn,html.fwd-on #ug-info-panel,html.fwd-on #ug-info-overlay,html.fwd-on #ug-sound-btn{visibility:hidden!important}
 .fwd{--fwi:#070b1c;position:fixed;inset:0;z-index:2147483647;color:#fff;font:400 16px/1.55 'Lilita One',system-ui,sans-serif;text-align:left;background:#0a1232}
+.fwd:focus{outline:none}
 .fwd[hidden]{display:none}
 .fwd *,.fwd *::before,.fwd *::after{box-sizing:border-box}
 .fwd-bg{position:absolute;inset:0;background-color:var(--wc);background-position:center 58%;background-size:cover;background-repeat:no-repeat}
