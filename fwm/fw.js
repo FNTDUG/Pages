@@ -191,7 +191,8 @@
       var a = (data.attacks || {})[n] || {};
       var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
       li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
-      li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.color ? ' <span class="fwd-tag">' + esc(a.color) + (a.type ? ' &middot; ' + esc(a.type) : '') + '</span>' : '') + '</p>';
+      li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + '</p>';
+      if (a.color || a.type) li += '<p class="fwd-tags">' + (a.color ? '<span class="fwd-tag fwd-tag-c">' + esc(a.color) + '</span>' : '') + (a.type ? '<span class="fwd-tag">' + esc(a.type) + '</span>' : '') + '</p>';
       if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
       if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';
       return li + '</div></li>';
