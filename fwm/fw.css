@@ -115,10 +115,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-atk img{display:block;width:170px;max-width:100%;height:auto;margin:0;image-rendering:auto}
 .fwd-atk-b{min-width:0}
 .fwd-panel .fwd-atk-n{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;color:#fff;font:400 18px/1.15 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1px 0 0 var(--fwi),-1px 0 0 var(--fwi),0 -1px 0 var(--fwi)}
-.fwd-panel .fwd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .fwd-tag{display:inline-flex;align-items:center;gap:6px;min-height:26px;box-sizing:border-box;padding:2px 11px;color:#fff;font:400 13.5px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:#2b3870;border:2px solid var(--fwi);border-radius:999px;box-shadow:0 2px 0 var(--fwi)}
-.fwd-tag-c{background:var(--c)}
-.fwd-tag-lt{color:#070b1c;text-shadow:none}
 .fwd-panel .fwd-atk-d{margin-top:4px;color:#e8ecff;font-size:15px;line-height:1.45}
 .fwd-panel .fwd-atk-f{margin-top:4px;color:#c9d3f5;font-size:13px;line-height:1.4}
 .fwd-atk-f code{font:400 14px/1.4 'Lilita One',system-ui,sans-serif;color:#fff;overflow-wrap:anywhere}
