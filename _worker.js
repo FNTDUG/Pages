@@ -4402,8 +4402,9 @@ function seoFwmHtml(d) {
   [['bosses', 'Bosses'], ['enemies', 'Enemies']].forEach(k => {
     const list = (d[k[0]] || []).filter(c => c && c.name);
     if (!list.length) return;
-    out.push('<h3>' + k[1] + '</h3><div class="ug-seo-wrap"><table><thead><tr><th>Name</th><th>World</th><th>Health (Normal / Hard)</th><th>Attack (Normal / Hard)</th></tr></thead><tbody>' +
-      list.map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc((c.worlds || []).join(', ')) + '</td><td>' + pair(c.health) + '</td><td>' + pair(c.attack) + '</td></tr>').join('') +
+    const mv = list.some(c => Array.isArray(c.attacks) && c.attacks.length);
+    out.push('<h3>' + k[1] + '</h3><div class="ug-seo-wrap"><table><thead><tr><th>Name</th><th>World</th><th>Health (Normal / Hard)</th><th>Attack (Normal / Hard)</th>' + (mv ? '<th>Moves</th>' : '') + '</tr></thead><tbody>' +
+      list.map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc((c.worlds || []).join(', ')) + '</td><td>' + pair(c.health) + '</td><td>' + pair(c.attack) + '</td>' + (mv ? '<td>' + seoEsc((c.attacks || []).join(', ')) + '</td>' : '') + '</tr>').join('') +
       '</tbody></table></div>');
   });
   const npcs = (d.npcs || []).filter(c => c && c.name);

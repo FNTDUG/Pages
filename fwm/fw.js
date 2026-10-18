@@ -57,10 +57,12 @@
       });
     });
     var users = {};
-    (data.party || []).forEach(function (c) { (c.attacks || []).forEach(function (n) { (users[n] = users[n] || []).push(c); }); });
+    ['party', 'boss', 'enemy'].forEach(function (k) {
+      ix.tabs[k].forEach(function (c) { (c.attacks || []).forEach(function (n) { (users[n] = users[n] || []).push(c); }); });
+    });
     Object.keys(data.attacks || {}).forEach(function (n) {
       var a = data.attacks[n] || {}, c = { name: n, kind: 'move', icon: a.icon, hex: a.hex, color: a.color, type: a.type, description: a.description, damage: a.damage, users: users[n] || [] };
-      c.world = c.users[0] && c.users[0].world;
+      c.world = c.users[0] && worldsOf(c.users[0])[0];
       c.id = slug(n);
       while (ix.byId[c.id]) c.id += '-move';
       ix.byId[c.id] = c;
@@ -183,6 +185,18 @@
   function panel(title, body) {
     return '<section class="fwd-panel"><h3 class="fwd-h">' + title + '</h3>' + body + '</section>';
   }
+  function movesPanel(data, c) {
+    if (!c.attacks || !c.attacks.length) return '';
+    return panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
+      var a = (data.attacks || {})[n] || {};
+      var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
+      li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
+      li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.color ? ' <span class="fwd-tag">' + esc(a.color) + (a.type ? ' &middot; ' + esc(a.type) : '') + '</span>' : '') + '</p>';
+      if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
+      if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';
+      return li + '</div></li>';
+    }).join('') + '</ul>');
+  }
 
   function specDetail(data, c, still, extra) {
     var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip', armor = c.kind === 'armor';
@@ -264,15 +278,7 @@
       h += '<p class="fwd-stat-v">' + (hp == null ? '?' : fmt(hp)) + '</p>';
       if (hp == null) h += '<p class="fwd-stat-note">Not known yet.</p>';
       h += '</div></section>';
-      if (c.attacks && c.attacks.length) h += panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
-        var a = data.attacks[n] || {};
-        var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
-        li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
-        li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.color ? ' <span class="fwd-tag">' + esc(a.color) + (a.type ? ' &middot; ' + esc(a.type) : '') + '</span>' : '') + '</p>';
-        if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
-        if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';
-        return li + '</div></li>';
-      }).join('') + '</ul>');
+      h += movesPanel(data, c);
       if (c.unlock) h += panel('How to get', '<p>' + esc(c.unlock) + '</p>');
     } else if (c.kind !== 'npc') {
       var rows = '';
@@ -284,7 +290,7 @@
         rows += '<tr><th scope="row">Health</th>' + cells(hs) + '</tr>';
         rows += '<tr><th scope="row">Attack</th>' + cells(at) + '</tr></tbody></table>';
       } else rows = '<p class="fwd-stat-note">Stats aren\'t known for this one yet.</p>';
-      h += panel('Stats', rows);
+      h += panel('Stats', rows) + movesPanel(data, c);
     }
     var about = '';
     if (c.about) about += '<p>' + esc(c.about) + '</p>';
