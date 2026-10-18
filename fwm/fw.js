@@ -404,16 +404,42 @@
   var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), tierMode = !!root.getAttribute('data-tiers'), metaSrc = root.getAttribute('data-meta') || root.getAttribute('data-tiers'), meta = null, scope = null;
   var baseSort = root.getAttribute('data-sort') || 'world';
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
-  var activeOpt = null;
+  var activeOpt = null, stills = {};
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0;
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
+  }
+
+  function stillMoves() {
+    Array.prototype.forEach.call(mount.querySelectorAll('.fw-card--move .fw-card-art img'), function (img) {
+      var src = img.getAttribute('src');
+      function put() {
+        var m = stills[src];
+        if (!m) {
+          if (!img.naturalWidth) return;
+          m = document.createElement('canvas');
+          m.width = img.naturalWidth;
+          m.height = img.naturalHeight;
+          try { m.getContext('2d').drawImage(img, 0, 0); } catch (e) { return; }
+          stills[src] = m;
+        }
+        var cv = document.createElement('canvas');
+        cv.width = m.width;
+        cv.height = m.height;
+        cv.setAttribute('aria-hidden', 'true');
+        cv.getContext('2d').drawImage(m, 0, 0);
+        if (img.parentNode) img.parentNode.replaceChild(cv, img);
+      }
+      if (stills[src] || (img.complete && img.naturalWidth)) put();
+      else img.addEventListener('load', put);
+    });
   }
 
   function render() {
     if (!data) return;
     if (meta) {
       mount.innerHTML = tierMode ? FW.tiers(data, meta, state.tab) : FW.teams(data, meta, +state.tab);
+      if (tierMode) stillMoves();
       if (tabs.length) mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
       Array.prototype.forEach.call(tabs, function (t) {
         var on = t.getAttribute('data-tab') === state.tab;

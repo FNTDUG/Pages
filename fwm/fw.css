@@ -238,7 +238,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fw .fw-tier-grid--move{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .fw .fw-tier-grid--move .fw-card{aspect-ratio:auto}
 .fw-card--move .fw-card-art{flex:none;height:72px;align-items:center;padding:10px 8px}
-.fw-card--move .fw-card-art img,#ug-content .fw .fw-card--move .fw-card-art img{width:100%;height:auto;max-height:100%;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(7,11,28,.35))}
+.fw-card--move .fw-card-art img,.fw-card--move .fw-card-art canvas,#ug-content .fw .fw-card--move .fw-card-art img{display:block;width:100%;height:auto;max-height:100%;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(7,11,28,.35))}
 .fwd-char--move .fwd-anim{width:min(440px,36vw);height:auto;aspect-ratio:auto}
 .fwd-users{display:flex;flex-wrap:wrap;gap:14px 12px;margin:0;padding:0;list-style:none}
 .fwd-users li{margin:0;padding:0}
