@@ -59,6 +59,43 @@ html.ov #ug-info-panel:not(.open){box-shadow:none}
 html.ov .inf-drop-body,html.ov .inf-subdrop-body,html.ov .inf-mg-drop,html.ov .inf-exp-body,html.ov .ug-mn-section-items{display:grid;grid-template-rows:minmax(0,0fr);max-height:none!important;overflow:hidden;transition:grid-template-rows .3s cubic-bezier(.3,.8,.3,1)!important}
 html.ov .inf-drop.open>.inf-drop-body,html.ov .inf-subdrop.open>.inf-subdrop-body,html.ov .inf-mg-wrap.open>.inf-mg-drop,html.ov .inf-exp-body.ov-open,html.ov .ug-mn-section.open>.ug-mn-section-items{grid-template-rows:minmax(0,1fr)}
 html.ov .inf-mg-fs-hint{bottom:8px;right:8px;padding:6px 9px;font:700 12px/1 var(--font-body);letter-spacing:.02em;color:#fff;background:rgba(6,5,10,.82);border:2px solid #06050a;border-radius:0}
+html.ov #inf-rot{background:var(--surface)}
+html.ov #ug-info-panel .inf-drop-inner{padding:14px 16px 18px;gap:12px}
+html.ov #ug-info-panel .inf-card,html.ov #ug-info-panel .inf-mg-item{background:#211c33;border:2px solid #06050a;border-radius:0;box-shadow:3px 3px 0 #06050a;padding:12px 14px;color:#f7f0e4}
+html.ov #ug-info-panel .inf-card::before,html.ov #ug-info-panel .inf-mg-item::before{display:none}
+html.ov #ug-info-panel .inf-card h4{font:700 16px/1.3 var(--font-body);letter-spacing:0;color:#f7f0e4}
+html.ov #ug-info-panel .inf-card p,html.ov #ug-info-panel .hp-quest,html.ov #ug-info-panel .hp-eff,html.ov #ug-info-panel .rot-obj{color:#d9d2e3}
+html.ov #ug-info-panel [style*="Audiowide"]{font-family:var(--font-body)!important;font-weight:700!important;letter-spacing:.04em}
+html.ov #ug-info-panel [style*="rgba(0, 0, 0, 0.4)"]{background:#141021!important;border:2px solid #06050a;border-radius:0!important}
+html.ov #ug-info-panel .inf-mg-item{font:700 14px/1.3 var(--font-body);transition:transform .12s,box-shadow .12s,background-color .12s}
+html.ov #ug-info-panel .inf-mg-item:hover{background:#2a2440;transform:translate(-1px,-1px);box-shadow:4px 4px 0 #06050a}
+html.ov #ug-info-panel .inf-mg-item:active{transform:translate(3px,3px);box-shadow:0 0 0 #06050a}
+html.ov #ug-info-panel .inf-mg-play{box-sizing:border-box;background:#ffa45b;border:2px solid #06050a;border-radius:0}
+html.ov #ug-info-panel .inf-mg-play::before{border-color:transparent transparent transparent #06050a}
+html.ov #ug-info-panel .inf-mg-video-wrap{border:2px solid #06050a;border-radius:0}
+html.ov .inf-mg-fs-close{background:#272436;border:3px solid #06050a;border-radius:0;box-shadow:3px 3px 0 #06050a;font-family:var(--font-body)}
+html.ov #ug-info-panel .inf-img,html.ov #ug-info-panel .inf-img img,html.ov #ug-info-panel .inf-img>div,html.ov #ug-info-panel .inf-img[class*="inf-rarity-"]::after,html.ov #ug-info-panel .inf-btxt{border-radius:0!important}
+html.ov #ug-info-panel .inf-btxt{font:700 15px/1 var(--font-body)}
+html.ov #ug-info-panel .inf-subdrop{border-bottom:0}
+html.ov #ug-info-panel .hp-wrap .inf-subdrop,html.ov #ug-info-panel .rot-pools .inf-subdrop{background:#191527;border:2px solid #06050a;border-radius:0}
+html.ov #ug-info-panel .hp-wrap .inf-subdrop.open,html.ov #ug-info-panel .rot-pools .inf-subdrop.open{background:#262038;border-color:#06050a}
+html.ov #ug-info-panel .inf-subdrop-btn:hover,html.ov #ug-info-panel .inf-subdrop.open>.inf-subdrop-btn{background:rgba(255,255,255,.05)}
+html.ov #ug-info-panel .hp-btn-label,html.ov #ug-info-panel .rot-group{font:700 12px/1.2 var(--font-body);letter-spacing:.08em}
+html.ov #ug-info-panel .hp-name{font:700 14px/1.3 var(--font-body);letter-spacing:0;color:#f7f0e4}
+html.ov #ug-info-panel .hp-cost,html.ov #ug-info-panel .inf-reward-chance{font:700 12px/1.2 var(--font-body)}
+html.ov #ug-info-panel .hp-tier{border-bottom-color:rgba(255,255,255,.08)}
+html.ov #ug-info-panel .rot-meta{color:#bdb5cb;font-size:12px}
+html.ov #ug-info-panel .rot-wait,html.ov #ug-info-panel .inf-rempty{color:var(--mute);font:500 14px/1.6 var(--font-body)}
+html.ov #ug-info-panel .inf-rgroup{padding:16px 16px 8px;font:700 12px/1.2 var(--font-body);letter-spacing:.08em}
+html.ov #ug-info-panel .inf-rgroup em,html.ov #ug-info-panel .inf-rmore{font:700 12px/1.4 var(--font-body);letter-spacing:.02em;color:#bdb5cb}
+html.ov #ug-info-panel .inf-ritems{padding:0 16px;gap:10px}
+html.ov #ug-info-panel .inf-hcat{font:600 11px/1.3 var(--font-body);letter-spacing:.06em;color:#bdb5cb}
+html.ov #ug-info-panel .inf-hit mark{background:#ffd23f;color:#06050a;border-radius:0;padding:0 2px}
+html.ov #ug-info-panel .inf-hgo{opacity:.85}
+html.ov #ug-info-panel .inf-drop.inf-flash{background:rgba(255,210,63,.14)}
+html.ov #ug-info-panel .inf-ad,html.ov #ug-info-panel .inf-ad-in,html.ov #ug-info-panel .inf-ad-sub{border-color:rgba(255,255,255,.08)}
+html.ov #ug-info-panel .inf-ad-label{font:700 11px/1 var(--font-body);letter-spacing:.08em;color:#bdb5cb}
+html.ov .inf-mode .inf-rt{font:700 10px/1 var(--font-body);letter-spacing:.06em}
 @media (prefers-reduced-motion:reduce){html.ov .inf-drop-body,html.ov .inf-subdrop-body,html.ov .inf-mg-drop,html.ov .inf-exp-body,html.ov .ug-mn-section-items{transition:none!important}}
 html.ov #ug-info-btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)!important}
 html.ov .metaMount,html.ov #unitEngine,html.ov #ue-last-updated-loader,html.ov #ug-info-panel{font-family:"Franklin Gothic Medium","Franklin Gothic","ITC Franklin Gothic",Arial,sans-serif;color:#fff}
