@@ -74,7 +74,6 @@ html.ov #ug-info-panel .inf-mg-play{box-sizing:border-box;background:#ffa45b;bor
 html.ov #ug-info-panel .inf-mg-play::before{border-color:transparent transparent transparent #06050a}
 html.ov #ug-info-panel .inf-mg-video-wrap{border:2px solid #06050a;border-radius:0}
 html.ov .inf-mg-fs-close{background:#272436;border:3px solid #06050a;border-radius:0;box-shadow:3px 3px 0 #06050a;font-family:var(--font-body)}
-html.ov #ug-info-panel .inf-img,html.ov #ug-info-panel .inf-img img,html.ov #ug-info-panel .inf-img>div,html.ov #ug-info-panel .inf-img[class*="inf-rarity-"]::after,html.ov #ug-info-panel .inf-btxt{border-radius:0!important}
 html.ov #ug-info-panel .inf-btxt{font:700 15px/1 var(--font-body)}
 html.ov #ug-info-panel .inf-subdrop{border-bottom:0}
 html.ov #ug-info-panel .hp-wrap .inf-subdrop,html.ov #ug-info-panel .rot-pools .inf-subdrop{background:#191527;border:2px solid #06050a;border-radius:0}
