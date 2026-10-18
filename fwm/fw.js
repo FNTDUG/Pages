@@ -201,16 +201,14 @@
     if (gr) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + esc(gr.color || '#2b3870') + '">' + esc(gr.name) + '</span>';
     h += '</div>' + (extra || '');
     if (armor && num(c.defense) != null) {
-      var dmax = 0, df = num(c.defense);
-      ix.tabs.armor.forEach(function (b) { var v = num(b.defense); if (v > dmax) dmax = v; });
+      var df = num(c.defense);
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart fwd-shield" viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + SHIELD + '</svg><div class="fwd-stat-b"><p class="fwd-stat-l">Defense</p>';
-      h += '<p class="fwd-stat-v">+' + fmt(df) + '</p><span class="fwd-bar fwd-bar--blue"><span style="width:' + Math.max(3, Math.round(df / (dmax || 1) * 100)) + '%"></span></span></div></section>';
+      h += '<p class="fwd-stat-v">+' + fmt(df) + '</p></div></section>';
     }
     if ((c.kind === 'byte' || armor) && num(c.price) != null) {
-      var max = 0, pr = num(c.price);
-      ix.tabs[c.kind].forEach(function (b) { var v = num(b.price); if (v > max) max = v; });
+      var pr = num(c.price);
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart fwd-coin" viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg><div class="fwd-stat-b"><p class="fwd-stat-l">Price <span>in Faz Tokens</span></p>';
-      h += '<p class="fwd-stat-v">' + (pr === 0 ? 'Free' : fmt(pr)) + '</p><span class="fwd-bar fwd-bar--gold"><span style="width:' + Math.max(3, Math.round(pr / (max || 1) * 100)) + '%"></span></span></div></section>';
+      h += '<p class="fwd-stat-v">' + (pr === 0 ? 'Free' : fmt(pr)) + '</p></div></section>';
     }
     if (c.effect) h += panel('What it does', '<p>' + esc(c.effect) + '</p>');
     if (c.unlock) h += panel(chip ? 'Where to find it' : 'How to get', '<p>' + esc(c.unlock) + '</p>');
@@ -252,7 +250,7 @@
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
     if (anim) h += '<p class="fwd-hint">Tap them to see a move</p>';
     h += '</div><div class="fwd-info">';
-    h += '<p class="fwd-kicker">' + KIND[c.kind] + (c.number ? ' #' + esc(c.number) : '') + (c.update ? ' &middot; ' + esc(c.update) : '') + '</p>';
+    h += '<p class="fwd-kicker">' + KIND[c.kind] + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
     worldsOf(c).forEach(function (k) {
       var ww = ix.world[k];
@@ -261,11 +259,10 @@
     if (party) h += '<span class="fwd-chip">From ' + esc(gameOf(c)) + '</span>';
     h += '</div>' + (extra || '');
     if (party) {
-      var max = 0, hp = num(c.health);
-      ix.tabs.party.forEach(function (p) { var v = num(p.health); if (v > max) max = v; });
+      var hp = num(c.health);
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health</p>';
       h += '<p class="fwd-stat-v">' + (hp == null ? '?' : fmt(hp)) + '</p>';
-      h += hp == null ? '<p class="fwd-stat-note">Not known yet.</p>' : '<span class="fwd-bar"><span style="width:' + Math.round(hp / max * 100) + '%"></span></span>';
+      if (hp == null) h += '<p class="fwd-stat-note">Not known yet.</p>';
       h += '</div></section>';
       if (c.attacks && c.attacks.length) h += panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
         var a = data.attacks[n] || {};
