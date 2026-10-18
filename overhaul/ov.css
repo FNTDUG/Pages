@@ -224,6 +224,7 @@ html.ov[data-theme="light"]{--c-hi:#ffffff}
 html.ov[data-theme="dark"]{--c-hi:#f7f0e4}
 .ov-hero{position:relative}
 .ov-float{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+html.ov #unitEngine .ue-header h2{white-space:nowrap;font-size:min(34px,calc(15vw - 27px))}
 .ov-sticker{position:absolute;left:0;top:0;will-change:transform}
 .ov-sticker,.ov-pin{filter:drop-shadow(var(--u) var(--u) 0 var(--ink))}
 .ov-far{opacity:.4}

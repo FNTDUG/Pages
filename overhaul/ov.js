@@ -340,7 +340,19 @@
   }
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
-  var floats = [], aim = { x: 0, y: 0 }, cam = { x: 0, y: 0 }, camOn = false;
+  var floats = [], aim = { x: 0, y: 0 }, cam = { x: 0, y: 0 }, camOn = false, spanW = 0, spanH = 0;
+  function spanOf() {
+    var vw = window.innerWidth;
+    if (!spanH || vw !== spanW) {
+      var probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none';
+      document.body.appendChild(probe);
+      spanW = vw;
+      spanH = Math.max(probe.offsetHeight, window.innerHeight) + 240;
+      probe.remove();
+    }
+    return spanH;
+  }
   var TIERS = {
     near: { u: [5, 6], up: 4, d: [0.45, 0.65], cam: 16 },
     far: { u: [3, 3], up: 3, d: [0.12, 0.22], cam: 6 }
@@ -351,7 +363,7 @@
     layer.className = 'ov-float';
     layer.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(layer, document.body.firstChild);
-    var vw = window.innerWidth, span = window.innerHeight + 240, phone = vw <= 600;
+    var vw = window.innerWidth, span = spanOf(), phone = vw <= 600;
     var count = {
       far: phone ? 3 : Math.min(12, Math.max(5, Math.round(vw / 160))),
       near: phone ? 3 : Math.min(10, Math.max(5, Math.round(vw / 200)))
@@ -393,7 +405,8 @@
     if (camOn) requestAnimationFrame(pan);
   }
   function float() {
-    var vw = window.innerWidth, span = window.innerHeight + 240, sy = reduced ? 0 : window.scrollY;
+    var vw = window.innerWidth, span = spanOf(), top = document.documentElement.scrollHeight - window.innerHeight;
+    var sy = reduced ? 0 : Math.max(0, Math.min(window.scrollY, Math.max(0, top)));
     floats.forEach(function (f) {
       var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span), y = Math.round(pos - cyc * span - 120);
       if (f.cyc !== null && cyc !== f.cyc) reroll(f, y, vw);
