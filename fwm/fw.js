@@ -595,9 +595,9 @@
       var c = u && ix.byId[u.getAttribute('data-id')];
       if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
       e.preventDefault();
+      history.pushState({ fw: 1, from: cur.id }, '', '#' + c.id);
       order = (cur.users || [c]).slice();
       show(c, 1);
-      history.replaceState(history.state, '', '#' + c.id);
       dlg.focus({ preventScroll: true });
     });
     document.addEventListener('keydown', function (e) {
@@ -660,6 +660,8 @@
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
     dlg.classList.toggle('fwd-solo', order.length < 2);
+    var fm = fromMove();
+    dlg.querySelector('.fwd-back').setAttribute('aria-label', fm && fm !== c ? 'Back to ' + fm.name : 'Back to the list');
     if (!still && dir) {
       inner.classList.remove('fwd-go-l', 'fwd-go-r');
       void inner.offsetWidth;
@@ -675,6 +677,8 @@
     if (meta) order = scope ? Array.prototype.map.call(scope.querySelectorAll('.fw-card--' + c.kind + '[data-id]'), function (x) { return ix.byId[x.getAttribute('data-id')]; }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }) : [c];
     else order = FW.order(data, state.tab, state.sort, state.q);
     if (order.indexOf(c) === -1) order = meta ? [c] : FW.order(data, c.kind, 'world', '');
+    var fm = fromMove();
+    if (fm && fm.users.indexOf(c) !== -1) order = fm.users.slice();
     var was = !dlg.hidden;
     if (!was) {
       lastFocus = document.activeElement;
@@ -703,7 +707,15 @@
     else if (lastFocus && lastFocus.focus) lastFocus.focus();
     cur = null;
   }
+  function fromMove() {
+    var f = history.state && history.state.from && ix.byId[history.state.from];
+    return f && f.kind === 'move' ? f : null;
+  }
   function close() {
+    if (fromMove()) {
+      history.back();
+      return;
+    }
     if (pushed) {
       pushed = false;
       history.back();
