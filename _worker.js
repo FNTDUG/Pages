@@ -4391,7 +4391,8 @@ function seoFwmHtml(d) {
   if (!d || !Array.isArray(d.party)) return '';
   const link = c => '<a href="/fwm/roster#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
   const val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
-  const pair = o => o ? val(o.normal) + ' / ' + val(o.hard) : '?';
+  const has = v => v != null && v !== '';
+  const pair = o => !o ? '?' : has(o.normal) && !has(o.hard) ? val(o.normal) + ' (Normal only)' : !has(o.normal) && has(o.hard) ? val(o.hard) + ' (Hard only)' : val(o.normal) + ' / ' + val(o.hard);
   const out = ['<h2>FNaF World Multiplayer roster</h2><p>' + d.party.length + ' party members, ' + (d.bosses || []).length + ' bosses, ' + (d.enemies || []).length + ' enemies and ' + (d.npcs || []).length + ' NPCs in FNaF World Multiplayer on Roblox.</p>'];
   out.push('<h3>Party members</h3><div class="ug-seo-wrap"><table><thead><tr><th>Character</th><th>World</th><th>Health</th><th>Moves</th><th>How to get</th></tr></thead><tbody>' +
     d.party.filter(c => c && c.name).map(c => '<tr><td>' + link(c) + '</td><td>' + seoEsc(c.world || '') + '</td><td>' + val(c.health) + '</td><td>' + seoEsc((c.attacks || []).join(', ')) + '</td><td>' + seoEsc(c.unlock || '') + '</td></tr>').join('') +

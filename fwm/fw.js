@@ -277,10 +277,12 @@
     } else if (c.kind !== 'npc') {
       var rows = '';
       var hs = c.health || {}, at = c.attack || {};
-      if (c.health || c.attack) {
-        rows += '<table class="fwd-tbl"><thead><tr><th scope="col"><span class="fw-sr">Stat</span></th><th scope="col">Normal</th><th scope="col">Hard</th></tr></thead><tbody>';
-        rows += '<tr><th scope="row">Health</th><td>' + esc(fmt(hs.normal)) + '</td><td>' + esc(fmt(hs.hard)) + '</td></tr>';
-        rows += '<tr><th scope="row">Attack</th><td>' + esc(fmt(at.normal)) + '</td><td>' + esc(fmt(at.hard)) + '</td></tr></tbody></table>';
+      var modes = [['normal', 'Normal'], ['hard', 'Hard']].filter(function (m) { return [hs[m[0]], at[m[0]]].some(function (v) { return v != null && v !== ''; }); });
+      if (modes.length) {
+        var cells = function (o) { return modes.map(function (m) { return '<td>' + esc(fmt(o[m[0]])) + '</td>'; }).join(''); };
+        rows += '<table class="fwd-tbl"><thead><tr><th scope="col"><span class="fw-sr">Stat</span></th>' + modes.map(function (m) { return '<th scope="col">' + m[1] + '</th>'; }).join('') + '</tr></thead><tbody>';
+        rows += '<tr><th scope="row">Health</th>' + cells(hs) + '</tr>';
+        rows += '<tr><th scope="row">Attack</th>' + cells(at) + '</tr></tbody></table>';
       } else rows = '<p class="fwd-stat-note">Stats aren\'t known for this one yet.</p>';
       h += panel('Stats', rows);
     }
