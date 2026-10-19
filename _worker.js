@@ -358,6 +358,9 @@ const SOUND_GOVERNOR = `<script>
   var muted=false;
   try{muted=localStorage.getItem(KEY)==='off';}catch(e){}
   var ctxs=[];
+  // Audio made with new Audio() never joins the DOM, so querySelectorAll can't
+  // find it to pause it; remember everything that actually starts playing.
+  var live=[];
 
   function silence(el){
     if(el.tagName==='VIDEO'){
@@ -375,7 +378,9 @@ const SOUND_GOVERNOR = `<script>
     }
   }
   function applyAll(){
-    var m=document.querySelectorAll('audio,video');
+    var m=Array.prototype.slice.call(document.querySelectorAll('audio,video'));
+    live=live.filter(function(el){return !el.paused||el.isConnected;});
+    for(var k=0;k<live.length;k++){if(m.indexOf(live[k])===-1)m.push(live[k]);}
     for(var i=0;i<m.length;i++){if(muted){silence(m[i]);}else{restore(m[i]);}}
     for(var j=0;j<ctxs.length;j++){try{if(muted){ctxs[j].suspend();}else{ctxs[j].resume();}}catch(e){}}
   }
@@ -393,6 +398,7 @@ const SOUND_GOVERNOR = `<script>
         // blocked" and retry on first tap, which would just fail again.
         else{try{this.pause();}catch(e){}return Promise.resolve();}
       }
+      if(live.indexOf(this)===-1)live.push(this);
       return nativePlay.apply(this,arguments);
     };
   }
@@ -426,6 +432,14 @@ const SOUND_GOVERNOR = `<script>
     document.addEventListener('DOMContentLoaded',applyAll);
     window.addEventListener('load',applyAll);
   }
+  // Other tabs, and pages restored by Back, would otherwise keep the old setting.
+  function sync(){
+    var m=muted;
+    try{m=localStorage.getItem(KEY)==='off';}catch(e){}
+    if(m!==muted){muted=m;applyAll();paint();}
+  }
+  window.addEventListener('storage',function(e){if(e.key===KEY)sync();});
+  window.addEventListener('pageshow',function(e){if(e.persisted)sync();});
 })();
 <\/script>`;
 
