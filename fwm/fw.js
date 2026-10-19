@@ -248,6 +248,20 @@
     return h + '</div>';
   }
 
+  FW.looks = function (c) {
+    var l = [{ name: 'Default', idle: c.idle, attack: c.attackAnimation, overworld: c.overworld }];
+    (c.skins || []).forEach(function (s) { if (s && s.name && (s.idle || s.overworld)) l.push(s); });
+    return l;
+  };
+  function lookBar(c) {
+    var l = FW.looks(c), h = '';
+    if (l.some(function (s) { return s.overworld; })) h += '<div class="fwd-looks" role="group" aria-label="View"><button type="button" class="fwd-look" data-view="battle" aria-pressed="true">Battle</button><button type="button" class="fwd-look" data-view="overworld" aria-pressed="false"' + (l[0].overworld ? '' : ' disabled') + '>Overworld</button></div>';
+    if (l.length > 1) h += '<div class="fwd-looks" role="group" aria-label="Skins">' + l.map(function (s, i) {
+      return '<button type="button" class="fwd-look" data-look="' + i + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + esc(s.name) + '</button>';
+    }).join('') + '</div>';
+    return h;
+  }
+
   FW.detail = function (data, c, still, extra) {
     if (c.kind === 'move') return moveDetail(data, c, extra);
     if (GROUPS[c.kind]) return specDetail(data, c, still, extra);
@@ -263,6 +277,7 @@
     h += '<span class="fwd-ground" aria-hidden="true"></span></div>';
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
     if (anim) h += '<p class="fwd-hint">Tap them to see a move</p>';
+    if (party) h += lookBar(c);
     h += '</div><div class="fwd-info">';
     h += '<p class="fwd-kicker">' + KIND[c.kind] + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
@@ -405,7 +420,7 @@
   var baseSort = root.getAttribute('data-sort') || 'world';
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null, stills = {};
-  var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0;
+  var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0, lookI = 0, view = 'battle';
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
@@ -617,6 +632,13 @@
     dlg.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('.fwd-char') : null;
       if (b && b.tagName === 'BUTTON') attack(b);
+      var lk = e.target.closest ? e.target.closest('.fwd-look') : null;
+      if (lk && cur) {
+        if (lk.hasAttribute('data-look')) lookI = +lk.getAttribute('data-look');
+        else view = lk.getAttribute('data-view');
+        applyLook();
+        return;
+      }
       var u = e.target.closest ? e.target.closest('.fwd-users a[data-id]') : null;
       var c = u && ix.byId[u.getAttribute('data-id')];
       if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
@@ -657,11 +679,30 @@
     });
     sc.addEventListener('pointercancel', function () { swipeX = null; });
   }
-  function attack(b) {
-    if (!cur || !cur.attackAnimation) return;
-    var img = b.querySelector('img'), back = cur.idle || cur.card;
+  function applyLook() {
+    var s = FW.looks(cur)[lookI] || {}, img = dlg.querySelector('.fwd-anim');
+    if (view === 'overworld' && !s.overworld) view = 'battle';
     clearTimeout(atkT);
-    img.src = cur.attackAnimation;
+    var ch = dlg.querySelector('.fwd-char');
+    ch.classList.remove('is-atk');
+    ch.classList.toggle('is-still', view !== 'battle' || !s.attack);
+    img.src = view === 'overworld' ? s.overworld : s.idle || cur.idle || cur.card;
+    img.classList.toggle('is-ow', view === 'overworld');
+    img.alt = cur.name + (lookI ? ' (' + s.name + ')' : '') + (view === 'overworld' ? ' in the overworld' : '');
+    var hint = dlg.querySelector('.fwd-hint');
+    if (hint) hint.hidden = view !== 'battle' || !s.attack;
+    Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-look'), function (x) {
+      var on = x.hasAttribute('data-look') ? +x.getAttribute('data-look') === lookI : x.getAttribute('data-view') === view;
+      x.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (x.getAttribute('data-view') === 'overworld') x.disabled = !s.overworld;
+    });
+  }
+  function attack(b) {
+    var s = cur && FW.looks(cur)[lookI];
+    if (!s || view !== 'battle' || !s.attack) return;
+    var img = b.querySelector('img'), back = s.idle || cur.idle || cur.card;
+    clearTimeout(atkT);
+    img.src = s.attack;
     b.classList.add('is-atk');
     atkT = setTimeout(function () {
       img.src = back;
@@ -676,6 +717,8 @@
   }
   function show(c, dir) {
     cur = c;
+    lookI = 0;
+    view = 'battle';
     clearTimeout(atkT);
     var w = worldOf(data, c), still = reduced();
     dlg.style.setProperty('--wc', w.color);
