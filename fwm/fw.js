@@ -437,7 +437,13 @@
 
   var firsts = {};
   function firstFrame(url) {
-    if (!firsts[url]) firsts[url] = new Promise(function (ok, no) {
+    if (!firsts[url]) firsts[url] = grabFirst(url).catch(function () {
+      return grabFirst(url + (url.indexOf('?') < 0 ? '?' : '&') + 'still=1');
+    });
+    return firsts[url];
+  }
+  function grabFirst(url) {
+    return new Promise(function (ok, no) {
       var im = new Image();
       im.crossOrigin = 'anonymous';
       im.onload = function () {
@@ -467,7 +473,6 @@
       im.onerror = no;
       im.src = url;
     });
-    return firsts[url];
   }
   function stillCards(box) {
     var list = box.querySelectorAll('img[data-still]:not([src])');
