@@ -157,10 +157,10 @@
     return list;
   };
 
-  FW.card = function (data, c, head) {
-    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : ''), hd = head && c.head && art;
-    var h = '<li><a class="fw-card fw-card--' + c.kind + (hd ? ' fw-card--head' : '') + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
-    h += '<span class="fw-card-art">' + (hd ? '<picture><source media="(max-width:600px)" srcset="' + esc(c.head) + '">' : '') + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + (hd ? '</picture>' : '') + '</span>';
+  FW.card = function (data, c) {
+    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
+    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
+    h += '<span class="fw-card-art">' + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
@@ -243,7 +243,7 @@
     if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
     if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
     if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
-      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.head || u.card ? '<img src="' + esc(u.head || u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
+      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.card ? '<img src="' + esc(u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
     }).join('') + '</ul>');
     return h + '</div>';
   }
@@ -322,9 +322,9 @@
     for (var i = 0; i < list.length; i++) if (list[i].name.toLowerCase() === n || list[i].id === n) return list[i];
     return null;
   }
-  function slot(data, kind, v, body) {
+  function slot(data, kind, v) {
     var c = pick(data, kind, v), name = v && typeof v === 'object' ? v.name : v;
-    var h = c ? FW.card(data, c, kind === 'party' && !body) : '<li><span class="fw-card fw-card--empty"><span class="fw-card-art"></span><span class="fw-card-name">' + (name ? esc(name) : 'Empty') + '</span></span></li>';
+    var h = c ? FW.card(data, c) : '<li><span class="fw-card fw-card--empty"><span class="fw-card-art"></span><span class="fw-card-name">' + (name ? esc(name) : 'Empty') + '</span></span></li>';
     if (v && v.caption) h = h.slice(0, -5) + '<span class="fw-slot-cap">' + esc(v.caption) + '</span></li>';
     return h;
   }
@@ -406,7 +406,7 @@
       var items = l[t.id] || [];
       if (!items.length) return;
       h += '<section class="fw-tier" style="--tc:' + esc(t.color || '#ffce1f') + '"><h2 class="fw-tier-h"><span class="fw-tier-l">' + esc(t.name || t.id) + '</span><span class="fw-sr"> tier</span></h2>';
-      h += '<ul class="fw-grid fw-tier-grid fw-tier-grid--' + tt[1] + '">' + items.map(function (v) { return slot(data, tt[1], v, true); }).join('') + '</ul></section>';
+      h += '<ul class="fw-grid fw-tier-grid fw-tier-grid--' + tt[1] + '">' + items.map(function (v) { return slot(data, tt[1], v); }).join('') + '</ul></section>';
     });
     if (!h) return '<p class="fw-none">Nothing ranked here yet.</p>';
     return (note ? '<p class="fw-tier-note">' + esc(note) + '</p>' : '') + h;
