@@ -468,7 +468,7 @@
     });
     return firsts[url];
   }
-  function stills(box) {
+  function stillCards(box) {
     var list = box.querySelectorAll('img[data-still]:not([src])');
     function go(img) {
       var u = img.getAttribute('data-still');
@@ -516,7 +516,7 @@
     if (meta) {
       mount.innerHTML = tierMode ? FW.tiers(data, meta, state.tab) : FW.teams(data, meta, +state.tab);
       if (tierMode) stillMoves();
-      stills(mount);
+      stillCards(mount);
       if (tabs.length) mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
       Array.prototype.forEach.call(tabs, function (t) {
         var on = t.getAttribute('data-tab') === state.tab;
@@ -527,7 +527,7 @@
     }
     syncSort();
     mount.innerHTML = FW.grid(data, state.tab, state.sort, state.q);
-    stills(mount);
+    stillCards(mount);
     mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
     Array.prototype.forEach.call(tabs, function (t) {
       var on = t.getAttribute('data-tab') === state.tab, n = t.querySelector('.fw-tab-n');
@@ -788,7 +788,7 @@
     dlg.querySelector('.fwd-bg').style.backgroundImage = w.background ? 'url("' + String(w.background).replace(/["\\]/g, '') + '")' : 'none';
     var inner = dlg.querySelector('.fwd-in');
     inner.innerHTML = FW.detail(data, c, still, tierMode ? FW.tierPanel(meta, c) : '');
-    stills(inner);
+    stillCards(inner);
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
