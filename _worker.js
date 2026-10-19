@@ -443,6 +443,18 @@ const SOUND_GOVERNOR = `<script>
 })();
 <\/script>`;
 
+// Pictures, video and canvases can't be dragged out or right-clicked to save.
+// Long-press menus on phones are covered by touch-callout (iOS) and the
+// contextmenu event (Android). Text, links and form fields keep their menus.
+const ASSET_GUARD = `<style>img,picture,video,canvas,svg{-webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none}img{-webkit-user-select:none;user-select:none}</style><script>
+(function(){
+  var SEL='img,picture,video,canvas,svg';
+  function asset(t){return t&&t.closest?t.closest(SEL):null;}
+  document.addEventListener('dragstart',function(e){if(asset(e.target))e.preventDefault();},true);
+  document.addEventListener('contextmenu',function(e){if(asset(e.target))e.preventDefault();},true);
+})();
+<\/script>`;
+
 const SOUND_BTN_HTML = `<button id="ug-sound-btn" onclick="ugSoundToggle()" aria-label="Mute site sounds" title="Mute site sounds" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke-linejoin="round"></path><g class="ug-snd-on"><path d="M15.8 9.3a4 4 0 0 1 0 5.4"></path><path d="M18.4 6.8a7.5 7.5 0 0 1 0 10.4"></path></g><g class="ug-snd-off"><path d="M16.5 9.5l5 5"></path><path d="M21.5 9.5l-5 5"></path></g></svg></button>
 <script>ugSoundPaint();<\/script>`;
 
@@ -8745,7 +8757,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(pvOn ? ovNavCssClean() : NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          el.append(pvOn ? ovNavCssClean() : NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(pvOn ? HOME_ICONS.replace('/icon-180.png', '/overhaul/icon-180.png') : HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (pvOn && !isOvHome) el.append(OV_HEAD, { html: true });
           if (ovMirror && !isOvHome && !pvMissing) el.append('<meta name="robots" content="noindex, nofollow">', { html: true });
           else if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
