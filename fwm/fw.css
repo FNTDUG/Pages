@@ -249,14 +249,14 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-users img{flex:none;box-sizing:border-box;width:74px;height:74px;padding:6px 6px 0;object-fit:contain;object-position:50% 100%;background:radial-gradient(120% 80% at 50% 28%,rgba(255,255,255,.5),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(0,0,0,.32)),var(--wc);border:3px solid var(--fwi);border-radius:14px;box-shadow:0 4px 0 var(--fwi);transition:box-shadow .08s}
 @media (max-width:860px){.fwd-char--move .fwd-anim{width:min(340px,82vw)}}
 @media (max-width:600px){.fw .fw-tier-grid--move{grid-template-columns:repeat(2,minmax(0,1fr))}.fw-card--move .fw-card-art{height:60px}}
-.fwd-looks{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:440px}
-.fwd-look{min-height:36px;padding:4px 14px;color:#fff;font:400 15px/1.1 'Lilita One',system-ui,sans-serif;letter-spacing:.02em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:rgba(14,22,58,.92);border:3px solid var(--fwi);border-radius:999px;box-shadow:0 3px 0 var(--fwi);cursor:pointer;transition:transform .1s,box-shadow .1s}
-.fwd-look:hover{transform:translateY(-1px)}
-.fwd-look[aria-pressed=true]{background:var(--wc,#2b3870);transform:translateY(2px);box-shadow:0 1px 0 var(--fwi)}
-.fwd-look:focus-visible{outline:3px solid #fff;outline-offset:2px}
-.fwd-look:disabled{opacity:.4;cursor:default;transform:none}
+.fwd-looks{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:460px}
+.fwd-look{min-height:40px;padding:4px 14px;color:#fff;font:400 16px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.02em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:linear-gradient(180deg,#63adff,#2f78e4);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .12s;-webkit-tap-highlight-color:transparent}
+.fwd-look:hover{filter:brightness(1.08)}
+.fwd-look:active{transform:translateY(3px);box-shadow:0 1px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35)}
+.fwd-look[aria-pressed=true]{background:linear-gradient(180deg,#ffe866,#ffbf14);box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.55)}
+.fwd-look:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.fwd-look:disabled{filter:grayscale(.8) brightness(.7);cursor:default;transform:none}
 button.fwd-char.is-still{cursor:default}
 button.fwd-char.is-still:hover .fwd-anim{transform:none}
-.fwd-anim.is-ow{width:min(300px,24vw)}
-@media (max-width:860px){.fwd-anim.is-ow{width:min(220px,56vw)}}
+.fwd-anim.is-ow{padding:13%}
 @media (prefers-reduced-motion:reduce){.fwd-look{transition:none}}

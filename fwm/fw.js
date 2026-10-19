@@ -690,7 +690,7 @@
     img.classList.toggle('is-ow', view === 'overworld');
     img.alt = cur.name + (lookI ? ' (' + s.name + ')' : '') + (view === 'overworld' ? ' in the overworld' : '');
     var hint = dlg.querySelector('.fwd-hint');
-    if (hint) hint.hidden = view !== 'battle' || !s.attack;
+    if (hint) hint.style.visibility = view !== 'battle' || !s.attack ? 'hidden' : '';
     Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-look'), function (x) {
       var on = x.hasAttribute('data-look') ? +x.getAttribute('data-look') === lookI : x.getAttribute('data-view') === view;
       x.setAttribute('aria-pressed', on ? 'true' : 'false');
