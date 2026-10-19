@@ -201,7 +201,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fw .fw-team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .fw-team-grid .fw-card-no{display:none}
 .fw .fw-team-grid .fw-card{height:auto}
-.fw-team-grid .fw-card-name{min-height:36px;padding:4px}
+.fw-team-grid .fw-card-name{min-height:36px;padding:4px}.fw-team-part--party .fw-card:not(.fw-card--empty) .fw-card-name{position:absolute;width:1px;height:1px;min-height:0;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .fw-team-grid .fw-card-hp{display:none}
 .fw-team-grid .fw-card-art{padding:10px 4px 2px}
 .fw .fw-team-grid--sm{grid-template-columns:repeat(4,minmax(0,74px));justify-content:center;gap:8px}
