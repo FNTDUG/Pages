@@ -158,7 +158,7 @@
   };
 
   function firstOf(c) {
-    return c.kind === 'party' ? c.idle || '' : /^(boss|enemy|npc)$/.test(c.kind) ? c.image || '' : '';
+    return c.kind === 'party' ? c.idle || '' : /^(boss|enemy|npc|byte|armor)$/.test(c.kind) ? c.image || '' : '';
   }
   function artImg(c, src, attrs) {
     var f = firstOf(c);
@@ -167,7 +167,7 @@
   }
 
   FW.card = function (data, c) {
-    var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
+    var hp = hpOf(c), gr = groupOf(data, c), art = (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
     var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
     h += '<span class="fw-card-art">' + artImg(c, art, ' alt="" loading="lazy" decoding="async"') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
@@ -209,9 +209,10 @@
 
   function specDetail(data, c, still, extra) {
     var ix = index(data), w = worldOf(data, c), gr = groupOf(data, c), chip = c.kind === 'chip', armor = c.kind === 'armor';
-    var src = chip ? (gr && gr.icon) : (still ? c.card : c.image || c.card);
+    var src = chip ? (gr && gr.icon) : c.image;
     var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char' + (chip ? ' fwd-char--chip' : armor ? ' fwd-char--armor' : ' fwd-char--byte') + '">';
-    if (src) h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
+    if (still && !chip) h += artImg(c, src, ' class="fwd-anim" alt="' + esc(c.name) + '" decoding="async"');
+    else if (src) h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
     h += '</div><span class="fwd-ground" aria-hidden="true"></span></div>';
     if (chip && c.image) h += '<img class="fwd-banner" src="' + esc(c.image) + '" alt="" width="400" height="100" decoding="async">';
     h += '</div><div class="fwd-info">';
@@ -252,7 +253,7 @@
     if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
     if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
     if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
-      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + artImg(u, u.card, ' alt="" loading="lazy" decoding="async"') + esc(u.name) + '</a></li>';
+      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + artImg(u, '', ' alt="" loading="lazy" decoding="async"') + esc(u.name) + '</a></li>';
     }).join('') + '</ul>');
     return h + '</div>';
   }
@@ -276,7 +277,7 @@
     if (GROUPS[c.kind]) return specDetail(data, c, still, extra);
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
     var anim = party && c.attackAnimation && !still;
-    var src = still ? c.card : (party ? c.idle : c.image) || c.card;
+    var src = party ? c.idle : c.image;
     var h = '<div class="fwd-stage">';
     h += '<div class="fwd-char-wrap">';
     if (anim) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s move animation">';
@@ -749,7 +750,7 @@
     var ch = dlg.querySelector('.fwd-char');
     ch.classList.remove('is-atk');
     ch.classList.toggle('is-still', view !== 'battle' || !s.attack);
-    img.src = view === 'overworld' ? s.overworld : s.idle || cur.idle || cur.card;
+    img.src = view === 'overworld' ? s.overworld : s.idle || cur.idle;
     img.classList.toggle('is-ow', view === 'overworld');
     img.alt = cur.name + (lookI ? ' (' + s.name + ')' : '') + (view === 'overworld' ? ' in the overworld' : '');
     var hint = dlg.querySelector('.fwd-hint');
@@ -763,7 +764,7 @@
   function attack(b) {
     var s = cur && FW.looks(cur)[lookI];
     if (!s || view !== 'battle' || !s.attack) return;
-    var img = b.querySelector('img'), back = s.idle || cur.idle || cur.card;
+    var img = b.querySelector('img'), back = s.idle || cur.idle;
     clearTimeout(atkT);
     img.src = s.attack;
     b.classList.add('is-atk');
