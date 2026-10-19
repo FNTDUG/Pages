@@ -157,10 +157,19 @@
     return list;
   };
 
+  function firstOf(c) {
+    return c.kind === 'party' ? c.idle || '' : /^(boss|enemy|npc)$/.test(c.kind) ? c.image || '' : '';
+  }
+  function artImg(c, src, attrs) {
+    var f = firstOf(c);
+    if (f) return '<img data-still="' + esc(f) + '"' + attrs + '>';
+    return src ? '<img src="' + esc(src) + '"' + attrs + '>' : '';
+  }
+
   FW.card = function (data, c) {
     var hp = hpOf(c), gr = groupOf(data, c), art = c.card || (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
     var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
-    h += '<span class="fw-card-art">' + (art ? '<img src="' + esc(art) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>';
+    h += '<span class="fw-card-art">' + artImg(c, art, ' alt="" loading="lazy" decoding="async"') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
@@ -243,7 +252,7 @@
     if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
     if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
     if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
-      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + (u.card ? '<img src="' + esc(u.card) + '" alt="" loading="lazy" decoding="async">' : '') + esc(u.name) + '</a></li>';
+      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + artImg(u, u.card, ' alt="" loading="lazy" decoding="async"') + esc(u.name) + '</a></li>';
     }).join('') + '</ul>');
     return h + '</div>';
   }
@@ -272,7 +281,7 @@
     h += '<div class="fwd-char-wrap">';
     if (anim) h += '<button type="button" class="fwd-char" aria-label="Play ' + esc(c.name) + '\'s move animation">';
     else h += '<div class="fwd-char">';
-    h += '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
+    h += still ? artImg(c, src, ' class="fwd-anim" alt="' + esc(c.name) + '" decoding="async"') : '<img class="fwd-anim" src="' + esc(src) + '" alt="' + esc(c.name) + '" decoding="async">';
     h += anim ? '</button>' : '</div>';
     h += '<span class="fwd-ground" aria-hidden="true"></span></div>';
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
@@ -425,6 +434,58 @@
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
 
+  var firsts = {};
+  function firstFrame(url) {
+    if (!firsts[url]) firsts[url] = new Promise(function (ok, no) {
+      var im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = function () {
+        try {
+          var w = im.naturalWidth, h = im.naturalHeight, cv = document.createElement('canvas');
+          cv.width = w;
+          cv.height = h;
+          var g = cv.getContext('2d');
+          g.drawImage(im, 0, 0);
+          var px = g.getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = -1, y1 = -1;
+          for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) if (px[(y * w + x) * 4 + 3]) {
+            if (x < x0) x0 = x;
+            if (x > x1) x1 = x;
+            if (y < y0) y0 = y;
+            if (y > y1) y1 = y;
+          }
+          if (x1 < 0) return no();
+          var cw = x1 - x0 + 1, ch = y1 - y0 + 1, k = Math.min(1, 220 / Math.max(cw, ch)), out = document.createElement('canvas');
+          out.width = Math.round(cw * k);
+          out.height = Math.round(ch * k);
+          var o = out.getContext('2d');
+          o.imageSmoothingQuality = 'high';
+          o.drawImage(cv, x0, y0, cw, ch, 0, 0, out.width, out.height);
+          out.toBlob(function (b) { if (b) ok(URL.createObjectURL(b)); else no(); }, 'image/png');
+        } catch (e) { no(); }
+      };
+      im.onerror = no;
+      im.src = url;
+    });
+    return firsts[url];
+  }
+  function stills(box) {
+    var list = box.querySelectorAll('img[data-still]:not([src])');
+    function go(img) {
+      var u = img.getAttribute('data-still');
+      firstFrame(u).then(function (s) { img.src = s; }, function () { img.src = u; });
+    }
+    if (box.fwIo) box.fwIo.disconnect();
+    if (!window.IntersectionObserver) { Array.prototype.forEach.call(list, go); return; }
+    box.fwIo = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        box.fwIo.unobserve(e.target);
+        go(e.target);
+      });
+    }, { rootMargin: '400px' });
+    Array.prototype.forEach.call(list, function (img) { box.fwIo.observe(img); });
+  }
+
   function stillMoves() {
     Array.prototype.forEach.call(mount.querySelectorAll('.fw-card--move .fw-card-art img'), function (img) {
       var src = img.getAttribute('src');
@@ -455,6 +516,7 @@
     if (meta) {
       mount.innerHTML = tierMode ? FW.tiers(data, meta, state.tab) : FW.teams(data, meta, +state.tab);
       if (tierMode) stillMoves();
+      stills(mount);
       if (tabs.length) mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
       Array.prototype.forEach.call(tabs, function (t) {
         var on = t.getAttribute('data-tab') === state.tab;
@@ -465,6 +527,7 @@
     }
     syncSort();
     mount.innerHTML = FW.grid(data, state.tab, state.sort, state.q);
+    stills(mount);
     mount.setAttribute('aria-labelledby', 'fw-tab-' + state.tab);
     Array.prototype.forEach.call(tabs, function (t) {
       var on = t.getAttribute('data-tab') === state.tab, n = t.querySelector('.fw-tab-n');
@@ -725,6 +788,7 @@
     dlg.querySelector('.fwd-bg').style.backgroundImage = w.background ? 'url("' + String(w.background).replace(/["\\]/g, '') + '")' : 'none';
     var inner = dlg.querySelector('.fwd-in');
     inner.innerHTML = FW.detail(data, c, still, tierMode ? FW.tierPanel(meta, c) : '');
+    stills(inner);
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
