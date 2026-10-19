@@ -396,6 +396,7 @@ const SOUND_GOVERNOR = `<script>
         // blocked" and retry on first tap, which would just fail again.
         else{try{this.pause();}catch(e){}return Promise.resolve();}
       }
+      if(document.hidden&&this.tagName!=='VIDEO'){try{this.pause();}catch(e){}return Promise.resolve();}
       if(live.indexOf(this)===-1)live.push(this);
       return nativePlay.apply(this,arguments);
     };
@@ -436,6 +437,9 @@ const SOUND_GOVERNOR = `<script>
     if(m!==muted){muted=m;applyAll();paint();}
   }
   window.addEventListener('storage',function(e){if(e.key===KEY)sync();});
+  document.addEventListener('visibilitychange',function(){
+    for(var j=0;j<ctxs.length;j++){try{if(document.hidden||muted){ctxs[j].suspend();}else{ctxs[j].resume();}}catch(e){}}
+  });
   window.addEventListener('pageshow',function(e){if(e.persisted)sync();});
 })();
 <\/script>`;
