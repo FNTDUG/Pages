@@ -358,8 +358,6 @@ const SOUND_GOVERNOR = `<script>
   var muted=false;
   try{muted=localStorage.getItem(KEY)==='off';}catch(e){}
   var ctxs=[];
-  // Audio made with new Audio() never joins the DOM, so querySelectorAll can't
-  // find it to pause it; remember everything that actually starts playing.
   var live=[];
 
   function silence(el){
@@ -432,7 +430,6 @@ const SOUND_GOVERNOR = `<script>
     document.addEventListener('DOMContentLoaded',applyAll);
     window.addEventListener('load',applyAll);
   }
-  // Other tabs, and pages restored by Back, would otherwise keep the old setting.
   function sync(){
     var m=muted;
     try{m=localStorage.getItem(KEY)==='off';}catch(e){}
@@ -443,9 +440,6 @@ const SOUND_GOVERNOR = `<script>
 })();
 <\/script>`;
 
-// Pictures, video and canvases can't be dragged out or right-clicked to save.
-// Long-press menus on phones are covered by touch-callout (iOS) and the
-// contextmenu event (Android). Text, links and form fields keep their menus.
 const ASSET_GUARD = `<style>img,picture,video,canvas,svg{-webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none}img{-webkit-user-select:none;user-select:none}</style><script>
 (function(){
   var SEL='img,picture,video,canvas,svg';
