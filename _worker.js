@@ -1034,8 +1034,8 @@ var EVOLUTIONS=[
   {name:'Gold Key',ing:[['8','Gold Ingot']]},
   {name:'Faz Key',ing:[['10','Faz Ingot']]},
   {name:'Soul Key',ing:[['12','Soul Ingot']]},
-  {name:'Reanimated Twisted Wolf',ing:[['1','Franken Part'],['10','iGhost'],['10','Ghost'],['10k','Fright Fuse Essence'],['50k','Event Tokens']]},
-  {name:'Trickster Bullies',ing:[['1','Scary Mask'],['5','iGhost'],['5','Ghost'],['5k','Fright Fuse Essence'],['20k','Event Tokens']]},
+  {name:'Reanimated Twisted Wolf',ing:[['1','Franken Part'],['10','Ghost'],['10k','Fright Fuse Essence'],['50k','Event Tokens']]},
+  {name:'Trickster Bullies',ing:[['1','Scary Mask'],['5','Ghost'],['5k','Fright Fuse Essence'],['20k','Event Tokens']]},
   {name:'Glitch Key',ing:[['5','Bronze Ingot'],['5','Silver Ingot'],['5','Gold Ingot'],['3','Faz Ingot'],['3','Soul Ingot'],['10','Glitch Ingot']]}
 ];
 function infLoadEvolutions(){
