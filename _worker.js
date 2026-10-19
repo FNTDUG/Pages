@@ -3716,7 +3716,7 @@ const SEO_PAGES = {
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
-  '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: all 48 party members with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
+  '/fwm/roster': ['FWM Roster: Every FNaF World Multiplayer Character', 'Every FNaF World Multiplayer character on Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
