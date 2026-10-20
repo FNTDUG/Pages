@@ -15,7 +15,7 @@ self.addEventListener('push', function (e) {
   }
   var opts = {
     body: d.body || '',
-    icon: '/favicon-192.png',
+    icon: '/overhaul/app-192.png',
     data: { url: d.url || '/' }
   };
   if (d.tag) opts.tag = d.tag;

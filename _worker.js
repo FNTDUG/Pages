@@ -5383,7 +5383,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
         </div>
         <p class="plabel">Preview</p>
         <div class="preview" aria-hidden="true">
-          <img src="/favicon-192.png" alt="">
+          <img src="/overhaul/favicon-192.png" alt="">
           <div><b id="pvTitle">FNTD User Guide</b><p id="pvMsg">New FNTD2 metas are up!</p><small>fntduserguide.com</small></div>
         </div>
         <div class="actions" id="mainActions">
