@@ -3361,7 +3361,7 @@ async function ghHealth() {
 
 const PUSH_VAPID_PUBLIC = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
 const PUSH_VAPID_SUBJECT = 'https://www.fntduserguide.com';
-const PUSH_GAMES = ['fntd2', 'bbn'];
+const PUSH_GAMES = ['fntd2', 'bbn', 'fwm'];
 const PUSH_HOSTS = ['fcm.googleapis.com', 'push.services.mozilla.com', 'push.apple.com', 'notify.windows.com'];
 const PUSH_BATCH = 20;
 const pushEnc = new TextEncoder();
@@ -3597,7 +3597,7 @@ async function pushSend(request, env) {
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
 
   if (body.mode === 'count') {
-    const counts = { fntd2: 0, bbn: 0, total: 0 };
+    const counts = { fntd2: 0, bbn: 0, fwm: 0, total: 0, combos: {} };
     let cursor;
     for (let page = 0; page < 20; page++) {
       const list = await env.PUSH_SUBS.list({ prefix: 's:', cursor });
@@ -3606,6 +3606,9 @@ async function pushSend(request, env) {
         counts.total++;
         if (g.indexOf('fntd2') !== -1) counts.fntd2++;
         if (g.indexOf('bbn') !== -1) counts.bbn++;
+        if (g.indexOf('fwm') !== -1) counts.fwm++;
+        const c = PUSH_GAMES.filter(x => g.indexOf(x) !== -1).join(',');
+        counts.combos[c] = (counts.combos[c] || 0) + 1;
       }
       if (list.list_complete) break;
       cursor = list.cursor;
@@ -5047,7 +5050,8 @@ const NOTIFY_HTML = `
   var KEY = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
   var GAMES = [
     { id: 'fntd2', name: 'FNTD2' },
-    { id: 'bbn', name: 'Bite By Night' }
+    { id: 'bbn', name: 'BBN' },
+    { id: 'fwm', name: 'FWM' }
   ];
   var FAIL = 'Something went wrong. Please try again.';
 
@@ -5076,11 +5080,11 @@ const NOTIFY_HTML = `
   function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
 
-  var chosen = { fntd2: true, bbn: true };
+  var chosen = { fntd2: true, bbn: true, fwm: true };
   var savedGames = load('ntf:games');
   if (savedGames) {
-    chosen = { fntd2: savedGames.indexOf('fntd2') !== -1, bbn: savedGames.indexOf('bbn') !== -1 };
-    if (!chosen.fntd2 && !chosen.bbn) chosen = { fntd2: true, bbn: true };
+    chosen = { fntd2: savedGames.indexOf('fntd2') !== -1, bbn: savedGames.indexOf('bbn') !== -1, fwm: savedGames.indexOf('fwm') !== -1 };
+    if (!chosen.fntd2 && !chosen.bbn && !chosen.fwm) chosen = { fntd2: true, bbn: true, fwm: true };
   }
 
   var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
@@ -5214,7 +5218,7 @@ const NOTIFY_HTML = `
   }
 
   function setChosen(list) {
-    chosen = { fntd2: list.indexOf('fntd2') !== -1, bbn: list.indexOf('bbn') !== -1 };
+    chosen = { fntd2: list.indexOf('fntd2') !== -1, bbn: list.indexOf('bbn') !== -1, fwm: list.indexOf('fwm') !== -1 };
     store('ntf:games', list.join(','));
   }
 
@@ -5776,12 +5780,17 @@ const PUSH_SEND_PAGE = `<!doctype html>
           <option value="/bbn/killer-terminal"></option>
           <option value="/bbn/survivor-terminal"></option>
           <option value="/patch-notes/bbn-patch-notes"></option>
+          <option value="/fwm/roster"></option>
+          <option value="/fwm/tech-specs"></option>
+          <option value="/fwm/tierlist"></option>
+          <option value="/fwm/meta-teams"></option>
         </datalist>
         <label class="f">Send to</label>
         <div class="games" id="games">
           <label class="game"><input type="checkbox" value="all"><span>Whole site <em id="cAll"></em></span></label>
           <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD2 <em id="cFntd2"></em></span></label>
-          <label class="game"><input type="checkbox" value="bbn"><span>Bite By Night <em id="cBbn"></em></span></label>
+          <label class="game"><input type="checkbox" value="bbn"><span>BBN <em id="cBbn"></em></span></label>
+          <label class="game"><input type="checkbox" value="fwm"><span>FWM <em id="cFwm"></em></span></label>
         </div>
         <p class="plabel">Preview</p>
         <div class="preview" aria-hidden="true">
@@ -5820,7 +5829,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
 <script>
 (function () {
   var password = '';
-  var counts = { fntd2: 0, bbn: 0, total: 0 };
+  var counts = { fntd2: 0, bbn: 0, fwm: 0, total: 0, combos: {} };
   var $ = function (id) { return document.getElementById(id); };
 
   function api(data) {
@@ -5850,10 +5859,12 @@ const PUSH_SEND_PAGE = `<!doctype html>
 
   function reach() {
     var g = games();
-    if (g.indexOf('all') !== -1 || g.length === 2) return counts.total;
-    if (g[0] === 'fntd2') return counts.fntd2;
-    if (g[0] === 'bbn') return counts.bbn;
-    return 0;
+    if (g.indexOf('all') !== -1) return counts.total;
+    var combos = counts.combos || {}, n = 0;
+    Object.keys(combos).forEach(function (c) {
+      if (c.split(',').some(function (x) { return g.indexOf(x) !== -1; })) n += combos[c];
+    });
+    return n;
   }
 
   function showCounts() {
@@ -5861,9 +5872,10 @@ const PUSH_SEND_PAGE = `<!doctype html>
     $('cAll').textContent = '(' + counts.total + ')';
     $('cFntd2').textContent = '(' + counts.fntd2 + ')';
     $('cBbn').textContent = '(' + counts.bbn + ')';
+    $('cFwm').textContent = '(' + (counts.fwm || 0) + ')';
   }
 
-  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'Bite By Night' };
+  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'BBN', fwm: 'FWM' };
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
