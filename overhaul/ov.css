@@ -553,3 +553,4 @@ html.ov #ug-content>:is(h2.ug-section-title,.bbn-dir-title,:has(>div[style*="Aud
 html.ov #ug-content>:is(h2.ug-section-title,.bbn-dir-title,:has(>div[style*="Audiowide"]))+*,html.ov #ug-content>.ug-info-box+img{margin-top:var(--ov-gap-s)!important}
 html.ov #ug-content .ug-section>*{margin-top:0!important;margin-bottom:var(--ov-gap-s)!important}
 html.ov #ug-content .ug-section>:is(.info-card,.ug-starry-panel,h2.ug-section-title:not(:first-child)){margin-top:var(--ov-gap)!important}
+html.ov #ug-content .update-log-wrapper{margin-top:0!important;margin-bottom:var(--ov-gap)!important}
