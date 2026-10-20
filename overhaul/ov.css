@@ -182,7 +182,7 @@ html.ov .ug-codes-btn{gap:10px;margin:16px 0;padding:10px 14px;border-radius:0;f
 html.ov #ug-hero a.ug-codes-btn{color:var(--text)!important;text-decoration:none!important}
 html.ov #ug-hero a.ug-codes-btn:hover{color:var(--text)!important;background:var(--surface);transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
 html.ov .ug-codes-btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
-.ov-hero--next{margin-bottom:40px}
+.ov-hero--next{margin-bottom:76px}
 .ov-next{position:absolute;z-index:2;top:100%;left:36px;display:inline-flex;align-items:center;gap:10px;padding:10px 14px 10px 12px;font:700 14px/1.2 var(--font-body);color:var(--text)!important;background:var(--surface);border:var(--bw) solid var(--ink);border-top:0;box-shadow:var(--shadow);transition:padding .12s}
 html.ov #ug-hero a.ov-next{text-decoration:none!important}
 .ov-next:hover{padding-top:14px}
