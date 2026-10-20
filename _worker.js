@@ -2866,7 +2866,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
          'Weak Point': '[OBTAINMENT]<br>● Game 2<br>[SYNERGY BOOSTS]<br>● {+15%} Crit Rate<br>● {+30%} Crit Damage',
          'Eye Augmentation': '[OBTAINMENT]<br>● Game 4<br>[SYNERGY BOOSTS]<br>● {+15%} Range<br>● {+10%} Damage',
          'Blazing Fire': '[OBTAINMENT]<br>● Game 6<br>[SYNERGY BOOST]<br>● {+20%} DoT Damage<br>[SYNERGY PASSIVE]<br>● When applying Burn to an enemy for the first time, Buff this Units Damage by {20%} for 10s (does not stack)',
-         'Serrated Edge': '[OBTAINMENT]<br>● Game 7<br>[SYNERGY BOOST]<br>● {+30%} Bleed Damage<br>[SYNERGY PASSIVE]<br>● When applying Bleed, gain {+5%} Damage and {+15%} Range for 10s (does not stack)'
+         'Serrated Edge': '[OBTAINMENT]<br>● Game 7<br>[SYNERGY BOOST]<br>● {+30%} Bleed Damage<br>[SYNERGY PASSIVE]<br>● When applying Bleed, gain {+5%} Damage and {+15%} Range for 10s (does not stack)',
+         'Legion Commander': '[OBTAINMENT]<br>● Game 8<br>[SYNERGY BOOST]<br>● This Units Summons gain {+15%} HP<br>[SYNERGY PASSIVES]<br>● After Summoning, gain {+15%} Damage for 10s<br>● This Unit Permanently gains {+1%} Damage per summon, up to {10%}'
         },
         enchants:{
          'Damage': '[OBTAINMENT]<br>● 25.8% from Enchanting<br>[BOOST]<br>● {+15%} Damage',
@@ -2925,6 +2926,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
         'Blazing Fire':'https://images.fntduserguide.com/blazing%20fire%20B.png',
         'Crowd Culler':'https://images.fntduserguide.com/crowd%20culler%20B.png',
         'Eye Augmentation':'https://images.fntduserguide.com/eye%20B.png',
+        'Legion Commander':'https://images.fntduserguide.com/legion-commander-B.webp',
         'Overwhelming Power':'https://images.fntduserguide.com/overwhemling%20B.png',
         'Rapid Strikes':'https://images.fntduserguide.com/rapid%20B.png',
         'Serrated Edge':'https://images.fntduserguide.com/serrated%20edge%20B.png',
