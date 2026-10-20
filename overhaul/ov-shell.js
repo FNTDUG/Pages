@@ -1,6 +1,7 @@
 (function () {
   if (document.getElementById('pv-gear')) return;
-  var h = document.documentElement, KOFI = 'https://ko-fi.com/fntdug';
+  var h = document.documentElement, KOFI = 'https://ko-fi.com/fntdug', ROBUX = 'https://www.roblox.com/game-pass/2040640989/100-Robux-donation';
+  var RBX = ['.....xx.....', '...xxxxxx...', '.xxxxxxxxxx.', 'xxxxxxxxxxxx', 'xxxx....xxxx', 'xxxx....xxxx', 'xxxx....xxxx', 'xxxx....xxxx', 'xxxxxxxxxxxx', '.xxxxxxxxxx.', '...xxxxxx...', '.....xx.....'];
   var ROWS = ['......cccc......', '......cccc......', '..ccc.cccc.ccc..', '..cccccccccccc..', '..cccccccccccc..', '...cccccccccc...', 'ccccccc..ccccccc', 'cccccc....cccccc', 'cccccc....cccccc', 'ccccccc..ccccccc', '...cccccccccc...', '..cccccccccccc..', '..cccccccccccc..', '..ccc.cccc.ccc..', '......cccc......', '......cccc......'];
   var CUP = '<svg class="kofi-cup" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h9v1H0zM0 1h3v1H0zM4 1h1v1H4zM6 1h6v1H6zM0 2h2v1H0zM7 2h2v1H7zM11 2h1v1h-1zM0 3h3v1H0zM6 3h3v1H6zM11 3h1v1h-1zM0 4h4v1H0zM5 4h6v1H5zM0 5h9v1H0zM1 6h7v1H1z"/></svg>';
   var CASE = '<svg class="sponsor-case" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h6v1H3zM3 1h1v1H3zM8 1h1v1H8zM0 2h12v1H0zM0 3h12v1H0zM0 4h5v1H0zM7 4h5v1H7zM0 5h5v1H0zM7 5h5v1H7zM0 6h12v1H0zM0 7h12v1H0zM0 8h12v1H0z"/></svg>';
@@ -76,7 +77,24 @@
     'html.ov .ug-mn-section.open>.ug-mn-section-btn .ug-mn-section-arrow::before,html.ov .inf-drop.open>.inf-drop-btn .inf-drop-arrow::before{height:12px;animation:pvCaret 1.05s steps(1,end) .2s infinite}' +
     '@keyframes pvCaret{0%{opacity:1}50%{opacity:0}}' +
     '@media (max-width:768px){html.ov .ug-mn-section-arrow,html.ov .inf-drop-arrow{width:20px;height:20px}html.ov .ug-mn-section-arrow::before,html.ov .inf-drop-arrow::before{width:7px;bottom:3px}html.ov .ug-mn-section.open>.ug-mn-section-btn .ug-mn-section-arrow::before,html.ov .inf-drop.open>.inf-drop-btn .inf-drop-arrow::before{height:10px}}' +
-    '@media (prefers-reduced-motion:reduce){html.ov .inf-mode,html.ov .ug-mn-discord,html.ov .ug-mn-kofi,html.ov .ug-mn-section-arrow,html.ov .inf-drop-arrow,html.ov .ug-mn-section-arrow::before,html.ov .inf-drop-arrow::before{transition:none;animation:none!important}}';
+    '@media (prefers-reduced-motion:reduce){html.ov .inf-mode,html.ov .ug-mn-discord,html.ov .ug-mn-kofi,html.ov .ug-mn-section-arrow,html.ov .inf-drop-arrow,html.ov .ug-mn-section-arrow::before,html.ov .inf-drop-arrow::before{transition:none;animation:none!important}}' +
+    '#pv-sup{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(8,10,14,.62)}' +
+    '#pv-sup[hidden]{display:none}' +
+    '.pv-sup-box{position:relative;width:min(340px,100%);box-sizing:border-box;color:var(--text);background:var(--surface);border:var(--bw,3px) solid var(--ink);box-shadow:var(--shadow,6px 6px 0 #000);font-family:var(--font-body);animation:pvSupIn .22s cubic-bezier(.3,1.3,.5,1)}' +
+    '@keyframes pvSupIn{from{opacity:0;scale:.92}}' +
+    '.pv-sup-h{margin:0;padding:14px 52px 14px 16px;font:400 16px/1.2 var(--font-head);text-transform:uppercase;letter-spacing:.04em;color:#2a0f1c;background:var(--pink);border-bottom:var(--bw,3px) solid var(--ink)}' +
+    '.pv-sup-x{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:32px;height:32px;padding:0;color:var(--text);background:var(--surface);border:2px solid var(--ink);border-radius:0;box-shadow:2px 2px 0 var(--ink);font:700 16px/1 var(--font-body);cursor:pointer}' +
+    '.pv-sup-x:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}' +
+    '.pv-sup-x:focus-visible,.pv-sup-btn:focus-visible{outline:3px solid var(--yellow,#ffd23f);outline-offset:3px}' +
+    '.pv-sup-p{margin:0;padding:14px 16px 4px;color:var(--mute);font:500 14px/1.45 var(--font-body)}' +
+    '.pv-sup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 16px 16px}' +
+    '.pv-sup-btn{--ipx:2px;display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 12px;border:var(--bw,3px) solid var(--ink);border-radius:0;box-shadow:var(--shadow-sm,3px 3px 0 #000);font:700 15px/1 var(--font-body);text-decoration:none;transition:transform .12s,box-shadow .12s,background-color .13s}' +
+    '.pv-sup-btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover,5px 5px 0 #000)}' +
+    '.pv-sup-btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}' +
+    '.pv-sup-rbx,.pv-sup-rbx:hover{color:#10260f;background:var(--green)}.pv-sup-rbx:hover{background:#9be59f}' +
+    '.pv-sup-kofi,.pv-sup-kofi:hover{color:#2a0f1c;background:var(--pink)}.pv-sup-kofi:hover{background:#ff8fbd}' +
+    '.robux-icon{flex:none;width:calc(12*var(--ipx,2px));height:calc(12*var(--ipx,2px));fill:currentColor}' +
+    '@media (prefers-reduced-motion:reduce){.pv-sup-box{animation:none}.pv-sup-btn{transition:none}}';
   document.head.appendChild(css);
   document.addEventListener('touchstart', function () {}, { passive: true });
   function calm() {
@@ -282,4 +300,55 @@
     sep.textContent = '|';
     legal.insertBefore(sep, legal.lastElementChild);
   }
+
+  var sup = null, supFrom = null;
+  function supBuild() {
+    var px = '';
+    RBX.forEach(function (r, y) {
+      for (var x = 0; x < r.length; x++) if (r.charAt(x) !== '.') px += '<rect x="' + x + '" y="' + y + '" width="1" height="1"/>';
+    });
+    var out = ' target="_blank" rel="noopener noreferrer"';
+    sup = document.createElement('div');
+    sup.id = 'pv-sup';
+    sup.hidden = true;
+    sup.innerHTML = '<div class="pv-sup-box" role="dialog" aria-modal="true" aria-labelledby="pv-sup-h">' +
+      '<p class="pv-sup-h" id="pv-sup-h">Support us</p>' +
+      '<button type="button" class="pv-sup-x" aria-label="Close">&#x2715;</button>' +
+      '<p class="pv-sup-p">Every bit helps keep the guide running. Pick how you&#39;d like to chip in.</p>' +
+      '<div class="pv-sup-row">' +
+      '<a class="pv-sup-btn pv-sup-rbx" href="' + ROBUX + '"' + out + '>Robux<svg class="robux-icon" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">' + px + '</svg></a>' +
+      '<a class="pv-sup-btn pv-sup-kofi" href="' + KOFI + '"' + out + '>Ko-fi' + CUP + '</a>' +
+      '</div></div>';
+    sup.addEventListener('click', function (e) {
+      if (e.target === sup || (e.target.closest && e.target.closest('.pv-sup-x'))) supSet(false);
+      else if (e.target.closest && e.target.closest('.pv-sup-btn')) setTimeout(function () { supSet(false); }, 0);
+    });
+    sup.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.stopPropagation(); supSet(false); return; }
+      if (e.key !== 'Tab') return;
+      var f = sup.querySelectorAll('button, a[href]'), first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    document.body.appendChild(sup);
+  }
+  function supSet(open) {
+    if (!sup) supBuild();
+    sup.hidden = !open;
+    h.classList.toggle('pv-sup-on', open);
+    if (open) {
+      sup.querySelector('.pv-sup-rbx').focus();
+    } else if (supFrom && document.contains(supFrom)) {
+      try { supFrom.focus({ preventScroll: true }); } catch (e) {}
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="ko-fi.com"]');
+    if (!a || a.classList.contains('pv-sup-btn') || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    var menu = document.getElementById('ug-mobile-nav');
+    if (menu && menu.contains(a) && typeof window.ugMobileClose === 'function') window.ugMobileClose();
+    supFrom = menu && menu.contains(a) ? document.getElementById('ug-hamburger') : a;
+    supSet(true);
+  }, true);
 })();
