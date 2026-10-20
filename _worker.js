@@ -3688,7 +3688,7 @@ const SEO_PAGES = {
   '/fntd2/unit-engine': ["FNTD2 Unit Engine: Every Unit's Stats, DPS & Value", 'Search every unit in Five Nights TD 2, the Roblox FNaF tower defense game: stats, upgrades, hero paths, a DPS calculator, Exists counts and trade values.'],
   '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator (Roblox)', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a Roblox trade is fair.'],
   '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm.'],
-  '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams for each Endless game, unit placements and the rewards for every map.'],
+  '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams, plus the token, soul, XP and present rewards for every Endless game.'],
   '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams, placements for every map, a modifier tier list and how to unlock OMC and the ??? modifier.'],
   '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
   '/fntd2/event-story-endless': ['FNTD2 Event Guide: Best Event Teams (Roblox)', 'The current Five Nights TD 2 event on Roblox: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
@@ -4085,19 +4085,20 @@ function seoEndlessHtml(src, data, nine) {
   if (teams) out.push('<h2>FNTD2 Endless meta teams</h2>' + teams);
   const notes = seoNineHtml(src, nine);
   if (notes) out.push(notes);
-  const drops = seoDropNames(src);
-  if (drops.length) out.push('<h2>Endless placements</h2><ul>' + drops.map(d => '<li>' + seoEsc(d) + '</li>').join('') + '</ul>');
   const gr = seoLit(src, 'GAME_REWARDS');
   if (gr && typeof gr === 'object') {
     const games = Object.keys(gr).filter(g => gr[g] && Array.isArray(gr[g].rewards));
     const names = [];
     games.forEach(g => gr[g].rewards.forEach(r => { if (r && r.name && names.indexOf(r.name) === -1) names.push(r.name); }));
     if (games.length && names.length) {
-      out.push('<h2>Endless rewards by game</h2><p>Rewards for reaching wave ' + seoEsc(gr[games[0]].targetWave || 100) + ' in each Endless game. Presents are random and not shown.</p><div class="ug-seo-wrap"><table><thead><tr><th>Game</th>' + names.map(n => '<th>' + seoEsc(n) + '</th>').join('') + '</tr></thead><tbody>' +
+      out.push('<h2>Endless rewards by game</h2><p>Rewards for reaching wave ' + seoEsc(gr[games[0]].targetWave || 100) + ' in each Endless game. Lower waves pay out a matching share, so wave 50 gives half.</p><div class="ug-seo-wrap"><table><thead><tr><th>Game</th>' + names.map(n => '<th>' + seoEsc(n) + '</th>').join('') + '</tr></thead><tbody>' +
         games.map(g => '<tr><td>Game ' + seoEsc(g.replace(/^G/, '')) + '</td>' + names.map(n => { const r = gr[g].rewards.find(x => x && x.name === n); return '<td>' + (r ? seoNum(r.amount) : '-') + '</td>'; }).join('') + '</tr>').join('') +
         '</tbody></table></div>');
     }
   }
+  const rng = seoLit(src, 'RNG_REWARDS');
+  const rl = rng && Array.isArray(rng['*']) ? rng['*'].filter(r => r && r.name && r.chance != null) : [];
+  if (rl.length) out.push('<h2>Endless RNG rewards</h2><p>Every Endless game can also drop ' + seoEsc(seoList(rl.map(r => 'a ' + r.name + ' (' + r.chance + '% chance)'))) + '.</p>');
   return out.length ? seoBlock('FNTD2 Endless guide as text', out.join('')) : '';
 }
 
