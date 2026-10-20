@@ -4792,21 +4792,21 @@ const OV_MIRROR_SCRIPT = `<script>
 })();
 <\/script>`;
 const PV_UPDATE = {
-  version: '2026-10-11',
+  version: '2026-10-20',
   items: [
+    'Meet Parvus, our new mascot!'
+    'We now cover FNaF World Mutliplayer!',
     'A brand new look for the whole site',
-    'Light and dark mode: switch with the sun and moon button in the settings cog',
-    'Meet Parvus, our new mascot'
+    'Accessibility settings'
   ]
 };
 const PV_TIP_DAYS = 3;
 const PV_TIPS = [
-  'Use the bell in the settings cog to get a notification when Metas, TierLists or Patch Notes are updated.',
-  'Switch between light and dark mode with the sun and moon button in the settings cog.',
-  'The speaker button in the settings cog mutes every sound on the site.',
-  'The eye button in the settings cog turns on a dyslexia-friendly font or colour blindness filters.',
-  'On FNTD2 pages, the INFO button opens a panel you can search.',
-  'Click or tap Parvus to open his chat window.'
+  'Use the bell in the settings cog to get a notification when Metas, TierLists or Patch Notes are updated',
+  'Switch between light and dark mode with the sun and moon button in the settings cog',
+  'The eye button in the settings cog turns on a dyslexia-friendly font or color blindness filters',
+  'On FNTD2 pages, the INFO button opens a very detailed panel',
+  'Click or tap Parvus to open his chat window'
 ];
 function pvDev(pathname) { return pathname === '/overhaul' || pathname.indexOf('/overhaul/') === 0; }
 function ovReal(pathname) { return pvDev(pathname) ? '/' + pathname.slice(9).replace(/^\/+/, '') : pathname; }
