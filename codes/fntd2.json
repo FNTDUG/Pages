@@ -1,0 +1,162 @@
+{
+  "updated": "2026-10-20T12:43:30-05:00",
+  "codes": [
+    {
+      "code": "HALLOWEEN26",
+      "rewards": [
+        "25,000 Tokens",
+        "2,500 Untradable Souls",
+        "1,000 Event Tokens"
+      ],
+      "requirement": "None",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "PIERROT",
+      "rewards": [
+        "50,000 Tokens",
+        "1,000 Event Tokens",
+        "1 XP Potion 2",
+        "1,000 Season XP",
+        "100 Raid Coins",
+        "50 Endo Chips",
+        "15 Springlocks"
+      ],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "FRIGHTFUSE",
+      "rewards": [
+        "25,000 Tokens",
+        "1,500 Untradable Souls",
+        "10 Endo Chips",
+        "5 Springlocks",
+        "250 Fright Fuse Essence"
+      ],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "TRICKORTREAT26",
+      "rewards": [
+        "2,500 Untradable Souls",
+        "150 Apocalypse Presents",
+        "50 Slumber Presents"
+      ],
+      "requirement": "20,000 Faz-Rating",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "THEQUEST",
+      "rewards": [
+        "50,000 Tokens",
+        "2,500 Untradable Souls",
+        "50 Seasonal Presents",
+        "50 Endo Chips",
+        "10 Remnant"
+      ],
+      "requirement": "25,000 Faz-Rating",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "CROWKEEPER",
+      "rewards": [
+        "50,000 Tokens",
+        "10,000 Event Tokens",
+        "20 Halloween Event Presents",
+        "50 Springlocks",
+        "10 Remnant"
+      ],
+      "requirement": "35,000 Faz-Rating",
+      "expires": "2026-10-21T14:00:00-05:00"
+    },
+    {
+      "code": "AboutBossRaid",
+      "rewards": [
+        "1 Time Lord Withered Freddy Present"
+      ],
+      "requirement": "15,000 Faz-Rating",
+      "expires": "2099-06-30T12:00:00-05:00"
+    },
+    {
+      "code": "NEWLOBBY",
+      "rewards": [
+        "25,000 Tokens",
+        "2,500 Untradable Souls"
+      ],
+      "requirement": "None",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "NEWINVENTORY",
+      "rewards": [
+        "50,000 Tokens",
+        "2,500 Untradable Souls",
+        "50 Seasonal Presents",
+        "50 Endo Chips",
+        "10 Remnant"
+      ],
+      "requirement": "25,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "PARTSANDSERVICES",
+      "rewards": [
+        "25,000 Tokens",
+        "1,500 Untradable Souls",
+        "10 Endo Chips",
+        "5 Springlocks"
+      ],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "CHIPSTACKING",
+      "rewards": [
+        "2,500 Untradable Souls",
+        "150 Apocalypse Presents",
+        "50 Slumber Presents"
+      ],
+      "requirement": "20,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "DOUBLEJUMP",
+      "rewards": [
+        "50,000 Tokens",
+        "200 Apocalypse Presents",
+        "50 Springlocks",
+        "10 Remnant"
+      ],
+      "requirement": "35,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "SORRY4DELAY5",
+      "rewards": [
+        "50,000 Tokens",
+        "1 XP Potion 2",
+        "1,000 Season XP",
+        "100 Raid Coins",
+        "50 Endo Chips",
+        "15 Springlocks"
+      ],
+      "requirement": "None",
+      "expires": "2026-10-14T14:11:00-05:00"
+    },
+    {
+      "code": "MONDAYUPDATE",
+      "rewards": [
+        "50,000 Tokens",
+        "1 XP Potion 2",
+        "1,000 Season XP",
+        "100 Raid Coins",
+        "50 Endo Chips",
+        "15 Springlocks"
+      ],
+      "requirement": "10,000 Faz-Rating",
+      "expires": "2026-10-14T14:11:00-05:00"
+    }
+  ]
+}
