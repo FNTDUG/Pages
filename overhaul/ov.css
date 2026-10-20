@@ -544,3 +544,12 @@ html.ov #ug-footer .ug-top-row{margin-bottom:14px}
 html.ov #ug-footer a.ug-top{border-radius:0;display:inline-flex;align-items:center;min-height:44px;padding:0 20px;color:#1d2228;background:var(--acc);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-sm);text-decoration:none;font-weight:700;transition:transform .12s,box-shadow .12s}
 html.ov #ug-footer a.ug-top:hover{color:#1d2228;transform:translate(-2px,-2px);box-shadow:var(--shadow-sm-hover)}
 html.ov #ug-footer a.ug-top:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+html.ov{--ov-gap:32px;--ov-gap-s:16px}
+@media (max-width:600px){html.ov{--ov-gap:24px;--ov-gap-s:12px}}
+html.ov #ug-content{margin-top:0!important;padding-top:0!important;padding-bottom:var(--ov-gap)!important}
+html.ov .ov-notes{margin-top:var(--ov-gap)}
+html.ov #ug-content>:where(:not(.chOv,#teamStore)){margin-top:var(--ov-gap)!important;margin-bottom:var(--ov-gap)!important}
+html.ov #ug-content>:is(h2.ug-section-title,.bbn-dir-title,:has(>div[style*="Audiowide"])),html.ov #ug-content>.ug-info-box:has(+img){margin-bottom:var(--ov-gap-s)!important}
+html.ov #ug-content>:is(h2.ug-section-title,.bbn-dir-title,:has(>div[style*="Audiowide"]))+*,html.ov #ug-content>.ug-info-box+img{margin-top:var(--ov-gap-s)!important}
+html.ov #ug-content .ug-section>*{margin-top:0!important;margin-bottom:var(--ov-gap-s)!important}
+html.ov #ug-content .ug-section>:is(.info-card,.ug-starry-panel,h2.ug-section-title:not(:first-child)){margin-top:var(--ov-gap)!important}
