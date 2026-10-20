@@ -4794,8 +4794,8 @@ const OV_MIRROR_SCRIPT = `<script>
 const PV_UPDATE = {
   version: '2026-10-20',
   items: [
-    'Meet Parvus, our new mascot!'
-    'We now cover FNaF World Mutliplayer!',
+    'Meet Parvus, our new mascot!',
+    'We now cover FNaF World Multiplayer!',
     'A brand new look for the whole site',
     'Accessibility settings'
   ]
