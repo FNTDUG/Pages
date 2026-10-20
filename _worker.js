@@ -344,6 +344,9 @@ const CONTENT_AD_HTML = `<script>
       el=kids[i];cn=String(el.className||'');
       if(cn.indexOf('ug-cad')!==-1||cn.indexOf('ad-slot')!==-1){acc=0;continue;}
       acc+=el.offsetHeight;
+      var nx=el.nextElementSibling;
+      while(nx&&/^(SCRIPT|STYLE)$/.test(nx.tagName))nx=nx.nextElementSibling;
+      if(nx&&String(nx.className||'').indexOf('ad-slot')!==-1)continue;
       if(acc>=${CONTENT_AD_EVERY}){acc=0;watch(el);}
     }
   }
