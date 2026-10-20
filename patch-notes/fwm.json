@@ -1,0 +1,97 @@
+{
+  "notes": [
+    {
+      "date": "2026-10-20",
+      "label": "Small Patch",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "Roster",
+          "link": "/fwm/roster",
+          "items": [
+            "Battle/Overworld is now a slide switch in each character's view.",
+            "Added a Skins button that opens a skin picker.",
+            "Added Nightmare Mangle and Elsparko renders."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "label": "Small Patch",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "Roster",
+          "link": "/fwm/roster",
+          "items": [
+            "Added a Battle/Overworld view and a skin picker to each character.",
+            "Character cards now show each character's first idle frame."
+          ]
+        },
+        {
+          "badge": "Updated",
+          "title": "Tech Specs",
+          "link": "/fwm/tech-specs",
+          "items": [
+            "Bytes and armor show their first frame."
+          ]
+        },
+        {
+          "badge": "Updated",
+          "title": "Meta Teams",
+          "link": "/fwm/meta-teams",
+          "items": [
+            "Names now match the Roster and TierList size."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "label": "Small Patch",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "TierList",
+          "link": "/fwm/tierlist",
+          "items": [
+            "Moves show as still frames and only animate in the full view.",
+            "Who has it now shows world-coloured portraits with names."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "label": "Small Patch",
+      "entries": [
+        {
+          "badge": "Added",
+          "title": "TierList",
+          "link": "/fwm/tierlist",
+          "items": [
+            "Added the FWM TierList with Party and Moves tabs.",
+            "Open a move to see which characters have it."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "label": "Version 1.0",
+      "entries": [
+        {
+          "badge": "Release",
+          "title": "FNaF World Multiplayer coverage release!",
+          "items": [
+            "Added the FWM page.",
+            "Added the Roster.",
+            "Added Tech Specs for Bytes, Chips and armor.",
+            "Added Meta Teams."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -504,8 +504,8 @@
   var screenSet = {};
   var NEXT_ON = ['/fntd2/story-index'];
   function nextBtn(wrap) {
-    var stage = wrap.querySelector('.ov-stage'), here = location.pathname.replace(/\/+$/, '');
-    if (!stage || NEXT_ON.indexOf(here) === -1) return;
+    var here = location.pathname.replace(/\/+$/, '');
+    if (NEXT_ON.indexOf(here) === -1) return;
     var cur = null;
     Array.prototype.forEach.call(document.querySelectorAll('#ug-mobile-nav a.ug-mn-child[data-nav-href]'), function (a) {
       var p = a.getAttribute('data-nav-href');
@@ -520,7 +520,8 @@
     a.className = 'ov-next';
     a.href = next.getAttribute('href');
     a.innerHTML = '<span class="ov-next-k">Next</span><span class="ov-next-t">' + esc(next.firstChild.textContent.trim()) + '</span><span class="ov-next-a" aria-hidden="true">&rarr;</span>';
-    stage.appendChild(a);
+    wrap.appendChild(a);
+    wrap.classList.add('ov-hero--next');
   }
 
   function sizeScreen() {
