@@ -265,10 +265,8 @@
   };
   function lookBar(c) {
     var l = FW.looks(c), h = '';
-    if (l.some(function (s) { return s.overworld; })) h += '<div class="fwd-looks" role="group" aria-label="View"><button type="button" class="fwd-look" data-view="battle" aria-pressed="true">Battle</button><button type="button" class="fwd-look" data-view="overworld" aria-pressed="false"' + (l[0].overworld ? '' : ' disabled') + '>Overworld</button></div>';
-    if (l.length > 1) h += '<div class="fwd-looks" role="group" aria-label="Skins">' + l.map(function (s, i) {
-      return '<button type="button" class="fwd-look" data-look="' + i + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + esc(s.name) + '</button>';
-    }).join('') + '</div>';
+    if (l.some(function (s) { return s.overworld; })) h += '<div class="fwd-view" role="group" aria-label="View"><span class="fwd-view-k" aria-hidden="true"></span><button type="button" class="fwd-seg" data-view="battle" aria-pressed="true">Battle</button><button type="button" class="fwd-seg" data-view="overworld" aria-pressed="false"' + (l[0].overworld ? '' : ' disabled') + '>Overworld</button></div>';
+    if (l.length > 1) h += '<button type="button" class="fwd-skins" aria-haspopup="dialog">Skins<span class="fwd-skins-n">' + l.length + '</span></button>';
     return h;
   }
 
@@ -691,6 +689,7 @@
     dlg.setAttribute('aria-labelledby', 'fwd-name');
     dlg.tabIndex = -1;
     dlg.innerHTML = '<div class="fwd-bg"></div><div class="fwd-shade"></div><div class="fwd-scroll"><div class="fwd-in"></div></div>' +
+      '<div class="fwd-sk" hidden><div class="fwd-sk-box" role="dialog" aria-modal="true" aria-labelledby="fwd-sk-t"><div class="fwd-sk-hd"><h2 class="fwd-h" id="fwd-sk-t">Skins</h2><button type="button" class="fwd-sk-x" aria-label="Close skins">&times;</button></div><ul class="fwd-sk-list"></ul></div></div>' +
       '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
       '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
       '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next">' + ICON_R + '</button></div>';
@@ -701,12 +700,17 @@
     dlg.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('.fwd-char') : null;
       if (b && b.tagName === 'BUTTON') attack(b);
-      var lk = e.target.closest ? e.target.closest('.fwd-look') : null;
-      if (lk && cur) {
-        if (lk.hasAttribute('data-look')) lookI = +lk.getAttribute('data-look');
-        else view = lk.getAttribute('data-view');
-        applyLook();
-        return;
+      if (e.target.closest && cur) {
+        if (e.target.closest('.fwd-skins')) { skinsSet(true); return; }
+        if (e.target.closest('.fwd-sk-x') || e.target.classList.contains('fwd-sk')) { skinsSet(false); return; }
+        var lk = e.target.closest('.fwd-seg, .fwd-tile');
+        if (lk) {
+          if (lk.hasAttribute('data-look')) lookI = +lk.getAttribute('data-look');
+          else view = lk.getAttribute('data-view');
+          applyLook();
+          if (lk.hasAttribute('data-look')) skinsSet(false);
+          return;
+        }
       }
       var u = e.target.closest ? e.target.closest('.fwd-users a[data-id]') : null;
       var c = u && ix.byId[u.getAttribute('data-id')];
@@ -719,18 +723,19 @@
     });
     document.addEventListener('keydown', function (e) {
       if (dlg.hidden) return;
-      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
+      var sk = dlg.querySelector('.fwd-sk'), skOn = !sk.hidden;
+      if (e.key === 'Escape') { e.preventDefault(); if (skOn) skinsSet(false); else close(); return; }
+      if (!skOn && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
         e.preventDefault();
         step(e.key === 'ArrowLeft' ? -1 : 1);
         return;
       }
       if (e.key !== 'Tab') return;
-      var f = Array.prototype.filter.call(dlg.querySelectorAll('button, a[href]'), function (x) { return x.offsetParent !== null || x === document.activeElement; });
+      var f = Array.prototype.filter.call((skOn ? sk : dlg).querySelectorAll('button, a[href]'), function (x) { return x.offsetParent !== null || x === document.activeElement; });
       if (!f.length) return;
       var first = f[0], last = f[f.length - 1];
-      if (document.activeElement === dlg) { e.preventDefault(); (e.shiftKey ? last : dlg.querySelector('.fwd-back')).focus(); }
-      else if (!dlg.contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+      if (document.activeElement === dlg) { e.preventDefault(); (e.shiftKey ? last : skOn ? first : dlg.querySelector('.fwd-back')).focus(); }
+      else if (!(skOn ? sk : dlg).contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
       else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
@@ -748,6 +753,26 @@
     });
     sc.addEventListener('pointercancel', function () { swipeX = null; });
   }
+  function skinsSet(on) {
+    var sk = dlg.querySelector('.fwd-sk');
+    if (on === !sk.hidden) return;
+    if (!on) {
+      sk.hidden = true;
+      var b = dlg.querySelector('.fwd-skins');
+      if (b) b.focus({ preventScroll: true });
+      return;
+    }
+    var still = reduced();
+    sk.querySelector('.fwd-sk-list').innerHTML = FW.looks(cur).map(function (s, i) {
+      var u = s.idle || s.overworld || cur.idle, a = ' alt="" decoding="async"';
+      return '<li><button type="button" class="fwd-tile" data-look="' + i + '" aria-pressed="' + (i === lookI ? 'true' : 'false') + '">' + (still ? '<img data-still="' + esc(u) + '"' + a + '>' : '<img src="' + esc(u) + '"' + a + '>') + '<span>' + esc(s.name) + '</span></button></li>';
+    }).join('');
+    sk.style.setProperty('--wc', dlg.style.getPropertyValue('--wc'));
+    sk.hidden = false;
+    if (still) stillCards(sk);
+    var t = sk.querySelector('.fwd-tile[aria-pressed=true]') || sk.querySelector('.fwd-tile');
+    if (t) t.focus({ preventScroll: true });
+  }
   function applyLook() {
     var s = FW.looks(cur)[lookI] || {}, img = dlg.querySelector('.fwd-anim');
     if (view === 'overworld' && !s.overworld) view = 'battle';
@@ -760,7 +785,9 @@
     img.alt = cur.name + (lookI ? ' (' + s.name + ')' : '') + (view === 'overworld' ? ' in the overworld' : '');
     var hint = dlg.querySelector('.fwd-hint');
     if (hint) hint.style.visibility = view !== 'battle' || !s.attack ? 'hidden' : '';
-    Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-look'), function (x) {
+    var vw = dlg.querySelector('.fwd-view');
+    if (vw) vw.classList.toggle('is-ow', view === 'overworld');
+    Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-seg, .fwd-tile'), function (x) {
       var on = x.hasAttribute('data-look') ? +x.getAttribute('data-look') === lookI : x.getAttribute('data-view') === view;
       x.setAttribute('aria-pressed', on ? 'true' : 'false');
       if (x.getAttribute('data-view') === 'overworld') x.disabled = !s.overworld;
@@ -788,6 +815,7 @@
     cur = c;
     lookI = 0;
     view = 'battle';
+    dlg.querySelector('.fwd-sk').hidden = true;
     clearTimeout(atkT);
     var w = worldOf(data, c), still = reduced();
     dlg.style.setProperty('--wc', w.color);
