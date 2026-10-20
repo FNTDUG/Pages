@@ -3398,7 +3398,7 @@ const SEO_PAGES = {
   '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator (Roblox)', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a Roblox trade is fair.'],
   '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm.'],
   '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams, plus the token, soul, XP and present rewards for every Endless game.'],
-  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams, a modifier tier list with rarity odds and how to unlock OMC and the ??? modifier.'],
+  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams and how to unlock OMC and the ??? modifier.'],
   '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
   '/fntd2/event-story-endless': ['FNTD2 Event Guide: Best Event Teams (Roblox)', 'The current Five Nights TD 2 event on Roblox: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
   '/fntd2/codes': ['FNTD2 Codes ({MONTH}): Five Nights TD 2 Roblox Codes', 'All working Five Nights TD 2 codes for Roblox in {MONTH}: free Tokens, Souls, presents and Endo Chips, with requirements and expiry times.'],
@@ -3782,11 +3782,6 @@ function seoBossHtml(src, data, nine) {
   if (notes) out.push(notes);
   const drops = seoDropNames(src);
   if (drops.length) out.push('<h2>Boss Raids placements</h2><p>Placement charts for every Boss Raids map:</p><ul>' + drops.map(d => '<li>' + seoEsc(d) + '</li>').join('') + '</ul>');
-  const bt = seoLit(src, 'BRM_TIERS'), bo = seoLit(src, 'BRM_ODDS');
-  if (Array.isArray(bt) && bt.length) {
-    const nm = { u: 'Uncommon', r: 'Rare', e: 'Epic', m: 'Mythic', s: 'Secret', n: 'Nightmare', a: 'Apex' };
-    out.push('<h2>Boss Raids modifier tier list</h2><p>Boss Raid modifiers ranked from ' + seoEsc(bt[0].tier) + ' down to ' + seoEsc(bt[bt.length - 1].tier) + '.' + (Array.isArray(bo) && bo.length ? ' Modifier rarity odds: ' + seoEsc(seoList(bo.map(o => o.rarity + ' ' + o.chance))) + '.' : '') + '</p><ul>' + bt.map(t => { const c = {}; String(t.mods || '').split('').forEach(k => { if (nm[k]) c[nm[k]] = (c[nm[k]] || 0) + 1; }); return '<li>' + seoEsc(t.tier) + ' tier: ' + seoEsc(String(t.mods || '').length) + ' modifiers (' + seoEsc(Object.keys(c).map(k => c[k] + ' ' + k).join(', ')) + ')</li>'; }).join('') + '</ul>');
-  }
   const rw = seoLit(src, 'REWARDS'), wave = (/TARGET_WAVE\s*=\s*(\d+)/.exec(src) || [])[1];
   if (Array.isArray(rw) && rw.length && wave) {
     const rare = rw.filter(r => r && r.rare).map(r => r.name);
@@ -3993,14 +3988,15 @@ async function seoLoadCodes(env, url, file) {
 const UPD_GH = {
   'metas.json': ['/fntd2/story-index', '/fntd2/endless-index', '/fntd2/boss-raids-index', '/fntd2/challenges', '/fntd2/meta-teams', '/fntd2/event-story-endless'],
   'tierlist.js': ['/fntd2/tierlists-1'],
+  'patchnotesfwm.json': ['/patch-notes/fwm-patch-notes'],
   'last-updated': ['/fntd2/unit-engine'],
   'fnafworld.json': ['/fwm/roster'],
   'fnafworldspecs.json': ['/fwm/tech-specs'],
   'fnafworldtiers.json': ['/fwm/tierlist'],
   'fnafworldmeta.json': ['/fwm/meta-teams']
 };
-const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json', '/patch-notes/fwm-patch-notes': '/patch-notes/fwm.json' };
-const PN_PAGES = { '/patch-notes/fwm-patch-notes': '/patch-notes/fwm.json' };
+const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json' };
+const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json' };
 const UPD_KEY = 'https://www.fntduserguide.com/_page-updates';
 let pageUpd = null, pageUpdAt = 0, pageUpdRun = null;
 async function pageUpdFetch(env, url) {
@@ -4036,7 +4032,7 @@ async function pageUpdLoad(env, url, ctx) {
   return pageUpdRun;
 }
 async function pnLoad(env, url, file) {
-  const r = await env.ASSETS.fetch(new Request(new URL(file, url).toString()));
+  const r = /^https:/.test(file) ? await fetch(file, { cf: { cacheTtl: 120, cacheEverything: true } }) : await env.ASSETS.fetch(new Request(new URL(file, url).toString()));
   return r.ok ? r.json() : null;
 }
 function pnTime(d) {
@@ -4668,6 +4664,11 @@ const NOTIFY_HTML = `
 
   var chosen = { fntd2: true, bbn: true, fwm: true };
   var savedGames = load('ntf:games');
+  if (savedGames && load('ntf:gamesv') !== '2') {
+    if (savedGames.indexOf('fwm') === -1) savedGames += ',fwm';
+    store('ntf:games', savedGames);
+    store('ntf:gamesv', '2');
+  }
   if (savedGames) {
     chosen = { fntd2: savedGames.indexOf('fntd2') !== -1, bbn: savedGames.indexOf('bbn') !== -1, fwm: savedGames.indexOf('fwm') !== -1 };
     if (!chosen.fntd2 && !chosen.bbn && !chosen.fwm) chosen = { fntd2: true, bbn: true, fwm: true };
@@ -4806,6 +4807,7 @@ const NOTIFY_HTML = `
   function setChosen(list) {
     chosen = { fntd2: list.indexOf('fntd2') !== -1, bbn: list.indexOf('bbn') !== -1, fwm: list.indexOf('fwm') !== -1 };
     store('ntf:games', list.join(','));
+    store('ntf:gamesv', '2');
   }
 
   function lockScroll() {

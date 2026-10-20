@@ -1,0 +1,19 @@
+{
+  "notes": [
+    {
+      "date": "2026-10-20",
+      "label": "Updated",
+      "entries": [
+          {
+            "badge": "Release",
+            "title": "FNaF World Multiplayer coverage release!",
+            "items": [
+              "Added the FWM page.",
+              "Added the Roster.",
+              "Added Tech Specs for Bytes, Chips and armor.",
+              "Added Meta Teams."
+          ]
+        }
+      ]
+    }
+    
