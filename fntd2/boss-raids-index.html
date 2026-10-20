@@ -48,167 +48,86 @@
 <div class="metaMount" data-meta="Boss Raids Grind"></div>
 
 <style>
-#bri-root{max-width:700px;margin:28px auto 0;font-family:'Press Start 2P',cursive}
-.bri-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.bri-tab{padding:10px 14px;background:rgba(8,6,18,.9);color:rgba(255,255,255,.6);font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.4px;border:1px solid rgba(255,164,91,.3);border-radius:8px;cursor:pointer;transition:background .15s,color .15s,border-color .15s,box-shadow .15s}
-.bri-tab:hover{background:rgba(255,164,91,.08);color:#fff;border-color:rgba(255,164,91,.6)}
-.bri-tab.active{background:linear-gradient(135deg,rgba(58,10,56,.95),rgba(104,31,98,.9));color:#ffa45b;border-color:#ffa45b;box-shadow:0 0 12px rgba(104,31,98,.5)}
-.bri-panel{display:none;background:rgba(8,6,18,.92);border:2px solid rgba(255,164,91,.55);border-radius:14px;overflow:hidden;box-shadow:0 0 35px 8px rgba(104,31,98,.45),0 0 70px 20px rgba(104,31,98,.15)}
-.bri-panel.active{display:block}
-.bri-ph{background:linear-gradient(180deg,#120326 0%,#3a0a38 30%,#681f62 55%,#3a0a38 78%,#120326 100%);padding:18px 16px;text-align:center;border-bottom:2px solid rgba(255,164,91,.55);position:relative}
-.bri-ph::before,.bri-ph::after{content:'◆';position:absolute;top:50%;transform:translateY(-50%);font-size:14px;color:#ffa45b;opacity:.5;font-family:'Press Start 2P',cursive;pointer-events:none}
-.bri-ph::before{left:14px}.bri-ph::after{right:14px}
-.bri-ph h3{font-family:'Audiowide',sans-serif;font-size:18px;color:#fff;margin:0;letter-spacing:1px;text-shadow:0 0 10px rgba(255,164,91,.4)}
-.bri-pb{padding:18px 16px}
-.bri-drop{margin:8px 0;border:1px solid rgba(255,164,91,.35);border-radius:10px;overflow:hidden;background:rgba(12,9,24,.94)}
-.bri-drop-btn{width:100%;padding:12px 14px;cursor:pointer;text-align:center;font-family:'Audiowide',sans-serif;font-size:13px;letter-spacing:.5px;color:#fff;background:linear-gradient(90deg,rgba(18,3,38,.9),rgba(58,10,56,.9),rgba(18,3,38,.9));display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;transition:color .15s,background .15s;border:none;border-bottom:1px solid transparent}
-.bri-drop-btn:hover,.bri-drop.open .bri-drop-btn{color:#ffa45b;background:linear-gradient(90deg,rgba(58,10,56,.95),rgba(104,31,98,.9),rgba(58,10,56,.95))}
-.bri-drop.open .bri-drop-btn{border-bottom:1px solid rgba(255,164,91,.35)}
-.bri-arrow{font-size:10px;transition:transform .25s ease;opacity:.7}
-.bri-drop.open .bri-arrow{transform:rotate(180deg)}
-.bri-drop-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.22,.9,.34,1)}
-.bri-drop.open .bri-drop-body{max-height:900px}
-.bri-drop-body img{width:100%;height:auto;display:block;opacity:0;transition:opacity .3s ease;margin:0!important}
-.bri-drop.open .bri-drop-body img.bri-loaded{opacity:1}
-.bri-select{width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;border:2px solid rgba(255,164,91,.45);background:rgba(8,6,18,.92);color:#fff;font-family:'Press Start 2P',cursive;font-size:10px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#ffa45b 50%),linear-gradient(135deg,#ffa45b 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
-.bri-select:focus{border-color:#ffa45b;box-shadow:0 0 0 2px rgba(255,164,91,.2)}
-.bri-re-card{border:1px solid rgba(255,164,91,.4);border-radius:12px;overflow:hidden;margin-top:14px;animation:briDrop .3s ease-out forwards}
-@keyframes briDrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.bri-rrow{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:11px;color:#fff;border-bottom:1px solid rgba(255,164,91,.2);background:rgba(12,9,24,.88)}
-.bri-rrow:last-child{border-bottom:none}
-.bri-rrow:nth-child(even){background:rgba(18,3,38,.6)}
-.bri-rleft{display:flex;align-items:center;gap:10px}
-.bri-ricon{width:32px;height:32px;border-radius:6px;flex-shrink:0}
-.bri-xp{text-align:center;margin-top:12px;font-size:11px;color:#ffd27f;padding:8px}
-.bri-glow-coins{filter:drop-shadow(0 0 5px rgba(253,190,0,.8))}
-.bri-glow-souls{filter:drop-shadow(0 0 5px rgba(169,55,255,.8))}
-.bri-glow-nightmare{filter:drop-shadow(0 0 6px #691CA4)}
-.bri-glow-secret{filter:drop-shadow(0 0 6px #C80000)}
+.brm{margin:36px 0 0;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+.brm-head{padding:22px 24px 18px;border-bottom:var(--bw) solid var(--ink)}
+.brm-head h2{margin:0;font:400 clamp(24px,3vw,30px)/1.1 var(--font-head);text-transform:uppercase;color:var(--text)}
+.brm-head p{margin:8px 0 0;font:400 15px/1.55 var(--font-body);color:var(--mute)}
+.brm-odds{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.brm-odds li{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;font:700 12px/1.2 var(--font-body);color:var(--text);background:var(--surface2);border:2px solid var(--ink)}
+.brm-odds i{width:10px;height:10px;background:var(--r);border:2px solid var(--ink)}
+.brm-odds b{font-weight:400;font-family:'JetBrains Mono',monospace;color:var(--mute)}
+.brm-tier{display:grid;grid-template-columns:92px minmax(0,1fr);border-bottom:var(--bw) solid var(--ink)}
+.brm-tier:last-child{border-bottom:0}
+.brm-lab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 6px;background:var(--t);border-right:var(--bw) solid var(--ink);color:#1d2228}
+.brm-lab strong{font:400 34px/1 var(--font-head)}
+.brm-lab span{font:400 10px/1 var(--font-body);letter-spacing:1px;white-space:nowrap}
+.brm-grid{display:flex;flex-wrap:wrap;gap:10px;padding:14px;background:#070b14}
+.brm-t{width:84px;aspect-ratio:120/105;flex-shrink:0;box-sizing:border-box;background:#0f1424 url(https://images.fntduserguide.com/boss-raids/br-mods-v1.webp) no-repeat;background-size:800% 800%;border:3px solid var(--r)}
+.r-uncommon{--r:#00bf63}.r-rare{--r:#1e90ff}.r-epic{--r:#ba60ff}.r-mythic{--r:#ffe600}.r-secret{--r:#e01e1e}.r-nightmare{--r:#6a2fa0}.r-apex{--r:#e04fb8}
+.brm-tier[data-tier="SS"]{--t:var(--pink)}.brm-tier[data-tier="S"]{--t:var(--acc)}.brm-tier[data-tier="A"]{--t:var(--yellow)}.brm-tier[data-tier="B"]{--t:var(--green)}.brm-tier[data-tier="C"]{--t:var(--blue)}
+@media (max-width:600px){
+  .brm-head{padding:18px 16px 14px}
+  .brm-tier{grid-template-columns:58px minmax(0,1fr)}
+  .brm-lab strong{font-size:24px}
+  .brm-lab span{font-size:8px;letter-spacing:0}
+  .brm-grid{gap:7px;padding:10px}
+  .brm-t{width:calc((100% - 21px) / 4)}
+}
 </style>
 
-<div id="bri-root">
-  <div class="bri-tabs">
-    <button class="bri-tab active" data-bri="bri-placements">Placements</button>
-    <button class="bri-tab" data-bri="bri-rewards">Rewards Index</button>
-    <button class="bri-tab" data-bri="bri-mods">Mods TierLists</button>
+<section class="brm" id="brm" aria-labelledby="brm-title">
+  <div class="brm-head">
+    <h2 id="brm-title">Mods TierList</h2>
+    <p>Boss Raid modifiers ranked from SS down to C. The border colour shows the modifier's rarity and the numeral shows its level.</p>
+    <ul class="brm-odds" id="brm-odds"></ul>
   </div>
-  <div class="bri-panel active" id="bri-placements">
-    <div class="bri-ph"><h3>Placements</h3></div>
-    <div class="bri-pb" id="bri-chart-drops"></div>
-  </div>
-  <div class="bri-panel" id="bri-rewards">
-    <div class="bri-ph"><h3>Rewards Index</h3></div>
-    <div class="bri-pb">
-      <select id="bri-wave" class="bri-select"><option value="">Select Wave</option></select>
-      <select id="bri-luck" class="bri-select" style="display:none">
-        <option value="">Select Luck</option>
-        <option value="1.5">1.5x Luck</option>
-        <option value="2">2x Luck</option>
-        <option value="2.5">2.5x Luck</option>
-        <option value="3">3x Luck</option>
-      </select>
-      <div id="bri-reward-result"></div>
-    </div>
-  </div>
-  <div class="bri-panel" id="bri-mods">
-    <div class="bri-ph"><h3>Mods TierLists</h3></div>
-    <div class="bri-pb" style="text-align:center">
-      <img alt="FNTD2 Boss Raids modifier tier list" src="https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/br-modifiers-high-rp3d23.png?enable-io=true&crop=0.7772%3A1&width=1920"
-        style="max-width:100%;border:2px solid rgba(255,164,91,.55);border-radius:10px;display:block;margin:0 auto">
-    </div>
-  </div>
-</div>
+  <div id="brm-tiers"></div>
+</section>
 
 <script>
 (function(){
-  document.querySelectorAll('.bri-tab').forEach(function(tab){
-    tab.addEventListener('click', function(){
-      document.querySelectorAll('.bri-tab').forEach(function(t){ t.classList.remove('active'); });
-      document.querySelectorAll('.bri-panel').forEach(function(p){ p.classList.remove('active'); });
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.bri).classList.add('active');
-    });
-  });
-  var drops = [
-    ['3-2-1 GO! (Farthest)',      'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/3-2-1-farthest-high-elpw8g.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['500 Squares (Farthest)',    'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/500-squares-farthest-high.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Long Walk (Farthest)',  'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pitchfork-farthest-high-74ljlo.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Longer Walk (Farthest)','https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/the-longer-walk-farthest-high.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Pitchfork (Farthest)',  'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pitchfork-farthest-high.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['Un-Equal (Farthest)',       'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/un-equal-farthest-high.png?enable-io=true&width=1252'],
-    ['3-2-1 GO! (Grind)',         'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/3-2-1-grind-high-cbymow.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['500 Squares (Grind)',       'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/500-squares-grind-high.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Long Walk (Grind)',     'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/long-walk-grind-high-ndkpqt.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Longer Walk (Grind)',   'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/the-longer-walk-grind-high.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['The Pitchfork (Grind)',     'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pitchfork-grind-high-gop6sg.png?enable-io=true&crop=1.7778%3A1&width=1252'],
-    ['Un-Equal (Grind)',          'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/un-equal-grind-high.png?enable-io=true&width=1252']
+  var BRM_ODDS = [
+    { rarity: 'Uncommon', chance: '50%' },
+    { rarity: 'Rare', chance: '30%' },
+    { rarity: 'Epic', chance: '15%' },
+    { rarity: 'Mythic', chance: '4%' },
+    { rarity: 'Secret', chance: '1%' },
+    { rarity: 'Nightmare', chance: '0.5%' },
+    { rarity: 'Apex', chance: '0.1%' }
   ];
-  var container = document.getElementById('bri-chart-drops');
-  drops.forEach(function(d){
-    var wrap = document.createElement('div'); wrap.className = 'bri-drop';
-    var btn  = document.createElement('div'); btn.className  = 'bri-drop-btn';
-    btn.innerHTML = d[0] + ' <span class="bri-arrow">&#9660;</span>';
-    var body = document.createElement('div'); body.className = 'bri-drop-body';
-    var img  = new Image();
-    img.src  = d[1];
-    img.alt  = d[0] + ' placements';
-    img.onload = function(){ img.classList.add('bri-loaded'); };
-    body.appendChild(img);
-    btn.onclick = function(){
-      var isOpen = wrap.classList.contains('open');
-      document.querySelectorAll('.bri-drop').forEach(function(x){ x.classList.remove('open'); });
-      if (!isOpen) wrap.classList.add('open');
-    };
-    wrap.appendChild(btn); wrap.appendChild(body);
-    container.appendChild(wrap);
-  });
-  var ICONS = {
-    'Coins':          'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-thu-jan-22-2026-10-26-52-gmt-0600-central-standard-time-high.png',
-    'Souls':          'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-thu-jan-22-2026-10-26-56-gmt-0600-central-standard-time-high.png',
-    'Season Presents':'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-mar-13-2026-23-08-58-gmt-0500-central-daylight-time-high.png?enable-io=true&crop=1%3A1&width=347',
-    'Raid Coin':      'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-fri-mar-06-2026-12-52-54-gmt-0600-central-standard-time-high.png?enable-io=true&crop=1%3A1&width=347'
-  };
-  var REWARDS = [
-    { name:'Coins',           amount:5580, glow:'coins',     rare:false },
-    { name:'Souls',           amount:31,   glow:'souls',     rare:true  },
-    { name:'Season Presents', amount:30,   glow:'secret',    rare:true  },
-    { name:'Raid Coin',       amount:17,   glow:'nightmare', rare:false }
+  var BRM_TIERS = [
+    { tier: 'SS', stars: 5, mods: 'anaaa' },
+    { tier: 'S', stars: 4, mods: 'nsnsnsnammmsn' },
+    { tier: 'A', stars: 3, mods: 'ereremerruuusm' },
+    { tier: 'B', stars: 2, mods: 'snansmersmnsmeeru' },
+    { tier: 'C', stars: 1, mods: 'nsmerseraeru' }
   ];
-  var TARGET_WAVE = 98, TARGET_XP = 99;
-  var WAVES = [10,20,30,40,50,58,66,74,83,90,98];
-  var waveEl = document.getElementById('bri-wave');
-  var luckEl = document.getElementById('bri-luck');
-  var resultEl = document.getElementById('bri-reward-result');
-  WAVES.forEach(function(w){
-    var o = document.createElement('option'); o.value = w; o.textContent = 'Wave ' + w;
-    waveEl.appendChild(o);
+  var NAME = { u: 'Uncommon', r: 'Rare', e: 'Epic', m: 'Mythic', s: 'Secret', n: 'Nightmare', a: 'Apex' };
+  var odds = document.getElementById('brm-odds'), host = document.getElementById('brm-tiers'), n = 0;
+  BRM_ODDS.forEach(function (o) {
+    var li = document.createElement('li');
+    li.className = 'r-' + o.rarity.toLowerCase();
+    li.innerHTML = '<i aria-hidden="true"></i>' + o.rarity + ' <b>' + o.chance + '</b>';
+    odds.appendChild(li);
   });
-  waveEl.addEventListener('change', function(){ luckEl.style.display = waveEl.value ? 'block' : 'none'; render(); });
-  luckEl.addEventListener('change', render);
-  function render(){
-    resultEl.innerHTML = '';
-    if (!waveEl.value) return;
-    var wave = Number(waveEl.value), scale = wave / TARGET_WAVE;
-    var luck = Number(luckEl.value || 1);
-    var card = document.createElement('div'); card.className = 'bri-re-card';
-    REWARDS.forEach(function(r){
-      var amt = Math.round(r.amount * scale * (r.rare ? luck : 1));
-      if (amt <= 0) return;
-      var row  = document.createElement('div'); row.className = 'bri-rrow';
-      var left = document.createElement('div'); left.className = 'bri-rleft';
-      var ico  = document.createElement('img');
-      ico.className = 'bri-ricon bri-glow-' + r.glow;
-      ico.src = ICONS[r.name]; ico.alt = r.name;
-      left.appendChild(ico);
-      left.appendChild(document.createTextNode(r.name + ' x' + amt));
-      row.appendChild(left);
-      card.appendChild(row);
+  BRM_TIERS.forEach(function (t) {
+    var row = document.createElement('div');
+    row.className = 'brm-tier';
+    row.setAttribute('data-tier', t.tier);
+    row.innerHTML = '<div class="brm-lab"><strong>' + t.tier + '</strong><span aria-hidden="true">' + new Array(t.stars + 1).join('\u2605') + '</span></div><div class="brm-grid"></div>';
+    var grid = row.lastChild;
+    t.mods.split('').forEach(function (c) {
+      var el = document.createElement('span'), col = n % 8, line = Math.floor(n / 8);
+      el.className = 'brm-t r-' + NAME[c].toLowerCase();
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', NAME[c] + ' modifier, ' + t.tier + ' tier');
+      el.title = NAME[c];
+      el.style.backgroundPosition = (col * 100 / 7) + '% ' + (line * 100 / 7) + '%';
+      grid.appendChild(el);
+      n++;
     });
-    resultEl.appendChild(card);
-    var xp = document.createElement('div'); xp.className = 'bri-xp';
-    xp.textContent = 'XP: ' + Math.round(TARGET_XP * scale);
-    resultEl.appendChild(xp);
-  }
+    host.appendChild(row);
+  });
 }());
 </script>
 
