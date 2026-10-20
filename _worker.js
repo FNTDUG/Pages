@@ -3808,8 +3808,8 @@ function seoEndlessHtml(src, data, nine) {
     }
   }
   const rng = seoLit(src, 'RNG_REWARDS');
-  const rl = rng && Array.isArray(rng['*']) ? rng['*'].filter(r => r && r.name && r.chance != null) : [];
-  if (rl.length) out.push('<h2>Endless RNG rewards</h2><p>Every Endless game can also drop ' + seoEsc(seoList(rl.map(r => 'a ' + r.name + ' (' + r.chance + '% chance)'))) + '.</p>');
+  const rl = rng && Array.isArray(rng['*']) ? rng['*'].filter(r => r && r.name) : [];
+  if (rl.length) out.push('<h2>Endless RNG rewards</h2><p>Every Endless game can also drop ' + seoEsc(seoList(rl.map(r => (r.min != null && r.max != null && r.min !== r.max ? r.min + ' to ' + r.max + ' ' : r.min > 1 ? r.min + ' ' : 'a ') + r.name + (r.chance != null ? ' (' + r.chance + '% chance)' : '')))) + '.</p>');
   return out.length ? seoBlock('FNTD2 Endless guide as text', out.join('')) : '';
 }
 

@@ -177,17 +177,17 @@ html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
   var MAP_BASE = 'https://images.fntduserguide.com/endless/';
   var GAMES = [1,2,3,4,5,6,7,8];
   var GAME_REWARDS = {
-    G1:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2400},{name:'Souls',amount:20}] },
-    G2:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2640},{name:'Souls',amount:20}] },
-    G3:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2880},{name:'Souls',amount:20}] },
-    G4:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:3120},{name:'Souls',amount:25}] },
-    G5:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:3600},{name:'Souls',amount:25}] },
-    G6:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:4080},{name:'Souls',amount:25}] },
-    G7:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:4080},{name:'Souls',amount:25}] },
-    G8:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:4080},{name:'Souls',amount:25}] }
+    G1:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2400}] },
+    G2:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2640}] },
+    G3:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:2880}] },
+    G4:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:3120}] },
+    G5:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:3600}] },
+    G6:{ targetWave:100, xp:100, rewards:[{name:'Tokens',amount:4080}] },
+    G7:{ targetWave:100, xp:84,  rewards:[{name:'Tokens',amount:6290}] },
+    G8:{ targetWave:100, xp:84,  rewards:[{name:'Tokens',amount:6290}] }
   };
   var RNG_REWARDS = {
-    '*': [{name:'Season 7 Present', min:1, max:1, chance:0.4}]
+    '*': [{name:'Souls', min:1, max:3, chance:null}, {name:'Season 7 Present', min:1, max:1, chance:0.4}]
   };
   var WAVE_MIN = 10, WAVE_MAX = 100, WAVE_STEP = 10;
   var XP_ICON = 'https://primary.jwwb.nl/public/g/h/p/temp-xkzspsgvvlzquzykopjj/pasted-image-thu-jan-22-2026-10-26-48-gmt-0600-central-standard-time-high.png?enable-io=true&width=96';
@@ -263,16 +263,17 @@ html.ov .ch-rewards.rowloop img{-webkit-user-drag:none;pointer-events:none}
       var amount = e.min != null ? 'x' + (e.min === e.max ? e.min : e.min + '~' + e.max) : '';
       var t = makeTile(e.name, amount, null);
       var meta = ITEM[e.name.toLowerCase()] || {};
+      var known = e.chance != null;
       t.setAttribute('data-rwtip', JSON.stringify({
         name: e.name,
-        qty: amount || pct(e.chance),
+        qty: amount || (known ? pct(e.chance) : '?'),
         label: amount ? 'Amount' : 'Chance',
-        note: amount ? ('Chance: ' + pct(e.chance)) : '',
+        note: amount && known ? ('Chance: ' + pct(e.chance)) : '',
         rarity: (meta.rarity || '').toLowerCase(),
         icon: meta.image || ''
       }));
-      t.setAttribute('aria-label', e.name + (amount ? ' ' + amount : '') + ' at ' + pct(e.chance));
-      t.appendChild(el('span','chOdds', pct(e.chance)));
+      t.setAttribute('aria-label', e.name + (amount ? ' ' + amount : '') + (known ? ' at ' + pct(e.chance) : ''));
+      if (known) t.appendChild(el('span','chOdds', pct(e.chance)));
       wrap.appendChild(t);
     });
     return wrap;
