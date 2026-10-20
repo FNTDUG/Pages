@@ -199,7 +199,7 @@
     return panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
       var a = (data.attacks || {})[n] || {};
       var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
-      li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="212" height="50" loading="lazy" decoding="async">' : '';
+      li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="214" height="50" loading="lazy" decoding="async">' : '';
       li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.type ? ' <span class="fwd-tag">' + esc(a.type) + '</span>' : '') + '</p>';
       if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
       if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';

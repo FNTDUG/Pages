@@ -112,7 +112,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-atks{display:grid;gap:12px;margin:0;padding:0;list-style:none}
 .fwd-atk{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px 14px;margin:0;padding:10px;background:rgba(255,255,255,.05);border:2px solid rgba(7,11,28,.9);border-radius:10px}
 .fwd-atk::before,.fwd-atk::marker{content:none}
-.fwd-atk img{display:block;width:170px;max-width:100%;height:auto;margin:0;image-rendering:auto}
+.fwd-atk img{display:block;width:214px;max-width:100%;height:auto;margin:0;image-rendering:auto}
 .fwd-atk-b{min-width:0}
 .fwd-panel .fwd-atk-n{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;color:#fff;font:400 18px/1.15 'Lilita One',system-ui,sans-serif;text-shadow:0 2px 0 var(--fwi),1px 0 0 var(--fwi),-1px 0 0 var(--fwi),0 -1px 0 var(--fwi)}
 .fwd-tag{display:inline-flex;align-items:center;gap:6px;min-height:26px;box-sizing:border-box;padding:2px 11px;color:#fff;font:400 13.5px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:#2b3870;border:2px solid var(--fwi);border-radius:999px;box-shadow:0 2px 0 var(--fwi)}
@@ -167,7 +167,6 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-back span{display:none}
 .fwd-back{padding:0}
 .fwd-atk{grid-template-columns:minmax(0,1fr)}
-.fwd-atk img{width:190px}
 .fwd-name{font-size:38px}
 .fwd-tbl td{font-size:18px}
 .fwd-tbl th,.fwd-tbl td{padding:8px 6px}
