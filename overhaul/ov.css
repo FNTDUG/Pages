@@ -425,6 +425,7 @@ html.ov .badge-new{color:#fff;background:#c4282d}
 html.ov .badge-feature{color:#0d1a29;background:var(--blue)}
 html.ov .badge-balance{color:#1d2228;background:var(--yellow)}
 html.ov .update-title{font:400 16px/1.3 var(--font-head);text-transform:uppercase;color:var(--text);vertical-align:middle}
+html.ov .update-title a{color:var(--text);text-decoration:underline;text-decoration-color:var(--game);text-decoration-thickness:3px;text-underline-offset:3px}
 html.ov .update-description{margin-top:8px;font:400 15px/1.65 var(--font-body);color:var(--mute)}
 html.ov .wkv-msg{font:500 15px/1.5 var(--font-body);color:var(--mute)}
 html.ov .wkv-list{gap:20px}
