@@ -3407,24 +3407,24 @@ const SEO_SECTIONS = {
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
-  '/': ['FNTD User Guide: FNTD2, FNTD & BBN Wiki and Guides', 'The wiki and guides for Roblox FNaF games Five Nights TD 2, Five Nights TD and Bite By Night: tier lists, meta teams, unit stats, trade values and patch notes.'],
-  '/fntd2/fntd2-directory': ['Five Nights TD 2 Wiki & Guide: Roblox FNaF Tower Defense', 'The Five Nights TD 2 (FNTD2) wiki and guide hub for the Roblox FNaF tower defense game: tier lists, meta teams, unit stats, trade values and every mode.'],
-  '/fntd2/fntd2-index': ['FNTD2 Wiki: Metas & Info for Five Nights TD 2 (Roblox)', 'The Five Nights TD 2 wiki for Roblox: the Unit Engine, trade calculator, meta teams, quests, presents, evolutions and guides for every game mode.'],
-  '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2 Roblox', 'Five Nights TD 2 tier list for the Roblox FNaF tower defense game, ranking every unit by role: starters, support, stun, slow, summon and knockback.'],
-  '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Five Nights TD 2 Teams (Roblox)', 'The best Five Nights TD 2 teams on Roblox for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements, tested at level 100.'],
-  '/fntd2/unit-engine': ["FNTD2 Units Wiki: Every Unit's Stats, DPS & Value", 'The Five Nights TD 2 units wiki for Roblox: search any unit for its stats, upgrades, hero paths, DPS, Exists count and trade value.'],
-  '/fntd2/trade-calculator': ['FNTD2 Trading Values & Trade Calculator (Roblox)', 'Five Nights TD 2 trading values and demand for every unit, normal and shiny, from Value Central, plus a calculator to check if a Roblox trade is fair.'],
+  '/': ['FNTD User Guide: Roblox FNaF Tower Defense & BBN Wiki', 'The wiki and guides for the Roblox FNaF tower defense games Five Nights TD 2 and Five Nights TD, plus Bite By Night: tier lists, meta teams, values and codes.'],
+  '/fntd2/fntd2-directory': ['Five Nights TD 2 Wiki & Guide: Roblox FNaF Tower Defense', 'The Five Nights TD 2 (FNTD2) wiki and guide hub for FNaF Tower Defense 2 on Roblox: tier lists, meta teams, unit stats, trade values and every game mode.'],
+  '/fntd2/fntd2-index': ['FNTD2 Wiki: Metas & Info for Five Nights TD 2 (Roblox)', 'The Five Nights TD 2 wiki for Roblox: Unit Engine, value calculator, meta teams, quests, hero paths, chips, presents, evolutions and guides for every mode.'],
+  '/fntd2/tierlists-1': ['FNTD2 Tier List: Best Units in Five Nights TD 2 Roblox', 'FNTD2 tier list for Five Nights TD 2 (FNaF Tower Defense 2) on Roblox: the best DPS, starter, support, stun, slow, summon and knockback units, ranked.'],
+  '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Five Nights TD 2 Teams (Roblox)', 'The best Five Nights TD 2 teams and loadouts on Roblox for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements.'],
+  '/fntd2/unit-engine': ['FNTD2 Units Wiki & Unit Engine: Stats, DPS & Value', 'The Five Nights TD 2 units wiki for Roblox: how to get every unit, its stats, upgrades, hero paths, a DPS calculator, Exists count and trade value.'],
+  '/fntd2/trade-calculator': ['FNTD2 Values & Value List: Trade Calculator (Roblox)', 'The Five Nights TD 2 (FNaF Tower Defense 2) value list: normal and shiny trading values from Value Central, plus a calculator to check if a trade is fair.'],
   '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm.'],
   '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams, plus the token, soul, XP and present rewards for every Endless game.'],
-  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams and how to unlock OMC and the ??? modifier.'],
+  '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams, how to get OMC (Old Man Consequences) and how to unlock the ??? modifier.'],
   '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
   '/fntd2/event-story-endless': ['FNTD2 Event Guide: Best Event Teams (Roblox)', 'The current Five Nights TD 2 event on Roblox: the best teams for Event Story and Event Endless and the best night to macro for event rewards.'],
-  '/fntd2/codes': ['FNTD2 Codes ({MONTH}): Five Nights TD 2 Roblox Codes', 'All working Five Nights TD 2 codes for Roblox in {MONTH}: free Tokens, Souls, presents and Endo Chips, with requirements and expiry times.'],
+  '/fntd2/codes': ['FNTD2 Codes ({MONTH}): Five Nights TD 2 Roblox Codes', 'All working Five Nights TD 2 (FNaF Tower Defense 2) codes for Roblox in {MONTH}: free Tokens, Souls, presents and Endo Chips, with expiry times.'],
   '/bbn/codes': ['Bite By Night Codes ({MONTH}): Roblox BBN Codes', 'All working Bite By Night codes for Roblox in {MONTH}, with their rewards, requirements and expiry times, plus how to redeem them in BBN.'],
   '/fntd2/clan-wars': ['FNTD2 Clan Wars Team Builder | Five Nights TD 2', 'Set the Clan Wars objective, restriction and banned, buffed and debuffed elements to see every Five Nights TD 2 unit you can still use on Roblox.'],
   '/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
   '/fntd2/patch-notes': ['FNTD2 Guide Patch Notes | FNTD User Guide', 'Changelog for the Five Nights TD 2 pages of the FNTD User Guide: new metas, tier list moves, new tools and fixes, newest first.'],
-  '/fntd1': ['Five Nights TD (FNTD1) Wiki & Guide: Roblox FNaF TD', 'The original Five Nights TD wiki and guide for the Roblox FNaF tower defense game: charts, tier lists, meta teams, PvP, Boss Raids, Endless and codes.'],
+  '/fntd1': ['Five Nights TD (FNTD1) Wiki: Roblox FNaF Tower Defense', 'The Five Nights TD wiki and guide for the Roblox FNaF tower defense game: charts, tier lists, meta teams, PvP, Boss Raids, Endless and an FAQ with codes.'],
   '/fntd1/charts-tierlists': ['FNTD1 Unit Charts: Midgame, Endgame, Stun & Slow', 'Five Nights TD (Roblox) unit charts ranking the top units for midgame, starters, endgame, slow, stun, booster, anti-regen and wither, with DPS.'],
   '/fntd1/other-charts': ['FNTD1 Title Chart & Attack Types Explained', 'The Five Nights TD (Roblox) title chart and every attack type explained with pictures: AOE, splash, pierce, pierce spread, nuke, chain, cone and single.'],
   '/fntd1/tierlists': ['FNTD1 Tier Lists: PvP & Boss Raids by Slot (Roblox)', 'Five Nights TD tier lists for every team slot (starter, stun, slow, endgame and booster) for Roblox PvP/Ranked and Boss Raids, with a team builder.'],
@@ -3443,7 +3443,7 @@ const SEO_PAGES = {
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/patch-notes/fwm-patch-notes': ['FWM Guide Patch Notes | FNTD User Guide', 'Changelog for the FNaF World Multiplayer pages of the FNTD User Guide: Roster, Tech Specs, TierList and Meta Teams updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki & Guide: Roblox FWM', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade in Tech Specs, a TierList and Meta Teams.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade in Tech Specs, a TierList and Meta Teams.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
@@ -3589,17 +3589,21 @@ function seoUnitFor(realPath, units) {
 }
 
 function seoUnitMeta(u) {
-  let title = u.name + ' | FNTD2 Wiki: Stats, DPS & Value';
-  if (title.length > 60) title = u.name + ' | FNTD2 Wiki: Stats';
-  if (title.length > 60) title = u.name + ' | FNTD2 Wiki';
-  if (title.length > 60) title = u.name + ' | FNTD2';
+  const get = !!u.obtainment;
+  const titles = get
+    ? [': How to Get, Stats & Value | FNTD2 Wiki', ': How to Get & Stats | FNTD2 Wiki', ' | FNTD2 Wiki: How to Get', ' | FNTD2 Wiki', ' | FNTD2']
+    : [' | FNTD2 Wiki: Stats, DPS & Value', ' | FNTD2 Wiki: Stats', ' | FNTD2 Wiki', ' | FNTD2'];
+  let title = u.name + titles[0];
+  for (let i = 1; title.length > 60 && i < titles.length; i++) title = u.name + titles[i];
   const rar = seoCap(u.rarity), a = /^[aeiou]/i.test(rar) ? 'an' : 'a';
   const lead = u.name + ' is ' + a + ' ' + rar + (u.element ? ' ' + u.element : '') + ' unit in Five Nights TD 2 (Roblox)';
+  const how = get ? 'How to get it, wiki stats, DPS' : 'Wiki stats, DPS';
   const tails = [
-    (u.typeMain ? ' (' + String(u.typeMain).replace(/-/g, ' / ') + ')' : '') + '. Wiki stats, upgrade costs, passives, tier list rank and trade value.',
-    '. Wiki stats, upgrade costs, passives, tier list rank and trade value.',
-    '. Wiki stats, passives, tier list rank and trade value.',
-    '. Stats, passives, tier list rank and trade value.',
+    (u.typeMain ? ' (' + String(u.typeMain).replace(/-/g, ' / ') + ')' : '') + '. ' + how + ', upgrade costs, passives, tier list rank and trade value.',
+    '. ' + how + ', upgrade costs, passives, tier list rank and trade value.',
+    '. ' + how + ', passives, tier list rank and trade value.',
+    '. ' + (get ? 'How to get it, stats' : 'Wiki stats') + ', tier list rank and trade value.',
+    '. ' + (get ? 'How to get it and stats.' : 'Stats, tier list rank and trade value.'),
     '.'
   ];
   let desc = lead + tails[0];
