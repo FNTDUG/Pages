@@ -480,13 +480,25 @@
   }
   function wiggle(g) {
     if (reduced) return;
+    function hop(b, k, v, d, wait) {
+      var on = false;
+      setTimeout(function step() {
+        on = !on;
+        var s = {};
+        s[k] = on ? v : 0;
+        g.set(b, s);
+        setTimeout(step, d * 1000);
+      }, wait * 1000);
+    }
     g.utils.toArray('.ov-far .ov-bob').forEach(function (b) {
-      g.to(b, { y: -3, duration: rnd(2.6, 4), ease: 'steps(1)', yoyo: true, repeat: -1, delay: rnd(0, 2) });
+      var d = rnd(2.6, 4);
+      hop(b, 'y', -3, d, rnd(0, 2) + d);
     });
     g.utils.toArray('.ov-near .ov-bob, .ov-pin .ov-bob').forEach(function (b) {
       var u = parseFloat(getComputedStyle(b.closest('[style*="--u"]')).getPropertyValue('--u')) || 5;
-      g.to(b, { y: -u * 2, duration: rnd(1.4, 2.6), ease: 'steps(2)', yoyo: true, repeat: -1, delay: rnd(0, 1.5) });
-      g.to(b, { x: u * (Math.random() < 0.5 ? -1 : 1), duration: rnd(2.2, 3.8), ease: 'steps(1)', yoyo: true, repeat: -1, delay: rnd(0, 2) });
+      var dy = rnd(1.4, 2.6), dx = rnd(2.2, 3.8);
+      hop(b, 'y', -u, dy, rnd(0, 1.5) + dy / 2);
+      hop(b, 'x', u * (Math.random() < 0.5 ? -1 : 1), dx, rnd(0, 2) + dx);
     });
     (function spin() {
       var list = g.utils.toArray('.ov-near .ov-spin');
