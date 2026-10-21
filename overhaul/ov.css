@@ -480,6 +480,7 @@ html.ov #ug-mobile-nav{font-size:17px;line-height:1.6}
 html.ov .ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{color:inherit;opacity:.7}
 html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
 .ov-hero--bare{grid-template-columns:minmax(0,1fr)}
+@media (max-width:960px){.ov-stage{display:none}}
 html.ov .info-card.rowloop{cursor:auto}
 html.ov .info-card.rowloop.can-drag{cursor:grab}
 html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:not(.pv-shell) #pv-theme{visibility:hidden!important;opacity:0!important}
