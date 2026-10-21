@@ -3414,7 +3414,7 @@ const SEO_PAGES = {
   '/fntd2/meta-teams': ['FNTD2 Meta Teams: Best Five Nights TD 2 Teams (Roblox)', 'The best Five Nights TD 2 teams and loadouts on Roblox for Story, Endless, Boss Raids, Challenges and multiplayer, with enchants and replacements.'],
   '/fntd2/unit-engine': ['FNTD2 Units Wiki & Unit Engine: Stats, DPS & Value', 'The Five Nights TD 2 units wiki for Roblox: how to get every unit, its stats, upgrades, hero paths, a DPS calculator, Exists count and trade value.'],
   '/fntd2/trade-calculator': ['FNTD2 Values & Value Calculator: FNaF TD 2 Value List', 'The Five Nights TD 2 (FNaF TD 2) value list: normal and shiny trading values from Value Central, plus a trade calculator to check if a trade is fair.'],
-  '/fntd2/story-index': ['FNTD2 Story Guide: Rewards & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: every game and night with Easy and Nightmare rewards, the recommended teams and the best night to farm.'],
+  '/fntd2/story-index': ['FNTD2 Story Guide: Rewards, Chips & Best Nights to Farm', 'Five Nights TD 2 Story guide for Roblox: rewards for every night, how to get chips on Night 7, the recommended teams and the best night to farm.'],
   '/fntd2/endless-index': ['FNTD2 Endless Guide: Best Teams & Rewards (Roblox)', 'Five Nights TD 2 Endless guide for Roblox: the best farthest and grind teams, plus the token, soul, XP and present rewards for every Endless game.'],
   '/fntd2/boss-raids-index': ['FNTD2 Boss Raids Guide: Meta Teams & OMC (Roblox)', 'Five Nights TD 2 Boss Raids meta for Roblox: the best teams, how to get OMC (Old Man Consequences) and how to unlock the ??? modifier.'],
   '/fntd2/challenges': ['FNTD2 Challenges: Maps, Rewards & Best Teams', 'Every Five Nights TD 2 Special Challenge on Roblox with its map, restrictions, rewards and the recommended team to clear it on Very Hard.'],
@@ -3883,6 +3883,16 @@ function seoStoryHtml(src, data) {
     if (typeof v === 'string') modes.push([v, v + ' team']);
     else if (v && typeof v === 'object') Object.keys(v).forEach(t => modes.push([v[t], v[t] + ' team']));
   });
+  const chipBy = seoLit(src, 'CHIP_BY_GAME') || {}, chipRar = seoLit(src, 'CHIP_RARITIES') || [];
+  const chipMin = Number((/CHIP_MIN_DIFF\s*=\s*(\d+)/.exec(src) || [])[1]) || 2;
+  const chipD = (seoInfVars().DESCS || {}).chips || {};
+  const chipGames = Object.keys(chipBy).filter(g => chipBy[g]).sort((a, b) => a - b);
+  if (chipGames.length) {
+    const odds = chipRar.filter(c => c && c.rarity && c.chance).map(c => seoCap(c.rarity) + ' ' + c.chance).join(', ');
+    out.push('<h2>How to get chips in FNTD2 Story</h2><p>Each Five Nights TD 2 Story game drops its own chip on Night 7 at difficulty ' + chipMin + ' or higher, as Part A or Part B.' + (odds ? ' Chip rarity odds: ' + seoEsc(odds) + '.' : '') + '</p>' +
+      '<div class="ug-seo-wrap"><table><thead><tr><th>Game</th><th>Chip</th><th>What it does</th></tr></thead><tbody>' +
+      chipGames.map(g => '<tr><td>Game ' + seoEsc(g) + ' Night 7</td><td>' + seoEsc(chipBy[g]) + '</td><td>' + seoEsc(chipD[chipBy[g]] ? seoInfText(chipD[chipBy[g]]) : '') + '</td></tr>').join('') + '</tbody></table></div>');
+  }
   const teams = modes.filter((m, i) => modes.findIndex(x => x[0] === m[0]) === i).map(m => seoTeam(data.metas, m[0], byKey, m[1])).join('');
   if (teams) out.push('<h2>FNTD2 Story teams</h2>' + teams);
   return seoBlock('FNTD2 Story guide as text', out.join(''));
