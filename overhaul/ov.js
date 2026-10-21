@@ -4,10 +4,6 @@
   h.classList.add('ov');
   setTimeout(function () { h.classList.add('ov-ready'); }, 2500);
   if (!/(^|\.)fntduserguide\.com$/.test(location.hostname)) h.classList.add('ov-noads');
-  if (!reduced) {
-    h.classList.add('ov-pre');
-    setTimeout(function () { h.classList.remove('ov-pre'); }, 3000);
-  }
   try { t = localStorage.getItem('pv-theme'); } catch (e) {}
   if (t !== 'dark' && t !== 'light') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   h.setAttribute('data-theme', t);
@@ -64,8 +60,12 @@
     fitTitle();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
     window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
-    if (bare) return;
     load('/overhaul/ov-voice.js');
+    if (bare) {
+      load('/overhaul/ov-ask.js');
+      load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
+      return;
+    }
     if (tpl) {
       document.dispatchEvent(new Event('ov:stage'));
       load('/overhaul/ov-ask.js');
@@ -610,32 +610,16 @@
   }
   function intro() {
     var g = window.gsap;
-    h.classList.remove('ov-pre');
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card'), function (row) { try { window.ovRowLoop(row); } catch (e) {} });
     if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
     wiggle(g);
-    if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
-    var keep = 'transform,opacity,visibility';
-    var ink = getComputedStyle(h).getPropertyValue('--ink').trim() || '#000';
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
-    var split = null;
-    try { if (window.SplitText) split = window.SplitText.create('.ov-copy .ug-page-title', { type: 'words,chars' }); } catch (e) { split = null; }
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
-    from('.ov-hero', { x: -16, y: -16, autoAlpha: 0, boxShadow: '22px 22px 0 ' + ink, duration: 0.4, ease: 'power3.in', clearProps: keep + ',boxShadow' }, 0);
-    from('.ov-kicker', { y: 12, autoAlpha: 0, duration: 0.45, clearProps: keep }, 0.25);
-    from(split ? split.chars : '.ov-copy .ug-page-title', split ? { yPercent: 60, autoAlpha: 0, duration: 0.5, stagger: 0.02 } : { y: 26, autoAlpha: 0, duration: 0.55, clearProps: keep }, 0.3);
-    from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.66);
-    from('.ov-copy .ug-status-badge, .ov-copy .ug-page-desc, .ov-copy .ug-codes-btn, .ov-copy .ov-next', { y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, clearProps: keep }, 0.58);
-    from('.ov-notes > *', { y: 24, autoAlpha: 0, duration: 0.5, stagger: 0.08, clearProps: keep }, 0.75);
-    tl.call(function () { if (split) split.revert(); fitTitle(); }, null, 1.3)
-      .call(function () { if (!bare) drop(g); }, null, 0.9);
-    if (!bare) from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0.35);
-    var items = window.ScrollTrigger ? g.utils.toArray('.info-card.rowloop, .info-card:not(.rowloop) > .info-card-section, .metaMount, #unitEngine, #ue-last-updated-loader') : [];
-    if (items.length) {
-      g.set(items, { autoAlpha: 0, y: 36 });
-      window.ScrollTrigger.batch(items, { start: 'top 92%', once: true, onEnter: function (els) {
-        g.to(els, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'back.out(1.7)', clearProps: keep });
-      } });
+    from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
+    tl.call(fitTitle, null, 0.7);
+    if (!bare) {
+      from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
+      tl.call(function () { drop(g); }, null, 0.5);
     }
   }
 
@@ -712,7 +696,7 @@
     }
     floaters();
     var touchRows = document.querySelector('.info-card, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
-    loadAll(['gsap', 'ScrollTrigger', 'SplitText'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js']), animate);
+    loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js']), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';

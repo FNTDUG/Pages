@@ -317,7 +317,6 @@ html.ovt-on #ug-hamburger,html.ovt-on #ug-info-btn,html.ovt-on #ug-sound-btn,htm
   .ovt-form{padding:12px}
 }
 @media (prefers-reduced-motion:reduce){.ovt-dots i{animation:none;opacity:.7}}
-html.ov.ov-pre .ov-hero,html.ov.ov-pre .ov-notes{visibility:hidden}
 @media (max-width:768px){
   html.ov #ug-hamburger{display:flex}
   html.ov .inf-modes{gap:8px;padding:34px 14px 0!important}
