@@ -4468,7 +4468,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const PAGE_MOVED = { '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
-const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021b"><link rel="stylesheet" href="/overhaul/ov.css?v=20261021b"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021b"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021b"><script src="/overhaul/ov-a11y.js?v=20261021b"><\/script><script src="/overhaul/ov.js?v=20261021b"><\/script>';
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021c"><link rel="stylesheet" href="/overhaul/ov.css?v=20261021c"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021c"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021c"><script src="/overhaul/ov-a11y.js?v=20261021c"><\/script><script src="/overhaul/ov.js?v=20261021c"><\/script>';
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 const PV_UPDATE = {
   version: '2026-10-20',

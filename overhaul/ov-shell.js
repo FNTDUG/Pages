@@ -250,27 +250,57 @@
   var bell = document.getElementById('ntfBell');
   if (bell && window.MutationObserver) new MutationObserver(layout).observe(bell, { attributes: true, attributeFilter: ['hidden'] });
 
+  var ads = [], adMo = null, adRo = null, adRaf = 0, adT = 0;
   function adEdges() {
-    var top = 0, bot = 0, W = window.innerWidth, H = window.innerHeight;
-    Array.prototype.forEach.call(document.body.children, function (el) {
-      if (el.tagName !== 'INS' && !el.querySelector('iframe')) return;
+    var top = 0, bot = 0, H = window.innerHeight;
+    ads.forEach(function (el) {
       var cs = getComputedStyle(el);
-      if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') return;
+      if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return;
       var r = el.getBoundingClientRect();
-      if (r.height < 20 || r.height > 260 || r.width < W * 0.6) return;
-      if (r.bottom >= H - 4 && r.top > H / 2) bot = Math.max(bot, H - r.top);
-      else if (r.top <= 4 && r.bottom < H / 2) top = Math.max(top, r.bottom);
+      if (r.height < 1 || r.bottom <= 0 || r.top >= H) return;
+      if (r.top + r.bottom > H) bot = Math.max(bot, H - Math.max(r.top, 0));
+      else top = Math.max(top, Math.min(r.bottom, H));
     });
     h.style.setProperty('--pv-ad-top', Math.round(top) + 'px');
     h.style.setProperty('--pv-ad-bot', Math.round(bot) + 'px');
   }
-  var adT = 0;
+  function adQueue() {
+    if (!adRaf) adRaf = requestAnimationFrame(function () { adRaf = 0; adEdges(); });
+    clearTimeout(adT);
+    adT = setTimeout(adEdges, 600);
+  }
+  function adFind() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-anchor-status]'), function (el) {
+      if (ads.indexOf(el) !== -1) return;
+      ads.push(el);
+      adMo.observe(el, { attributes: true, attributeFilter: ['style', 'data-anchor-status'] });
+      if (adRo) adRo.observe(el);
+    });
+    adQueue();
+  }
   function adWatch() {
     var on = /(^|\s)(ovt-on|talk-on)(\s|$)/.test(h.className);
-    if (on && !adT) { adEdges(); adT = setInterval(adEdges, 500); }
-    else if (!on && adT) { clearInterval(adT); adT = 0; }
+    if (on && !adMo) {
+      ads = [];
+      adMo = new MutationObserver(function (list) {
+        if (list.some(function (m) { return m.type === 'childList'; })) adFind();
+        else adQueue();
+      });
+      adRo = window.ResizeObserver ? new ResizeObserver(adQueue) : null;
+      adMo.observe(h, { childList: true });
+      adMo.observe(document.body, { childList: true });
+      adFind();
+      adEdges();
+    } else if (!on && adMo) {
+      adMo.disconnect();
+      if (adRo) adRo.disconnect();
+      adMo = adRo = null;
+      ads = [];
+      clearTimeout(adT);
+    }
   }
   if (window.MutationObserver) new MutationObserver(adWatch).observe(h, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', function () { if (adMo) adQueue(); }, { passive: true });
 
   function link(cls, html) {
     var a = document.createElement('a');
