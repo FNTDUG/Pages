@@ -302,7 +302,7 @@ html.ovt-on #ug-hamburger,html.ovt-on #ug-info-btn,html.ovt-on #ug-sound-btn,htm
 .ov-screen #mascotSprite{cursor:pointer}
 .ov-screen #mascotSprite:focus-visible{outline:4px solid var(--yellow);outline-offset:4px}
 @media (max-width:760px){
-  .ovt{padding:0;align-items:stretch}
+  .ovt{padding:var(--pv-ad-top,0px) 0 var(--pv-ad-bot,0px);align-items:stretch}
   .ovt-box{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);width:100%;height:100%;border:0;box-shadow:none}
   .ovt-side{flex-direction:row;align-items:center;gap:14px;padding:12px 64px 12px 12px;background:var(--game);color:var(--game-ink);border-right:0;border-bottom:var(--bw) solid var(--ink)}
   .ovt-side .ovt-note{color:var(--game-ink);opacity:.8;text-align:left;font-size:13px}

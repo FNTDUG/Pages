@@ -250,6 +250,28 @@
   var bell = document.getElementById('ntfBell');
   if (bell && window.MutationObserver) new MutationObserver(layout).observe(bell, { attributes: true, attributeFilter: ['hidden'] });
 
+  function adEdges() {
+    var top = 0, bot = 0, W = window.innerWidth, H = window.innerHeight;
+    Array.prototype.forEach.call(document.body.children, function (el) {
+      if (el.tagName !== 'INS' && !el.querySelector('iframe')) return;
+      var cs = getComputedStyle(el);
+      if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') return;
+      var r = el.getBoundingClientRect();
+      if (r.height < 20 || r.height > 260 || r.width < W * 0.6) return;
+      if (r.bottom >= H - 4 && r.top > H / 2) bot = Math.max(bot, H - r.top);
+      else if (r.top <= 4 && r.bottom < H / 2) top = Math.max(top, r.bottom);
+    });
+    h.style.setProperty('--pv-ad-top', Math.round(top) + 'px');
+    h.style.setProperty('--pv-ad-bot', Math.round(bot) + 'px');
+  }
+  var adT = 0;
+  function adWatch() {
+    var on = /(^|\s)(ovt-on|talk-on)(\s|$)/.test(h.className);
+    if (on && !adT) { adEdges(); adT = setInterval(adEdges, 500); }
+    else if (!on && adT) { clearInterval(adT); adT = 0; }
+  }
+  if (window.MutationObserver) new MutationObserver(adWatch).observe(h, { attributes: true, attributeFilter: ['class'] });
+
   function link(cls, html) {
     var a = document.createElement('a');
     a.href = KOFI;
