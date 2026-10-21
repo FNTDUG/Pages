@@ -488,6 +488,7 @@ html.ov:not(.pv-shell) #ug-sound-btn,html.ov:not(.pv-shell) .ntf-bell,html.ov:no
 .ov-dir .ov-card--wide{grid-column:1/-1}
 html.ov .ov-dir.rowloop{display:flex;flex-wrap:nowrap;gap:24px;margin-left:-24px;margin-right:-24px;padding:8px 24px 22px;overflow:hidden;clip-path:inset(0 0 0 8px);-webkit-user-select:none;user-select:none}
 html.ov .ov-dir.rowloop>.ov-card{flex:0 0 calc((100% - 24px) / 2)}
+@media (max-width:960px){html.ov .ov-dir.rowloop{clip-path:none}}
 html.ov .ov-dir.rowloop.can-drag{cursor:grab}
 html.ov .ov-dir.rowloop.is-dragging{cursor:grabbing}
 @media (max-width:600px){html.ov .ov-dir.rowloop{gap:16px;margin-left:-16px;margin-right:-16px;padding:8px 16px 22px}html.ov .ov-dir.rowloop>.ov-card{flex-basis:100%}}
