@@ -622,7 +622,7 @@
   }
   function intro() {
     var g = window.gsap;
-    if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row); } catch (e) {} });
+    if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
     if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
     wiggle(g);
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
