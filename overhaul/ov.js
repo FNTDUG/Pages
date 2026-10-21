@@ -35,7 +35,7 @@
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
   var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
-  var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches);
+  var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || (!document.querySelector('meta[name="ov-stage"]') && !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches));
   function hero() {
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
     if (!inner || !area || document.querySelector('.ov-hero')) return;
@@ -47,8 +47,8 @@
       t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
     }
     var wrap = document.createElement('div');
-    wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '');
     var own = document.querySelector('meta[name="ov-stage"]'), tpl = own && document.getElementById(own.content);
+    wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '') + (tpl && !bare ? ' ov-hero--own' : '');
     wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : tpl ? '<div class="ov-stage"><div class="ov-screen">' + tpl.innerHTML + '</div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
