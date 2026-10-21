@@ -150,8 +150,6 @@ html.ov #ug-main{background:none!important}
 html.ov #ug-header{display:none}
 
 html.ov{--game:var(--acc);--game-ink:var(--acc-ink)}
-html.ov[data-game="fntd1"]{--game:var(--blue);--game-ink:#0d1a29}
-html.ov[data-game="bbn"]{--game:#b48cff;--game-ink:#160d29}
 html.ov[data-game="wiki"]{--game:var(--pink);--game-ink:#2a0f1c}
 
 html.ov #ug-hero{background:none!important;padding:72px 0 0}
