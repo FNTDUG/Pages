@@ -17,7 +17,6 @@ self.addEventListener('push', function (e) {
     body: d.body || '',
     icon: '/overhaul/app-192.png',
     badge: '/overhaul/badge-96.png',
-    badge: '/overhaul/badge-96.png',
     data: { url: d.url || '/' }
   };
   if (d.tag) opts.tag = d.tag;
