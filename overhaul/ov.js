@@ -201,7 +201,19 @@
       out.appendChild(card);
     });
     grid.parentNode.replaceChild(out, grid);
-    if (!reduced) Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
+    if (reduced) return;
+    Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
+    if (window.MutationObserver) new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        Array.prototype.forEach.call(m.addedNodes, function (n) {
+          var t = n.nodeType === 1 && n.querySelector('.ov-term');
+          if (!t) return;
+          var old = t.querySelector('.ov-term-type');
+          if (old) old.parentNode.removeChild(old);
+          typer(t, 9);
+        });
+      });
+    }).observe(out, { childList: true });
   }
   function typer(el, U) {
     var TILE = 24, FREE = [2, 8, 12, 18], COLORS = ['#8b949e', '#8b949e', '#8b949e', '#79c0ff', '#d2a8ff', '#ffa657'];
@@ -610,7 +622,7 @@
   }
   function intro() {
     var g = window.gsap;
-    if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card'), function (row) { try { window.ovRowLoop(row); } catch (e) {} });
+    if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row); } catch (e) {} });
     if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
     wiggle(g);
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
@@ -695,7 +707,7 @@
       h.classList.add('ov-ready');
     }
     floaters();
-    var touchRows = document.querySelector('.info-card, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+    var touchRows = document.querySelector('.info-card, .ov-dir, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js']), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
