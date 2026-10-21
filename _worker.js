@@ -2987,6 +2987,21 @@ const ACTIVE_SCRIPT = `<script>
   if(me)S[me]=now;
   try{localStorage.setItem('pv:seen',JSON.stringify(S));}catch(e){}
 })();
+(function(){
+  var f=document.getElementById('ug-footer'),b=document.body,own=false;
+  if(!f||!window.MutationObserver)return;
+  function fix(){
+    if(own){own=false;return;}
+    var p=parseFloat(b.style.paddingBottom)||0;
+    f.style.paddingBottom='';
+    if(!p)return;
+    f.style.paddingBottom=((parseFloat(getComputedStyle(f).paddingBottom)||0)+p)+'px';
+    own=true;
+    b.style.paddingBottom='0px';
+  }
+  new MutationObserver(fix).observe(b,{attributes:true,attributeFilter:['style']});
+  if(b.style.paddingBottom)fix();
+})();
 <\/script>`;
 
 const HOME_ICONS =
