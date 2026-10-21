@@ -60,7 +60,7 @@
     fitTitle();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
     window.addEventListener('resize', function () { sizeScreen(); fitTitle(); }, { passive: true });
-    load('/overhaul/ov-voice.js');
+    load('/overhaul/ov-voice.js?v=20261021a');
     if (bare) {
       load('/overhaul/ov-ask.js');
       load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });

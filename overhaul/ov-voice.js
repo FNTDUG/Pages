@@ -16,16 +16,24 @@
       });
     }).then(function (b) { buf = b; }, function () { loading = null; });
   }
+  function make() {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (ctx || !C) return;
+    ctx = new C();
+    gain = ctx.createGain();
+    gain.gain.value = VOLUME;
+    gain.connect(ctx.destination);
+  }
+  function idle() {
+    if (window.requestIdleCallback) requestIdleCallback(make, { timeout: 4000 });
+    else setTimeout(make, 1500);
+  }
+  if (document.readyState === 'complete') idle();
+  else window.addEventListener('load', idle);
   function wake(e) {
     if (e && e.isTrusted === false) return;
-    var C = window.AudioContext || window.webkitAudioContext;
-    if (!C) return;
-    if (!ctx) {
-      ctx = new C();
-      gain = ctx.createGain();
-      gain.gain.value = VOLUME;
-      gain.connect(ctx.destination);
-    }
+    make();
+    if (!ctx) return;
     if (ctx.state === 'suspended' && !muted()) {
       var r = ctx.resume();
       if (r && r.catch) r.catch(function () {});
