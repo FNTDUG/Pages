@@ -44,10 +44,10 @@
 .fw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:12px;margin:0;padding:0;list-style:none}
 .fw-grid>li{min-width:0;margin:0;padding:0}
 .fw-grid>li::before,.fw-grid>li::marker{content:none}
-.fw .fw-card{position:relative;display:flex;flex-direction:column;height:100%;aspect-ratio:4/5;overflow:hidden;color:#fff;text-decoration:none;background:radial-gradient(120% 80% at 50% 28%,rgba(255,255,255,.5),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(0,0,0,.32)),var(--wc);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi);transition:transform .1s,box-shadow .1s;-webkit-tap-highlight-color:transparent}
+.fw .fw-card{position:relative;display:flex;flex-direction:column;height:100%;aspect-ratio:4/5;overflow:hidden;color:#fff;text-decoration:none;background:#121a3d;border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi);transition:transform .1s,box-shadow .1s;-webkit-tap-highlight-color:transparent}
 .fw .fw-card:hover{transform:translateY(-3px);box-shadow:0 7px 0 var(--fwi)}
 .fw .fw-card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--fwi)}
-.fw-card-art{display:flex;flex:1 1 auto;align-items:flex-end;justify-content:center;min-height:0;padding:24px 6px 2px}
+.fw-card-art{display:flex;flex:1 1 auto;align-items:flex-end;justify-content:center;min-height:0;padding:24px 6px 2px;background:radial-gradient(120% 114% at 50% 40%,rgba(255,255,255,.5),rgba(255,255,255,0) 62%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(0,0,0,.26)),var(--wc)}
 #ug-content .fw .fw-card-art img,.fw .fw-card-art img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;margin:0;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(7,11,28,.35))}
 .fw-card-name{display:flex;align-items:center;justify-content:center;flex:none;min-height:42px;padding:6px 6px;font:400 15px/1.08 'Lilita One',system-ui,sans-serif;letter-spacing:.02em;text-align:center;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi),1px 1px 0 var(--fwi),-1px 1px 0 var(--fwi),1px -1px 0 var(--fwi),-1px -1px 0 var(--fwi);background:#121a3d;border-top:3px solid var(--fwi);overflow-wrap:anywhere}
 .fw-card-hp{position:absolute;top:5px;left:5px;display:flex;align-items:center;gap:4px;padding:3px 6px 3px 5px;font:400 14px/1 'Lilita One',system-ui,sans-serif;text-shadow:0 1.5px 0 var(--fwi),1px 0 0 var(--fwi),-1px 0 0 var(--fwi),0 -1px 0 var(--fwi);background:#c9243c;border:2px solid var(--fwi);border-radius:8px}
@@ -212,7 +212,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fw-team-grid--sm .fw-card-name{height:34px;min-height:0;padding:3px 2px;font-size:11.5px;line-height:1.05}
 .fw-team-grid--sm .fw-card-art img,#ug-content .fw .fw-team-grid--sm .fw-card-art img{width:auto;max-width:86%;max-height:100%}
 .fw-team-grid--sm .fw-card--chip .fw-card-art img,#ug-content .fw .fw-team-grid--sm .fw-card--chip .fw-card-art img{max-width:60%}
-.fw .fw-card--empty{background:rgba(7,11,28,.35);border-style:dashed;border-color:rgba(201,216,255,.45);box-shadow:none}
+.fw .fw-card--empty .fw-card-art{background:none}.fw .fw-card--empty{background:rgba(7,11,28,.35);border-style:dashed;border-color:rgba(201,216,255,.45);box-shadow:none}
 .fw .fw-card--empty:hover,.fw .fw-card--empty:active{transform:none;box-shadow:none}
 .fw-card--empty .fw-card-name{color:#c9d8ff;background:transparent;border-top-color:transparent}
 .fw-slot-cap{display:block;margin:5px 0 0;font:400 13px/1.15 'Lilita One',system-ui,sans-serif;text-align:center;text-shadow:0 2px 0 var(--fwi)}
