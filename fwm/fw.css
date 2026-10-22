@@ -156,7 +156,7 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-info{text-align:center}
 .fwd-chips{justify-content:center}
 .fwd-panel{text-align:left}
-.fwd-top{padding:12px 14px;gap:8px}
+.fwd-top{padding:12px 14px;gap:8px;-webkit-transform:translateZ(0);transform:translateZ(0)}
 .fwd-nav{position:static;width:48px;height:48px;margin:0}
 .fwd-nav svg{width:12px;height:18px}
 .fwd-count{order:1;margin-left:auto}
