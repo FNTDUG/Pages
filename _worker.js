@@ -48,6 +48,7 @@ const MOBILE_NAV_BODY = `
     <a href="/fwm/tech-specs"            class="ug-mn-child" data-nav-href="/fwm/tech-specs">Tech Specs</a>
     <a href="/fwm/tierlist"             class="ug-mn-child" data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
+    <a href="/fwm/grind"                 class="ug-mn-child" data-nav-href="/fwm/grind">Grind</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -112,6 +113,7 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/tech-specs"            data-nav-href="/fwm/tech-specs">Tech Specs</a>
     <a href="/fwm/tierlist"             data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
+    <a href="/fwm/grind"                 data-nav-href="/fwm/grind">Grind</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3382,13 +3384,14 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 3;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind': 'FWM Grind on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
   if (p === '/fwm/tech-specs') return 'fwm-specs';
   if (p === '/fwm/meta-teams') return 'fwm-meta';
   if (p === '/fwm/tierlist') return 'fwm-tiers';
+  if (p === '/fwm/grind') return 'fwm-grind';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3447,6 +3450,7 @@ const SEO_PAGES = {
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
+  '/fwm/grind': ['FWM Grind Guide: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -4027,7 +4031,8 @@ const UPD_GH = {
   'fnafworld.json': ['/fwm/roster'],
   'fnafworldspecs.json': ['/fwm/tech-specs'],
   'fnafworldtiers.json': ['/fwm/tierlist'],
-  'fnafworldmeta.json': ['/fwm/meta-teams']
+  'fnafworldmeta.json': ['/fwm/meta-teams'],
+  'fnafworldgrind.json': ['/fwm/grind']
 };
 const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json' };
 const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json' };
@@ -4201,6 +4206,28 @@ function seoFwmLink(name, page) {
   if (!page) return seoEsc(name);
   return '<a href="/fwm/' + page + '#' + encodeURIComponent(seoFwmSlug(name)) + '">' + seoEsc(name) + '</a>';
 }
+function seoFwmGrindHtml(d, roster) {
+  if (!d || !Array.isArray(d.methods)) return '';
+  const foes = {};
+  ((roster && roster.bosses) || []).concat((roster && roster.enemies) || []).forEach(c => { if (c && c.name) foes[seoFwmSlug(c.name)] = c; });
+  const out = ['<h2>FNaF World Multiplayer grind guide</h2>'];
+  d.methods.forEach(m => {
+    if (!m || !m.name) return;
+    const f = m.boss && foes[seoFwmSlug(m.boss)];
+    out.push('<h3>' + seoEsc(m.name) + (f ? ': ' + seoFwmLink(f.name, 'roster') : '') + '</h3>');
+    const rw = (m.rewards || []).filter(r => r && r.name);
+    if (rw.length) out.push('<p>Rewards per win: ' + rw.map(r => seoEsc(r.name) + ' ' + seoEsc(String(r.normal == null ? '?' : r.normal)) + ' on Normal, ' + seoEsc(String(r.hard == null ? '?' : r.hard)) + ' on Hard').join('; ') + '.</p>');
+    (m.sections || []).forEach(sc => {
+      if (!sc || !sc.title) return;
+      let b = '<h4>' + seoEsc(sc.title) + '</h4>';
+      if (sc.text) b += '<p>' + seoEsc(sc.text) + '</p>';
+      if (sc.steps && sc.steps.length) b += '<ol>' + sc.steps.map(x => '<li>' + seoEsc(x) + '</li>').join('') + '</ol>';
+      if (sc.rows && sc.rows.length) b += '<ul>' + sc.rows.map(r => '<li>' + seoEsc(r.label || '') + (r.world ? ' (' + seoEsc(r.world) + ')' : '') + ': ' + seoEsc(r.text || '') + '</li>').join('') + '</ul>';
+      out.push(b);
+    });
+  });
+  return out.length > 1 ? seoBlock('FNaF World Multiplayer grind guide as text', out.join('')) : '';
+}
 function seoFwmTierHtml(d) {
   if (!d || !d.lists) return '';
   const tiers = Array.isArray(d.tiers) && d.tiers.length ? d.tiers : ['s', 'a', 'b', 'c', 'd'].map(id => ({ id, name: id.toUpperCase() }));
@@ -4261,6 +4288,12 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
+  if (p === '/fwm/grind') {
+    const [d, roster] = await Promise.all([seoTimed(seoLoadFwm('fnafworldgrind.json'), 2500), seoTimed(seoLoadFwm('fnafworld.json'), 2500)]);
+    let html = '';
+    try { html = seoFwmGrindHtml(d, roster); } catch (e) { html = ''; }
+    return html ? { html } : null;
+  }
   if (p === '/fwm/roster' || p === '/fwm/tech-specs' || p === '/fwm/meta-teams' || p === '/fwm/tierlist') {
     const specs = p === '/fwm/tech-specs', metas = p === '/fwm/meta-teams', tiers = p === '/fwm/tierlist';
     const d = await seoTimed(seoLoadFwm(tiers ? 'fnafworldtiers.json' : metas ? 'fnafworldmeta.json' : specs ? 'fnafworldspecs.json' : 'fnafworld.json'), 2500);
@@ -4344,7 +4377,8 @@ const SITEMAP_DATA = {
   '/fwm/roster': ['fnafworld.json'],
   '/fwm/tech-specs': ['fnafworldspecs.json'],
   '/fwm/meta-teams': ['fnafworldmeta.json'],
-  '/fwm/tierlist': ['fnafworldtiers.json']
+  '/fwm/tierlist': ['fnafworldtiers.json'],
+  '/fwm/grind': ['fnafworldgrind.json']
 };
 const SITEMAP_SEED = {
   'a:/': '2026-10-14T03:09:51Z', 'a:/overhaul/': '2026-10-15T19:44:48Z', 'a:/fntd2/fntd2-directory': '2026-10-14T20:39:46Z', 'a:/fntd2/fntd2-index': '2026-09-20T00:07:03Z',
@@ -5407,6 +5441,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
           <option value="/fwm/tech-specs"></option>
           <option value="/fwm/tierlist"></option>
           <option value="/fwm/meta-teams"></option>
+          <option value="/fwm/grind"></option>
         </datalist>
         <label class="f">Send to</label>
         <div class="games" id="games">
@@ -7969,8 +8004,8 @@ function parvusContext(text, data) {
 }
 
 function parvusFwmLoad() {
-  return Promise.all(['fnafworld.json', 'fnafworldspecs.json', 'fnafworldtiers.json', 'fnafworldmeta.json'].map(f => seoTimed(seoLoadFwm(f), 2500)).concat([seoTimed(pnLoad(null, null, PN_PAGES['/patch-notes/fwm-patch-notes']), 2500)]))
-    .then(([roster, specs, tiers, metas, notes]) => ({ roster, specs, tiers, metas, notes }));
+  return Promise.all(['fnafworld.json', 'fnafworldspecs.json', 'fnafworldtiers.json', 'fnafworldmeta.json', 'fnafworldgrind.json'].map(f => seoTimed(seoLoadFwm(f), 2500)).concat([seoTimed(pnLoad(null, null, PN_PAGES['/patch-notes/fwm-patch-notes']), 2500)]))
+    .then(([roster, specs, tiers, metas, grind, notes]) => ({ roster, specs, tiers, metas, grind, notes }));
 }
 
 function parvusFwmContext(text, f, page) {
@@ -8012,10 +8047,18 @@ function parvusFwmContext(text, f, page) {
     if (teams.length) teams.slice(0, 3).forEach(n => { const t = f.metas.metas[n]; const nm = v => (v || []).map(x => x && typeof x === 'object' ? x.name : x).filter(Boolean).join(', '); out.push('FWM META TEAM "' + n + '"' + (t.caption ? ' (' + t.caption + ')' : '') + ': party 1 ' + nm(t.party1) + '; party 2 ' + nm(t.party2) + '; bytes ' + nm(t.bytes) + '; chips ' + nm(t.chips) + (t.notes ? '; ' + t.notes : '') + '. Page: /fwm/meta-teams'); });
     else out.push('FWM META TEAMS: none posted yet on /fwm/meta-teams.');
   }
+  if (/\b(grind|grinding|farm|farming|exp|xp|level|levels|leveling|levelling|token|tokens|faz)\b/.test(q) && f.grind && Array.isArray(f.grind.methods)) {
+    f.grind.methods.forEach(m => {
+      if (!m || !m.name) return;
+      const rw = (m.rewards || []).filter(x => x && x.name).map(x => x.name + ' ' + (x.normal == null ? '?' : x.normal) + ' on Normal / ' + (x.hard == null ? '?' : x.hard) + ' on Hard').join(', ');
+      const secs = (m.sections || []).filter(sc => sc && sc.title).map(sc => sc.title + ': ' + [sc.text || '', (sc.steps || []).map((x, i) => (i + 1) + ') ' + x).join(' '), (sc.rows || []).map(x => (x.label || '') + ' - ' + (x.text || '')).join(' ')].filter(Boolean).join(' ')).join(' | ');
+      out.push('FWM GRIND METHOD "' + m.name + '"' + (m.boss ? ' (boss ' + m.boss + ')' : '') + (rw ? '; rewards per win ' + rw : '') + '; ' + parvusText(secs, 900) + '. Page: /fwm/grind');
+    });
+  }
   if (/\b(patch|update|updates|updated|new|changed|changes|latest|recent|added)\b/.test(q) && f.notes && Array.isArray(f.notes.notes) && f.notes.notes.length) {
     out.push('LATEST FWM GUIDE PATCH NOTES (changes to this site, newest first; page /patch-notes/fwm-patch-notes):\n' + f.notes.notes.slice(0, 4).map(n => n.date + (n.label ? ' ' + n.label : '') + ' - ' + (n.entries || []).map(e => (e.title || '') + ': ' + (e.items || []).join('; ')).join(' | ')).join('\n'));
   }
-  if (asked && r.party) out.push('FWM has ' + r.party.length + ' party members, ' + (r.bosses || []).length + ' bosses, ' + (r.enemies || []).length + ' enemies, ' + (sp.bytes || []).length + ' Bytes, ' + (sp.chips || []).length + ' Chips. Pages: /fwm/roster, /fwm/tierlist, /fwm/tech-specs, /fwm/meta-teams.');
+  if (asked && r.party) out.push('FWM has ' + r.party.length + ' party members, ' + (r.bosses || []).length + ' bosses, ' + (r.enemies || []).length + ' enemies, ' + (sp.bytes || []).length + ' Bytes, ' + (sp.chips || []).length + ' Chips. Pages: /fwm/roster, /fwm/tierlist, /fwm/tech-specs, /fwm/meta-teams, /fwm/grind.');
   return out.join('\n\n');
 }
 

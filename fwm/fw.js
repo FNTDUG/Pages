@@ -5,7 +5,7 @@
   var GROUPS = { byte: 'bytes', chip: 'chips', armor: 'armor' };
   var ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
   var GAME_ORDER = ["Five Nights at Freddy's", "Five Nights at Freddy's 2", "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's 4: Halloween Edition", 'FNaF World'];
-  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor', move: 'Move' };
+  var KIND = { party: 'Party member', boss: 'Boss', enemy: 'Enemy', npc: 'NPC', byte: 'Byte', chip: 'Chip', armor: 'Mendo-Armor', move: 'Move', grind: 'Grind method' };
   var HEART = '<path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/>';
   var SHIELD = '<path d="M0 0h7v4H6v1H5v1H4v1H3V6H2V5H1V4H0z"/>';
   var TIER_TABS = [['party', 'party', 'Party'], ['moves', 'move', 'Moves'], ['bytes', 'byte', 'Bytes'], ['chips', 'chip', 'Chips'], ['armor', 'armor', 'Mendo-Armor']];
@@ -41,7 +41,7 @@
   }
   function index(data) {
     if (data._ix) return data._ix;
-    var ix = { world: {}, group: { byte: {}, chip: {}, armor: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [], armor: [], move: [] } };
+    var ix = { world: {}, group: { byte: {}, chip: {}, armor: {} }, byId: {}, tabs: { party: [], boss: [], enemy: [], npc: [], byte: [], chip: [], armor: [], move: [], grind: [] } };
     (data.worlds || []).forEach(function (w, i) { w.i = i; ix.world[w.name] = w; });
     Object.keys(GROUPS).forEach(function (k) {
       ((data.groups || {})[GROUPS[k]] || []).forEach(function (gr, i) { gr.i = i; ix.group[k][gr.name] = gr; });
@@ -158,7 +158,7 @@
   };
 
   function firstOf(c) {
-    return c.kind === 'party' ? c.idle || '' : /^(boss|enemy|npc|byte|armor)$/.test(c.kind) ? c.image || '' : '';
+    return c.kind === 'party' ? c.idle || '' : /^(boss|enemy|npc|byte|armor|grind)$/.test(c.kind) ? c.image || '' : '';
   }
   function artImg(c, src, attrs) {
     var f = firstOf(c);
@@ -173,6 +173,8 @@
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
+    } else if (c.kind === 'grind') {
+      if (c.method.kicker) h += '<span class="fw-card-hp fw-card-cost">' + esc(c.method.kicker) + '</span>';
     } else if (c.kind !== 'npc' && c.kind !== 'chip' && c.kind !== 'move') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
     if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
@@ -270,7 +272,64 @@
     return h;
   }
 
+  function grindDetail(data, c, still) {
+    var ix = index(data), m = c.method, f = c.foe, alt = f ? f.name : c.name;
+    var h = '<div class="fwd-stage"><div class="fwd-char-wrap"><div class="fwd-char">';
+    if (c.image) h += still ? artImg(c, c.image, ' class="fwd-anim" alt="' + esc(alt) + '" decoding="async"') : '<img class="fwd-anim" src="' + esc(c.image) + '" alt="' + esc(alt) + '" decoding="async">';
+    h += '</div><span class="fwd-ground" aria-hidden="true"></span></div></div><div class="fwd-info">';
+    h += '<p class="fwd-kicker">' + KIND.grind + (m.kicker ? ' &middot; ' + esc(m.kicker) : '') + '</p>';
+    h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
+    worldsOf(c).forEach(function (k) {
+      var ww = ix.world[k];
+      if (ww) h += '<span class="fwd-chip fwd-chip-w" style="--wc:' + ww.color + '">' + esc(ww.name) + '</span>';
+    });
+    if (f) h += '<a class="fwd-chip fwd-chip-a" href="/fwm/roster#' + esc(f.id) + '">' + esc(f.name) + '</a>';
+    h += '</div>';
+    var rw = (m.rewards || []).filter(function (r) { return r && r.name; });
+    var modes = [['normal', 'Normal'], ['hard', 'Hard']].filter(function (md) { return rw.some(function (r) { return r[md[0]] != null && r[md[0]] !== ''; }); });
+    if (rw.length && modes.length) {
+      var t = '<table class="fwd-tbl"><thead><tr><th scope="col"><span class="fw-sr">Reward</span></th>' + modes.map(function (md) { return '<th scope="col">' + md[1] + '</th>'; }).join('') + '</tr></thead><tbody>';
+      rw.forEach(function (r) {
+        t += '<tr><th scope="row">' + esc(r.name) + '</th>' + modes.map(function (md) { return '<td>' + esc(r[md[0]] == null || r[md[0]] === '' ? '?' : fmt(r[md[0]])) + '</td>'; }).join('') + '</tr>';
+      });
+      h += panel('Rewards per win', t + '</tbody></table>');
+    }
+    (m.sections || []).forEach(function (sc) {
+      if (!sc || !sc.title) return;
+      var b = '';
+      if (sc.text) b += '<p>' + esc(sc.text) + '</p>';
+      if (sc.steps && sc.steps.length) b += '<ol class="fwd-steps">' + sc.steps.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+      if (sc.rows && sc.rows.length) b += '<ul class="fwd-rows">' + sc.rows.map(function (r) {
+        var ww = ix.world[r.world];
+        return '<li><span class="fwd-chip' + (ww ? ' fwd-chip-w" style="--wc:' + esc(ww.color) : '') + '">' + esc(r.label || '') + '</span><p>' + (ww ? '<span class="fwd-row-w">' + esc(ww.name) + '</span>' : '') + esc(r.text || '') + '</p></li>';
+      }).join('') + '</ul>';
+      if (b) h += panel(esc(sc.title), b);
+    });
+    if (f && f.about) h += panel('About ' + esc(f.name), '<p>' + esc(f.about) + '</p>');
+    return h + '</div>';
+  }
+  FW.grinds = function (data) {
+    var l = index(data).tabs.grind;
+    if (!l.length) return '<p class="fw-none">No grind methods yet.</p>';
+    return '<ul class="fw-grid fw-grind-grid">' + l.map(function (c) { return FW.card(data, c); }).join('') + '</ul>';
+  };
+  FW.addGrinds = function (data, g) {
+    var ix = index(data);
+    ix.tabs.grind = [];
+    ((g && g.methods) || []).forEach(function (m) {
+      if (!m || !m.name) return;
+      var f = m.boss ? ix.byId[slug(m.boss)] || null : null;
+      if (f && f.kind !== 'boss' && f.kind !== 'enemy') f = null;
+      var c = { kind: 'grind', name: m.name, method: m, foe: f, image: m.image || (f && f.image) || '', worlds: m.world ? [m.world] : f ? worldsOf(f) : [] };
+      c.id = m.id || slug(m.name);
+      while (ix.byId[c.id]) c.id += '-grind';
+      ix.byId[c.id] = c;
+      ix.tabs.grind.push(c);
+    });
+  };
+
   FW.detail = function (data, c, still, extra) {
+    if (c.kind === 'grind') return grindDetail(data, c, still);
     if (c.kind === 'move') return moveDetail(data, c, extra);
     if (GROUPS[c.kind]) return specDetail(data, c, still, extra);
     var ix = index(data), w = worldOf(data, c), party = c.kind === 'party';
@@ -424,7 +483,7 @@
   var root = document.getElementById('fw');
   if (!root) return;
   var mount = root.querySelector('.fw-grids'), tabs = root.querySelectorAll('.fw-tab'), sortBtn = root.querySelector('.fw-sort'), menu = root.querySelector('.fw-menu'), sortVal = root.querySelector('.fw-sort-v'), qEl = root.querySelector('.fw-q');
-  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), tierMode = !!root.getAttribute('data-tiers'), metaSrc = root.getAttribute('data-meta') || root.getAttribute('data-tiers'), meta = null, scope = null;
+  var firstTab = tabs[0] && tabs[0].getAttribute('data-tab'), tierMode = !!root.getAttribute('data-tiers'), grindMode = !!root.getAttribute('data-grind'), metaSrc = root.getAttribute('data-meta') || root.getAttribute('data-tiers') || root.getAttribute('data-grind'), meta = null, scope = null;
   var baseSort = root.getAttribute('data-sort') || 'world';
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null, stills = {};
@@ -517,6 +576,11 @@
 
   function render() {
     if (!data) return;
+    if (grindMode) {
+      mount.innerHTML = FW.grinds(data);
+      stillCards(mount);
+      return;
+    }
     if (meta) {
       mount.innerHTML = tierMode ? FW.tiers(data, meta, state.tab) : FW.teams(data, meta, +state.tab);
       if (tierMode) stillMoves();
@@ -614,7 +678,8 @@
   bindTabs();
   function metaTabs() {
     var wrap = root.querySelector('.fw-tabs'), ps;
-    if (tierMode) ps = FW.tierTabs(meta).map(function (t) { return [t[0], t[2], FW.tierCount(meta, t[0])]; });
+    if (grindMode) ps = [];
+    else if (tierMode) ps = FW.tierTabs(meta).map(function (t) { return [t[0], t[2], FW.tierCount(meta, t[0])]; });
     else ps = FW.pages(meta).map(function (p, i) { return [String(i), p.pageTitle, p.order.filter(function (n) { return meta.metas && meta.metas[n]; }).length]; });
     if (ps.length) state.tab = ps[0][0];
     if (ps.length < 2 || !wrap) {
@@ -674,7 +739,7 @@
     var a = e.target.closest ? e.target.closest('.fw-card') : null;
     if (!a || !data || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
-    scope = meta ? (tierMode ? mount : a.closest('.fw-team')) : null;
+    scope = meta ? (tierMode || grindMode ? mount : a.closest('.fw-team')) : null;
     open(a.getAttribute('data-id'), true);
   });
 
@@ -907,7 +972,7 @@
         scope = null;
         var tt = tierMode ? FW.tierTabs(meta).filter(function (t) { return t[1] === c.kind; })[0] : null;
         if (tt && tt[0] !== state.tab) { state.tab = tt[0]; render(); }
-        if (tt) scope = mount;
+        if (tt || grindMode) scope = mount;
       }
       open(id, false);
     } else {
@@ -926,19 +991,20 @@
       return JSON.parse(t.replace(/,(\s*[\]}])/g, '$1'));
     });
   }
-  Promise.all([root.getAttribute('data-src') || DATA].concat(metaSrc ? [root.getAttribute('data-specs'), metaSrc] : []).map(get)).then(function (r) {
+  Promise.all([root.getAttribute('data-src') || DATA].concat(metaSrc ? [root.getAttribute('data-specs'), metaSrc] : []).map(function (u) { return u ? get(u) : null; })).then(function (r) {
     var d = r[0];
     if (metaSrc) {
-      ['bytes', 'chips', 'armor', 'groups'].forEach(function (k) { d[k] = r[1][k]; });
+      if (r[1]) ['bytes', 'chips', 'armor', 'groups'].forEach(function (k) { d[k] = r[1][k]; });
       meta = r[2] || {};
       metaTabs();
     }
     data = d;
     ix = index(d);
+    if (grindMode) FW.addGrinds(d, meta);
     root.classList.add('fw-ready');
     render();
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
-    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
+    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : grindMode ? 'The grind guides' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
   });
 })(typeof window !== 'undefined' ? window : this);
