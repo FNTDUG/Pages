@@ -1003,6 +1003,6 @@
     render();
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
-    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : grindMode ? 'The grind guides' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
+    mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : grindMode ? 'The grind methods' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
   });
 })(typeof window !== 'undefined' ? window : this);

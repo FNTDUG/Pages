@@ -179,7 +179,7 @@
     '/fwm/tech-specs': { tint: 'green', go: 'Open Tech Specs' },
     '/fwm/tierlist': { tint: 'pink', go: 'Open the TierList' },
     '/fwm/meta-teams': { tint: 'blue', go: 'Open Meta Teams' },
-    '/fwm/grind': { tint: 'green', go: 'Open the Grind guides' }
+    '/fwm/grind-methods': { tint: 'green', go: 'Open Grind Methods' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
