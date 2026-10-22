@@ -3383,7 +3383,7 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_OG_V = 4;
+const SEO_OG_V = 5;
 const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
@@ -3446,7 +3446,7 @@ const SEO_PAGES = {
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/patch-notes/fwm-patch-notes': ['FWM Guide Patch Notes | FNTD User Guide', 'Changelog for the FNaF World Multiplayer pages of the FNTD User Guide: Roster, Tech Specs, TierList and Meta Teams updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
-  '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade in Tech Specs, a TierList and Meta Teams.'],
+  '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade, a TierList, Meta Teams and Grind Methods.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
