@@ -429,6 +429,20 @@
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null, stills = {};
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0, lookI = 0, view = 'battle';
+  function fitView() {
+    var v = window.visualViewport, st = dlg && dlg.style;
+    if (!st) return;
+    var on = v && !dlg.hidden && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) && (Math.abs(v.offsetTop) > 1 || Math.abs(v.offsetLeft) > 1 || Math.abs(v.height - window.innerHeight) > 1 || Math.abs(v.width - window.innerWidth) > 1);
+    st.top = on ? v.offsetTop + 'px' : '';
+    st.left = on ? v.offsetLeft + 'px' : '';
+    st.width = on ? v.width + 'px' : '';
+    st.height = on ? v.height + 'px' : '';
+    st.right = st.bottom = on ? 'auto' : '';
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitView);
+    window.visualViewport.addEventListener('scroll', fitView);
+  }
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
@@ -858,6 +872,7 @@
       }
     }
     show(c, 0);
+    fitView();
     if (push && !was) {
       history.pushState({ fw: 1 }, '', '#' + id);
       pushed = true;
@@ -869,6 +884,7 @@
     clearTimeout(atkT);
     dlg.hidden = true;
     document.documentElement.classList.remove('fwd-on');
+    fitView();
     var back = cur && (scope || mount).querySelector('.fw-card[data-id="' + cur.id + '"]');
     if (back) back.focus();
     else if (lastFocus && lastFocus.focus) lastFocus.focus();
