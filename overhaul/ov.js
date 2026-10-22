@@ -196,12 +196,21 @@
       card.className = 'ov-card ov-card--term' + (col.classList.contains('bbn-dir-col--wide') ? ' ov-card--wide' : '');
       card.href = href;
       card.style.setProperty('--c', 'var(--' + sc.tint + ')');
-      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-c" aria-hidden="true"></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
-      card.querySelector('.ov-term-t').textContent = name;
+      card.innerHTML = '<span class="ov-term-frame"><span class="ov-term"><h3><span class="ov-term-p" aria-hidden="true">&gt;</span><span class="ov-term-t"></span><span class="ov-term-w"><span class="ov-term-l"></span><span class="ov-term-c" aria-hidden="true"></span></span></h3></span></span>' + (desc ? '<p></p>' : '') + '<span class="ov-card-go">' + esc(sc.go || 'Open ' + name) + ' <span class="arrow" aria-hidden="true">&rarr;</span></span>';
+      var cut = name.lastIndexOf(' ');
+      card.querySelector('.ov-term-t').textContent = name.slice(0, cut + 1);
+      card.querySelector('.ov-term-l').textContent = name.slice(cut + 1);
       if (desc) card.querySelector('p').textContent = desc.textContent.trim();
       out.appendChild(card);
     });
     grid.parentNode.replaceChild(out, grid);
+    fitTerms(out);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitTerms(out); });
+    var fitT = 0;
+    window.addEventListener('resize', function () {
+      clearTimeout(fitT);
+      fitT = setTimeout(function () { fitTerms(out); }, 150);
+    });
     if (reduced) return;
     Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
@@ -215,6 +224,16 @@
         });
       });
     }).observe(out, { childList: true });
+  }
+  function fitTerms(box) {
+    Array.prototype.forEach.call(box.querySelectorAll('.ov-term h3'), function (h) {
+      h.style.fontSize = '';
+      var fs = parseFloat(getComputedStyle(h).fontSize);
+      while (fs > 18 && h.getBoundingClientRect().height > fs * 1.6) {
+        fs -= 1;
+        h.style.fontSize = fs + 'px';
+      }
+    });
   }
   function typer(el, U) {
     var TILE = 24, FREE = [2, 8, 12, 18], COLORS = ['#8b949e', '#8b949e', '#8b949e', '#79c0ff', '#d2a8ff', '#ffa657'];

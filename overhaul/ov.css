@@ -523,6 +523,7 @@ html.ov .ov-card.ov-card--term{padding:0;gap:0;overflow:hidden}
 @keyframes ovTermScroll{from{background-position:0 0}to{background-position:0 -216px}}
 .ov-term-p{position:absolute;left:0;top:0;color:var(--c,var(--game))}
 html.ov .ov-card.ov-card--term .ov-term h3{position:relative;padding-left:1.05em;margin:0;min-width:0;font:400 clamp(26px,3vw,34px)/1.1 var(--font-head);letter-spacing:0;text-transform:uppercase;color:#f7f0e4;overflow-wrap:anywhere}
+.ov-term-w{white-space:nowrap}
 .ov-term-c{display:inline-block;width:.5em;height:.85em;margin-left:.22em;vertical-align:-.06em;background:var(--c,var(--game))}
 html.ov .ov-card.ov-card--term>p{margin:18px 24px 0}
 html.ov .ov-card.ov-card--term>.ov-card-go{padding:14px 24px 22px}
