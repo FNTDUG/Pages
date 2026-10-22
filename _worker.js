@@ -48,7 +48,7 @@ const MOBILE_NAV_BODY = `
     <a href="/fwm/tech-specs"            class="ug-mn-child" data-nav-href="/fwm/tech-specs">Tech Specs</a>
     <a href="/fwm/tierlist"             class="ug-mn-child" data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
-    <a href="/fwm/grind"                 class="ug-mn-child" data-nav-href="/fwm/grind">Grind</a>
+    <a href="/fwm/grind"                 class="ug-mn-child" data-nav-href="/fwm/grind">Grind Methods</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -113,7 +113,7 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/tech-specs"            data-nav-href="/fwm/tech-specs">Tech Specs</a>
     <a href="/fwm/tierlist"             data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
-    <a href="/fwm/grind"                 data-nav-href="/fwm/grind">Grind</a>
+    <a href="/fwm/grind"                 data-nav-href="/fwm/grind">Grind Methods</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3383,8 +3383,8 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_OG_V = 3;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind': 'FWM Grind on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_V = 4;
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind': 'FWM Grind Methods on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
@@ -3450,7 +3450,7 @@ const SEO_PAGES = {
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
-  '/fwm/grind': ['FWM Grind Guide: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
+  '/fwm/grind': ['FWM Grind Methods: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -4210,7 +4210,7 @@ function seoFwmGrindHtml(d, roster) {
   if (!d || !Array.isArray(d.methods)) return '';
   const foes = {};
   ((roster && roster.bosses) || []).concat((roster && roster.enemies) || []).forEach(c => { if (c && c.name) foes[seoFwmSlug(c.name)] = c; });
-  const out = ['<h2>FNaF World Multiplayer grind guide</h2>'];
+  const out = ['<h2>FNaF World Multiplayer grind methods</h2>'];
   d.methods.forEach(m => {
     if (!m || !m.name) return;
     const f = m.boss && foes[seoFwmSlug(m.boss)];
@@ -4226,7 +4226,7 @@ function seoFwmGrindHtml(d, roster) {
       out.push(b);
     });
   });
-  return out.length > 1 ? seoBlock('FNaF World Multiplayer grind guide as text', out.join('')) : '';
+  return out.length > 1 ? seoBlock('FNaF World Multiplayer grind methods as text', out.join('')) : '';
 }
 function seoFwmTierHtml(d) {
   if (!d || !d.lists) return '';
