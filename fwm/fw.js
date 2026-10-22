@@ -168,7 +168,7 @@
 
   FW.card = function (data, c) {
     var hp = hpOf(c), gr = groupOf(data, c), art = (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
-    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" style="--wc:' + esc(colorOf(data, c)) + '">';
+    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-google-vignette="false" style="--wc:' + esc(colorOf(data, c)) + '">';
     h += '<span class="fw-card-art">' + artImg(c, art, ' alt="" loading="lazy" decoding="async"') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
@@ -253,7 +253,7 @@
     if (c.description) h += panel('What it does', '<p>' + esc(c.description) + '</p>');
     if (c.damage) h += panel('Damage', '<p class="fwd-atk-f"><code>' + esc(c.damage) + '</code></p>');
     if (c.users.length) h += panel('Who has it', '<ul class="fwd-users">' + c.users.map(function (u) {
-      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" style="--wc:' + esc(colorOf(data, u)) + '">' + artImg(u, '', ' alt="" loading="lazy" decoding="async"') + esc(u.name) + '</a></li>';
+      return '<li><a href="#' + esc(u.id) + '" data-id="' + esc(u.id) + '" data-google-vignette="false" style="--wc:' + esc(colorOf(data, u)) + '">' + artImg(u, '', ' alt="" loading="lazy" decoding="async"') + esc(u.name) + '</a></li>';
     }).join('') + '</ul>');
     return h + '</div>';
   }
