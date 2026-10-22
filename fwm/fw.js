@@ -173,9 +173,7 @@
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
       else if (hp != null) h += '<span class="fw-card-hp fw-card-cost" title="Price"><svg viewBox="0 0 7 7" aria-hidden="true" focusable="false">' + COIN + '</svg>' + fmt(hp) + '<span class="fw-sr"> Faz Tokens</span></span>';
-    } else if (c.kind === 'grind') {
-      if (c.method.kicker) h += '<span class="fw-card-hp fw-card-cost">' + esc(c.method.kicker) + '</span>';
-    } else if (c.kind !== 'npc' && c.kind !== 'chip' && c.kind !== 'move') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
+    } else if (c.kind !== 'npc' && c.kind !== 'chip' && c.kind !== 'move' && c.kind !== 'grind') h += '<span class="fw-card-hp" title="Health"><svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">' + HEART + '</svg>' + (hp == null ? '?' : fmt(hp)) + '<span class="fw-sr"> health</span></span>';
     if (c.tier && ROMAN[c.tier]) h += '<span class="fw-card-no"><span class="fw-sr">Tier </span>' + ROMAN[c.tier] + '</span>';
     h += '<span class="fw-card-name">' + esc(c.name) + '</span></a></li>';
     return h;
