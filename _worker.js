@@ -3448,6 +3448,7 @@ const SEO_PAGES = {
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
   '/fwm/grind-methods': ['FWM Grind Methods: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
+  '/staff': ['FNTD User Guide Staff: Owner, Editors & Researchers', 'Meet the staff behind the FNTD User Guide: the owner, chart lead, editors, researchers and management who keep the Roblox guides up to date.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
 };
@@ -4336,7 +4337,7 @@ function seoLlms() {
     ['Five Nights TD', p => p === '/fntd1' || p.indexOf('/fntd1/') === 0 || p === '/patch-notes/fntd1-1'],
     ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
     ['FNaF World Multiplayer', p => p.indexOf('/fwm/') === 0 || p === '/patch-notes/fwm-patch-notes'],
-    ['About the site', p => p === '/sponsor' || p === '/privacy-policy']
+    ['About the site', p => p === '/sponsor' || p === '/staff' || p === '/privacy-policy']
   ];
   const skip = ['/', '/wiki', '/fntd2/patch-notes', '/bbn/codes'];
   const pages = Object.keys(SEO_PAGES).filter(p => skip.indexOf(p) === -1);
@@ -4381,7 +4382,7 @@ const SITEMAP_SEED = {
   'a:/fntd2/tierlists-1': '2026-10-14T03:09:51Z', 'a:/fntd2/meta-teams': '2026-10-14T08:26:05Z', 'a:/fntd2/unit-engine': '2026-10-13T04:44:52Z', 'a:/fntd2/trade-calculator': '2026-10-13T04:44:52Z',
   'a:/fntd2/story-index': '2026-10-14T21:11:03Z', 'a:/fntd2/endless-index': '2026-10-14T04:20:43Z', 'a:/fntd2/boss-raids-index': '2026-10-14T04:20:43Z', 'a:/fntd2/challenges': '2026-10-14T21:11:03Z',
   'a:/fntd2/event-story-endless': '2026-10-13T04:44:52Z', 'a:/fntd2/clan-wars': '2026-09-23T05:04:14Z', 'a:/fntd2/codes': '2026-10-14T20:39:46Z', 'a:/bbn/codes': '2026-10-14T20:39:46Z',
-  'a:/patch-notes': '2026-10-13T23:18:35Z', 'a:/bbn/bite-by-night-directory': '2026-10-14T20:39:46Z', 'a:/sponsor': '2026-10-13T21:22:29Z', 'a:/privacy-policy': '2026-10-15T18:02:15Z',
+  'a:/patch-notes': '2026-10-13T23:18:35Z', 'a:/bbn/bite-by-night-directory': '2026-10-14T20:39:46Z', 'a:/sponsor': '2026-10-13T21:22:29Z', 'a:/staff': '2026-10-23T19:00:00Z', 'a:/privacy-policy': '2026-10-15T18:02:15Z',
   'r:json': '2026-10-14T18:32:29Z', 'r:metas.json': '2026-10-15T20:16:06Z', 'r:tierlist.js': '2026-10-15T19:42:00Z', 'r:Unit-Engine': '2026-10-08T18:55:55Z',
   'r:trade-calculator': '2026-09-30T00:29:12Z', 'r:patchnotesfntd2.html': '2026-10-07T01:30:58Z', '*': '2026-09-20T00:07:03Z'
 };
