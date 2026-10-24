@@ -3545,6 +3545,21 @@ function seoKey(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, 
 function seoUnitPath(name) { return '/fntd2/unit-engine/' + encodeURIComponent(String(name).replace(/\s+/g, '-')); }
 function seoCap(v) { v = String(v || ''); return v.charAt(0).toUpperCase() + v.slice(1); }
 function seoNum(v) { const n = Number(v); return isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 2 }) : String(v); }
+const STAFF_GUILD = '1318328907757391952';
+async function staffApi(env, path) {
+  const r = await fetch('https://discord.com/api/v10' + path, { headers: { authorization: 'Bot ' + env.DISCORD_BOT_TOKEN, 'user-agent': 'DiscordBot (https://www.fntduserguide.com, 1)' } });
+  return { status: r.status, body: await r.json().catch(() => null) };
+}
+async function staffCheck(env) {
+  if (!env.DISCORD_BOT_TOKEN) return Response.json({ token: false });
+  const [g, roles, mem] = await Promise.all([staffApi(env, '/guilds/' + STAFF_GUILD + '?with_counts=true'), staffApi(env, '/guilds/' + STAFF_GUILD + '/roles'), staffApi(env, '/guilds/' + STAFF_GUILD + '/members?limit=1')]);
+  return Response.json({
+    token: true,
+    guild: g.status, members: g.body && g.body.approximate_member_count, ownerSet: !!(g.body && g.body.owner_id),
+    roles: roles.status, roleNames: Array.isArray(roles.body) ? roles.body.map(r => r.name) : roles.body,
+    memberList: mem.status, memberErr: mem.status === 200 ? null : mem.body
+  }, { headers: { 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
+}
 function seoTimed(p, ms) { return Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]); }
 
 async function seoLoadValues() {
@@ -8258,6 +8273,7 @@ export default {
     if (url.pathname.indexOf('/wiki/img/') === 0) return wikiImage(env, url);
     if (url.pathname === '/parvus/ask') return parvusAsk(request, env, url);
     if (url.pathname === '/parvus/status') return parvusStatus(request, env);
+    if (url.pathname === '/__staff-check' && /\.pages\.dev$/.test(url.hostname)) return staffCheck(env);
     if (!WIKI_EDITOR_ON && /^(\/overhaul)?\/wiki-edit(\.html)?\/?$/.test(url.pathname)) {
       return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
     }
