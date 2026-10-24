@@ -116,7 +116,14 @@
       "tips": "Freddy as a character is made as an all rounder, having ok DPS and good, but short buffs. Using Freddy usually means you should be spamming Birthday with the ocasional Pizza Wheel.",
       "idle": "https://fnaf-world.fntduserguide.com/idle/freddy.webp",
       "attackAnimation": "https://fnaf-world.fntduserguide.com/attack/freddy.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/freddy.webp"
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/freddy.webp",
+      "skins": [
+        {
+          "name": "Trophy Freddy",
+          "idle": "https://fnaf-world.fntduserguide.com/skins/trophy-freddy-idle.webp",
+          "attack": "https://fnaf-world.fntduserguide.com/skins/trophy-freddy-attack.webp"
+        }
+      ]
     },
     {
       "id": "bonnie",
@@ -2168,6 +2175,24 @@
       ],
       "about": "Rot is an enemy found in Deep-Metal Mine.",
       "image": "https://fnaf-world.fntduserguide.com/foes/rot.webp"
+    },
+    {
+      "id": "candy-corn",
+      "name": "Candy Corn",
+      "update": "Update 3",
+      "worlds": [
+        "Halloween Backstage"
+      ],
+      "health": {
+        "normal": 1000,
+        "hard": 2000
+      },
+      "attack": {
+        "normal": "50-54",
+        "hard": "100-104"
+      },
+      "about": "Candy Corn is a new enemy found in Halloween Backstage, added in FNaF World Multiplayer.",
+      "image": "https://fnaf-world.fntduserguide.com/foes/candy-corn.webp"
     }
   ],
   "npcs": [
