@@ -3550,6 +3550,21 @@ async function staffApi(env, path) {
   const r = await fetch('https://discord.com/api/v10' + path, { headers: { authorization: 'Bot ' + env.DISCORD_BOT_TOKEN, 'user-agent': 'DiscordBot (https://www.fntduserguide.com, 1)' } });
   return { status: r.status, body: await r.json().catch(() => null) };
 }
+async function staffWho(env, roles) {
+  const want = ['Founder', 'Chart Lead', 'Website Editor', 'Researcher', 'FNTD Researcher', 'BBN Researcher', 'FWM Researcher', 'Manager', 'Staff', 'Guide Staff', 'Chart Team', 'Active Chart Team', 'Designer'];
+  const ids = {};
+  roles.forEach(r => { if (want.indexOf(r.name) !== -1) ids[r.id] = r.name; });
+  const out = {};
+  let after = '0';
+  for (let i = 0; i < 5; i++) {
+    const r = await staffApi(env, '/guilds/' + STAFF_GUILD + '/members?limit=1000&after=' + after);
+    if (!Array.isArray(r.body) || !r.body.length) break;
+    r.body.forEach(m => m.roles.forEach(id => { if (ids[id]) (out[ids[id]] = out[ids[id]] || []).push(m.user.id + ' ' + m.user.username); }));
+    after = r.body[r.body.length - 1].user.id;
+    if (r.body.length < 1000) break;
+  }
+  return out;
+}
 async function staffCheck(env) {
   if (!env.DISCORD_BOT_TOKEN) return Response.json({ token: false });
   const [g, roles, mem] = await Promise.all([staffApi(env, '/guilds/' + STAFF_GUILD + '?with_counts=true'), staffApi(env, '/guilds/' + STAFF_GUILD + '/roles'), staffApi(env, '/guilds/' + STAFF_GUILD + '/members?limit=1')]);
@@ -3557,7 +3572,9 @@ async function staffCheck(env) {
     token: true,
     guild: g.status, members: g.body && g.body.approximate_member_count, ownerSet: !!(g.body && g.body.owner_id),
     roles: roles.status, roleNames: Array.isArray(roles.body) ? roles.body.map(r => r.name) : roles.body,
-    memberList: mem.status, memberErr: mem.status === 200 ? null : mem.body
+    memberList: mem.status, memberErr: mem.status === 200 ? null : mem.body,
+    owner: g.body && g.body.owner_id,
+    who: await staffWho(env, Array.isArray(roles.body) ? roles.body : [])
   }, { headers: { 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
 }
 function seoTimed(p, ms) { return Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]); }
