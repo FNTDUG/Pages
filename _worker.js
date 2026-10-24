@@ -3545,6 +3545,72 @@ function seoKey(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, 
 function seoUnitPath(name) { return '/fntd2/unit-engine/' + encodeURIComponent(String(name).replace(/\s+/g, '-')); }
 function seoCap(v) { v = String(v || ''); return v.charAt(0).toUpperCase() + v.slice(1); }
 function seoNum(v) { const n = Number(v); return isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 2 }) : String(v); }
+const STAFF_GUILD = '1318328907757391952';
+async function staffApi(env, path) {
+  const r = await fetch('https://discord.com/api/v10' + path, { headers: { authorization: 'Bot ' + env.DISCORD_BOT_TOKEN, 'user-agent': 'DiscordBot (https://www.fntduserguide.com, 1)' } });
+  return { status: r.status, body: await r.json().catch(() => null) };
+}
+const STAFF_OWNER = '809615521737343046';
+const STAFF_SECTIONS = [['Owner', ''], ['Chart Lead', 'Chart Lead'], ['Editors', 'Website Editor'], ['Researchers', 'Researcher'], ['Management', 'Moderator']];
+const STAFF_KEY = 'https://www.fntduserguide.com/__staff-v1';
+const STAFF_LAST = 'https://www.fntduserguide.com/__staff-last-v1';
+function staffPerson(u) {
+  const a = u.avatar;
+  const img = a ? 'https://cdn.discordapp.com/avatars/' + u.id + '/' + a + '.webp?size=256' + (a.indexOf('a_') === 0 ? '&animated=true' : '') : 'https://cdn.discordapp.com/embed/avatars/' + Number((BigInt(u.id) >> 22n) % 6n) + '.png';
+  return { id: u.id, name: u.username, img };
+}
+async function staffBuild(env) {
+  const g = '/guilds/' + STAFF_GUILD;
+  const roles = await staffApi(env, g + '/roles');
+  if (roles.status !== 200 || !Array.isArray(roles.body)) return null;
+  const want = {};
+  const lists = {};
+  for (const [title, role] of STAFF_SECTIONS) {
+    lists[title] = [];
+    if (!role) continue;
+    const r = roles.body.find(x => x.name === role);
+    if (!r) return null;
+    want[r.id] = title;
+  }
+  let after = '0';
+  let owner = null;
+  for (let i = 0; i < 20; i++) {
+    const r = await staffApi(env, g + '/members?limit=1000&after=' + after);
+    if (r.status !== 200 || !Array.isArray(r.body)) return null;
+    r.body.forEach(m => {
+      if (!m.user || m.user.bot) return;
+      const person = staffPerson(m.user);
+      if (m.user.id === STAFF_OWNER) owner = person;
+      m.roles.forEach(id => { if (want[id]) lists[want[id]].push(person); });
+    });
+    if (r.body.length < 1000) break;
+    after = r.body[r.body.length - 1].user.id;
+  }
+  if (owner) lists.Owner.push(owner);
+  return { at: Date.now(), sections: STAFF_SECTIONS.map(x => ({ title: x[0], people: lists[x[0]].sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })) })) };
+}
+async function staffLoad(env) {
+  if (!env.DISCORD_BOT_TOKEN) return null;
+  const c = caches.default;
+  try { const hit = await c.match(STAFF_KEY); if (hit) return await hit.json(); } catch (e) {}
+  let data = null;
+  try { data = await staffBuild(env); } catch (e) {}
+  if (data) {
+    const body = JSON.stringify(data);
+    try {
+      await Promise.all([
+        c.put(STAFF_KEY, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=900' } })),
+        c.put(STAFF_LAST, new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } }))
+      ]);
+    } catch (e) {}
+    return data;
+  }
+  try { const last = await c.match(STAFF_LAST); if (last) return await last.json(); } catch (e) {}
+  return null;
+}
+function staffHtml(data) {
+  return data.sections.filter(x => x.people.length).map(x => '<section class="st-role' + (x.title === 'Owner' ? ' st-owner' : '') + '"><h2>' + seoEsc(x.title) + ' <span class="st-n">' + x.people.length + '</span></h2><ul class="st-grid">' + x.people.map(p => '<li class="st-card" data-id="' + seoEsc(p.id) + '"><img src="' + seoEsc(p.img) + '" alt="' + seoEsc(p.name) + '" width="96" height="96" loading="lazy"><span class="st-name">' + seoEsc(p.name) + '</span></li>').join('') + '</ul></section>').join('');
+}
 function seoTimed(p, ms) { return Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]); }
 
 async function seoLoadValues() {
@@ -8447,14 +8513,17 @@ export default {
     const codesCfg = okPage ? CODES_PAGES[seoPath(realPath)] || null : null;
     const codesGame = okPage && !codesCfg ? seoCodesGame(seoPath(realPath)) : null;
     const pnFile = okPage ? PN_PAGES[seoPath(realPath)] || null : null;
-    const [ssr, pageNotes, codesData, codesFeeds, gameCodes, pageUpds, pnData] = await Promise.all([
+    const staffP = okPage && seoPath(realPath) === '/staff' ? staffLoad(env) : null;
+    if (staffP && ctx) ctx.waitUntil(staffP.catch(() => null));
+    const [ssr, pageNotes, codesData, codesFeeds, gameCodes, pageUpds, pnData, staffData] = await Promise.all([
       okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve('')) : null,
       okPage && seoPath(realPath).indexOf('/fntd2/') === 0 ? seoTimed(seoLoadNotes(), 1500) : null,
       codesCfg ? seoTimed(seoLoadCodes(env, url, codesCfg.file), 2500) : null,
       codesCfg && codesCfg.icons ? seoTimed(seoLoadInfFeeds(), 2000) : null,
       codesGame ? seoTimed(seoLoadCodes(env, url, CODES_PAGES[codesGame].file), 1500) : null,
       okPage || pvMissing ? seoTimed(pageUpdLoad(env, url, ctx), 1500) : null,
-      pnFile ? seoTimed(pnLoad(env, url, pnFile), 2500) : null
+      pnFile ? seoTimed(pnLoad(env, url, pnFile), 2500) : null,
+      staffP ? seoTimed(staffP, 3000) : null
     ]);
     let codesHtml = '';
     if (codesData) { try { codesHtml = seoCodesHtml(codesData, codesFeeds, codesCfg); } catch (e) { codesHtml = ''; } }
@@ -8563,6 +8632,11 @@ export default {
         element(el) { el.setInnerContent(seo.title); }
       }).on('meta[name="description"]', {
         element(el) { el.remove(); }
+      });
+    }
+    if (staffData && staffData.sections) {
+      rw = rw.on('div.st-wrap', {
+        element(el) { el.setInnerContent(staffHtml(staffData), { html: true }); }
       });
     }
     rw = rw.on('link[rel="canonical"]', {
