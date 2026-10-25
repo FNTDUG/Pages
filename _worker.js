@@ -366,7 +366,7 @@ const RAIL_HTML = `<script>
   if(!document.querySelector('#ug-main ins.adsbygoogle'))return;
   var content=document.getElementById('ug-content');
   if(!content)return;
-  var rails=null,railW=0;
+  var rails=null,railW=0,dock=content.getAttribute('data-layout')==='wide';
   function clean(){var t=document.getElementById('cleanModeToggle');return !!(t&&t.classList.contains('on'));}
   function build(){
     rails={};
@@ -375,6 +375,7 @@ const RAIL_HTML = `<script>
       wrap.className='ug-rail ad-slot';
       var inner=document.createElement('div');
       inner.className='ug-rail-in';
+      if(dock){wrap.setAttribute('data-dock','1');var lab=document.createElement('p');lab.className='ug-rail-h';lab.textContent='Advertisement';inner.appendChild(lab);}
       wrap.appendChild(inner);
       document.body.appendChild(wrap);
       rails[side]={wrap:wrap,inner:inner};
@@ -396,8 +397,30 @@ const RAIL_HTML = `<script>
     },ms);});
   }
   function hide(){if(rails){rails.left.wrap.style.display='none';rails.right.wrap.style.display='none';}}
+  function docked(){
+    var vw=document.documentElement.clientWidth;
+    if(vw<1680){hide();return;}
+    if(!rails)build();
+    if(!railW)railW=vw>=2280?300:160;
+    var card=railW+26,box=content.getBoundingClientRect();
+    var hero=document.querySelector('.ov-hero')||content,sy=window.scrollY||window.pageYOffset;
+    var top=Math.min(hero.getBoundingClientRect().top,box.top)+sy,h=box.bottom+sy-top;
+    var pos={left:Math.round(box.left-card),right:Math.round(vw-box.right-card)};
+    ['left','right'].forEach(function(side){
+      var w=rails[side].wrap;
+      if(w.getAttribute('data-dismissed'))return;
+      if(pos[side]<8){w.style.display='none';return;}
+      w.style.display='block';
+      w.style.top=top+'px';
+      w.style.height=h+'px';
+      w.style.width=card+'px';
+      w.style[side]=pos[side]+'px';
+    });
+    fill(rails.left);fill(rails.right);
+  }
   function layout(){
     if(clean()){hide();return;}
+    if(dock){docked();return;}
     var box=content.getBoundingClientRect();
     var free=Math.floor((window.innerWidth-box.width)/2);
     var need=railW||${RAIL_MIN};
