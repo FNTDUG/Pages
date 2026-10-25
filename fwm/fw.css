@@ -257,6 +257,13 @@ button.fwd-char:hover .fwd-anim{transform:scale(1.03)}
 .fwd-seg:disabled{opacity:.3;cursor:default}
 .fwd-skins{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:4px 14px 4px 20px;color:#fff;font:400 18px/1 'Lilita One',system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 var(--fwi),1.5px 0 0 var(--fwi),-1.5px 0 0 var(--fwi),0 -1.5px 0 var(--fwi);background:linear-gradient(180deg,#63adff,#2f78e4);border:3px solid var(--fwi);border-radius:12px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .12s;-webkit-tap-highlight-color:transparent}
 .fwd-skins:hover{filter:brightness(1.08)}
+.fwd-cr{min-width:220px;max-width:360px;padding:8px 14px 10px;background:#121a3d;border:3px solid var(--fwi);border-radius:14px;box-shadow:0 4px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.08)}
+.fwd-cr[hidden]{display:none}
+.fwd-cr-h{margin:0 0 4px;color:#ffd23a;font:400 15px/1.2 'Lilita One',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.fwd-cr dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;margin:0}
+.fwd-cr-r{display:contents}
+.fwd-cr dt{color:#b8c9f6;font:400 15px/1.35 'Lilita One',system-ui,sans-serif}
+.fwd-cr dd{margin:0;color:#fff;font:400 15px/1.35 'Lilita One',system-ui,sans-serif;overflow-wrap:anywhere}
 .fwd-skins:active{transform:translateY(3px);box-shadow:0 1px 0 var(--fwi),inset 0 2px 0 rgba(255,255,255,.35)}
 .fwd-skins:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .fwd-skins-n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;color:#18203f;font-size:14px;text-shadow:none;background:#fff;border:2px solid var(--fwi);border-radius:999px}
