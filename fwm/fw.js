@@ -273,7 +273,7 @@
   }
   function creditBox(cr) {
     var r = creditRows(cr);
-    return '<section class="fwd-cr" aria-label="Credits"' + (r ? '' : ' hidden') + '><p class="fwd-cr-h">Credits</p><dl>' + r + '</dl></section>';
+    return '<section class="fwd-panel fwd-cr"' + (r ? '' : ' hidden') + '><h3 class="fwd-h">Credits</h3><dl>' + r + '</dl></section>';
   }
   function lookBar(c) {
     var l = FW.looks(c), h = '';
@@ -355,7 +355,6 @@
     if (c.quote) h += '<p class="fwd-quote">&ldquo;' + esc(c.quote) + '&rdquo;</p>';
     if (anim) h += '<p class="fwd-hint">Tap them to see a move</p>';
     if (party) h += lookBar(c);
-    if (party || c.credits) h += creditBox(c.credits);
     h += '</div><div class="fwd-info">';
     h += '<p class="fwd-kicker">' + KIND[c.kind] + '</p>';
     h += '<h2 class="fwd-name" id="fwd-name">' + esc(c.name) + '</h2><div class="fwd-chips">';
@@ -365,6 +364,7 @@
     });
     if (party) h += '<span class="fwd-chip">From ' + esc(gameOf(c)) + '</span>';
     h += '</div>' + (extra || '');
+    if (party || c.credits) h += creditBox(c.credits);
     if (party) {
       var hp = num(c.health);
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health</p>';
