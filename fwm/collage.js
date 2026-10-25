@@ -1,6 +1,6 @@
 (function () {
-  var COLS = ['--acc', '--yellow', '--blue', '--pink', '--green'];
-  var layer = null, lastW = 0, resizeT = 0;
+  var COLS = ['--acc', '--acc', '--acc', '--yellow', '--yellow', '--blue', '--blue', '--pink', '--pink', '--green', '--surface'];
+  var layer = null, lastW = 0, resizeT = 0, hopT = 0, still = false;
 
   function seed(s) {
     var h = 2166136261;
@@ -15,23 +15,31 @@
 
   function build() {
     var vw = window.innerWidth, vh = Math.max(window.innerHeight, screen.height || 0);
-    var rnd = seed(location.pathname), cell = vw <= 600 ? 110 : 150, html = '';
-    for (var y = -cell / 2; y < vh + cell / 2; y += cell) {
-      for (var x = -cell / 2; x < vw + cell / 2; x += cell) {
-        var n = rnd() < 0.45 ? 2 : 1;
-        for (var k = 0; k < n; k++) {
-          var w = Math.round(cell * (0.5 + rnd() * 1.1)), h = Math.round(cell * (0.5 + rnd() * 1.1));
-          var l = Math.round(x + (rnd() - 0.5) * cell * 0.8), t = Math.round(y + (rnd() - 0.5) * cell * 0.8);
-          var cls = 'fwc-b' + (rnd() < 0.22 ? ' fwc-o' : '') + (rnd() < 0.12 ? ' fwc-ink' : '');
-          var col = COLS[Math.floor(rnd() * COLS.length)];
-          var dx = Math.round((rnd() - 0.5) * 14), dy = Math.round((rnd() - 0.5) * 14);
-          var dur = Math.round(18 + rnd() * 22), del = -Math.round(rnd() * dur);
-          html += '<i class="' + cls + '" style="left:' + l + 'px;top:' + t + 'px;width:' + w + 'px;height:' + h + 'px;--c:var(' + col + ');--r:' + ((rnd() - 0.5) * 5).toFixed(1) + 'deg;--dx:' + dx + 'px;--dy:' + dy + 'px;animation-duration:' + dur + 's;animation-delay:' + del + 's"></i>';
-        }
+    var rnd = seed(location.pathname), u = vw <= 600 ? 24 : 32, cell = u * 4, html = '';
+    for (var y = -cell; y < vh + cell; y += cell) {
+      for (var x = -cell; x < vw + cell; x += cell) {
+        if (rnd() > 0.42) continue;
+        var w = u * (2 + Math.floor(rnd() * 6)), h = u * (2 + Math.floor(rnd() * 6));
+        var l = x + u * Math.floor(rnd() * 3), t = y + u * Math.floor(rnd() * 3);
+        var col = COLS[Math.floor(rnd() * COLS.length)];
+        html += '<i class="fwc-b" style="left:' + l + 'px;top:' + t + 'px;width:' + w + 'px;height:' + h + 'px;--c:var(' + col + ')"></i>';
       }
     }
     layer.innerHTML = html;
+    layer.style.setProperty('--u', u + 'px');
     lastW = vw;
+  }
+
+  function hop() {
+    var bs = layer.children;
+    if (bs.length && !document.hidden) {
+      for (var i = 0; i < 2; i++) {
+        var b = bs[Math.floor(Math.random() * bs.length)], d = Math.random();
+        b.style.setProperty('--x', (d < 0.25 ? -1 : d < 0.5 ? 1 : 0) * 12 + 'px');
+        b.style.setProperty('--y', (d >= 0.5 && d < 0.75 ? -1 : d >= 0.75 ? 1 : 0) * 12 + 'px');
+      }
+    }
+    hopT = setTimeout(hop, 1800 + Math.random() * 1600);
   }
 
   function start() {
@@ -41,11 +49,12 @@
     layer.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(layer, document.body.firstChild);
     build();
+    still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!still) hopT = setTimeout(hop, 1500);
     window.addEventListener('resize', function () {
       clearTimeout(resizeT);
       resizeT = setTimeout(function () { if (Math.abs(window.innerWidth - lastW) > 80) build(); }, 250);
     }, { passive: true });
-    document.addEventListener('visibilitychange', function () { layer.classList.toggle('fwc-paused', document.hidden); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
