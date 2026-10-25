@@ -259,10 +259,22 @@
   }
 
   FW.looks = function (c) {
-    var l = [{ name: 'Default', idle: c.idle, attack: c.attackAnimation, overworld: c.overworld }];
+    var l = [{ name: 'Default', idle: c.idle, attack: c.attackAnimation, overworld: c.overworld, credits: c.credits }];
     (c.skins || []).forEach(function (s) { if (s && s.name && (s.idle || s.overworld)) l.push(s); });
     return l;
   };
+  function creditRows(cr) {
+    var h = '';
+    if (cr && typeof cr === 'object') Object.keys(cr).forEach(function (k) {
+      var v = [].concat(cr[k]).filter(Boolean);
+      if (v.length) h += '<div class="fwd-cr-r"><dt>' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '</dt><dd>' + v.map(esc).join(', ') + '</dd></div>';
+    });
+    return h;
+  }
+  function creditBox(cr) {
+    var r = creditRows(cr);
+    return '<section class="fwd-panel fwd-cr"' + (r ? '' : ' hidden') + '><h3 class="fwd-h">Credits</h3><dl>' + r + '</dl></section>';
+  }
   function lookBar(c) {
     var l = FW.looks(c), h = '';
     if (l.some(function (s) { return s.overworld; })) h += '<div class="fwd-view" role="group" aria-label="View"><span class="fwd-view-k" aria-hidden="true"></span><button type="button" class="fwd-seg" data-view="battle" aria-pressed="true">Battle</button><button type="button" class="fwd-seg" data-view="overworld" aria-pressed="false"' + (l[0].overworld ? '' : ' disabled') + '>Overworld</button></div>';
@@ -359,6 +371,7 @@
       if (hp == null) h += '<p class="fwd-stat-note">Not known yet.</p>';
       h += '</div></section>';
       h += movesPanel(data, c);
+      h += creditBox(c.credits);
       if (c.unlock) h += panel('How to get', '<p>' + esc(c.unlock) + '</p>');
     } else if (c.kind !== 'npc') {
       var rows = '';
@@ -372,6 +385,7 @@
       } else rows = '<p class="fwd-stat-note">Stats aren\'t known for this one yet.</p>';
       h += panel('Stats', rows) + movesPanel(data, c);
     }
+    if (!party && c.credits) h += creditBox(c.credits);
     var about = '';
     if (c.about) about += '<p>' + esc(c.about) + '</p>';
     if (c.tips) about += '<h3 class="fwd-h fwd-h2">Tips</h3><p>' + esc(c.tips) + '</p>';
@@ -852,6 +866,12 @@
     if (hint) hint.style.visibility = view !== 'battle' || !s.attack ? 'hidden' : '';
     var vw = dlg.querySelector('.fwd-view');
     if (vw) vw.classList.toggle('is-ow', view === 'overworld');
+    var cb = dlg.querySelector('.fwd-cr');
+    if (cb) {
+      var cr = creditRows(s.credits);
+      cb.querySelector('dl').innerHTML = cr;
+      cb.hidden = !cr;
+    }
     Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-seg, .fwd-tile'), function (x) {
       var on = x.hasAttribute('data-look') ? +x.getAttribute('data-look') === lookI : x.getAttribute('data-view') === view;
       x.setAttribute('aria-pressed', on ? 'true' : 'false');
