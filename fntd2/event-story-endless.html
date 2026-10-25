@@ -27,6 +27,24 @@
     </div></div>
     <div id="ug-content">
 <div class="metaMount" data-meta="Event Story 7 + Boss Quest"></div>
+<div data-note="dtm-grind"></div>
+<script>
+(function () {
+  if (window.nsNotesLoading) return;
+  window.nsNotesLoading = true;
+  fetch("https://raw.githack.com/FNTDUG/characters.json/refs/heads/main/nine-slice-panel.html")
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(function (html) {
+      var holder = document.createElement("div");
+      holder.hidden = true;
+      document.body.appendChild(holder);
+      var range = document.createRange();
+      range.selectNode(holder);
+      holder.appendChild(range.createContextualFragment(html));
+    })
+    .catch(function (e) { console.error("Notes load error:", e); });
+})();
+</script>
 
 <div style="max-width:700px;margin:32px auto;display:flex;align-items:center;gap:16px">
   <div style="flex:1;height:2px;background:linear-gradient(to right,transparent,rgba(255,164,91,.55))"></div>

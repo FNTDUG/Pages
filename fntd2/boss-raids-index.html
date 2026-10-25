@@ -27,24 +27,6 @@
     </div></div>
     <div id="ug-content">
 <div class="metaMount" data-meta="Boss Raids"></div>
-<div data-note="security-owl-stall-br"></div>
-<script>
-(function () {
-  if (window.nsNotesLoading) return;
-  window.nsNotesLoading = true;
-  fetch("https://raw.githack.com/FNTDUG/characters.json/refs/heads/main/nine-slice-panel.html")
-    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
-    .then(function (html) {
-      var holder = document.createElement("div");
-      holder.hidden = true;
-      document.body.appendChild(holder);
-      var range = document.createRange();
-      range.selectNode(holder);
-      holder.appendChild(range.createContextualFragment(html));
-    })
-    .catch(function (e) { console.error("Notes load error:", e); });
-})();
-</script>
 <div class="metaMount" data-meta="Boss Raids Grind"></div>
       <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
