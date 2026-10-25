@@ -182,7 +182,11 @@
       "name": "Radioactive Foxy",
       "idle": "https://fnaf-world.fntduserguide.com/skins/radioactive-foxy-idle.webp",
       "attack": "https://fnaf-world.fntduserguide.com/skins/radioactive-foxy-attack.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/radioactive-foxy.webp" 
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/radioactive-foxy.webp",
+      "credits": {
+        "model": ["bennetjl0202"],
+        "animation": ["_adamm_"]
+      }
       }
       ],
       "attacks": [
@@ -637,7 +641,11 @@
       "name": "Twisted Bonnie",
       "idle": "https://fnaf-world.fntduserguide.com/skins/twisted-bonnie-roblox-idle.webp",
       "attack": "https://fnaf-world.fntduserguide.com/skins/twisted-bonnie-roblox-attack.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/twisted-bonnie.webp" 
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/twisted-bonnie.webp",
+      "credits": {
+        "model": ["bennetjl0202"],
+        "animation": ["_adamm_"]
+      }
       }
       ],
       "quote": "Let's get mean!",
@@ -786,7 +794,11 @@
       "name": "Toxic Springtrap",
       "idle": "https://fnaf-world.fntduserguide.com/skins/toxic-springtrap-idle.webp",
       "attack": "https://fnaf-world.fntduserguide.com/skins/toxic-springtrap-attack.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/toxic-springtrap.webp" 
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/toxic-springtrap.webp",
+      "credits": {
+        "model": ["bennetjl0202"],
+        "animation": ["_adamm_"]
+      }
       }
       ],
       "quote": "Cuter in person; still a killer.",
@@ -949,7 +961,11 @@
       "name": "Screampunk",
       "idle": "https://fnaf-world.fntduserguide.com/skins/screampunk-idle.webp",
       "attack": "https://fnaf-world.fntduserguide.com/skins/screampunk-attack.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/screampunk.webp" 
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/screampunk.webp",
+      "credits": {
+        "model": ["bennetjl0202"],
+        "animation": ["_adamm_"]
+      }
       }
       ],
       "attacks": [
@@ -1119,7 +1135,11 @@
       "name": "Mechanical Mangle",
       "idle": "https://fnaf-world.fntduserguide.com/skins/mechanical-marvel-mangle-idle.webp",
       "attack": "https://fnaf-world.fntduserguide.com/skins/mechanical-mangle-attack.webp",
-      "overworld": "https://fnaf-world.fntduserguide.com/overworld/mechanical-mangle.webp" 
+      "overworld": "https://fnaf-world.fntduserguide.com/overworld/mechanical-mangle.webp",
+      "credits": {
+        "model": ["bennetjl0202"],
+        "animation": ["_adamm_"]
+      }
       }
       ],
       "attacks": [
