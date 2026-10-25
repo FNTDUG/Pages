@@ -2228,7 +2228,11 @@
         "hard": "100-104"
       },
       "about": "Candy Corn is a new enemy found in Halloween Backstage, added in FNaF World Multiplayer.",
-      "image": "https://fnaf-world.fntduserguide.com/foes/candy-corn.webp"
+      "image": "https://fnaf-world.fntduserguide.com/foes/candy-corn.webp",
+      "credits": {
+        "model": ["thebananaman20"],
+        "animation": ["xtrasprinkles", "Thevendortrio"]
+      }
     }
   ],
   "npcs": [
