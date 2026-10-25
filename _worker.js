@@ -246,7 +246,7 @@ function xdActive(pathname) {
 const XDISMISS_HTML = `<script>
 (function(){
   function close(box){
-    var t=(box.className||'').indexOf('ug-rail-in')!==-1&&box.parentNode?box.parentNode:box;
+    var t=(box.className||'').indexOf('ug-rail-in')!==-1&&box.parentNode&&(box.parentNode.className||'').indexOf('ug-rail-seg')===-1?box.parentNode:box;
     t.setAttribute('data-dismissed','1');
     t.style.display='none';
   }
