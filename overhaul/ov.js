@@ -373,123 +373,9 @@
   }
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
-  var floats = [], aim = { x: 0, y: 0 }, cam = { x: 0, y: 0 }, camOn = false, spanW = 0, spanH = 0;
-  function spanOf() {
-    var vw = window.innerWidth;
-    if (!spanH || vw !== spanW) {
-      var probe = document.createElement('div');
-      probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none';
-      document.body.appendChild(probe);
-      spanW = vw;
-      spanH = Math.max(probe.offsetHeight, window.innerHeight) + 240;
-      probe.remove();
-    }
-    return spanH;
-  }
-  var TIERS = {
-    near: { u: [5, 6], up: 4, d: [0.45, 0.65], cam: 16 },
-    far: { u: [3, 3], up: 3, d: [0.12, 0.22], cam: 6 }
-  };
-  function floaters() {
-    if (/[?&]float=0/.test(location.search) || document.querySelector('.ov-float')) return;
-    var layer = document.createElement('div');
-    layer.className = 'ov-float';
-    layer.setAttribute('aria-hidden', 'true');
-    document.body.insertBefore(layer, document.body.firstChild);
-    var vw = window.innerWidth, span = spanOf(), phone = vw <= 600;
-    var count = {
-      far: phone ? 3 : Math.min(12, Math.max(5, Math.round(vw / 160))),
-      near: phone ? 3 : Math.min(10, Math.max(5, Math.round(vw / 200)))
-    };
-    ['far', 'near'].forEach(function (tier) {
-      var T = TIERS[tier];
-      for (var i = 0; i < count[tier]; i++) {
-        var f = { tier: tier, u: phone ? T.up : T.u[0] + Math.floor(Math.random() * (T.u[1] - T.u[0] + 1)), d: rnd(T.d[0], T.d[1]), cyc: null };
-        f.name = free(f);
-        f.el = sticker(f.name, f.u, 'ov-sticker ov-' + tier);
-        f.w = parseFloat(f.el.style.width);
-        layer.appendChild(f.el);
-        var best = -1;
-        for (var c = 0; c < 20; c++) {
-          var cx = spot(f, vw), cy = Math.random(), dist = far(cx * vw, cy * span - 120, f);
-          if (dist > best) { best = dist; f.fx = cx; f.fy = cy; }
-        }
-        f.x = f.fx * vw - f.w / 2;
-        f.y = f.fy * span - 120;
-        floats.push(f);
-      }
-    });
-    float();
-    if (!reduced) window.addEventListener('scroll', float, { passive: true });
-    window.addEventListener('resize', float, { passive: true });
-    if (!reduced && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      window.addEventListener('pointermove', function (e) {
-        aim.x = e.clientX / window.innerWidth - 0.5;
-        aim.y = e.clientY / window.innerHeight - 0.5;
-        if (!camOn) { camOn = true; requestAnimationFrame(pan); }
-      }, { passive: true });
-    }
-  }
-  function pan() {
-    cam.x += (aim.x - cam.x) * 0.07;
-    cam.y += (aim.y - cam.y) * 0.07;
-    if (Math.abs(aim.x - cam.x) < 0.001 && Math.abs(aim.y - cam.y) < 0.001) { cam.x = aim.x; cam.y = aim.y; camOn = false; }
-    float();
-    if (camOn) requestAnimationFrame(pan);
-  }
-  function float() {
-    var vw = window.innerWidth, span = spanOf(), top = document.documentElement.scrollHeight - window.innerHeight;
-    var sy = reduced ? 0 : Math.max(0, Math.min(window.scrollY, Math.max(0, top)));
-    floats.forEach(function (f) {
-      var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span), y = Math.round(pos - cyc * span - 120);
-      if (f.cyc !== null && cyc !== f.cyc) reroll(f, y, vw);
-      f.cyc = cyc;
-      f.x = Math.round(f.fx * vw - f.w / 2);
-      f.y = y;
-      var k = TIERS[f.tier].cam;
-      f.el.style.transform = 'translate(' + Math.round(f.x - cam.x * k * 2) + 'px,' + Math.round(y - cam.y * k * 2) + 'px)';
-    });
-  }
-  var ovCol = 0;
-  function spot(f, vw) {
-    if (!ovCol) ovCol = parseFloat(getComputedStyle(h).getPropertyValue('--ov-col')) || 980;
-    var col = Math.min(vw, ovCol + 48);
-    var room = (vw - col) / 2 - f.w - 12;
-    if (room < 8) return Math.random();
-    var x = 6 + f.w / 2 + Math.random() * room;
-    return (Math.random() < 0.5 ? x : vw - x) / vw;
-  }
   function pick() {
     var names = Object.keys(SPRITES);
     return names[Math.floor(Math.random() * names.length)];
-  }
-  function free(self) {
-    var used = {}, open = [];
-    floats.forEach(function (o) { if (o !== self && o.tier === self.tier) used[o.name] = 1; });
-    Object.keys(SPRITES).forEach(function (n) { if (!used[n]) open.push(n); });
-    return open.length ? open[Math.floor(Math.random() * open.length)] : pick();
-  }
-  function far(x, y, self) {
-    var best = Infinity;
-    floats.forEach(function (o) {
-      if (o === self) return;
-      var dx = x - (o.x + o.w / 2), dy = y - o.y;
-      best = Math.min(best, dx * dx + dy * dy);
-    });
-    return best;
-  }
-  function reroll(f, y, vw) {
-    f.name = free(f);
-    var a = art(SPRITES[f.name]);
-    f.w = a.w * f.u;
-    f.el.style.width = f.w + 'px';
-    f.el.style.height = a.h * f.u + 'px';
-    f.el.querySelector('.ov-bob').innerHTML = a.svg;
-    var best = -1;
-    for (var c = 0; c < 16; c++) {
-      var cx = spot(f, vw), dist = far(cx * vw, y, f);
-      if (dist > best) { best = dist; f.fx = cx; }
-    }
   }
   function pins(card) {
     var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
@@ -510,21 +396,12 @@
         setTimeout(step, d * 1000);
       }, wait * 1000);
     }
-    g.utils.toArray('.ov-far .ov-bob').forEach(function (b) {
-      var d = rnd(2.6, 4);
-      hop(b, 'y', -3, d, rnd(0, 2) + d);
-    });
-    g.utils.toArray('.ov-near .ov-bob, .ov-pin .ov-bob').forEach(function (b) {
+    g.utils.toArray('.ov-pin .ov-bob').forEach(function (b) {
       var u = parseFloat(getComputedStyle(b.closest('[style*="--u"]')).getPropertyValue('--u')) || 5;
       var dy = rnd(1.4, 2.6), dx = rnd(2.2, 3.8);
       hop(b, 'y', -u, dy, rnd(0, 1.5) + dy / 2);
       hop(b, 'x', u * (Math.random() < 0.5 ? -1 : 1), dx, rnd(0, 2) + dx);
     });
-    (function spin() {
-      var list = g.utils.toArray('.ov-near .ov-spin');
-      if (list.length) g.to(list[Math.floor(Math.random() * list.length)], { rotation: '+=360', duration: 0.6, ease: 'steps(4)' });
-      setTimeout(spin, rnd(3500, 6500));
-    })();
   }
 
   function fitTitle() {
@@ -738,7 +615,6 @@
     } finally {
       h.classList.add('ov-ready');
     }
-    floaters();
     var touchRows = document.querySelector('.info-card, .ov-dir, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js']), animate);
     var btn = document.createElement('button');
