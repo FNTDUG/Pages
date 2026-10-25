@@ -52,7 +52,6 @@
     wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : tpl ? '<div class="ov-stage"><div class="ov-screen">' + tpl.innerHTML + '</div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
-    pins(wrap);
     nextBtn(wrap);
     gatherNotes(wrap, area, inner);
     document.addEventListener('pagenotes:ready', function () { gatherNotes(wrap, area, inner); });
@@ -362,48 +361,6 @@
     });
   }
 
-  function sticker(name, u, cls) {
-    var a = art(SPRITES[name]), el = document.createElement('div');
-    el.className = cls;
-    el.style.width = a.w * u + 'px';
-    el.style.height = a.h * u + 'px';
-    el.style.setProperty('--u', u + 'px');
-    el.innerHTML = '<div class="ov-spin"><div class="ov-bob">' + a.svg + '</div></div>';
-    return el;
-  }
-  function rnd(a, b) { return a + Math.random() * (b - a); }
-
-  function pick() {
-    var names = Object.keys(SPRITES);
-    return names[Math.floor(Math.random() * names.length)];
-  }
-  function pins(card) {
-    var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
-    var a = pick(), b = pick();
-    while (b === a) b = pick();
-    card.appendChild(sticker(a, u, 'ov-pin ov-pin-tl'));
-    card.appendChild(sticker(b, u, 'ov-pin ov-pin-br'));
-  }
-  function wiggle(g) {
-    if (reduced) return;
-    function hop(b, k, v, d, wait) {
-      var on = false;
-      setTimeout(function step() {
-        on = !on;
-        var s = {};
-        s[k] = on ? v : 0;
-        g.set(b, s);
-        setTimeout(step, d * 1000);
-      }, wait * 1000);
-    }
-    g.utils.toArray('.ov-pin .ov-bob').forEach(function (b) {
-      var u = parseFloat(getComputedStyle(b.closest('[style*="--u"]')).getPropertyValue('--u')) || 5;
-      var dy = rnd(1.4, 2.6), dx = rnd(2.2, 3.8);
-      hop(b, 'y', -u, dy, rnd(0, 1.5) + dy / 2);
-      hop(b, 'x', u * (Math.random() < 0.5 ? -1 : 1), dx, rnd(0, 2) + dx);
-    });
-  }
-
   function fitTitle() {
     var t = document.querySelector('.ov-copy .ug-page-title');
     if (!t) return;
@@ -533,7 +490,6 @@
     var g = window.gsap;
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
     if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
-    wiggle(g);
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);

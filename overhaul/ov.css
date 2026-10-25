@@ -228,25 +228,6 @@ html.ov[data-theme="light"]{--c-hi:#ffffff}
 html.ov[data-theme="dark"]{--c-hi:#f7f0e4}
 .ov-hero{position:relative}
 html.ov #unitEngine .ue-header h2{white-space:nowrap;font-size:min(34px,calc(15vw - 27px))}
-.ov-sticker{position:absolute;left:0;top:0;will-change:transform}
-.ov-sticker,.ov-pin{filter:drop-shadow(var(--u) var(--u) 0 var(--ink))}
-.ov-spin,.ov-bob,.ov-spin svg{display:block;width:100%;height:100%}
-.ov-sticker .k,.ov-pin .k{fill:var(--ink)}
-.ov-sticker .g,.ov-pin .g{fill:var(--game)}
-.ov-sticker .y,.ov-pin .y{fill:var(--yellow)}
-.ov-sticker .c,.ov-pin .c{fill:var(--c-hi)}
-.ov-sticker .b,.ov-pin .b{fill:var(--blue)}
-.ov-sticker .m,.ov-pin .m{fill:var(--mute)}
-.ov-sticker .r,.ov-pin .r{fill:var(--red)}
-.ov-sticker .n,.ov-pin .n{fill:var(--green)}
-.ov-pin{position:absolute;z-index:3;pointer-events:none}
-.ov-pin-tl{left:0;top:0;transform:translate(-45%,-45%)}
-.ov-pin-br{right:0;bottom:0;transform:translate(40%,40%)}
-.ov-pin{--gut:24px}
-@media (max-width:1099px){
-  .ov-pin-tl{transform:translate(max(-45%,calc(var(--u) + 2px - var(--gut))),-45%)}
-  .ov-pin-br{transform:translate(min(40%,calc(var(--gut) - var(--u) * 2 - 2px)),40%)}
-}
 .ovt{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
 .ovt[hidden]{display:none}
 .ovt-veil{position:absolute;inset:0;background:var(--overlay)}
@@ -351,7 +332,6 @@ html.ovt-on #ug-hamburger,html.ovt-on #ug-info-btn,html.ovt-on #ug-sound-btn,htm
   html.ov #ug-hero-inner{padding:0 16px}
   html.ov #ug-content{padding:8px 16px 60px}
   .ov-stage{padding:6px}
-  .ov-pin{--gut:16px}
   .ov-screen .mascot{--m-bubble-w:360px}
   .ov-copy{padding:22px 18px 24px}
   .ov-kicker{font-size:11px;white-space:nowrap}
@@ -474,7 +454,7 @@ html.ov #ug-mobile-nav{font-size:17px;line-height:1.6}
 html.ov .ug-mn-section.open .ug-mn-section-btn .ug-mn-section-arrow{color:inherit;opacity:.7}
 html.ov .ug-mn-child,html.ov .ug-mn-discord{letter-spacing:normal}
 .ov-hero--bare{grid-template-columns:minmax(0,1fr)}
-@media (max-width:960px){.ov-stage{display:none}.ov-hero--own>.ov-stage{display:flex}.ov-hero--bare>.ov-pin-tl{display:none}}
+@media (max-width:960px){.ov-stage{display:none}.ov-hero--own>.ov-stage{display:flex}}
 @media (max-width:600px){.ov-hero--own .ov-screen{min-height:300px}}
 html.ov .info-card.rowloop{cursor:auto}
 html.ov .info-card.rowloop.can-drag{cursor:grab}
