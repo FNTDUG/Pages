@@ -430,7 +430,9 @@ const RAIL_HTML = `<script>
     var card=railW+26,box=content.getBoundingClientRect();
     var first=content.firstElementChild;
     while(first&&!first.getBoundingClientRect().height)first=first.nextElementSibling;
-    var sy=window.scrollY||window.pageYOffset,top=(first?first.getBoundingClientRect().top:box.top)+sy,h=box.bottom+sy-top;
+    var last=content.lastElementChild;
+    while(last&&!last.getBoundingClientRect().height)last=last.previousElementSibling;
+    var sy=window.scrollY||window.pageYOffset,top=(first?first.getBoundingClientRect().top:box.top)+sy,h=(last?last.getBoundingClientRect().bottom:box.bottom)+sy-top;
     var pos={left:Math.round(box.left-card),right:Math.round(vw-box.right-card)};
     var n=Math.max(1,Math.floor(h/Math.max(1.5*window.innerHeight,1200)));
     ['left','right'].forEach(function(side){
