@@ -601,6 +601,8 @@
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
     });
+    var ph = qEl && qEl.getAttribute('data-ph-' + state.tab), qLab = ph && root.querySelector('label[for="' + qEl.id + '"]');
+    if (ph) { qEl.placeholder = ph; if (qLab) qLab.textContent = ph; }
     syncSort();
   }
   function allOpts() {
