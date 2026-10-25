@@ -403,8 +403,7 @@ const RAIL_HTML = `<script>
     if(!rails)build();
     if(!railW)railW=vw>=2280?300:160;
     var card=railW+26,box=content.getBoundingClientRect();
-    var hero=document.querySelector('.ov-hero')||content,sy=window.scrollY||window.pageYOffset;
-    var top=Math.min(hero.getBoundingClientRect().top,box.top)+sy,h=box.bottom+sy-top;
+    var sy=window.scrollY||window.pageYOffset,top=box.top+sy,h=box.height;
     var pos={left:Math.round(box.left-card),right:Math.round(vw-box.right-card)};
     ['left','right'].forEach(function(side){
       var w=rails[side].wrap;
