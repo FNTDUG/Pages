@@ -364,7 +364,6 @@
     });
     if (party) h += '<span class="fwd-chip">From ' + esc(gameOf(c)) + '</span>';
     h += '</div>' + (extra || '');
-    if (party || c.credits) h += creditBox(c.credits);
     if (party) {
       var hp = num(c.health);
       h += '<section class="fwd-panel fwd-stat"><svg class="fwd-heart" viewBox="0 0 7 6" aria-hidden="true" focusable="false"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg><div class="fwd-stat-b"><p class="fwd-stat-l">Health</p>';
@@ -372,6 +371,7 @@
       if (hp == null) h += '<p class="fwd-stat-note">Not known yet.</p>';
       h += '</div></section>';
       h += movesPanel(data, c);
+      h += creditBox(c.credits);
       if (c.unlock) h += panel('How to get', '<p>' + esc(c.unlock) + '</p>');
     } else if (c.kind !== 'npc') {
       var rows = '';
@@ -385,6 +385,7 @@
       } else rows = '<p class="fwd-stat-note">Stats aren\'t known for this one yet.</p>';
       h += panel('Stats', rows) + movesPanel(data, c);
     }
+    if (!party && c.credits) h += creditBox(c.credits);
     var about = '';
     if (c.about) about += '<p>' + esc(c.about) + '</p>';
     if (c.tips) about += '<h3 class="fwd-h fwd-h2">Tips</h3><p>' + esc(c.tips) + '</p>';
