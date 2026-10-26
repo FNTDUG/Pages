@@ -191,6 +191,18 @@
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
     var inks = null, geo = null, prevX = [], shift = 0, edge = null, SHADOW = opts.shadow != null ? opts.shadow : 8;
+    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false, filled = false, natW = 0, touched = false;
+    function unfill() {
+      if (!filled) return;
+      filled = false;
+      originals().forEach(function (el) { el.style.flex = ''; el.style.minWidth = ''; el.style.maxWidth = ''; });
+    }
+    function canFill() {
+      if (nOrig < 2 || !edge) return false;
+      var cs = getComputedStyle(box), avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      var gap = step - edge.w[0], per = (avail - (nOrig - 1) * gap) / nOrig;
+      return per >= Math.min(filled ? natW : edge.w[0], 320);
+    }
     function kids() { return Array.prototype.slice.call(box.children); }
     function originals() { return kids().filter(function (el) { return !el.classList.contains('is-copy'); }); }
     function wants() {
@@ -234,11 +246,13 @@
       if (!fine) shift = Math.round(box.clientLeft + (box.clientWidth - r0.width / sc) / 2 - (r0.left - br0.left) / sc);
       total = step * base.length;
       var need = box.clientWidth + step;
-      while (total < need) {
+      while (!filled && total < need) {
         base.forEach(function (el) { var c = copy(el); box.appendChild(c); extra.push(c); });
         total += step * base.length;
       }
       items = kids();
+      nOrig = base.length;
+      extra.forEach(function (c) { c.style.visibility = bounded ? 'hidden' : ''; });
       items.forEach(function (el) {
         el.setAttribute('draggable', 'false');
         Array.prototype.forEach.call(el.querySelectorAll('a,img'), function (a) { a.setAttribute('draggable', 'false'); });
@@ -246,6 +260,13 @@
       var own = items[0].offsetParent === box;
       edge = { left0: own ? items[0].offsetLeft + box.clientLeft : items[0].offsetLeft - box.offsetLeft, w: items.map(function (el) { return el.offsetWidth; }), clip: edge ? edge.clip : null };
       if (inks) gauge();
+      if (shift) { lo0 = -shift; hi0 = (nOrig - 1) * step - shift; }
+      else {
+        var gap0 = step - edge.w[0], fit0 = Math.max(1, Math.floor((box.clientWidth + box.clientLeft - edge.left0 + gap0) / step));
+        lo0 = 0; hi0 = Math.max(0, (nOrig - fit0) * step);
+      }
+      if (bounded) pos = clamp(pos);
+      if (drag && bounded) drag.applyBounds({ minX: -hi0, maxX: -lo0 });
     }
     function gauge() {
       var mine = box.style.clipPath;
@@ -300,11 +321,13 @@
       });
     }
     function norm(v) { return ((v % total) + total) % total; }
+    function clamp(v) { return Math.max(lo0, Math.min(hi0, v)); }
     function render() {
-      pos = norm(pos);
+      if (!bounded) pos = norm(pos);
       var lo = -step, xs = inks && geo ? [] : null, cut = 0;
       items.forEach(function (el, i) {
-        var x = norm(i * step - pos - lo) + lo;
+        var x = bounded ? i * step - pos : norm(i * step - pos - lo) + lo;
+        if (bounded && i >= nOrig) { el.style.translate = Math.round(x - i * step) + 'px 0'; if (xs) xs[i] = 1e6; return; }
         el.style.translate = Math.round(x - i * step) + 'px 0';
         if (xs) xs[i] = geo.left0 + Math.round(x);
         else if (edge) { var r = edge.left0 + Math.round(x) + edge.w[i]; if (r <= 0 && r + SHADOW > cut) cut = r + SHADOW; }
@@ -316,6 +339,7 @@
       if (xs) inkFrame(xs);
     }
     function nearest(target) {
+      if (bounded) return clamp(target);
       var d = norm(target - pos);
       if (d > total / 2) d -= total;
       return pos + d;
@@ -331,22 +355,45 @@
       idle();
     }
     function stopAuto() {
+      touched = true;
       idle();
+      if (!bounded) enterBounded();
       if (!auto) return;
       auto = false;
       cancelAnimationFrame(raf);
       idle();
     }
+    function enterBounded() {
+      if (bounded || !on || !nOrig) return;
+      var base = nOrig * step, p = ((pos % base) + base) % base;
+      function lock(v) {
+        bounded = true;
+        entering = false;
+        extra.forEach(function (c) { c.style.visibility = 'hidden'; });
+        pos = clamp(v);
+        slide.x = pos;
+        prevX = [];
+        if (drag) { drag.applyBounds({ minX: -hi0, maxX: -lo0 }); g.set(proxy, { x: -pos }); drag.update(); }
+        render();
+      }
+      if (p >= lo0 - 0.5 && p <= hi0 + 0.5) { lock(p); return; }
+      var fwd = base - p + lo0, back = p - hi0, to = fwd < back ? pos + fwd : pos - back, end = fwd < back ? lo0 : hi0;
+      entering = true;
+      g.killTweensOf(slide);
+      slide.x = pos;
+      g.to(slide, { x: to, duration: 0.35, ease: 'power2.out', onUpdate: function () { pos = slide.x; render(); }, onComplete: function () { lock(end); } });
+    }
     var nudgeT = 0, hover = false, pressing = false, nt = null;
     function idle() {
       clearTimeout(nudgeT);
-      if (!on || auto || reduced) return;
+      if (!on || auto || reduced || hi0 <= lo0) return;
       nudgeT = setTimeout(nudge, 2500 + Math.random() * 500);
     }
     function nudge() {
       if (!on || auto) return;
       if (hover || pressing || !seen || document.hidden || box.querySelector(':focus-visible') || (drag && (drag.isDragging || drag.isThrowing)) || g.isTweening(slide)) { idle(); return; }
       var base = nearest(snapPos(pos)), d = Math.max(14, Math.min(30, step * 0.09));
+      if (bounded && base >= hi0 - 0.5) d = -d;
       var move = function () { pos = slide.x; render(); };
       slide.x = pos;
       nt = g.timeline({ onComplete: function () { nt = null; idle(); } })
@@ -374,12 +421,25 @@
     function build() {
       on = true;
       box.classList.add('rowloop');
-      if (fine && opts.ink !== false) {
+      measure();
+      if (fine && hi0 > lo0 && canFill()) {
+        natW = edge.w[0];
+        filled = true;
+        originals().forEach(function (el) { el.style.flex = '1 1 0'; el.style.minWidth = '0'; el.style.maxWidth = 'none'; });
+        measure();
+      }
+      fixed = fine && hi0 <= lo0;
+      if (fixed || touched) {
+        bounded = true;
+        auto = false;
+        extra.forEach(function (c) { c.style.visibility = 'hidden'; });
+      }
+      if (!fixed && fine && opts.ink !== false) {
         var seed = Math.floor(Math.random() * 2147483647);
         inks = [Splash('left', seed), Splash('right', seed ^ 0x5bd1e995)];
         if (seen) { inks[0].show(); inks[1].show(); }
+        gauge();
       }
-      measure();
       pos = 0;
       render();
       if (fine || still) box.classList.remove('can-drag');
@@ -393,6 +453,7 @@
         onPress: function () {
           pressing = true;
           stopAuto();
+          if (entering) { this.endDrag(); return; }
           g.killTweensOf(slide);
           g.set(proxy, { x: -pos });
           this.update();
@@ -407,12 +468,18 @@
           setTimeout(function () { if (!self.isThrowing) settle(); }, 0);
         },
         onThrowComplete: settle,
-        snap: function (v) { return -snapPos(-v); }
+        edgeResistance: 0.85,
+        snap: function (v) { return bounded ? -clamp(snapPos(-v)) : -snapPos(-v); }
       })[0];
+      if (drag && bounded) drag.applyBounds({ minX: -hi0, maxX: -lo0 });
       if (auto) { last = 0; raf = requestAnimationFrame(tick); }
     }
     function teardown() {
       on = false;
+      bounded = false;
+      entering = false;
+      fixed = false;
+      auto = !reduced && !touched;
       if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; }
       box.style.clipPath = '';
       edge = null;
@@ -422,6 +489,7 @@
       g.killTweensOf(slide);
       extra.forEach(function (c) { c.parentNode.removeChild(c); });
       extra = [];
+      unfill();
       kids().forEach(function (el) { el.style.translate = ''; });
       box.classList.remove('rowloop', 'is-dragging', 'can-drag');
     }
@@ -429,17 +497,24 @@
       var want = wants();
       if (want && !on) build();
       else if (!want && on) teardown();
-      else if (on) { measure(); render(); }
+      else if (on) {
+        measure();
+        if (fine) {
+          var keep = filled ? canFill() : hi0 <= lo0 || canFill();
+          if (keep !== fixed || (fixed && !filled && hi0 > lo0)) { teardown(); build(); return; }
+        }
+        render();
+      }
     }
     box.addEventListener('focusin', function (e) {
       if (!on) return;
       stopAuto();
       var el = e.target.closest ? e.target.closest('.rowloop > *') : null;
       var i = items.indexOf(el);
-      if (i >= 0 && e.target.matches && e.target.matches(':focus-visible')) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
+      if (i >= 0 && !entering && e.target.matches && e.target.matches(':focus-visible')) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
     });
     box.addEventListener('keydown', stopAuto);
-    var outsideAt = -1e9, wheelTo = null, wheelT = 0;
+    var outsideAt = -1e9, wheelTo = null, wheelT = 0, heldAt = -1e9;
     window.addEventListener('wheel', function (e) { if (!box.contains(e.target)) outsideAt = e.timeStamp; }, { passive: true });
     box.addEventListener('wheel', function (e) {
       if (!on || e.ctrlKey) return;
@@ -447,10 +522,20 @@
       if (!across && e.timeStamp - outsideAt < 300) { outsideAt = e.timeStamp; return; }
       d *= e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? box.clientWidth : 1;
       if (!d) return;
+      if (bounded && !entering) {
+        var from = wheelTo === null ? pos : wheelTo;
+        if ((d < 0 && from <= lo0 + 0.5) || (d > 0 && from >= hi0 - 0.5)) {
+          if (e.timeStamp - heldAt < 400) { heldAt = e.timeStamp; e.preventDefault(); }
+          return;
+        }
+      }
+      heldAt = e.timeStamp;
       e.preventDefault();
       stopAuto();
+      if (entering) return;
       g.killTweensOf(proxy);
       wheelTo = pos + (wheelTo === null ? 0 : wheelTo - slide.x) + d;
+      if (bounded) wheelTo = clamp(wheelTo);
       glideTo(wheelTo, 0.3);
       clearTimeout(wheelT);
       wheelT = setTimeout(function () { wheelTo = null; settle(); }, 180);

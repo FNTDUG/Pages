@@ -52,7 +52,6 @@
     wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : tpl ? '<div class="ov-stage"><div class="ov-screen">' + tpl.innerHTML + '</div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
-    pins(wrap);
     nextBtn(wrap);
     gatherNotes(wrap, area, inner);
     document.addEventListener('pagenotes:ready', function () { gatherNotes(wrap, area, inner); });
@@ -362,171 +361,6 @@
     });
   }
 
-  function sticker(name, u, cls) {
-    var a = art(SPRITES[name]), el = document.createElement('div');
-    el.className = cls;
-    el.style.width = a.w * u + 'px';
-    el.style.height = a.h * u + 'px';
-    el.style.setProperty('--u', u + 'px');
-    el.innerHTML = '<div class="ov-spin"><div class="ov-bob">' + a.svg + '</div></div>';
-    return el;
-  }
-  function rnd(a, b) { return a + Math.random() * (b - a); }
-
-  var floats = [], aim = { x: 0, y: 0 }, cam = { x: 0, y: 0 }, camOn = false, spanW = 0, spanH = 0;
-  function spanOf() {
-    var vw = window.innerWidth;
-    if (!spanH || vw !== spanW) {
-      var probe = document.createElement('div');
-      probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none';
-      document.body.appendChild(probe);
-      spanW = vw;
-      spanH = Math.max(probe.offsetHeight, window.innerHeight) + 240;
-      probe.remove();
-    }
-    return spanH;
-  }
-  var TIERS = {
-    near: { u: [5, 6], up: 4, d: [0.45, 0.65], cam: 16 },
-    far: { u: [3, 3], up: 3, d: [0.12, 0.22], cam: 6 }
-  };
-  function floaters() {
-    if (/[?&]float=0/.test(location.search) || document.querySelector('.ov-float')) return;
-    var layer = document.createElement('div');
-    layer.className = 'ov-float';
-    layer.setAttribute('aria-hidden', 'true');
-    document.body.insertBefore(layer, document.body.firstChild);
-    var vw = window.innerWidth, span = spanOf(), phone = vw <= 600;
-    var count = {
-      far: phone ? 3 : Math.min(12, Math.max(5, Math.round(vw / 160))),
-      near: phone ? 3 : Math.min(10, Math.max(5, Math.round(vw / 200)))
-    };
-    ['far', 'near'].forEach(function (tier) {
-      var T = TIERS[tier];
-      for (var i = 0; i < count[tier]; i++) {
-        var f = { tier: tier, u: phone ? T.up : T.u[0] + Math.floor(Math.random() * (T.u[1] - T.u[0] + 1)), d: rnd(T.d[0], T.d[1]), cyc: null };
-        f.name = free(f);
-        f.el = sticker(f.name, f.u, 'ov-sticker ov-' + tier);
-        f.w = parseFloat(f.el.style.width);
-        layer.appendChild(f.el);
-        var best = -1;
-        for (var c = 0; c < 20; c++) {
-          var cx = spot(f, vw), cy = Math.random(), dist = far(cx * vw, cy * span - 120, f);
-          if (dist > best) { best = dist; f.fx = cx; f.fy = cy; }
-        }
-        f.x = f.fx * vw - f.w / 2;
-        f.y = f.fy * span - 120;
-        floats.push(f);
-      }
-    });
-    float();
-    if (!reduced) window.addEventListener('scroll', float, { passive: true });
-    window.addEventListener('resize', float, { passive: true });
-    if (!reduced && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      window.addEventListener('pointermove', function (e) {
-        aim.x = e.clientX / window.innerWidth - 0.5;
-        aim.y = e.clientY / window.innerHeight - 0.5;
-        if (!camOn) { camOn = true; requestAnimationFrame(pan); }
-      }, { passive: true });
-    }
-  }
-  function pan() {
-    cam.x += (aim.x - cam.x) * 0.07;
-    cam.y += (aim.y - cam.y) * 0.07;
-    if (Math.abs(aim.x - cam.x) < 0.001 && Math.abs(aim.y - cam.y) < 0.001) { cam.x = aim.x; cam.y = aim.y; camOn = false; }
-    float();
-    if (camOn) requestAnimationFrame(pan);
-  }
-  function float() {
-    var vw = window.innerWidth, span = spanOf(), top = document.documentElement.scrollHeight - window.innerHeight;
-    var sy = reduced ? 0 : Math.max(0, Math.min(window.scrollY, Math.max(0, top)));
-    floats.forEach(function (f) {
-      var pos = f.fy * span - sy * f.d, cyc = Math.floor(pos / span), y = Math.round(pos - cyc * span - 120);
-      if (f.cyc !== null && cyc !== f.cyc) reroll(f, y, vw);
-      f.cyc = cyc;
-      f.x = Math.round(f.fx * vw - f.w / 2);
-      f.y = y;
-      var k = TIERS[f.tier].cam;
-      f.el.style.transform = 'translate(' + Math.round(f.x - cam.x * k * 2) + 'px,' + Math.round(y - cam.y * k * 2) + 'px)';
-    });
-  }
-  var ovCol = 0;
-  function spot(f, vw) {
-    if (!ovCol) ovCol = parseFloat(getComputedStyle(h).getPropertyValue('--ov-col')) || 980;
-    var col = Math.min(vw, ovCol + 48);
-    var room = (vw - col) / 2 - f.w - 12;
-    if (room < 8) return Math.random();
-    var x = 6 + f.w / 2 + Math.random() * room;
-    return (Math.random() < 0.5 ? x : vw - x) / vw;
-  }
-  function pick() {
-    var names = Object.keys(SPRITES);
-    return names[Math.floor(Math.random() * names.length)];
-  }
-  function free(self) {
-    var used = {}, open = [];
-    floats.forEach(function (o) { if (o !== self && o.tier === self.tier) used[o.name] = 1; });
-    Object.keys(SPRITES).forEach(function (n) { if (!used[n]) open.push(n); });
-    return open.length ? open[Math.floor(Math.random() * open.length)] : pick();
-  }
-  function far(x, y, self) {
-    var best = Infinity;
-    floats.forEach(function (o) {
-      if (o === self) return;
-      var dx = x - (o.x + o.w / 2), dy = y - o.y;
-      best = Math.min(best, dx * dx + dy * dy);
-    });
-    return best;
-  }
-  function reroll(f, y, vw) {
-    f.name = free(f);
-    var a = art(SPRITES[f.name]);
-    f.w = a.w * f.u;
-    f.el.style.width = f.w + 'px';
-    f.el.style.height = a.h * f.u + 'px';
-    f.el.querySelector('.ov-bob').innerHTML = a.svg;
-    var best = -1;
-    for (var c = 0; c < 16; c++) {
-      var cx = spot(f, vw), dist = far(cx * vw, y, f);
-      if (dist > best) { best = dist; f.fx = cx; }
-    }
-  }
-  function pins(card) {
-    var phone = window.innerWidth <= 600, u = phone ? 4 : 5;
-    var a = pick(), b = pick();
-    while (b === a) b = pick();
-    card.appendChild(sticker(a, u, 'ov-pin ov-pin-tl'));
-    card.appendChild(sticker(b, u, 'ov-pin ov-pin-br'));
-  }
-  function wiggle(g) {
-    if (reduced) return;
-    function hop(b, k, v, d, wait) {
-      var on = false;
-      setTimeout(function step() {
-        on = !on;
-        var s = {};
-        s[k] = on ? v : 0;
-        g.set(b, s);
-        setTimeout(step, d * 1000);
-      }, wait * 1000);
-    }
-    g.utils.toArray('.ov-far .ov-bob').forEach(function (b) {
-      var d = rnd(2.6, 4);
-      hop(b, 'y', -3, d, rnd(0, 2) + d);
-    });
-    g.utils.toArray('.ov-near .ov-bob, .ov-pin .ov-bob').forEach(function (b) {
-      var u = parseFloat(getComputedStyle(b.closest('[style*="--u"]')).getPropertyValue('--u')) || 5;
-      var dy = rnd(1.4, 2.6), dx = rnd(2.2, 3.8);
-      hop(b, 'y', -u, dy, rnd(0, 1.5) + dy / 2);
-      hop(b, 'x', u * (Math.random() < 0.5 ? -1 : 1), dx, rnd(0, 2) + dx);
-    });
-    (function spin() {
-      var list = g.utils.toArray('.ov-near .ov-spin');
-      if (list.length) g.to(list[Math.floor(Math.random() * list.length)], { rotation: '+=360', duration: 0.6, ease: 'steps(4)' });
-      setTimeout(spin, rnd(3500, 6500));
-    })();
-  }
-
   function fitTitle() {
     var t = document.querySelector('.ov-copy .ug-page-title');
     if (!t) return;
@@ -656,7 +490,6 @@
     var g = window.gsap;
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
     if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
-    wiggle(g);
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
@@ -727,9 +560,20 @@
     window.infToggleExp.ov = true;
   }
 
+  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
+  function bar() {
+    var main = document.getElementById('ug-main');
+    if (!main || main.querySelector('.pv-bar') || !document.querySelector('#ug-content[data-layout="wide"]')) return;
+    var links = GAMES.map(function (g) { return '<a href="' + g[2] + '"' + (g[0] === game ? ' aria-current="true"' : '') + '>' + g[1] + '</a>'; }).join('');
+    var el = document.createElement('header');
+    el.className = 'pv-bar';
+    el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
+    main.insertBefore(el, main.firstChild);
+  }
   function ready() {
     if (document.getElementById('pv-theme')) return;
     try {
+      bar();
       drops();
       cards();
       directory();
@@ -738,9 +582,8 @@
     } finally {
       h.classList.add('ov-ready');
     }
-    floaters();
     var touchRows = document.querySelector('.info-card, .ov-dir, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
-    loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js']), animate);
+    loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js?v=20261025f']), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';
@@ -778,7 +621,7 @@
     var bell = document.getElementById('ntfBell');
     if (bell && window.MutationObserver) new MutationObserver(place).observe(bell, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
     window.addEventListener('resize', place, { passive: true });
-    load('/overhaul/ov-shell.js?v=20261023b', function () { if (!document.getElementById('pv-gear')) h.classList.add('pv-shell'); });
+    load('/overhaul/ov-shell.js?v=20261025a', function () { if (!document.getElementById('pv-gear')) h.classList.add('pv-shell'); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();

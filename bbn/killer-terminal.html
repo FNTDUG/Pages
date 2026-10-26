@@ -1303,15 +1303,8 @@ function fixButtonRowWidths() {
   document.getElementById('data-bar').style.maxWidth = w + 'px';
 }
   
-['camera-buttons', 'data-bar'].forEach(function(id) {
-  var el = document.getElementById(id);
-  el.addEventListener('wheel', function(e) {
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
-    }
-  }, { passive: false });
-});
+function rowWheel(el){var held=-1e9,outside=-1e9;window.addEventListener('wheel',function(e){if(!el.contains(e.target))outside=e.timeStamp;},{passive:true});el.addEventListener('wheel',function(e){if(e.ctrlKey)return;var across=Math.abs(e.deltaX)>Math.abs(e.deltaY),d=across?e.deltaX:e.deltaY;if(!d)return;if(!across&&e.timeStamp-outside<300){outside=e.timeStamp;return;}var max=el.scrollWidth-el.clientWidth;if(max<=0)return;if((d<0&&el.scrollLeft<=0)||(d>0&&el.scrollLeft>=max-1)){if(e.timeStamp-held<400){held=e.timeStamp;e.preventDefault();}return;}held=e.timeStamp;e.preventDefault();el.scrollLeft+=d;},{passive:false});}
+['camera-buttons', 'data-bar'].forEach(function(id) { rowWheel(document.getElementById(id)); });
   
 fixButtonRowWidths();
 window.addEventListener('resize', fixButtonRowWidths);
