@@ -47,7 +47,6 @@ const MOBILE_NAV_BODY = `
     <a href="/fwm/tierlist"             class="ug-mn-child" data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         class="ug-mn-child" data-nav-href="/fwm/grind-methods">Grind Methods</a>
-    <a href="/fwm/freddy-in-space"       class="ug-mn-child" data-nav-href="/fwm/freddy-in-space">Freddy in Space</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -111,7 +110,6 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/tierlist"             data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         data-nav-href="/fwm/grind-methods">Grind Methods</a>
-    <a href="/fwm/freddy-in-space"       data-nav-href="/fwm/freddy-in-space">Freddy in Space</a>
   </div>
 </div>
 <div class="ug-tn-item">
