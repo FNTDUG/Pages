@@ -285,6 +285,7 @@
           var id = list[i];
           if (seen[id]) continue;
           seen[id] = 1;
+          if (L.obst[id][4] !== e.ly) continue;
           if (ovRect(e, b, L.obst[id])) return true;
         }
       }
@@ -450,7 +451,7 @@
       if (L.names[o.n].indexOf(it[0]) < 0) L.names[o.n].push(it[0]);
       if (o.t < 2) {
         L.bd[it[3]].push({ o: o, x: it[1], y: it[2] });
-        if (o.ob === 1) L.obst.push([it[1], it[2], o.w, o.h]);
+        if (o.ob === 1) L.obst.push([it[1], it[2], o.w, o.h, it[3]]);
         return;
       }
       if (f === 38 && o.n === 'textbox') return;
