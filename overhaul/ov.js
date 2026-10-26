@@ -52,7 +52,6 @@
     wrap.innerHTML = '<div class="ov-copy"><span class="ov-kicker"><i></i>' + esc(section()) + '</span></div>' + (bare ? '' : tpl ? '<div class="ov-stage"><div class="ov-screen">' + tpl.innerHTML + '</div></div>' : '<div class="ov-stage' + (reduced ? '' : ' ov-wait') + '"><div class="ov-screen"><div data-parvus-home></div></div></div>');
     inner.insertBefore(wrap, inner.firstChild);
     wrap.firstChild.appendChild(area);
-    nextBtn(wrap);
     gatherNotes(wrap, area, inner);
     document.addEventListener('pagenotes:ready', function () { gatherNotes(wrap, area, inner); });
     sizeScreen();
@@ -380,7 +379,9 @@
 
   var SCALE = 0.75;
   var screenSet = {};
-  function nextBtn(wrap) {
+  function pager() {
+    var content = document.getElementById('ug-content');
+    if (!content || content.querySelector('.ov-pager')) return;
     var here = location.pathname.replace(/\/+$/, '');
     var cur = null;
     Array.prototype.forEach.call(document.querySelectorAll('#ug-mobile-nav a.ug-mn-child[data-nav-href]'), function (a) {
@@ -389,17 +390,28 @@
     });
     var sec = cur && cur.closest('.ug-mn-section');
     if (!sec) return;
-    var list = sec.querySelectorAll('a.ug-mn-child[data-nav-href]');
+    var list = Array.prototype.slice.call(sec.querySelectorAll('a.ug-mn-child[data-nav-href]'));
     if (list.length < 2) return;
-    var next = list[(Array.prototype.indexOf.call(list, cur) + 1) % list.length];
-    var a = document.createElement('a');
-    a.className = 'ov-next';
-    a.href = next.getAttribute('href');
-    a.innerHTML = '<span class="ov-next-k">Next</span><span class="ov-next-t">' + esc(next.firstChild.textContent.trim()) + '</span><span class="ov-next-a" aria-hidden="true">&rarr;</span>';
-    var area = wrap.querySelector('.ug-page-title-area'), codes = area && area.querySelector('.ug-codes-btn');
-    if (!area) return;
-    if (codes) codes.parentNode.insertBefore(a, codes.nextSibling);
-    else area.appendChild(a);
+    var i = list.indexOf(cur), prev = i > 0 ? list[i - 1] : null, next = i < list.length - 1 ? list[i + 1] : null;
+    function name(a) { return a.firstChild.textContent.trim(); }
+    function cell(a, cls, k) {
+      if (!a) return '<span class="ov-pager-' + cls + ' ov-pager-none"></span>';
+      return '<a class="ov-pager-' + cls + '" rel="' + cls + '" href="' + esc(a.getAttribute('href')) + '"><span class="ov-pager-k">' + k + '</span><span class="ov-pager-t">' + esc(name(a)) + '</span></a>';
+    }
+    var links = list.map(function (a) {
+      return a === cur ? '<strong aria-current="page">' + esc(name(a)) + '</strong>' : '<a href="' + esc(a.getAttribute('href')) + '">' + esc(name(a)) + '</a>';
+    }).join('<span class="ov-pager-dot" aria-hidden="true"> &middot; </span>');
+    var nav = document.createElement('nav');
+    nav.className = 'ov-pager';
+    nav.setAttribute('aria-label', section() + ' pages');
+    nav.innerHTML = '<p class="ov-pager-h">' + esc(section()) + '</p><div class="ov-pager-row">' + cell(prev, 'prev', '&larr; Previous') + cell(next, 'next', 'Next &rarr;') + '</div><p class="ov-pager-list">' + links + '</p>';
+    var ads = Array.prototype.filter.call(content.children, function (el) { return el.classList.contains('ad-slot'); });
+    var last = ads[ads.length - 1], after = false;
+    for (var el = last && last.nextElementSibling; el; el = el.nextElementSibling) {
+      if (!/^(SCRIPT|STYLE|TEMPLATE|LINK)$/.test(el.tagName) && !el.classList.contains('ad-slot')) { after = true; break; }
+    }
+    if (last && !after) content.insertBefore(nav, last);
+    else content.appendChild(nav);
   }
 
   function sizeScreen() {
@@ -574,6 +586,7 @@
     if (document.getElementById('pv-theme')) return;
     try {
       bar();
+      pager();
       drops();
       cards();
       directory();
