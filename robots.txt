@@ -9,3 +9,4 @@ Disallow: /poll/admin
 
 Sitemap: https://www.fntduserguide.com/sitemap.xml
 Sitemap: https://www.fntduserguide.com/sitemap-units.xml
+Sitemap: https://www.fntduserguide.com/sitemap-fwm.xml

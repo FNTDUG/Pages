@@ -168,7 +168,7 @@
 
   FW.card = function (data, c) {
     var hp = hpOf(c), gr = groupOf(data, c), art = (c.kind === 'chip' && gr ? gr.icon : '') || (c.kind === 'move' ? c.icon : '');
-    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="#' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-google-vignette="false" style="--wc:' + esc(colorOf(data, c)) + '">';
+    var h = '<li><a class="fw-card fw-card--' + c.kind + '" href="' + (FW.linkBase ? esc(FW.linkBase + encodeURIComponent(c.id)) : '#' + esc(c.id)) + '" data-id="' + esc(c.id) + '" data-google-vignette="false" style="--wc:' + esc(colorOf(data, c)) + '">';
     h += '<span class="fw-card-art">' + artImg(c, art, ' alt="" loading="lazy" decoding="async"') + '</span>';
     if (c.kind === 'byte' || c.kind === 'armor') {
       if (hp === 0) h += '<span class="fw-card-hp fw-card-cost" title="Price">Free</span>';
@@ -500,6 +500,13 @@
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null, stills = {};
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0, lookI = 0, view = 'battle';
+  var listBase = !metaSrc && root.hasAttribute('data-pages') ? root.getAttribute('data-pages') : '';
+  var pageMatch = listBase && location.pathname.indexOf(listBase) === 0 ? location.pathname.slice(listBase.length).replace(/\/+$/, '') : '';
+  var pageId = pageMatch ? decodeURIComponent(pageMatch) : '', isPage = !!pageId, RET = 'fw-ret' + listBase;
+  if (listBase && !isPage) FW.linkBase = listBase;
+  function pageUrl(c) { return listBase + encodeURIComponent(c.id); }
+  function retGet() { try { return JSON.parse(sessionStorage.getItem(RET) || 'null'); } catch (e) { return null; } }
+  function retSet() { try { sessionStorage.setItem(RET, JSON.stringify({ tab: state.tab, sort: state.sort, q: state.q, y: window.scrollY || window.pageYOffset || 0 })); } catch (e) {} }
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
@@ -751,31 +758,56 @@
   });
   mount.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('.fw-card') : null;
+    if (FW.linkBase) { if (a) retSet(); return; }
     if (!a || !data || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
     scope = meta ? (tierMode || grindMode ? mount : a.closest('.fw-team')) : null;
     open(a.getAttribute('data-id'), true);
   });
 
+  var warmed = {};
+  function warm(e) {
+    var a = FW.linkBase && e.target.closest ? e.target.closest('.fw-card') : null;
+    if (!a || warmed[a.href]) return;
+    warmed[a.href] = 1;
+    var l = document.createElement('link');
+    l.rel = 'prefetch';
+    l.href = a.href;
+    document.head.appendChild(l);
+    if (ix) preload(ix.byId[a.getAttribute('data-id')]);
+  }
+  mount.addEventListener('pointerover', warm);
+  mount.addEventListener('touchstart', warm, { passive: true });
+  mount.addEventListener('focusin', warm);
+
   var ICON_L = '<svg viewBox="0 0 8 12" aria-hidden="true" focusable="false"><path d="M5 0h3v2H6v2H4v1H3v2h1v1h2v2h2v2H5v-2H3V8H1V7H0V5h1V4h2V2h2z"/></svg>';
   var ICON_R = '<svg viewBox="0 0 8 12" aria-hidden="true" focusable="false"><path d="M3 0H0v2h2v2h2v1h1v2H4v1H2v2H0v2h3v-2h2V8h2V7h1V5H7V4H5V2H3z"/></svg>';
   function build() {
     dlg = document.createElement('div');
-    dlg.className = 'fwd';
-    dlg.hidden = true;
-    dlg.setAttribute('role', 'dialog');
-    dlg.setAttribute('aria-modal', 'true');
+    dlg.className = 'fwd' + (isPage ? ' fwd--page' : '');
+    dlg.hidden = !isPage;
+    if (!isPage) {
+      dlg.setAttribute('role', 'dialog');
+      dlg.setAttribute('aria-modal', 'true');
+      dlg.tabIndex = -1;
+    }
     dlg.setAttribute('aria-labelledby', 'fwd-name');
-    dlg.tabIndex = -1;
     dlg.innerHTML = '<div class="fwd-bg"></div><div class="fwd-shade"></div><div class="fwd-scroll"><div class="fwd-in"></div></div>' +
       '<div class="fwd-sk" hidden><div class="fwd-sk-box" role="dialog" aria-modal="true" aria-labelledby="fwd-sk-t"><div class="fwd-sk-hd"><h2 class="fwd-h" id="fwd-sk-t">Skins</h2><button type="button" class="fwd-sk-x" aria-label="Close skins">&times;</button></div><ul class="fwd-sk-list"></ul></div></div>' +
-      '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
-      '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
-      '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next">' + ICON_R + '</button></div>';
-    document.body.appendChild(dlg);
-    dlg.querySelector('.fwd-back').addEventListener('click', close);
-    dlg.querySelector('.fwd-prev').addEventListener('click', function () { step(-1); });
-    dlg.querySelector('.fwd-next').addEventListener('click', function () { step(1); });
+      (isPage
+        ? '<div class="fwd-top"><a class="fwd-btn fwd-back" href="' + esc(listBase.replace(/\/$/, '')) + '">' + ICON_L + '<span>Roster</span></a><span class="fwd-count"></span>' +
+          '<a class="fwd-btn fwd-nav fwd-prev" rel="prev" aria-label="Previous">' + ICON_L + '</a>' +
+          '<a class="fwd-btn fwd-nav fwd-next" rel="next" aria-label="Next">' + ICON_R + '</a></div>'
+        : '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
+          '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
+          '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next">' + ICON_R + '</button></div>');
+    if (isPage) root.appendChild(dlg);
+    else document.body.appendChild(dlg);
+    if (!isPage) {
+      dlg.querySelector('.fwd-back').addEventListener('click', close);
+      dlg.querySelector('.fwd-prev').addEventListener('click', function () { step(-1); });
+      dlg.querySelector('.fwd-next').addEventListener('click', function () { step(1); });
+    }
     dlg.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('.fwd-char') : null;
       if (b && b.tagName === 'BUTTON') attack(b);
@@ -795,6 +827,7 @@
       var c = u && ix.byId[u.getAttribute('data-id')];
       if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
       e.preventDefault();
+      if (isPage) { location.href = pageUrl(c); return; }
       history.pushState({ fw: 1, from: cur.id }, '', '#' + c.id);
       order = (cur.users || [c]).slice();
       show(c, 1);
@@ -802,6 +835,13 @@
     });
     document.addEventListener('keydown', function (e) {
       if (dlg.hidden) return;
+      if (isPage) {
+        if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.altKey && !e.ctrlKey && !e.metaKey && order.length > 1) {
+          var to = dlg.querySelector(e.key === 'ArrowLeft' ? '.fwd-prev' : '.fwd-next');
+          if (to && to.href) location.href = to.href;
+        }
+        return;
+      }
       var sk = dlg.querySelector('.fwd-sk'), skOn = !sk.hidden;
       if (e.key === 'Escape') { e.preventDefault(); if (skOn) skinsSet(false); else close(); return; }
       if (!skOn && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
@@ -828,7 +868,10 @@
       if (swipeX == null) return;
       var dx = e.clientX - swipeX, dy = e.clientY - swipeY;
       swipeX = null;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (isPage) { var to = dlg.querySelector(dx < 0 ? '.fwd-next' : '.fwd-prev'); if (to && to.href) location.href = to.href; }
+        else step(dx < 0 ? 1 : -1);
+      }
     });
     sc.addEventListener('pointercancel', function () { swipeX = null; });
   }
@@ -911,6 +954,13 @@
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
+    if (isPage) {
+      var pv = order[(i - 1 + order.length) % order.length], nx = order[(i + 1) % order.length];
+      dlg.querySelector('.fwd-prev').href = pageUrl(pv);
+      dlg.querySelector('.fwd-prev').setAttribute('aria-label', 'Previous: ' + pv.name);
+      dlg.querySelector('.fwd-next').href = pageUrl(nx);
+      dlg.querySelector('.fwd-next').setAttribute('aria-label', 'Next: ' + nx.name);
+    }
     dlg.classList.toggle('fwd-solo', order.length < 2);
     var fm = fromMove();
     dlg.querySelector('.fwd-back').setAttribute('aria-label', fm && fm !== c ? 'Back to ' + fm.name : 'Back to the list');
@@ -1000,8 +1050,23 @@
       hide();
     }
   }
-  window.addEventListener('popstate', fromHash);
-  window.addEventListener('hashchange', fromHash);
+  function page() {
+    var c = ix.byId[pageId];
+    if (!c) {
+      mount.innerHTML = '<p class="fw-none">There is no character at this address. <a href="' + esc(listBase.replace(/\/$/, '')) + '">Back to the Roster</a></p>';
+      return;
+    }
+    root.classList.add('fw-page');
+    var ret = retGet();
+    order = FW.order(data, c.kind, (ret && ret.sort) || baseSort, '');
+    if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
+    if (!dlg) build();
+    show(c, 0);
+  }
+  if (!isPage) {
+    window.addEventListener('popstate', fromHash);
+    window.addEventListener('hashchange', fromHash);
+  }
 
   function get(u) {
     return fetch(u, { cache: 'no-cache' }).then(function (r) {
@@ -1022,7 +1087,17 @@
     ix = index(d);
     if (grindMode) FW.addGrinds(d, meta);
     root.classList.add('fw-ready');
+    if (isPage) { page(); return; }
+    if (FW.linkBase && location.hash.length > 1 && ix.byId[decodeURIComponent(location.hash.slice(1))]) { location.replace(FW.linkBase + location.hash.slice(1)); return; }
+    var nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null, ret = FW.linkBase ? retGet() : null;
+    var back = ret && ((nav && nav.type === 'back_forward') || (document.referrer && document.referrer.indexOf(location.origin + listBase) === 0));
+    if (back) {
+      if (ret.tab && ix.tabs[ret.tab]) state.tab = ret.tab;
+      if (ret.sort) state.sort = ret.sort;
+      if (ret.q && qEl) { state.q = ret.q; qEl.value = ret.q; }
+    }
     render();
+    if (back && ret.y) requestAnimationFrame(function () { window.scrollTo(0, ret.y); });
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
     mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : grindMode ? 'The grind methods' : 'The characters') + ' could not load. Refresh the page to try again.</p>';

@@ -4329,6 +4329,66 @@ function seoFwmSpecsHtml(d) {
 function seoFwmSlug(s) {
   return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
 }
+const FWM_KINDS = [['party', 'party', 'Party member'], ['bosses', 'boss', 'Boss'], ['enemies', 'enemy', 'Enemy'], ['npcs', 'npc', 'NPC']];
+function seoFwmChars(d) {
+  const out = [], seen = {};
+  if (!d) return out;
+  FWM_KINDS.forEach(k => (d[k[0]] || []).forEach(c => {
+    if (!c || !c.name) return;
+    let id = c.id || seoFwmSlug(c.name);
+    while (seen[id]) id += '-' + k[1];
+    seen[id] = 1;
+    out.push({ c, id, kind: k[1], label: k[2] });
+  }));
+  return out;
+}
+function seoFwmCharMeta(x) {
+  const c = x.c, worlds = (c.worlds || (c.world ? [c.world] : [])).filter(Boolean);
+  const tails = [' | FNaF World Multiplayer Wiki', ' | FWM Wiki: Stats & Moves', ' | FWM Wiki', ' | FWM'];
+  let title = c.name + tails[0];
+  for (let i = 1; title.length > 60 && i < tails.length; i++) title = c.name + tails[i];
+  const a = /^[aeiou]/i.test(x.label) ? 'an' : 'a';
+  let desc = c.name + ' is ' + a + ' ' + x.label.toLowerCase() + ' in FNaF World Multiplayer on Roblox' + (worlds.length ? ', found in ' + worlds.join(', ') : '') + '.';
+  const more = x.kind === 'npc' ? ' Who they are and where to find them.' : x.kind === 'party' ? ' Health, moves, skins and how to unlock it.' : ' Health, attack, moves and where to fight it.';
+  desc += more;
+  if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
+  return { title, desc, crumbs: [[SITE_NAME, '/'], ['FNaF World Multiplayer', '/fwm/fwm-directory'], ['Roster', '/fwm/roster'], [c.name, '/fwm/roster/' + encodeURIComponent(x.id)]] };
+}
+function seoFwmCharLead(x) {
+  const c = x.c, worlds = (c.worlds || (c.world ? [c.world] : [])).filter(Boolean);
+  return x.label + (worlds.length ? ' from ' + worlds.join(', ') : '') + ' in FNaF World Multiplayer.' + (c.about ? ' ' + c.about : '');
+}
+function seoFwmCharHtml(x) {
+  const c = x.c, val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
+  const pair = o => o && typeof o === 'object' ? 'Normal ' + val(o.normal) + ', Hard ' + val(o.hard) : val(o);
+  const rows = [['Type', seoEsc(x.label)], ['World', seoEsc((c.worlds || (c.world ? [c.world] : [])).join(', '))]];
+  if (c.health != null) rows.push(['Health', pair(c.health)]);
+  if (c.attack != null) rows.push(['Attack', pair(c.attack)]);
+  if ((c.attacks || []).length) rows.push(['Moves', seoEsc(c.attacks.join(', '))]);
+  if (c.unlock) rows.push(['How to get', seoEsc(c.unlock)]);
+  const skins = (c.skins || []).filter(k => k && k.name).map(k => k.name);
+  if (skins.length) rows.push(['Skins', seoEsc(skins.join(', '))]);
+  return seoBlock(c.name + ' as text', '<h2>' + seoEsc(c.name) + '</h2><p>' + seoEsc(seoFwmCharLead(x)) + '</p><table><tbody>' + rows.filter(r => r[1]).map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('') + '</tbody></table><p><a href="/fwm/roster">Full FNaF World Multiplayer roster</a></p>');
+}
+async function seoFwmSitemap(env, url) {
+  return sitemapCached(url, 'sitemap-fwm.xml', async () => {
+    const list = seoFwmChars(await seoTimed(seoLoadFwm('fnafworld.json'), 4000));
+    const now = Date.now();
+    const st = { map: (await sitemapState(env, 'sitemap:lmf')) || {}, dirty: false };
+    st.first = !Object.keys(st.map).length;
+    const enc = new TextEncoder();
+    const sigs = await Promise.all(list.map(async x => wikiHex(new Uint8Array(await crypto.subtle.digest('SHA-1', enc.encode(JSON.stringify(x.c))))).slice(0, 16)));
+    const rows = list.map((x, i) => {
+      const t = sitemapStamp(st, x.id, sigs[i], now, now);
+      return '  <url><loc>' + seoEsc(SITE_URL + '/fwm/roster/' + encodeURIComponent(x.id)) + '</loc><lastmod>' + sitemapIso(t) + '</lastmod></url>';
+    });
+    if (st.dirty && env.PUSH_SUBS && list.length) {
+      try { await env.PUSH_SUBS.put('sitemap:lmf', JSON.stringify(st.map)); } catch (e) {}
+    }
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+    return new Response(body, { status: list.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  });
+}
 function seoFwmLink(name, page) {
   if (!page) return seoEsc(name);
   return '<a href="/fwm/' + page + '#' + encodeURIComponent(seoFwmSlug(name)) + '">' + seoEsc(name) + '</a>';
@@ -4415,6 +4475,14 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
+  if (p.indexOf('/fwm/roster/') === 0) {
+    const want = decodeURIComponent(p.slice('/fwm/roster/'.length));
+    const x = seoFwmChars(await seoTimed(seoLoadFwm('fnafworld.json'), 2500)).filter(y => y.id === want)[0];
+    if (!x) return { missing: true, canon: '/fwm/roster', meta: { title: 'Character not found | FWM Wiki', desc: 'There is no FNaF World Multiplayer character at this address. Open the Roster to see every party member, boss, enemy and NPC in FWM on Roblox.' } };
+    let html = '';
+    try { html = seoFwmCharHtml(x); } catch (e) { html = ''; }
+    return { fwChar: x, lead: seoFwmCharLead(x), meta: seoFwmCharMeta(x), canon: '/fwm/roster/' + encodeURIComponent(x.id), html };
+  }
   if (p === '/fwm/grind-methods') {
     const [d, roster] = await Promise.all([seoTimed(seoLoadFwm('fnafworldgrind.json'), 2500), seoTimed(seoLoadFwm('fnafworld.json'), 2500)]);
     let html = '';
@@ -8508,6 +8576,7 @@ export default {
     const pageMoved = PAGE_MOVED[url.pathname.replace(/^\/overhaul(?=\/)/, '').replace(/(\.html|\/)$/, '')];
     if (pageMoved) return Response.redirect(new URL((url.pathname.indexOf('/overhaul/') === 0 ? '/overhaul' : '') + pageMoved + url.search + url.hash, url).toString(), 301);
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap(env, url);
+    if (url.pathname === '/sitemap-fwm.xml') return seoFwmSitemap(env, url);
     if (url.pathname === '/sitemap.xml') return seoSitemap(env, url);
     if (url.pathname === '/llms.txt') return seoLlms();
     if (url.pathname === '/meta-engine.js') {
@@ -8552,7 +8621,7 @@ export default {
     const realPath = url.pathname;
 
     let assetReq = request;
-    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/wiki'];
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
       if (realPath.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
@@ -8606,8 +8675,9 @@ export default {
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">', { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
-          if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
+          if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
         }
       })
       .on('link[rel="icon"]', {
@@ -8631,7 +8701,13 @@ export default {
         }
       })
       .on('.ug-page-title', {
-        element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
+        element(el) {
+          if (!h1Done) { h1Done = true; el.tagName = 'h1'; }
+          if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.fwChar.c.name), { html: true });
+        }
+      })
+      .on('.ug-page-desc', {
+        element(el) { if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.lead), { html: true }); }
       })
       .on('div#ug-content', {
         element(el) {
