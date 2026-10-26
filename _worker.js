@@ -8674,7 +8674,7 @@ export default {
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
-          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); if (!(ssr && ssr.fwChar)) el.append(ADSENSE_LOADER, { html: true });
+          el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">', { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
           if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -8712,7 +8712,7 @@ export default {
       .on('html', {
         element(el) { if (ssr && ssr.fwChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char').trim()); }
       })
-      .on('div.ad-slot, div#ug-hero, script[src*="googlesyndication.com"]', {
+      .on('div.ad-slot, div#ug-hero', {
         element(el) { if (ssr && ssr.fwChar) el.remove(); }
       })
       .on('div#ug-content', {
