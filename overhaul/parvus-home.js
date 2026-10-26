@@ -345,12 +345,7 @@ if (document.querySelector("[data-parvus-home]")) {
     deadZoneHold: 0.6,    /* once looking a way, the pointer has to come this much closer to centre before the eyes come back */
     trackLag:     170,    /* the pointer has to settle this long in a new direction before the eyes follow */
     trackRadius:  340,    /* he only notices the pointer within this many pixels */
-    frenzySpeed:  1.4,    /* pointer pixels per millisecond that counts as frantic */
-    frenzyHoldMs:800,    /* how long the waving keeps up before he is pleased */
-    clicksFor:     10,    /* clicks on him that make him cross */
     clickWindow: 5000,    /* the clicks have to land inside this long */
-    tellMs:      1000,    /* how long the plain squint or smile shows first */
-    moodMs:      5000,    /* how long the mood lasts, ignoring the pointer */
     readyMs:     1100,    /* he looks where he is going this long before setting off */
     sound:       true,    /* his voice and the text box, off makes him silent */
     volume:      0.65,    /* how loud he is, 0 to 1 */
@@ -363,9 +358,6 @@ if (document.querySelector("[data-parvus-home]")) {
     quietMs:     25000,   /* this long without the pointer counts as gone quiet */
     pokeMin:         2,   /* clicks in the window before he mentions it */
     pokeReplyMs:     1,   /* how soon he answers back after being poked */
-    dashMs:        520,   /* how long he bolts for once he has had enough */
-    dashSpeed:    0.42,   /* pixels per millisecond while bolting */
-    faceDeadZone:   24,   /* pointer nearer his middle than this will not turn him */
     settleSpeed:  0.11,
     chanceRainbow: 0.02,
     rainbowMinMs:  6000,
@@ -590,21 +582,11 @@ if (document.querySelector("[data-parvus-home]")) {
 
   var SND = {
     text:  'https://sounds.fntduserguide.com/textsound1.m4a',
-    close: 'https://sounds.fntduserguide.com/window-move.m4a',
-    happy: ['https://sounds.fntduserguide.com/parvus-happy1.m4a',
-            'https://sounds.fntduserguide.com/parvus-happy2.m4a'],
-    angry: ['https://sounds.fntduserguide.com/parvus-Angry1.m4a',
-            'https://sounds.fntduserguide.com/parvus-Angry2.m4a',
-            'https://sounds.fntduserguide.com/parvus-Agnry3.m4a'],
-    /* the moment his colour leaves the base one, and the moment it comes back */
-    colourOn:  'https://sounds.fntduserguide.com/parvus-color-sound1.m4a',
-    colourOff: 'https://sounds.fntduserguide.com/parvus-color-sound2.m4a',
-    dash:      'https://sounds.fntduserguide.com/parvus-dash.m4a',
-    hat:       'https://sounds.fntduserguide.com/parvus-hat.m4a'
+    close: 'https://sounds.fntduserguide.com/window-move.m4a'
   };
 
   var clips = {};
-  [SND.text, SND.close, SND.colourOn, SND.colourOff, SND.dash, SND.hat].concat(SND.happy, SND.angry).forEach(function (url) {
+  [SND.text, SND.close].forEach(function (url) {
     var a = new Audio();
     a.preload = 'auto';
     a.src = url;
@@ -637,16 +619,14 @@ if (document.querySelector("[data-parvus-home]")) {
   /* row 0 holds the bodies and the hats, row 1 the eyes, so any body can wear
      any eyes and any hat. the breathing is done in css now, so each colour is a
      single frame rather than a run. */
-  var BODY = { idle: 0, idleAngry: 1, idleHappy: 2, idleSad: 3, idleAdv: 4, idleDark: 5,
-               move: 6, dash: 7, moveAdv: 8, moveHappy: 9, moveAngry: 10, moveSad: 11,
-               rainbow: 'rainbow' };
+  var BODY = { idle: 0, idleSad: 3, move: 6, moveSad: 11, rainbow: 'rainbow' };
   var RAINBOW = { frames: 21, rainbow: 2 };
   var WIGGLE = { rows: 5, top: 96, h: 126,
                  ms: [70, 70, 60, 70, 70, 240, 70, 70, 60, 70, 70, 100, 70, 70, 240, 70, 70, 60, 70, 70, 240, 70, 70, 60, 70, 70] };
   WIGGLE.total = WIGGLE.ms.reduce(function (a, b) { return a + b; }, 0);
   var HAT  = { buildersclub: 12, party: 14, pith: 15 };
   var HAT_BOX = { buildersclub: [0, 88], party: [0, 83], pith: [0, 80] };
-  var EYE  = { base: 0, squint: 1, angry: 4, blinkC: 6, blinkR: 7, blinkL: 8, think: 13, pleased: 19 };
+  var EYE  = { base: 0, squint: 1, blinkC: 6, blinkR: 7, blinkL: 8, think: 13, pleased: 19 };
   var LOOK = [12, 14, 13, 15, 17, 16, 11, 18, 10];
   var TIRED_EYES = 9;
   var tired = (function () {
@@ -716,7 +696,7 @@ if (document.querySelector("[data-parvus-home]")) {
   }
   function show(bodyCol, eyeCol) {
     if (tired) {
-      bodyCol = state === 'move' || state === 'ready' || bodyCol === BODY.dash ? BODY.moveSad : BODY.idleSad;
+      bodyCol = state === 'move' || state === 'ready' ? BODY.moveSad : BODY.idleSad;
       if (eyeCol !== EYE.blinkC && eyeCol !== EYE.blinkR && eyeCol !== EYE.blinkL) eyeCol = TIRED_EYES;
     }
     var bodyRow = 0, rainbowBody = bodyCol === BODY.rainbow;
@@ -806,7 +786,6 @@ if (document.querySelector("[data-parvus-home]")) {
     put('');                                /* off his head straight away */
     void hatDrop.offsetWidth;               /* restart the animation cleanly */
     hatDrop.classList.add('falling');
-    play(SND.hat);                          /* it comes off with a sound of its own */
     fallTimer = setTimeout(function () {
       hatDrop.classList.remove('falling');
       fallTimer = 0;
@@ -816,10 +795,6 @@ if (document.querySelector("[data-parvus-home]")) {
 
   function bodyFor(moving, now) {
     if (now === undefined) now = performance.now();
-    if (inMood(performance.now())) {
-      if (mood === 'angry') return moving ? BODY.moveAngry : BODY.idleAngry;
-      return moving ? BODY.moveHappy : BODY.idleHappy;
-    }
     if (lit(performance.now())) return BODY.rainbow;
     return moving ? BODY.move : BODY.idle;
   }
@@ -842,7 +817,7 @@ if (document.querySelector("[data-parvus-home]")) {
     return -1;
   }
   function screenReady(now) {
-    return !thinking && !inMood(now) && !inRainbow(now) && now - holoEnded > CFG.screenGapMs;
+    return !thinking && !inRainbow(now) && now - holoEnded > CFG.screenGapMs;
   }
   function startScreen(now) {
     state = 'screen'; started = now; wiggleAt = 0;
@@ -851,7 +826,7 @@ if (document.querySelector("[data-parvus-home]")) {
     holoLookAt = 0;
   }
   function rainbowReady(now) {
-    return !inMood(now) && !inRainbow(now) && now - rainbowUntil > CFG.rainbowGapMs;
+    return !inRainbow(now) && now - rainbowUntil > CFG.rainbowGapMs;
   }
   var rainbowFrom = 0, danceFrom = 0, landedAt = 0;
   function startRainbow(now) {
@@ -867,58 +842,9 @@ if (document.querySelector("[data-parvus-home]")) {
 
   var state = 'rest';
   var started = 0, until = 0, x = 0, y = 0, dir = 1, facing = 1;
-  var dashX = 0, dashY = 0;            /* the way he is bolting, as a unit vector */
   var blinkAt = 0, blinkEnd = 0;
   var pointerX = 0, pointerY = 0, pointerAt = 0;
-  var frenzy = 0, frenzyFor = 0;
-  var moodUntil = 0, mood = '';        /* 'angry' after a poking, 'happy' after waving */
-  var dashUntil = 0;                   /* he is bolting away from the pointer until this */
-  /* which side the pointer is on, 1 for his right. the dead zone stops him
-     flipping back and forth when it sits almost dead centre */
-  function towardPointer() {
-    var r = sprite.getBoundingClientRect();
-    var ex = pointerX - (r.left + r.width / 2);
-    return Math.abs(ex) < CFG.faceDeadZone ? facing : (ex > 0 ? 1 : -1);
-  }
-  function faceThePointer() {
-    var way = towardPointer();
-    if (way !== facing) look(way);
-  }
   var clicks = [];
-  function inMood(now) { return now < moodUntil; }
-  /* in a mood the eyes are the squint or the smile, and blinking still works */
-  function moodEyes(shut) {
-    if (shut) return blinkCol(0);
-    return mood === 'angry' ? EYE.angry : EYE.pleased;
-  }
-  function startMood(now, kind) {
-    if (thinking || tired) return;
-    mood = kind; state = 'tell'; started = now; until = now + CFG.tellMs;
-    frenzyFor = 0; frenzy = 0; clicks.length = 0;
-    stopRainbow(now);
-    wear(hatNow());
-    hush(now, true);            /* he stops talking the moment his mood turns */
-    play(kind === 'angry' ? SND.angry : SND.happy);
-    /* having had enough, he bolts the opposite way from the pointer while
-       keeping his eye on it, so he backs off rather than turning tail */
-    if (kind === 'angry' && CFG.dashMs > 0) {
-      var r = sprite.getBoundingClientRect();
-      var ex = pointerX - (r.left + r.width / 2);
-      var ey = pointerY - (r.top + r.height / 2);
-      var len = Math.sqrt(ex * ex + ey * ey);
-      /* straight down the middle of him, so there is no away to speak of */
-      if (len < 1) { ex = (Math.random() < 0.5 ? -1 : 1); ey = 0; len = 1; }
-      var ax = -ex / len, ay = -ey / len;
-      /* already against a wall on an axis, so he takes that one the other way */
-      if ((ax > 0 && x >= xMax()) || (ax < 0 && x <= xMin())) ax = -ax;
-      if ((ay > 0 && y >= yBottom()) || (ay < 0 && y <= yTop())) ay = -ay;
-      dashX = ax; dashY = ay;
-      dir = ax >= 0 ? 1 : -1;
-      faceThePointer();
-      dashUntil = now + CFG.dashMs;
-      play(SND.dash);
-    }
-  }
 
   /* the text box */
   var chatAt = 0, chatEnd = 0;
@@ -1022,10 +948,9 @@ if (document.querySelector("[data-parvus-home]")) {
     var now = performance.now();
     clicks.push(now);
     while (clicks.length && now - clicks[0] > CFG.clickWindow) clicks.shift();
-    if (clicks.length >= CFG.clicksFor && state !== 'tell' && !inMood(now)) startMood(now, 'angry');
     /* he answers a poking straight away rather than waiting out the usual gap,
        which is what made the poked lines look like they never fired */
-    else if (clicks.length >= CFG.pokeMin && !chatEnd && !inMood(now) &&
+    if (clicks.length >= CFG.pokeMin && !chatEnd &&
              chatAt > now + CFG.pokeReplyMs) { chatAt = now + CFG.pokeReplyMs; forced = 'poked'; }
   });
   sprite.style.cursor = 'pointer';
@@ -1033,13 +958,7 @@ if (document.querySelector("[data-parvus-home]")) {
 
   if (CFG.followCursor) {
     window.addEventListener('pointermove', function (e) {
-      var now = performance.now();
-      var gap = now - pointerAt;
-      if (pointerAt && gap > 0 && gap < 200) {
-        var moved = Math.abs(e.clientX - pointerX) + Math.abs(e.clientY - pointerY);
-        frenzy = moved / gap;           /* pixels per millisecond */
-      }
-      pointerX = e.clientX; pointerY = e.clientY; pointerAt = now;
+      pointerX = e.clientX; pointerY = e.clientY; pointerAt = performance.now();
     }, { passive: true });
   }
 
@@ -1055,7 +974,6 @@ if (document.querySelector("[data-parvus-home]")) {
   }
   function rawAim(now) {
     if (!CFG.followCursor || !pointerAt || now - pointerAt > CFG.cursorIdleMs) return null;
-    if (now < moodUntil) return null;          /* in a mood, so the pointer is ignored */
     var r = sprite.getBoundingClientRect();
     var ex = pointerX - (r.left + r.width / 2);
     var ey = pointerY - (r.top + r.height / 2);
@@ -1093,7 +1011,7 @@ if (document.querySelector("[data-parvus-home]")) {
   function place() {            /* keep him and his shadow over the same spot */
     travel.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
     /* the shadow only follows him sideways: it belongs on the floor, so when he
-       bolts upwards it stays put and shrinks instead of flying up with him */
+       rises it stays put and shrinks instead of flying up with him */
     if (disco) disco.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
     if (shade) {
       shade.style.transform = 'translate(' + x.toFixed(1) + 'px,' + Math.max(0, y).toFixed(1) + 'px)';
@@ -1154,7 +1072,7 @@ if (document.querySelector("[data-parvus-home]")) {
     }
   }
 
-  var last = 0, wasColoured = false, discoWas = false;
+  var last = 0, discoWas = false;
   if (discoRoom) discoRoom.addEventListener('transitionend', function () {
     if (!discoWas) discoRoom.classList.remove('leaving');
     else if (!landedAt) {
@@ -1168,12 +1086,6 @@ if (document.querySelector("[data-parvus-home]")) {
     if (!last) last = now;
     var dt = now - last; last = now;
 
-    /* one pop whenever he leaves his usual colour and another when he returns */
-    var coloured = inMood(now) || lit(now);
-    if (coloured && !wasColoured) play(SND.colourOn);
-    else if (wasColoured && !coloured) play(SND.colourOff);
-    wasColoured = coloured;
-
     var partying = inRainbow(now);
     if (discoRoom && partying !== discoWas) {
       discoWas = partying;
@@ -1186,63 +1098,32 @@ if (document.querySelector("[data-parvus-home]")) {
       else wear(hatNow());
     }
 
-    /* waving the pointer around him fast enough for long enough makes him squint */
-    if (now - pointerAt > 150) frenzy = 0;
-    var nearby = cursorAim(now) !== null;
-    if (nearby && frenzy > CFG.frenzySpeed) frenzyFor += dt; else frenzyFor = 0;
-    if (frenzyFor >= CFG.frenzyHoldMs && state !== 'tell' && !inMood(now)) startMood(now, 'happy');
-
-    /* blinking belongs to the calm states only */
     if (!blinkAt) blinkAt = now + rand(CFG.blinkMin, CFG.blinkMax);
-    /* he can blink in any state now, the moving and angry poses have their own */
-    var calm = (state !== 'tell');
-    if (calm && now >= blinkAt && now < blinkAt + CFG.blinkMs) {
+    if (now >= blinkAt && now < blinkAt + CFG.blinkMs) {
       blinkEnd = blinkAt + CFG.blinkMs;
     } else if (now >= blinkAt + CFG.blinkMs) {
       if (blinkEnd) blinkEnd = 0;
       if (now >= blinkAt) blinkAt = now + rand(CFG.blinkMin, CFG.blinkMax);
     }
-    var shut = calm && blinkEnd && now < blinkEnd;
+    var shut = blinkEnd && now < blinkEnd;
 
-    /* he only pipes up once he has settled, never mid-walk or mid-mood */
+    /* he only pipes up once he has settled, never mid-walk */
     if (!chatAt) chatAt = now + rand(CFG.chatMin, CFG.chatMax);
     var talkOpen = document.documentElement.classList.contains('ovt-on');
     if (talkOpen && chatEnd && !thinking) hush(now, true);
     if (chatEnd) { if (now >= chatEnd) hush(now); }
-    else if (CFG.chatMs > 0 && now >= chatAt && !talkOpen && !tired && !inMood(now) && !partying &&
+    else if (CFG.chatMs > 0 && now >= chatAt && !talkOpen && !tired && !partying &&
              (state === 'rest' || state === 'idle')) say(now);
 
-    var bolting = now < dashUntil;
-    /* once the bolt is over he drifts back down to his usual height */
+    /* he drifts back to his usual height when outside it */
     var hi = yBottom(), lo = inRainbow(now) ? Math.min(hi, Math.max(yTop(), discoDrop)) : yTop();
-    if (!bolting && (y < lo || y > hi)) {
+    if (y < lo || y > hi) {
       var goal = y < lo ? lo : hi, back = CFG.settleSpeed * dt;
       y = Math.abs(goal - y) <= back ? goal : y + (goal > y ? back : -back);
       place();
     }
 
-    if (state === 'tell') {
-      /* the plain version of the mood comes first: a squint, or a pleased smile */
-      if (bolting) {
-        /* he stays turned towards it the whole way, even if it chases him */
-        faceThePointer();
-        /* squinting and bolting, still the plain body since the colour comes after */
-        show(BODY.dash, EYE.angry);
-        x += dashX * CFG.dashSpeed * dt;
-        y += dashY * CFG.dashSpeed * dt;
-        if (x > xMax()) x = xMax();
-        if (x < xMin()) x = xMin();
-        if (y > yBottom()) y = yBottom();
-        if (y < yTop()) y = yTop();
-        place();
-      } else {
-        /* the plain body wearing the squint or the smile, before the colour changes */
-        show(plainBody(), mood === 'angry' ? EYE.angry : EYE.pleased);
-      }
-      /* the tell is over, so this is the frame his colour actually changes */
-      /* the colour pop is handled up in tick */
-      if (now >= until) { moodUntil = now + CFG.moodMs; dashUntil = 0; rest(now); }
-    } else if (state === 'screen') {
+    if (state === 'screen') {
       if (now >= holoLookAt) {
         var ndx = holoDx, ndy = holoDy;
         while (ndx === holoDx && ndy === holoDy) { ndx = Math.floor(Math.random() * 3) - 1; ndy = Math.floor(Math.random() * 3) - 1; }
@@ -1255,8 +1136,7 @@ if (document.querySelector("[data-parvus-home]")) {
       show(plainBody(), shut ? EYE.blinkR : EYE.think);
     } else if (state === 'rest') {
       var tracked = cursorEye(now);
-      if (inMood(now)) show(bodyFor(false, now), moodEyes(shut));
-      else if (shut) show(plainBody(), blinkCol(tracked === null ? 0 : lastAim));
+      if (shut) show(plainBody(), blinkCol(tracked === null ? 0 : lastAim));
       else if (tracked !== null) show(plainBody(), tracked);
       else show(plainBody(), EYE.base);   /* nothing going on, so the plain eyes */
       if (now >= until) next(now);
@@ -1264,17 +1144,13 @@ if (document.querySelector("[data-parvus-home]")) {
       var idleSeen = cursorEye(now);
       var idleBody = plainBody();
       /* the idle animation is the body only, so the eyes stay on the pointer */
-      if (inMood(now)) show(bodyFor(false, now), moodEyes(shut));
-      else if (shut) show(idleBody, blinkCol(idleSeen === null ? 0 : lastAim));
+      if (shut) show(idleBody, blinkCol(idleSeen === null ? 0 : lastAim));
       else show(idleBody, idleSeen === null ? EYE.base : idleSeen);
       if (now >= until) rest(now);
     } else if (state === 'glance') {
       var seen = cursorEye(now);
       if (seen !== null) { rest(now); }          /* the pointer turned up, so watch it instead */
-      else if (inMood(now)) {
-        show(bodyFor(false, now), moodEyes(shut));
-        if (now >= until) rest(now);
-      } else {
+      else {
         var way = (now - started) < CFG.glanceMs ? -1 : 1;
         if (shut) show(plainBody(), blinkCol(way));
         else show(plainBody(), way < 0 ? COL.lookLeft : COL.lookRight);
@@ -1283,8 +1159,7 @@ if (document.querySelector("[data-parvus-home]")) {
     } else if (state === 'turn') {
       /* he turned, so he finds the pointer again from where he is now facing */
       var turnSeen = cursorEye(now);
-      if (inMood(now)) show(bodyFor(false, now), moodEyes(shut));
-      else if (shut) show(plainBody(), blinkCol(turnSeen === null ? 0 : lastAim));
+      if (shut) show(plainBody(), blinkCol(turnSeen === null ? 0 : lastAim));
       else show(plainBody(), turnSeen === null ? EYE.base : turnSeen);
       if (now >= until) rest(now);
     } else if ((state === 'ready' || state === 'move') && inRainbow(now)) {
@@ -1292,8 +1167,7 @@ if (document.querySelector("[data-parvus-home]")) {
       rest(now);
     } else if (state === 'ready') {
       /* interest in the pointer drops here: he looks the way he is about to go */
-      if (inMood(now)) show(bodyFor(false, now), moodEyes(shut));
-      else show(plainBody(), eyeCol(dir === facing ? 1 : -1, moveTy - y > 24 ? 1 : (moveTy - y < -24 ? -1 : 0)));
+      show(plainBody(), eyeCol(dir === facing ? 1 : -1, moveTy - y > 24 ? 1 : (moveTy - y < -24 ? -1 : 0)));
       lastAim = 0;
       if (now >= until) {
         look(dir);
@@ -1305,12 +1179,9 @@ if (document.querySelector("[data-parvus-home]")) {
       }
     } else if (state === 'move') {
       /* the moving body wears whichever eyes suit the moment */
-      if (inMood(now)) show(bodyFor(true, now), moodEyes(shut));
-      else {
-        var moveBody = bodyFor(true, now);
-        if (typeof moveBody === 'number') moveBody += Math.floor((now - started) / CFG.moveFrameMs) % CFG.moveFrames;
-        show(moveBody, shut ? blinkCol(0) : EYE.base);
-      }
+      var moveBody = bodyFor(true, now);
+      if (typeof moveBody === 'number') moveBody += Math.floor((now - started) / CFG.moveFrameMs) % CFG.moveFrames;
+      show(moveBody, shut ? blinkCol(0) : EYE.base);
       x += moveVx * dt;
       if (x > xMax()) { x = xMax(); moveVx = 0; }
       if (x < xMin()) { x = xMin(); moveVx = 0; }
@@ -1332,8 +1203,7 @@ if (document.querySelector("[data-parvus-home]")) {
     var now = performance.now();
     if (tired) {
       stopRainbow(now);
-      moodUntil = 0;
-      if (state === 'screen' || state === 'tell') rest(now);
+      if (state === 'screen') rest(now);
       if (chatEnd && !thinking) hush(now, true);
     }
     show(plainBody(), EYE.base);
@@ -1375,13 +1245,13 @@ if (document.querySelector("[data-parvus-home]")) {
   window.mascotRainbow = function (on) {
     var now = performance.now();
     if (on === false) stopRainbow(now);
-    else if (!inMood(now)) startRainbow(now);
+    else startRainbow(now);
     return inRainbow(now);
   };
   var thinking = false;
   window.mascotScreen = function () {
     var now = performance.now();
-    if (thinking || inMood(now) || inRainbow(now)) return false;
+    if (thinking || inRainbow(now)) return false;
     startScreen(now);
     return true;
   };
@@ -1418,11 +1288,10 @@ if (document.querySelector("[data-parvus-home]")) {
     if (chatEnd) hush(now, true);
     say(now, line);
   };
-  window.mascotMood = function () { return { mood: mood, until: Math.round(moodUntil), clicks: clicks.length }; };
   /* handy while tuning: mascotPeek() reports what it is doing */
   window.mascotPeek = function () {
     return { state: state, x: Math.round(x), y: Math.round(y), facing: facing, dir: dir,
-             hat: wearing || 'none', mood: mood, inMood: inMood(performance.now()), thinking: thinking };
+             hat: wearing || 'none', thinking: thinking };
   };
 })();
 

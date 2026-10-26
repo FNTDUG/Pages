@@ -72,7 +72,7 @@
       return;
     }
     var js = document.createElement('script');
-    js.src = '/overhaul/parvus-home.js';
+    js.src = '/overhaul/parvus-home.js?v=20261026a';
     js.onload = function () {
       var home = document.getElementById('parvusHome');
       sizeScreen();
