@@ -553,9 +553,9 @@ html.ov:not(.ov-noads):has(#ug-content[data-layout=wide]) #ug-main .ad-slot:not(
 html.ov .ug-rail[data-dock] .ug-xd,html.ov:not(.ov-noads):has(#ug-content[data-layout=wide]) #ug-main .ad-slot:not(.ug-rail) .ug-xd{position:absolute;top:2px;right:4px;z-index:1;margin:0;line-height:0}
 html.ov:not(.ov-noads):has(#ug-content[data-layout=wide]) #ug-main .ad-slot .ug-xd-btn,html.ov .ug-rail[data-dock] .ug-xd-btn{width:22px;height:22px;font-size:11px;box-shadow:2px 2px 0 var(--ink)}
 html.ov:has(#ug-content[data-layout=wide]) .ov-hero::before{content:"";position:absolute;z-index:-1;left:50%;top:-140px;bottom:-30px;width:100vw;transform:translateX(-50%);background:var(--bar);border-bottom:var(--bw) solid var(--ink);pointer-events:none}
-html.ov:has(#ug-content[data-layout=wide]) #ug-hero .ad-slot{margin-top:62px!important}
+html.ov:has(#ug-content[data-layout=wide]) .ov-hero{margin-bottom:62px}
 @media (max-width:600px){html.ov:has(#ug-content[data-layout=wide]) .ov-hero::before{bottom:-22px}
-html.ov:has(#ug-content[data-layout=wide]) #ug-hero .ad-slot{margin-top:46px!important}}
+html.ov:has(#ug-content[data-layout=wide]) .ov-hero{margin-bottom:46px}}
 html.ov:has(#ug-content[data-layout=wide]){--bar:#a39b8d;--backdrop:#857e71;--bar-text:#1d2228;--bar-mute:#2a2830;--bar-hover:rgba(29,34,40,.1)}
 html.ov[data-theme="dark"]:has(#ug-content[data-layout=wide]){--bar:#3b3848;--backdrop:#121117;--bar-text:#fff3df;--bar-mute:#cfc8dc;--bar-hover:rgba(255,255,255,.1)}
 html.ov:has(#ug-content[data-layout=wide]){--hdr-h:72px;--hdr-r:12px;--sheet:0px;--gear-top:14px!important}
