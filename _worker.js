@@ -4329,7 +4329,7 @@ function seoFwmSpecsHtml(d) {
 function seoFwmSlug(s) {
   return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
 }
-const FWM_PRE_CSS = '<style>html.fw-char,html.fw-char body{background:#0a1232!important}html.fw-char #ug-main{visibility:hidden}' +
+const FWM_PRE_CSS = '<style>html.fw-char,html.fw-char body{background:#0a1232!important}html.fw-char #ug-main{visibility:hidden}html.fw-char #ug-hamburger,html.fw-char #ug-info-btn,html.fw-char #ug-sound-btn,html.fw-char .ntf-bell{display:none!important}' +
   '.fwd-pre{position:fixed;inset:0;z-index:2147483646;background:#0a1232;pointer-events:none}.fwd-pre i,.fwd-pre b{position:absolute;inset:0}' +
   '.fwd-pre i{background-position:center 58%;background-size:cover;background-repeat:no-repeat}' +
   '.fwd-pre b{background:linear-gradient(90deg,rgba(6,10,30,0) 0%,rgba(6,10,30,.12) 36%,rgba(6,10,30,.84) 56%,rgba(6,10,30,.92) 100%)}' +
