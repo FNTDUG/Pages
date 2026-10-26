@@ -500,11 +500,29 @@
   var data = null, ix = null, state = { tab: firstTab || (metaSrc ? '0' : 'party'), sort: baseSort, q: '' };
   var activeOpt = null, stills = {};
   var dlg = null, cur = null, order = [], pushed = false, lastFocus = null, atkT = 0, swipeX = null, swipeY = 0, qT = 0, lookI = 0, view = 'battle';
-  var listBase = !metaSrc && root.hasAttribute('data-pages') ? root.getAttribute('data-pages') : '';
+  var listBase = root.hasAttribute('data-pages') ? root.getAttribute('data-pages') : '';
   var pageMatch = listBase && location.pathname.indexOf(listBase) === 0 ? location.pathname.slice(listBase.length).replace(/\/+$/, '') : '';
-  var pageId = pageMatch ? decodeURIComponent(pageMatch) : '', isPage = !!pageId, RET = 'fw-ret' + listBase;
+  var pageId = pageMatch ? decodeURIComponent(pageMatch) : '', isPage = !!pageId, RET = 'fw-ret' + listBase, ORD = 'fw-ord' + listBase;
   if (listBase && !isPage) FW.linkBase = listBase;
   function pageUrl(c) { return listBase + encodeURIComponent(c.id); }
+  function homeName() {
+    var a = document.querySelector('#ug-mobile-nav a[data-nav-href="' + listBase.replace(/\/$/, '') + '"]');
+    return (a && a.firstChild && a.firstChild.textContent.trim()) || root.getAttribute('data-pages-name') || 'Back';
+  }
+  function kindIds(box, kind) {
+    return Array.prototype.map.call(box.querySelectorAll('.fw-card--' + kind + '[data-id]'), function (x) { return x.getAttribute('data-id'); }).filter(function (x, i, a) { return a.indexOf(x) === i; });
+  }
+  function ordSet(ids) { try { sessionStorage.setItem(ORD, JSON.stringify(ids)); } catch (e) {} }
+  function metaIds(c) {
+    var t = document.createElement('template');
+    if (grindMode) t.innerHTML = FW.grinds(data);
+    else if (tierMode) {
+      var tt = FW.tierTabs(meta).filter(function (x) { return x[1] === c.kind; })[0];
+      t.innerHTML = tt ? FW.tiers(data, meta, tt[0]) : '';
+    } else t.innerHTML = FW.pages(meta).map(function (x, i) { return FW.teams(data, meta, i); }).join('');
+    var box = t.content, hit = box.querySelector('.fw-card[data-id="' + c.id + '"]'), team = !tierMode && !grindMode && hit ? hit.closest('.fw-team') : null;
+    return kindIds(team || box, c.kind);
+  }
   function retGet() { try { return JSON.parse(sessionStorage.getItem(RET) || 'null'); } catch (e) { return null; } }
   function retSet() { try { sessionStorage.setItem(RET, JSON.stringify({ tab: state.tab, sort: state.sort, q: state.q, y: window.scrollY || window.pageYOffset || 0 })); } catch (e) {} }
   function reduced() {
@@ -758,7 +776,13 @@
   });
   mount.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('.fw-card') : null;
-    if (FW.linkBase) { if (a) retSet(); return; }
+    if (FW.linkBase) {
+      if (a) {
+        retSet();
+        if (meta && ix && ix.byId[a.getAttribute('data-id')]) ordSet(kindIds(tierMode || grindMode ? mount : a.closest('.fw-team') || mount, ix.byId[a.getAttribute('data-id')].kind));
+      }
+      return;
+    }
     if (!a || !data || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
     scope = meta ? (tierMode || grindMode ? mount : a.closest('.fw-team')) : null;
@@ -795,7 +819,7 @@
     dlg.innerHTML = '<div class="fwd-bg"></div><div class="fwd-shade"></div><div class="fwd-scroll"><div class="fwd-in"></div></div>' +
       '<div class="fwd-sk" hidden><div class="fwd-sk-box" role="dialog" aria-modal="true" aria-labelledby="fwd-sk-t"><div class="fwd-sk-hd"><h2 class="fwd-h" id="fwd-sk-t">Skins</h2><button type="button" class="fwd-sk-x" aria-label="Close skins">&times;</button></div><ul class="fwd-sk-list"></ul></div></div>' +
       (isPage
-        ? '<div class="fwd-top"><a class="fwd-btn fwd-back" href="' + esc(listBase.replace(/\/$/, '')) + '">' + ICON_L + '<span>Roster</span></a><span class="fwd-count"></span>' +
+        ? '<div class="fwd-top"><a class="fwd-btn fwd-back" href="' + esc(listBase.replace(/\/$/, '')) + '">' + ICON_L + '<span>' + esc(homeName()) + '</span></a><span class="fwd-count"></span>' +
           '<a class="fwd-btn fwd-nav fwd-prev" rel="prev" aria-label="Previous">' + ICON_L + '</a>' +
           '<a class="fwd-btn fwd-nav fwd-next" rel="next" aria-label="Next">' + ICON_R + '</a></div>'
         : '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
@@ -826,7 +850,7 @@
       var c = u && ix.byId[u.getAttribute('data-id')];
       if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
       e.preventDefault();
-      if (isPage) { location.href = pageUrl(c); return; }
+      if (isPage) { if (cur.users) ordSet(cur.users.map(function (x) { return x.id; })); location.href = pageUrl(c); return; }
       history.pushState({ fw: 1, from: cur.id }, '', '#' + c.id);
       order = (cur.users || [c]).slice();
       show(c, 1);
@@ -1053,7 +1077,7 @@
   function page() {
     var c = ix.byId[pageId];
     if (!c) {
-      mount.innerHTML = '<p class="fw-none">There is no character at this address. <a href="' + esc(listBase.replace(/\/$/, '')) + '">Back to the Roster</a></p>';
+      mount.innerHTML = '<p class="fw-none">Nothing is at this address. <a href="' + esc(listBase.replace(/\/$/, '')) + '">Back to ' + esc(homeName()) + '</a></p>';
       return;
     }
     root.classList.add('fw-page');
@@ -1061,8 +1085,16 @@
     var mn = document.getElementById('ug-main');
     if (mn) mn.inert = true;
     var ret = retGet();
-    order = FW.order(data, c.kind, (ret && ret.sort) || baseSort, '');
-    if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
+    if (meta) {
+      var ids = null;
+      try { ids = JSON.parse(sessionStorage.getItem(ORD) || 'null'); } catch (e) { ids = null; }
+      if (!ids || ids.indexOf(c.id) === -1) ids = metaIds(c);
+      order = ids.map(function (id) { return ix.byId[id]; }).filter(Boolean);
+      if (order.indexOf(c) === -1) order = [c];
+    } else {
+      order = FW.order(data, c.kind, (ret && ret.sort) || baseSort, '');
+      if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
+    }
     if (!dlg) build();
     var dir = 0;
     try { dir = +sessionStorage.getItem('fw-dir') || 0; sessionStorage.removeItem('fw-dir'); } catch (e) {}
@@ -1082,7 +1114,7 @@
     }
     var bk = dlg.querySelector('.fwd-back'), ru = null;
     try { ru = document.referrer ? new URL(document.referrer) : null; } catch (e) { ru = null; }
-    var home = listBase.replace(/\/$/, ''), name = 'Roster';
+    var home = listBase.replace(/\/$/, ''), name = homeName();
     if (ru && ru.origin === location.origin && ru.pathname.indexOf(listBase) !== 0 && ru.pathname.replace(/\/+$/, '') !== home) {
       var best = null;
       Array.prototype.forEach.call(document.querySelectorAll('#ug-mobile-nav a[data-nav-href]'), function (a) {
@@ -1137,7 +1169,7 @@
     var nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null, ret = FW.linkBase ? retGet() : null;
     var back = ret && ((nav && nav.type === 'back_forward') || (document.referrer && document.referrer.indexOf(location.origin + listBase) === 0));
     if (back) {
-      if (ret.tab && ix.tabs[ret.tab]) state.tab = ret.tab;
+      if (ret.tab && (ix.tabs[ret.tab] || Array.prototype.some.call(tabs, function (t) { return t.getAttribute('data-tab') === ret.tab; }))) state.tab = ret.tab;
       if (ret.sort) state.sort = ret.sort;
       if (ret.q && qEl) { state.q = ret.q; qEl.value = ret.q; }
     }
