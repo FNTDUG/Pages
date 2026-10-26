@@ -1804,7 +1804,10 @@
           window.__ueInit = init || {};
           html = html.replace("var currentUnitLevel = 1;", "var currentUnitLevel = Math.max(1, Math.min(100, Math.round(+window.__ueInit.lvl) || 1));")
             .replace("var isShinyMode = false;", "var isShinyMode = !!window.__ueInit.shiny;")
-            .replace("var isGlitchedMode = false;", "var isGlitchedMode = !!window.__ueInit.glitch; window.__ueState = function () { return { lvl: currentUnitLevel, shiny: isShinyMode, glitch: isGlitchedMode }; };");
+            .replace("var isGlitchedMode = false;", "var isGlitchedMode = !!window.__ueInit.glitch; window.__ueState = function () { return { lvl: currentUnitLevel, shiny: isShinyMode, glitch: isGlitchedMode }; };")
+            .replace("function ueLoadExistsData() {", "(function () { try { var c = JSON.parse(sessionStorage.getItem(\"ue-exists\") || \"null\"); if (c && c.u && Date.now() - c.t < 600000) { __ueExists.byBaseName = c.u; __ueExists.loaded = true; } } catch (e) {} })();\n      function ueLoadExistsData() {")
+            .replace("__ueExists.byBaseName = data.units;", "__ueExists.byBaseName = data.units; try { sessionStorage.setItem(\"ue-exists\", JSON.stringify({ t: Date.now(), u: data.units })); } catch (e) {}")
+            .replace("document.addEventListener(\"ue-exists-ready\", function () {", "document.addEventListener(\"ue-exists-ready\", function () { allowDisplayAnimation = false;");
           loader.innerHTML = "";
           var range = document.createRange();
           range.selectNode(loader);
