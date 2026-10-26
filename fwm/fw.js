@@ -1097,7 +1097,14 @@
       if (ret.q && qEl) { state.q = ret.q; qEl.value = ret.q; }
     }
     render();
-    if (back && ret.y) requestAnimationFrame(function () { window.scrollTo(0, ret.y); });
+    if (back && ret.y) {
+      var moved = false, stop = function () { moved = true; };
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
+      var goY = function () { if (!moved && Math.abs((window.scrollY || window.pageYOffset) - ret.y) > 4) window.scrollTo(0, ret.y); };
+      requestAnimationFrame(goY);
+      [250, 700, 1500].forEach(function (ms) { setTimeout(goY, ms); });
+      window.addEventListener('load', goY, { once: true });
+    }
     if (location.hash.length > 1) fromHash();
   }).catch(function () {
     mount.innerHTML = '<p class="fw-none">' + (tierMode ? 'The TierList' : grindMode ? 'The grind methods' : 'The characters') + ' could not load. Refresh the page to try again.</p>';
