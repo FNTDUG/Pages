@@ -975,6 +975,7 @@
     var inner = dlg.querySelector('.fwd-in');
     inner.innerHTML = FW.detail(data, c, still, tierMode ? FW.tierPanel(meta, c) : '');
     stillCards(inner);
+    if (isPage) adPanel(inner);
     dlg.querySelector('.fwd-scroll').scrollTop = 0;
     var i = order.indexOf(c);
     dlg.querySelector('.fwd-count').textContent = (i + 1) + ' / ' + order.length;
@@ -995,6 +996,17 @@
     }
     preload(order[(i + 1) % order.length]);
     preload(order[(i - 1 + order.length) % order.length]);
+  }
+  function adPanel(inner) {
+    var info = inner.querySelector('.fwd-info');
+    if (!info) return;
+    var ad = document.createElement('section'), mv = info.querySelector('.fwd-atks'), at = mv ? mv.closest('.fwd-panel') : info.querySelector('.fwd-panel');
+    ad.className = 'fwd-panel fwd-ad';
+    ad.setAttribute('aria-label', 'Advertisement');
+    ad.innerHTML = '<h3 class="fwd-h">Advertisement</h3><div class="fwd-ad-box"><ins class="adsbygoogle" style="display:block;width:100%;height:280px" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209"></ins></div>';
+    if (at) at.parentNode.insertBefore(ad, at.nextSibling);
+    else info.appendChild(ad);
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
   }
   function open(id, push) {
     var c = ix && ix.byId[id];

@@ -315,3 +315,4 @@ html.fw-char #ug-main{visibility:hidden}
 .fwd--page .fwd-back span{display:inline}
 .fwd--page .fwd-back{padding:0 16px 0 13px}
 .fwd a.fwd-btn,html.ov .fwd a.fwd-btn{color:#fff!important;text-decoration:none!important}
+.fwd-ad .fwd-ad-box{height:280px;overflow:hidden;border-radius:8px;background:rgba(0,0,0,.28)}.fwd-ad:has(ins[data-ad-status=unfilled]){display:none}
