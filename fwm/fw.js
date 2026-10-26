@@ -801,8 +801,7 @@
         : '<div class="fwd-top"><button type="button" class="fwd-btn fwd-back" aria-label="Back to the list">' + ICON_L + '<span aria-hidden="true">Back</span></button><span class="fwd-count" aria-live="polite"></span>' +
           '<button type="button" class="fwd-btn fwd-nav fwd-prev" aria-label="Previous">' + ICON_L + '</button>' +
           '<button type="button" class="fwd-btn fwd-nav fwd-next" aria-label="Next">' + ICON_R + '</button></div>');
-    if (isPage) root.appendChild(dlg);
-    else document.body.appendChild(dlg);
+    document.body.appendChild(dlg);
     if (!isPage) {
       dlg.querySelector('.fwd-back').addEventListener('click', close);
       dlg.querySelector('.fwd-prev').addEventListener('click', function () { step(-1); });
@@ -836,6 +835,7 @@
     document.addEventListener('keydown', function (e) {
       if (dlg.hidden) return;
       if (isPage) {
+        if (e.key === 'Escape') { var bb = dlg.querySelector('.fwd-back'); if (bb) bb.click(); return; }
         if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.altKey && !e.ctrlKey && !e.metaKey && order.length > 1) {
           var to = dlg.querySelector(e.key === 'ArrowLeft' ? '.fwd-prev' : '.fwd-next');
           if (to && to.href) location.href = to.href;
@@ -1057,6 +1057,9 @@
       return;
     }
     root.classList.add('fw-page');
+    document.documentElement.classList.add('fwd-on');
+    var mn = document.getElementById('ug-main');
+    if (mn) mn.inert = true;
     var ret = retGet();
     order = FW.order(data, c.kind, (ret && ret.sort) || baseSort, '');
     if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');

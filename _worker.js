@@ -8712,6 +8712,9 @@ export default {
       .on('html', {
         element(el) { if (ssr && ssr.fwChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char').trim()); }
       })
+      .on('div.ad-slot', {
+        element(el) { if (ssr && ssr.fwChar) el.remove(); }
+      })
       .on('div#ug-content', {
         element(el) {
           el.tagName = 'main';
@@ -8763,8 +8766,10 @@ export default {
           el.append(noInfoPanel || pvMissing ? pollHtml.replace('data-auto="1"', 'data-auto="0"') : pollHtml, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
-          el.append(RAIL_HTML, { html: true });
-          el.append(CONTENT_AD_HTML, { html: true });
+          if (!(ssr && ssr.fwChar)) {
+            el.append(RAIL_HTML, { html: true });
+            el.append(CONTENT_AD_HTML, { html: true });
+          }
           if (hasInfo) el.append(INFO_HTML, { html: true });
           if (!noInfoPanel) {
             el.append('<script>window.PV_UPD=' + JSON.stringify(pageUpds || {}) + '<\/script>' + ACTIVE_SCRIPT, { html: true });
