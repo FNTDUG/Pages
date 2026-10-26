@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");}}catch(e){}})();</script>
-<style>html.ue-focus #ug-hero{display:none!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
+<style>#ue-loader{min-height:100vh}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unit Engine / FNTD2 | FNTD Userguide</title>
@@ -1719,7 +1718,7 @@
       function norm(u) { try { return decodeURIComponent(new URL(u, location.href).pathname).replace(/\/+$/, '').toLowerCase(); } catch (e) { return ''; } }
       function jump() {
         var ue = document.getElementById("unitEngine");
-        if (!ue || moved || document.documentElement.classList.contains("ue-focus")) return;
+        if (!ue || moved) return;
         ue.scrollIntoView({ block: "start" });
       }
       function settle() {
@@ -1728,15 +1727,22 @@
         [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
         window.addEventListener("load", jump, { once: true });
       }
+      function retitle(url) {
+        setTimeout(function () {
+          var inp = document.getElementById("unitSearch"), name = inp && inp.value.trim();
+          if (!name) { try { name = decodeURIComponent(url.split(/[?#]/)[0].replace(/\/+$/, "").split("/").pop()).replace(/-/g, " "); } catch (e) { name = ""; } }
+          if (name) document.title = name + ": How to Get, Stats & Value | FNTD2 Wiki";
+          if (onUnit) { var d = document.querySelector("details.ug-seo"); if (d) d.hidden = true; }
+        }, 0);
+      }
       var rs = history.replaceState;
       history.replaceState = function (st, t, url) {
         if (typeof url === "string" && unitRe.test(url.split(/[?#]/)[0])) {
           if (norm(url) === norm(location.href)) {
             if (!armed) { armed = true; settle(); }
-          } else if (armed) {
-            try { sessionStorage.setItem("ue-focus", "1"); } catch (e) {}
-            location.href = url;
-            return;
+          } else {
+            armed = true;
+            retitle(url);
           }
         }
         return rs.apply(history, arguments);
