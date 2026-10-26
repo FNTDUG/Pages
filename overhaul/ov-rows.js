@@ -191,7 +191,18 @@
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
     var inks = null, geo = null, prevX = [], shift = 0, edge = null, SHADOW = opts.shadow != null ? opts.shadow : 8;
-    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false;
+    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false, filled = false, natW = 0;
+    function unfill() {
+      if (!filled) return;
+      filled = false;
+      originals().forEach(function (el) { el.style.flex = ''; el.style.minWidth = ''; el.style.maxWidth = ''; });
+    }
+    function canFill() {
+      if (nOrig < 2 || !edge) return false;
+      var cs = getComputedStyle(box), avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      var gap = step - edge.w[0], per = (avail - (nOrig - 1) * gap) / nOrig;
+      return per >= Math.min(filled ? natW : edge.w[0], 320);
+    }
     function kids() { return Array.prototype.slice.call(box.children); }
     function originals() { return kids().filter(function (el) { return !el.classList.contains('is-copy'); }); }
     function wants() {
@@ -410,6 +421,12 @@
       on = true;
       box.classList.add('rowloop');
       measure();
+      if (fine && hi0 > lo0 && canFill()) {
+        natW = edge.w[0];
+        filled = true;
+        originals().forEach(function (el) { el.style.flex = '1 1 0'; el.style.minWidth = '0'; el.style.maxWidth = 'none'; });
+        measure();
+      }
       fixed = fine && hi0 <= lo0;
       if (fixed) {
         bounded = true;
@@ -469,6 +486,7 @@
       g.killTweensOf(slide);
       extra.forEach(function (c) { c.parentNode.removeChild(c); });
       extra = [];
+      unfill();
       kids().forEach(function (el) { el.style.translate = ''; });
       box.classList.remove('rowloop', 'is-dragging', 'can-drag');
     }
@@ -478,8 +496,11 @@
       else if (!want && on) teardown();
       else if (on) {
         measure();
-        if (fine && (fixed ? hi0 > lo0 : hi0 <= lo0)) { teardown(); build(); }
-        else render();
+        if (fine) {
+          var keep = filled ? canFill() : hi0 <= lo0 || canFill();
+          if (keep !== fixed || (fixed && !filled && hi0 > lo0)) { teardown(); build(); return; }
+        }
+        render();
       }
     }
     box.addEventListener('focusin', function (e) {
