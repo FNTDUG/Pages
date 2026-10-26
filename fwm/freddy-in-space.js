@@ -122,7 +122,7 @@
       return;
     }
     m.paused = false;
-    e.dir = s.dir;
+    e.dir = m.rev ? (s.dir + 16) & 31 : s.dir;
     m.sp = s.sp;
   }
 
@@ -1130,6 +1130,6 @@
     key: function (k, on) { KEY[k] = on; },
     begin: begin,
     scene: scene,
-    dump: function () { return L.all.filter(function (e) { return !e.dead && e.vis; }).map(function (e) { var b = box(e); return [e.o.n, e.ly, Math.round(e.x), Math.round(e.y), b && b.slice(0, 4).map(Math.round)]; }); }
+    dump: function () { return L.all.filter(function (e) { return !e.dead && e.vis; }).map(function (e) { var b = box(e); return [e.o.n, e.ly, Math.round(e.x), Math.round(e.y), b && b.slice(0, 4).map(Math.round), e.dir, b && b[4]]; }); }
   };
 })();
