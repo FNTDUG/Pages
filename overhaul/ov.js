@@ -560,7 +560,7 @@
     window.infToggleExp.ov = true;
   }
 
-  var GAMES = [['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
+  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
   function bar() {
     var main = document.getElementById('ug-main');
     if (!main || main.querySelector('.pv-bar') || !document.querySelector('#ug-content[data-layout="wide"]')) return;
