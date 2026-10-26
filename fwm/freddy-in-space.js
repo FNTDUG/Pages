@@ -62,7 +62,7 @@
         ['b', 27, 8], ['s', 30, 31, 1, 9],
         ['s', 32, 38, 6, 6], ['C', 35, 6],
         ['t', 40, 18], ['k', 47, 18], ['H', 44, 18],
-        ['s', 50, 60, 13, 17], ['k', 59, 13], ['b', 55, 7],
+        ['s', 50, 59, 13, 17], ['k', 58, 13], ['b', 55, 7],
         ['s', 62, 63, 1, 12], ['b', 66, 9], ['t', 67, 18],
         ['s', 70, 80, 10, 17], ['C', 75, 10], ['k', 79, 10],
         ['b', 85, 6], ['t', 88, 18], ['k', 92, 18], ['H', 90, 18],
@@ -78,7 +78,7 @@
         ['d', 36, 4], ['c', 40, 1], ['d', 46, 6], ['H', 44, 14],
         ['s', 48, 49, 10, 13], ['o', 51, 55, 6], ['C', 53, 6],
         ['M', 74, 14], ['D', 83, 14],
-        ['c', 88, 1], ['d', 92, 5], ['s', 91, 91, 11, 13], ['o', 94, 97, 8], ['C', 95, 8], ['H', 97, 14],
+        ['c', 88, 1], ['d', 92, 5], ['s', 91, 91, 12, 13], ['o', 94, 97, 8], ['C', 95, 8], ['H', 97, 14],
         ['B', 122, 14]
       ]
     }
@@ -168,7 +168,7 @@
       if (k === 'm') e.vx = -0.6;
       if (k === 'b') { e.vx = 0.7; e.vy = 0.55; }
       if (k === 'd') { e.vx = 0.8; e.home = e.x; }
-      if (k === 'M') e.vx = -0.8;
+      if (k === 'M') { e.vx = -0.8; e.home = e.x; }
       if (k === 'B') e.x = o[1] * T - 20;
       ents.push(e);
     });
@@ -186,9 +186,9 @@
 
   function moveX(o, dx) {
     o.x += dx;
-    var t0 = Math.floor(o.y / T), t1 = Math.floor((o.y + o.h - 1) / T), tx, ty;
+    var t0 = Math.floor(o.y / T), t1 = Math.floor((o.y + o.h - 0.001) / T), tx, ty;
     if (dx > 0) {
-      tx = Math.floor((o.x + o.w - 1) / T);
+      tx = Math.floor((o.x + o.w - 0.001) / T);
       for (ty = t0; ty <= t1; ty++) if (solid(tile(tx, ty))) { o.x = tx * T - o.w; return true; }
     } else if (dx < 0) {
       tx = Math.floor(o.x / T);
@@ -199,9 +199,9 @@
   function moveY(o, dy) {
     var bottom = o.y + o.h;
     o.y += dy;
-    var t0 = Math.floor(o.x / T), t1 = Math.floor((o.x + o.w - 1) / T), tx, ty, v;
+    var t0 = Math.floor(o.x / T), t1 = Math.floor((o.x + o.w - 0.001) / T), tx, ty, v;
     if (dy > 0) {
-      ty = Math.floor((o.y + o.h - 1) / T);
+      ty = Math.floor((o.y + o.h - 0.001) / T);
       for (tx = t0; tx <= t1; tx++) {
         v = tile(tx, ty);
         if (solid(v) || (v === 2 && bottom <= ty * T + 0.01)) { o.y = ty * T - o.h; return 1; }
@@ -213,8 +213,8 @@
     return 0;
   }
   function boxFree(x, y, w, h) {
-    for (var ty = Math.floor(y / T); ty <= Math.floor((y + h - 1) / T); ty++)
-      for (var tx = Math.floor(x / T); tx <= Math.floor((x + w - 1) / T); tx++) if (solid(tile(tx, ty))) return false;
+    for (var ty = Math.floor(y / T); ty <= Math.floor((y + h - 0.001) / T); ty++)
+      for (var tx = Math.floor(x / T); tx <= Math.floor((x + w - 0.001) / T); tx++) if (solid(tile(tx, ty))) return false;
     return true;
   }
 
@@ -283,7 +283,7 @@
 
   function fire() {
     var n = G.cup, size = n >= 6 ? 3 : n >= 3 ? 2 : 1;
-    shots.push({ x: P.face > 0 ? P.x + P.w : P.x - 6, y: P.y + (P.crouch ? 5 : 9) - (size - 1), w: 6 + size * 2, h: 1 + size, vx: 4.5 * P.face, left: 90 + n * 25, dmg: 1 + n * 0.15, size: size });
+    shots.push({ x: P.face > 0 ? P.x + P.w : P.x - 6, y: P.y + (P.crouch ? 5 : 9) - (size - 1), w: 6 + size * 2, h: 1 + size, vx: 4.5 * P.face, left: 120 + n * 22, dmg: 1 + n * 0.15, size: size });
     snd('shoot');
   }
 
@@ -411,7 +411,7 @@
         if (!near(e, 260, 200)) continue;
         e.vy = Math.min(5, e.vy + 0.35);
         if (moveY(e, e.vy) === 1) e.vy = 0;
-        if (moveX(e, e.vx) || e.t % 150 === 0) e.vx = -e.vx;
+        if (moveX(e, e.vx) || Math.abs(e.x - e.home) > 90) { e.vx = -e.vx; e.x += e.vx * 2; }
         e.face = P.x < e.x ? -1 : 1;
         if (e.cd <= 0) {
           var a = aimAt(e, 2.1), sp = e.hp < e.max / 2;
@@ -1134,9 +1134,13 @@
   run();
 
   window.FIS = {
-    state: function () { return { mode: G.mode, lv: G.lv, hp: P ? P.hp : null, cup: G.cup, boots: P ? P.boots : false, x: P ? Math.round(P.x) : 0, y: P ? Math.round(P.y) : 0, ents: ents.length, foes: foes.length }; },
+    state: function () {
+      var hpOf = function (k) { var e = ents.filter(function (x) { return x.k === k; })[0]; return e ? Math.round(e.hp) : null; };
+      return { mode: G.mode, lv: G.lv, hp: P ? P.hp : null, cup: G.cup, boots: P ? P.boots : false, x: P ? Math.round(P.x) : 0, y: P ? Math.round(P.y) : 0, ents: ents.length, foes: foes.length, metal: hpOf('M'), boss: hpOf('B'), locked: lockX >= 0 };
+    },
     warp: function (lv, tx, row) { startLevel(lv, null); if (tx != null) { P.x = tx * T + 2; P.y = row * T - P.h; snapCam(); } G.mode = 'play'; dlg = null; syncButtons(); run(); },
     give: function (cups, boots) { G.cup = cups; P.boots = G.boots = !!boots; },
-    heal: function () { P.hp = 100; }
+    heal: function (n) { P.hp = n == null ? 100 : n; },
+    foe: function (k) { var e = ents.filter(function (x) { return x.k === (k === 'boss' ? 'B' : 'M'); })[0]; return e ? Math.round(e.x) : null; }
   };
 })();
