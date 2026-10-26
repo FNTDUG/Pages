@@ -560,9 +560,20 @@
     window.infToggleExp.ov = true;
   }
 
+  var GAMES = [['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
+  function bar() {
+    var main = document.getElementById('ug-main');
+    if (!main || main.querySelector('.pv-bar') || !document.querySelector('#ug-content[data-layout="wide"]')) return;
+    var links = GAMES.map(function (g) { return '<a href="' + g[2] + '"' + (g[0] === game ? ' aria-current="true"' : '') + '>' + g[1] + '</a>'; }).join('');
+    var el = document.createElement('header');
+    el.className = 'pv-bar';
+    el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="48" height="40"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
+    main.insertBefore(el, main.firstChild);
+  }
   function ready() {
     if (document.getElementById('pv-theme')) return;
     try {
+      bar();
       drops();
       cards();
       directory();
