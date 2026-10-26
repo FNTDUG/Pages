@@ -78,6 +78,11 @@
     var d = modes.getBoundingClientRect().top - saved.top;
     if (Math.abs(d) > 1) window.scrollBy(0, d);
   }
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(place);
+    ro.observe(document.getElementById("ug-main") || document.body);
+    setTimeout(function () { ro.disconnect(); }, 4000);
+  }
   place();
   requestAnimationFrame(function () { place(); shown(); });
   setTimeout(shown, 1500);
