@@ -191,7 +191,7 @@
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
     var inks = null, geo = null, prevX = [], shift = 0, edge = null, SHADOW = opts.shadow != null ? opts.shadow : 8;
-    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false, filled = false, natW = 0;
+    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false, filled = false, natW = 0, touched = false;
     function unfill() {
       if (!filled) return;
       filled = false;
@@ -355,6 +355,7 @@
       idle();
     }
     function stopAuto() {
+      touched = true;
       idle();
       if (!bounded) enterBounded();
       if (!auto) return;
@@ -428,11 +429,12 @@
         measure();
       }
       fixed = fine && hi0 <= lo0;
-      if (fixed) {
+      if (fixed || touched) {
         bounded = true;
         auto = false;
         extra.forEach(function (c) { c.style.visibility = 'hidden'; });
-      } else if (fine && opts.ink !== false) {
+      }
+      if (!fixed && fine && opts.ink !== false) {
         var seed = Math.floor(Math.random() * 2147483647);
         inks = [Splash('left', seed), Splash('right', seed ^ 0x5bd1e995)];
         if (seen) { inks[0].show(); inks[1].show(); }
@@ -469,6 +471,7 @@
         edgeResistance: 0.85,
         snap: function (v) { return bounded ? -clamp(snapPos(-v)) : -snapPos(-v); }
       })[0];
+      if (drag && bounded) drag.applyBounds({ minX: -hi0, maxX: -lo0 });
       if (auto) { last = 0; raf = requestAnimationFrame(tick); }
     }
     function teardown() {
@@ -476,7 +479,7 @@
       bounded = false;
       entering = false;
       fixed = false;
-      auto = !reduced;
+      auto = !reduced && !touched;
       if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; }
       box.style.clipPath = '';
       edge = null;

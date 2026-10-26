@@ -583,7 +583,7 @@
       h.classList.add('ov-ready');
     }
     var touchRows = document.querySelector('.info-card, .ov-dir, [data-ov-rows]') && !(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
-    loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js?v=20261025e']), animate);
+    loadAll(['gsap'].concat(touchRows ? ['Draggable', 'InertiaPlugin'] : []).map(function (n) { return '/overhaul/gsap/' + n + '.min.js'; }).concat(['/overhaul/ov-rows.js?v=20261025f']), animate);
     var btn = document.createElement('button');
     btn.id = 'pv-theme';
     btn.type = 'button';

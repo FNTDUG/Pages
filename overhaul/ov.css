@@ -589,3 +589,4 @@ html.ov:has(#ug-content[data-layout=wide]) #ug-footer .ov-foot-legal a,html.ov:h
 html.ov:has(#ug-content[data-layout=wide]):has(#ug-info-btn){--info-gap:83px}
 html.ov:has(#ug-content[data-layout=wide]) #ug-info-btn{top:var(--gear-top)!important;right:calc(var(--hdr-r) + var(--menu-w,106px) + 12px)!important}
 @media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]):has(#ug-info-btn){--info-gap:70px}html.ov:has(#ug-content[data-layout=wide]) #ug-info-btn{height:32px!important}}
+html.ov:has(#ug-content[data-layout=wide]){scroll-padding-top:calc(var(--hdr-h) + 16px)}
