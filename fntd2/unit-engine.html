@@ -1749,7 +1749,7 @@
         }
         clearTimeout(goTimer);
         goTimer = setTimeout(function () {
-          try { sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-ac", String(acTop)); } catch (e) {}
+          try { sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
           location.href = url;
         }, wait);
       }
@@ -1765,6 +1765,27 @@
         }
         return rs.apply(history, arguments);
       };
+      function pick(name, e) {
+        if (!armed || !name) return;
+        var url = location.pathname.replace(/(\/unit-engine)(\/.*)?$/, "$1") + "/" + encodeURIComponent(String(name).replace(/\s+/g, "-"));
+        if (norm(url) === norm(location.href)) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var inp = document.getElementById("unitSearch"), ac = document.getElementById("autocomplete"), snd = document.getElementById("unitConfirmSound");
+        if (inp) { inp.value = name; inp.blur(); }
+        if (ac) ac.style.display = "none";
+        if (snd) { try { snd.currentTime = 0; snd.volume = 0.4; var pr = snd.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (x) {} }
+        go(url);
+      }
+      document.addEventListener("click", function (e) {
+        var it = e.target && e.target.closest && e.target.closest("#autocomplete .autocomplete-item");
+        if (it) pick(it.textContent.trim(), e);
+      }, true);
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" || !e.isTrusted || !e.target || e.target.id !== "unitSearch") return;
+        var v = e.target.value.trim().toLowerCase(), its = document.querySelectorAll("#autocomplete .autocomplete-item");
+        for (var i = 0; i < its.length; i++) if (its[i].textContent.trim().toLowerCase() === v) { pick(its[i].textContent.trim(), e); return; }
+      }, true);
       var loader = document.getElementById("ue-loader");
       var URL_UE = "https://rawcdn.githack.com/FNTDUG/characters.json/refs/heads/main/Unit-Engine", hit = null;
       try { hit = JSON.parse(sessionStorage.getItem("ue-frag") || "null"); } catch (e) { hit = null; }
@@ -1778,6 +1799,12 @@
           return t;
         }))
         .then(function(html) {
+          var init = null;
+          try { if (document.documentElement.classList.contains("ue-focus")) init = JSON.parse(sessionStorage.getItem("ue-st") || "null"); sessionStorage.removeItem("ue-st"); } catch (e) {}
+          window.__ueInit = init || {};
+          html = html.replace("var currentUnitLevel = 1;", "var currentUnitLevel = Math.max(1, Math.min(100, Math.round(+window.__ueInit.lvl) || 1));")
+            .replace("var isShinyMode = false;", "var isShinyMode = !!window.__ueInit.shiny;")
+            .replace("var isGlitchedMode = false;", "var isGlitchedMode = !!window.__ueInit.glitch; window.__ueState = function () { return { lvl: currentUnitLevel, shiny: isShinyMode, glitch: isGlitchedMode }; };");
           loader.innerHTML = "";
           var range = document.createRange();
           range.selectNode(loader);
