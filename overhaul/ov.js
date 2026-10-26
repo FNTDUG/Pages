@@ -567,7 +567,7 @@
     var links = GAMES.map(function (g) { return '<a href="' + g[2] + '"' + (g[0] === game ? ' aria-current="true"' : '') + '>' + g[1] + '</a>'; }).join('');
     var el = document.createElement('header');
     el.className = 'pv-bar';
-    el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="48" height="40"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
+    el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_bar.png?v=1" alt="" width="50" height="45"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
     main.insertBefore(el, main.firstChild);
   }
   function ready() {
