@@ -191,7 +191,7 @@
     var on = false, auto = !reduced, pos = 0, raf = 0, last = 0, seen = false, resizeT = 0;
     var items = [], extra = [], step = 0, total = 0, drag = null, proxy = document.createElement('div'), slide = { x: 0 };
     var inks = null, geo = null, prevX = [], shift = 0, edge = null, SHADOW = opts.shadow != null ? opts.shadow : 8;
-    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0;
+    var bounded = false, entering = false, lo0 = 0, hi0 = 0, nOrig = 0, fixed = false;
     function kids() { return Array.prototype.slice.call(box.children); }
     function originals() { return kids().filter(function (el) { return !el.classList.contains('is-copy'); }); }
     function wants() {
@@ -374,7 +374,7 @@
     var nudgeT = 0, hover = false, pressing = false, nt = null;
     function idle() {
       clearTimeout(nudgeT);
-      if (!on || auto || reduced) return;
+      if (!on || auto || reduced || hi0 <= lo0) return;
       nudgeT = setTimeout(nudge, 2500 + Math.random() * 500);
     }
     function nudge() {
@@ -409,12 +409,18 @@
     function build() {
       on = true;
       box.classList.add('rowloop');
-      if (fine && opts.ink !== false) {
+      measure();
+      fixed = fine && hi0 <= lo0;
+      if (fixed) {
+        bounded = true;
+        auto = false;
+        extra.forEach(function (c) { c.style.visibility = 'hidden'; });
+      } else if (fine && opts.ink !== false) {
         var seed = Math.floor(Math.random() * 2147483647);
         inks = [Splash('left', seed), Splash('right', seed ^ 0x5bd1e995)];
         if (seen) { inks[0].show(); inks[1].show(); }
+        gauge();
       }
-      measure();
       pos = 0;
       render();
       if (fine || still) box.classList.remove('can-drag');
@@ -452,6 +458,8 @@
       on = false;
       bounded = false;
       entering = false;
+      fixed = false;
+      auto = !reduced;
       if (inks) { inks[0].kill(); inks[1].kill(); inks = null; geo = null; }
       box.style.clipPath = '';
       edge = null;
@@ -468,7 +476,11 @@
       var want = wants();
       if (want && !on) build();
       else if (!want && on) teardown();
-      else if (on) { measure(); render(); }
+      else if (on) {
+        measure();
+        if (fine && (fixed ? hi0 > lo0 : hi0 <= lo0)) { teardown(); build(); }
+        else render();
+      }
     }
     box.addEventListener('focusin', function (e) {
       if (!on) return;
