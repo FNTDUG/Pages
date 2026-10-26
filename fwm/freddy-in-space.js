@@ -23,6 +23,7 @@
   }
   function ready(k) { var i = IMG[k]; return i && i.complete && i.naturalWidth; }
   function fr(k, t) { var m = META[k]; return m[2] > 1 ? Math.floor(t * STEP / m[4]) % m[2] : 0; }
+  function part(k, t, a, n) { return a + Math.floor(t * STEP / META[k][4]) % n; }
   function spr(k, f, x, y, flip, sx2, sy2, alpha) {
     var m = META[k], im = IMG[k];
     if (!m || !ready(k)) return false;
@@ -705,7 +706,7 @@
     var cxs = flip ? m[0] - (b[0] + b[2]) / 2 : (b[0] + b[2]) / 2;
     var sy = crouch ? 0.72 : 1;
     var dx = x + 18 - cxs, dy = y + (crouch ? 60 : 84) - b[3] * sy;
-    var f = air ? Math.min(29, Math.floor(air * 1.2)) : fr(k, walk || t);
+    var f = air ? 15 + Math.min(14, Math.floor(air * 0.6)) : part(k, walk || t, 15, 15);
     if (!spr(k, f, dx, dy, flip, 1, sy)) px(x, y, 36, crouch ? 60 : 84, '#8a4b2a');
     var hx = dx + (flip ? m[0] - 47 : 47), hy = dy + 28 * sy;
     g.beginPath();
@@ -729,7 +730,8 @@
     if (k === 'c') onBox(e.face > 0 ? 'cam-r' : 'cam-l', 0, e, false, 'top');
     else if (k === 'L') onBox('laser', fr('laser', t), e, false, 'top');
     else if (k === 'b' || k === 'd') onBox(d.spr, fr(d.spr, t), e, false, 'mid');
-    else if (k === 'm') onBox('mouse', fr('mouse', t), e, e.vx > 0);
+    else if (k === 'm') onBox('mouse', part('mouse', t, 1, 5), e, e.vx < 0);
+    else if (k === 'r') onBox('robot', part('robot', t, 15, 15), e, e.face < 0);
     else if (k === 'M') onBox('metalman', fr('metalman', t), e, e.face > 0);
     else if (k === 'B') {
       if (e.dying && ready('boss-dead')) spr('boss-dead', 0, e.x + e.w / 2 - cam.x - 79, e.y + e.h - cam.y - 185, false, 1.5);
