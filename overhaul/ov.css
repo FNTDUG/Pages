@@ -592,3 +592,5 @@ html.ov:has(#ug-content[data-layout=wide]) #ug-info-btn{top:var(--gear-top)!impo
 @media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]):has(#ug-info-btn){--info-gap:70px}html.ov:has(#ug-content[data-layout=wide]) #ug-info-btn{height:32px!important}}
 html.ov:has(#ug-content[data-layout=wide]){scroll-padding-top:calc(var(--hdr-h) + 16px)}
 html.ov:not(.ov-noads):has(#ug-content[data-layout=wide]) #ug-main .ad-slot:not(.ug-rail){max-width:none!important;width:auto!important;margin-left:0!important;margin-right:0!important;padding-left:10px!important;padding-right:10px!important;border-left:var(--bw) solid transparent!important;border-right:var(--bw) solid transparent!important}
+html.ov .ug-rail[data-dock] .ug-rail-in{overflow:hidden}
+html.ov:has(#ug-content[data-layout=wide]) body{overflow-x:clip}
