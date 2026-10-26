@@ -540,8 +540,8 @@ html.ov #ug-content .ug-section>*{margin-top:0!important;margin-bottom:var(--ov-
 html.ov #ug-content .ug-section>:is(.info-card,.ug-starry-panel,h2.ug-section-title:not(:first-child)){margin-top:var(--ov-gap)!important}
 html.ov #ug-content .update-log-wrapper{margin-top:0!important;margin-bottom:var(--ov-gap)!important}
 html.ov:has(#ug-content[data-layout=wide]){--ov-col:min(1320px,100vw)}
-@media (min-width:1680px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 468px)}}
-@media (min-width:2280px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 748px)}}
+@media (min-width:1680px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 420px)}}
+@media (min-width:2280px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 700px)}}
 html.ov #ug-content[data-layout=wide]{max-width:var(--ov-col)!important}
 html.ov:has(#ug-content[data-layout=wide]) .ov-copy p{max-width:62ch}
 html.ov .ug-rail[data-dock]{flex-direction:column;background:var(--surface2);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
@@ -561,8 +561,6 @@ html.ov:has(#ug-content[data-layout=wide]){--bar:#a39b8d;--backdrop:#857e71;--ba
 html.ov[data-theme="dark"]:has(#ug-content[data-layout=wide]){--bar:#3b3848;--backdrop:#121117;--bar-text:#fff3df;--bar-mute:#cfc8dc;--bar-hover:rgba(255,255,255,.1)}
 html.ov:has(#ug-content[data-layout=wide]){--hdr-h:72px;--hdr-r:12px;--sheet:0px;--gear-top:14px!important}
 @media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]){--hdr-h:62px;--gear-top:15px!important}html.ov:has(#ug-content[data-layout=wide]) #ug-hamburger{top:var(--gear-top)!important}}
-@media (min-width:1680px){html.ov:has(#ug-content[data-layout=wide]){--sheet:24px;--hdr-r:36px;background:var(--backdrop)!important}
-html.ov:has(#ug-content[data-layout=wide]) #ug-main{margin:0 var(--sheet) var(--sheet);background:var(--bg)!important}}
 .pv-bar{display:none}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar{position:fixed;top:0;left:var(--sheet);right:var(--sheet);z-index:1040;display:flex;align-items:stretch;gap:24px;height:var(--hdr-h);padding:0 calc(var(--hdr-r) + var(--menu-w,106px) + var(--info-gap,0px) + var(--gear-size,46px) * 2 + 40px) 0 20px;background:var(--bar);border-bottom:var(--bw) solid var(--ink);box-sizing:border-box}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand{display:flex;align-items:center;gap:10px;flex:none;color:var(--bar-text)!important;text-decoration:none!important;font:400 18px/1 var(--font-head);letter-spacing:.02em;text-transform:uppercase}
