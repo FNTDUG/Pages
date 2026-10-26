@@ -320,3 +320,5 @@ html.fw-char #ug-content>.fw{margin-top:0!important}
 .fwd--page .fwd-nav svg{width:12px;height:18px}
 @media (min-width:861px){.fwd--page .fwd-bg,.fwd--page .fwd-shade{bottom:auto;height:100vh}html.fw-char .fwd--page .fwd-stage{top:88px;height:calc(100vh - 140px)}}
 html.ov #ug-content .fwd--page a.fwd-btn{color:#fff!important;text-decoration:none!important}
+.fwd--page .fwd-back span{display:inline}
+.fwd--page .fwd-back{padding:0 16px 0 13px}
