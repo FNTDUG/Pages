@@ -453,6 +453,7 @@
         if (o.ob === 1) L.obst.push([it[1], it[2], o.w, o.h]);
         return;
       }
+      if (f === 38 && o.n === 'textbox') return;
       make(it[0], it[1], it[2], it[3]);
     });
     buildGrid();
@@ -890,7 +891,7 @@
         var e = L.all[i];
         if (e.ly !== li || e.dead || !e.vis || !e.flOn) continue;
         if (e.t >= 32) continue;
-        var ex = e.x - ox, ey = e.y - oy;
+        var fixed = e.o.fl & 2048, ex = e.x - (fixed ? 0 : ox), ey = e.y - (fixed ? 0 : oy);
         sg.globalAlpha = e.alpha;
         if (e.t === 7) { drawCounter(e, ex, ey); sg.globalAlpha = 1; continue; }
         if (e.t === 3) { drawText(e, ex, ey); sg.globalAlpha = 1; continue; }
