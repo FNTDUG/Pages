@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");var op=HTMLMediaElement.prototype.play,quiet=true;setTimeout(function(){quiet=false},15000);HTMLMediaElement.prototype.play=function(){if(quiet&&this.id==="unitConfirmSound"){quiet=false;return Promise.resolve();}return op.apply(this,arguments);};}}catch(e){}})();</script>
-<style>html.ue-focus #ug-hero{display:none!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
+<style>html.ue-focus #ug-hero-inner>:not(.ad-slot){display:none!important}html.ue-focus #ug-hero{padding-top:0!important;padding-bottom:0!important;min-height:0!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unit Engine / FNTD2 | FNTD Userguide</title>
