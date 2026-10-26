@@ -3090,7 +3090,7 @@ const ANALYTICS =
 const ADSENSE_LOADER =
   '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7017245771068026" crossorigin="anonymous"><\/script>';
 
-const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624', '7344880866', '10743048214'];
+const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624', '7344880866', '10743048214', '5569032992', '6331902150', '6739698191', '4391829435', '4053293514'];
 
 const EXTRA_ITEMS = {
   materials: {
