@@ -2791,6 +2791,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
     .catch(function(){});
 })();
 <\/script>`;
+const INFO_LAZY = (() => {
+  const a = INFO_HTML.indexOf('<script>'), b = INFO_HTML.lastIndexOf('</script>');
+  if (a === -1 || b < a) return INFO_HTML;
+  const boot = '<script>(function(){var done=false;window.ugInfoToggle=function(){if(!done){done=true;var src=document.getElementById("ug-info-js");var s=document.createElement("script");s.text=src.textContent;document.body.appendChild(s);src.parentNode.removeChild(src);}if(window.ugInfoToggle&&!window.ugInfoToggle._boot)window.ugInfoToggle();};window.ugInfoToggle._boot=1;})();<\/script>';
+  return INFO_HTML.slice(0, a) + '<script type="text/plain" id="ug-info-js">' + INFO_HTML.slice(a + 8, b) + '</script>' + boot + INFO_HTML.slice(b + 9);
+})();
 
 
 const WIP_PAGES = {
@@ -4315,7 +4321,8 @@ async function seoLoadFwm(file) {
 }
 function seoFwmSpecsHtml(d) {
   if (!d || !Array.isArray(d.bytes)) return '';
-  const link = c => '<a href="/fwm/tech-specs#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
+  const ids = new Map(seoFwmIndex(d).list.map(x => [x.c, x.id]));
+  const link = c => '<a href="/fwm/tech-specs/' + encodeURIComponent(ids.get(c) || seoFwmSlug(c.name)) + '">' + seoEsc(c.name) + '</a>';
   const bytes = d.bytes.filter(c => c && c.name), chips = (d.chips || []).filter(c => c && c.name), armor = (d.armor || []).filter(c => c && c.name);
   const out = ['<h2>FNaF World Multiplayer tech specs</h2><p>' + bytes.length + ' Bytes, ' + chips.length + ' Chips and ' + armor.length + ' Mendo-Armor upgrades in FNaF World Multiplayer on Roblox.</p>'];
   out.push('<h3>Bytes</h3><div class="ug-seo-wrap"><table><thead><tr><th>Byte</th><th>Type</th><th>Price (Faz Tokens)</th><th>What it does</th><th>How to get</th></tr></thead><tbody>' +
@@ -4328,6 +4335,162 @@ function seoFwmSpecsHtml(d) {
 }
 function seoFwmSlug(s) {
   return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
+}
+const FWM_PRE_CSS = '<style>html.fw-char,html.fw-char body{background:#0a1232!important}html.fw-char #ug-main{visibility:hidden}html.fw-char #ug-hamburger,html.fw-char #ug-info-btn,html.fw-char #ug-sound-btn,html.fw-char .ntf-bell{display:none!important}' +
+  '.fwd-pre{position:fixed;inset:0;z-index:2147483646;background:#0a1232;pointer-events:none}.fwd-pre i,.fwd-pre b{position:absolute;inset:0}' +
+  '.fwd-pre i{background-position:center 58%;background-size:cover;background-repeat:no-repeat}' +
+  '.fwd-pre b{background:linear-gradient(90deg,rgba(6,10,30,0) 0%,rgba(6,10,30,.12) 36%,rgba(6,10,30,.84) 56%,rgba(6,10,30,.92) 100%)}' +
+  '@media (max-width:860px){.fwd-pre i{bottom:auto;height:64vh}.fwd-pre b{background:linear-gradient(180deg,rgba(6,10,30,.05) 0%,rgba(6,10,30,.12) 34%,rgba(10,18,50,.9) 54%,#0a1232 64vh,#0a1232 100%)}}' +
+  '@view-transition{navigation:auto}</style>';
+const FWM_LISTS = [['party', 'party', 'Party member'], ['bosses', 'boss', 'Boss'], ['enemies', 'enemy', 'Enemy'], ['npcs', 'npc', 'NPC'], ['bytes', 'byte', 'Byte'], ['chips', 'chip', 'Chip'], ['armor', 'armor', 'Mendo-Armor']];
+const FWM_SUBS = {
+  '/fwm/roster': { name: 'Roster', files: ['fnafworld.json'], kinds: ['party', 'boss', 'enemy', 'npc'] },
+  '/fwm/tech-specs': { name: 'Tech Specs', files: ['fnafworldspecs.json'], kinds: ['byte', 'chip', 'armor'] },
+  '/fwm/tierlist': { name: 'TierList', files: ['fnafworld.json', 'fnafworldspecs.json', 'fnafworldtiers.json'], kinds: ['party', 'move', 'byte', 'chip', 'armor'] },
+  '/fwm/meta-teams': { name: 'Meta Teams', files: ['fnafworld.json', 'fnafworldspecs.json', 'fnafworldmeta.json'], kinds: ['party', 'byte', 'chip'] },
+  '/fwm/grind-methods': { name: 'Grind Methods', files: ['fnafworld.json', 'fnafworldgrind.json'], kinds: ['grind'] }
+};
+function seoFwmWorlds(c) {
+  return (c.worlds || (c.world ? [c.world] : [])).filter(Boolean);
+}
+function seoFwmIndex(fw, specs, grind) {
+  const d = Object.assign({}, fw || {});
+  if (specs && fw !== specs) ['bytes', 'chips', 'armor', 'groups'].forEach(k => { d[k] = specs[k]; });
+  const list = [], byId = {};
+  const add = x => { byId[x.id] = x; list.push(x); };
+  FWM_LISTS.forEach(l => (d[l[0]] || []).forEach(c => {
+    if (!c || !c.name) return;
+    let id = c.id || seoFwmSlug(c.name);
+    while (byId[id]) id += '-' + l[1];
+    add({ c, id, kind: l[1], label: l[2], worlds: seoFwmWorlds(c) });
+  }));
+  const users = {};
+  ['party', 'boss', 'enemy'].forEach(k => list.filter(x => x.kind === k).forEach(x => (x.c.attacks || []).forEach(n => (users[n] = users[n] || []).push(x))));
+  Object.keys(d.attacks || {}).forEach(n => {
+    let id = seoFwmSlug(n);
+    while (byId[id]) id += '-move';
+    const u = users[n] || [];
+    add({ c: Object.assign({}, d.attacks[n] || {}, { name: n }), id, kind: 'move', label: 'Move', users: u, worlds: u[0] ? u[0].worlds.slice(0, 1) : [] });
+  });
+  ((grind && grind.methods) || []).forEach(m => {
+    if (!m || !m.name) return;
+    let f = m.boss ? byId[seoFwmSlug(m.boss)] || null : null;
+    if (f && f.kind !== 'boss' && f.kind !== 'enemy') f = null;
+    let id = m.id || seoFwmSlug(m.name);
+    while (byId[id]) id += '-grind';
+    add({ c: m, id, kind: 'grind', label: 'Grind method', foe: f, worlds: m.world ? [m.world] : f ? f.worlds : [] });
+  });
+  return { list, byId, worlds: d.worlds || (fw && fw.worlds) || [] };
+}
+async function seoFwmSubIndex(base, ms) {
+  const sub = FWM_SUBS[base];
+  const files = await Promise.all(sub.files.map(f => seoTimed(seoLoadFwm(f), ms)));
+  const fw = files[0];
+  if (!fw) return null;
+  const ix = base === '/fwm/tech-specs' ? seoFwmIndex(fw) : seoFwmIndex(fw, base === '/fwm/tierlist' || base === '/fwm/meta-teams' ? files[1] : null, base === '/fwm/grind-methods' ? files[1] : null);
+  ix.list = ix.list.filter(x => sub.kinds.indexOf(x.kind) !== -1);
+  return ix;
+}
+async function seoFwmCanon(base, x) {
+  if (base === '/fwm/roster' || base === '/fwm/tech-specs' || base === '/fwm/grind-methods' || x.kind === 'move') return base + '/' + encodeURIComponent(x.id);
+  const home = x.kind === 'party' ? '/fwm/roster' : '/fwm/tech-specs';
+  const ix = await seoFwmSubIndex(home, 2500);
+  const y = ix && ix.list.filter(v => v.c === x.c || (v.kind === x.kind && v.c.name === x.c.name))[0];
+  return y ? home + '/' + encodeURIComponent(y.id) : base;
+}
+function seoFwmSubMeta(x, base) {
+  const c = x.c, sub = FWM_SUBS[base], worlds = x.worlds;
+  const tails = [' | FNaF World Multiplayer Wiki', ' | FWM Wiki', ' | FWM'];
+  if (x.kind === 'party' || x.kind === 'boss' || x.kind === 'enemy' || x.kind === 'npc') tails.splice(1, 0, ' | FWM Wiki: Stats & Moves');
+  let title = c.name + tails[0];
+  for (let i = 1; title.length > 60 && i < tails.length; i++) title = c.name + tails[i];
+  const a = /^[aeiou]/i.test(x.label) ? 'an' : 'a';
+  let desc = c.name + ' is ' + a + ' ' + x.label.toLowerCase() + ' in FNaF World Multiplayer on Roblox' + (worlds.length && x.kind !== 'move' ? ', found in ' + worlds.join(', ') : '') + '.';
+  if (x.kind === 'npc') desc += ' Who they are and where to find them.';
+  else if (x.kind === 'party') desc += ' Health, moves, skins and how to unlock it.';
+  else if (x.kind === 'boss' || x.kind === 'enemy') desc += ' Health, attack, moves and where to fight it.';
+  else if (x.kind === 'move') desc += ' ' + (c.description ? c.description + ' ' : '') + 'Damage, and which characters have it.';
+  else if (x.kind === 'grind') desc = c.name + ': a FNaF World Multiplayer grind method' + (c.kicker ? ' for ' + c.kicker : '') + ' on Roblox' + (x.foe ? ', fighting ' + x.foe.c.name : '') + '. Rewards per win, the team to use and step-by-step tips.';
+  else desc += ' ' + (c.effect ? c.effect + ' ' : '') + (x.kind === 'chip' ? 'What it does and where to find it.' : 'What it does, its price and how to get it.');
+  if (base === '/fwm/tierlist' && x.kind !== 'move') desc = desc.replace(/\.$/, '') + ' TierList rank included.';
+  if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
+  return { title, desc, crumbs: [[SITE_NAME, '/'], ['FNaF World Multiplayer', '/fwm/fwm-directory'], [sub.name, base], [c.name, base + '/' + encodeURIComponent(x.id)]] };
+}
+function seoFwmSubLead(x) {
+  const c = x.c, w = x.worlds;
+  if (x.kind === 'grind') return 'Grind method' + (c.kicker ? ' for ' + c.kicker : '') + ' in FNaF World Multiplayer' + (x.foe ? ': fight ' + x.foe.c.name : '') + (w.length ? ' in ' + w.join(', ') : '') + '.';
+  if (x.kind === 'move') return 'Move in FNaF World Multiplayer' + (c.type ? ' (' + c.type + ')' : '') + '.' + (c.description ? ' ' + c.description : '');
+  if (x.kind === 'byte' || x.kind === 'chip' || x.kind === 'armor') return x.label + (c.group ? ' (' + c.group + ')' : '') + ' in FNaF World Multiplayer.' + (c.effect ? ' ' + c.effect : '');
+  return x.label + (w.length ? ' from ' + w.join(', ') : '') + ' in FNaF World Multiplayer.' + (c.about ? ' ' + c.about : '');
+}
+function seoFwmSubHtml(x, base) {
+  const c = x.c, sub = FWM_SUBS[base], val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
+  const pair = o => o && typeof o === 'object' ? 'Normal ' + val(o.normal) + ', Hard ' + val(o.hard) : val(o);
+  const rows = [['Type', seoEsc(x.label)]];
+  if (x.worlds.length && x.kind !== 'move') rows.push(['World', seoEsc(x.worlds.join(', '))]);
+  if (x.kind === 'move') {
+    if (c.type) rows.push(['Move type', seoEsc(c.type)]);
+    if (c.color) rows.push(['Colour', seoEsc(c.color)]);
+    if (c.damage) rows.push(['Damage', seoEsc(c.damage)]);
+    if (x.users.length) rows.push(['Who has it', seoEsc(x.users.map(u => u.c.name).join(', '))]);
+  } else if (x.kind === 'grind') {
+    if (x.foe) rows.push(['Fight', seoEsc(x.foe.c.name)]);
+    (c.rewards || []).filter(r => r && r.name).forEach(r => rows.push([seoEsc(r.name) + ' per win', 'Normal ' + val(r.normal) + ', Hard ' + val(r.hard)]));
+  } else {
+    if (c.group) rows.push([x.kind === 'chip' ? 'Tier' : 'Group', seoEsc(c.group)]);
+    if (c.effect) rows.push(['What it does', seoEsc(c.effect)]);
+    if (c.defense != null) rows.push(['Defense', '+' + val(c.defense)]);
+    if (c.price != null) rows.push(['Price', c.price === 0 ? 'Free' : val(c.price) + ' Faz Tokens']);
+    if (c.health != null) rows.push(['Health', pair(c.health)]);
+    if (c.attack != null) rows.push(['Attack', pair(c.attack)]);
+    if ((c.attacks || []).length) rows.push(['Moves', seoEsc(c.attacks.join(', '))]);
+    if (c.unlock) rows.push(['How to get', seoEsc(c.unlock)]);
+    const skins = (c.skins || []).filter(k => k && k.name).map(k => k.name);
+    if (skins.length) rows.push(['Skins', seoEsc(skins.join(', '))]);
+  }
+  let more = '';
+  if (x.kind === 'grind') (c.sections || []).forEach(sc => {
+    if (!sc || !sc.title) return;
+    more += '<h3>' + seoEsc(sc.title) + '</h3>' + (sc.text ? '<p>' + seoEsc(sc.text) + '</p>' : '') + (sc.steps && sc.steps.length ? '<ol>' + sc.steps.map(t => '<li>' + seoEsc(t) + '</li>').join('') + '</ol>' : '') + (sc.rows && sc.rows.length ? '<ul>' + sc.rows.map(r => '<li>' + seoEsc(r.label || '') + ': ' + seoEsc(r.text || '') + '</li>').join('') + '</ul>' : '');
+  });
+  return seoBlock(c.name + ' as text', '<h2>' + seoEsc(c.name) + '</h2><p>' + seoEsc(seoFwmSubLead(x)) + '</p><table><tbody>' + rows.filter(r => r[1]).map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('') + '</tbody></table>' + more + '<p><a href="' + base + '">FNaF World Multiplayer ' + seoEsc(sub.name) + '</a></p>');
+}
+async function seoFwmSub(p) {
+  const base = Object.keys(FWM_SUBS).filter(b => p.indexOf(b + '/') === 0)[0];
+  if (!base) return null;
+  const want = decodeURIComponent(p.slice(base.length + 1)).replace(/\/+$/, '');
+  const ix = await seoFwmSubIndex(base, 2500);
+  const x = ix && ix.list.filter(y => y.id === want)[0];
+  if (!x) return { missing: true, canon: base, meta: { title: 'Not found | FWM Wiki', desc: 'There is nothing in the FNaF World Multiplayer ' + FWM_SUBS[base].name + ' at this address. Open the ' + FWM_SUBS[base].name + ' to see everything it lists on Roblox.' } };
+  let html = '';
+  try { html = seoFwmSubHtml(x, base); } catch (e) { html = ''; }
+  const w = ix.worlds.filter(v => v && v.name === x.worlds[0])[0] || ix.worlds[0] || {};
+  return { fwChar: x, fwWorld: { color: w.color || '#0a1232', bg: w.background || '' }, lead: seoFwmSubLead(x), meta: seoFwmSubMeta(x, base), canon: await seoFwmCanon(base, x), html };
+}
+async function seoFwmSitemap(env, url) {
+  return sitemapCached(url, 'sitemap-fwm.xml', async () => {
+    const subs = await Promise.all(['/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/grind-methods'].map(b => seoFwmSubIndex(b, 4000)));
+    const pre = { '/fwm/roster': '', '/fwm/tech-specs': 'ts:', '/fwm/tierlist': 'mv:', '/fwm/grind-methods': 'gr:' };
+    const list = [];
+    ['/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/grind-methods'].forEach((b, i) => ((subs[i] && subs[i].list) || []).forEach(x => {
+      if (b === '/fwm/tierlist' && x.kind !== 'move') return;
+      list.push({ c: x.c, id: pre[b] + x.id, loc: b + '/' + encodeURIComponent(x.id) });
+    }));
+    const now = Date.now();
+    const st = { map: (await sitemapState(env, 'sitemap:lmf')) || {}, dirty: false };
+    st.first = !Object.keys(st.map).length;
+    const enc = new TextEncoder();
+    const sigs = await Promise.all(list.map(async x => wikiHex(new Uint8Array(await crypto.subtle.digest('SHA-1', enc.encode(JSON.stringify(x.c))))).slice(0, 16)));
+    const rows = list.map((x, i) => {
+      const t = sitemapStamp(st, x.id, sigs[i], now, now);
+      return '  <url><loc>' + seoEsc(SITE_URL + x.loc) + '</loc><lastmod>' + sitemapIso(t) + '</lastmod></url>';
+    });
+    if (st.dirty && env.PUSH_SUBS && list.length) {
+      try { await env.PUSH_SUBS.put('sitemap:lmf', JSON.stringify(st.map)); } catch (e) {}
+    }
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+    return new Response(body, { status: list.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  });
 }
 function seoFwmLink(name, page) {
   if (!page) return seoEsc(name);
@@ -4392,7 +4555,8 @@ function seoFwmMetaHtml(d) {
 }
 function seoFwmHtml(d) {
   if (!d || !Array.isArray(d.party)) return '';
-  const link = c => '<a href="/fwm/roster#' + encodeURIComponent(c.id || String(c.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) + '">' + seoEsc(c.name) + '</a>';
+  const ids = new Map(seoFwmIndex(d).list.map(x => [x.c, x.id]));
+  const link = c => '<a href="/fwm/roster/' + encodeURIComponent(ids.get(c) || seoFwmSlug(c.name)) + '">' + seoEsc(c.name) + '</a>';
   const val = v => v == null || v === '' ? '?' : seoEsc(typeof v === 'number' ? seoNum(v) : v);
   const has = v => v != null && v !== '';
   const pair = o => !o ? '?' : has(o.normal) && !has(o.hard) ? val(o.normal) + ' (Normal only)' : !has(o.normal) && has(o.hard) ? val(o.hard) + ' (Hard only)' : val(o.normal) + ' / ' + val(o.hard);
@@ -4415,6 +4579,10 @@ function seoFwmHtml(d) {
 
 async function seoSsr(realPath, pageSrc) {
   const p = seoPath(realPath);
+  if (p.indexOf('/fwm/') === 0 && p.split('/').length > 3) {
+    const sub = await seoFwmSub(p);
+    if (sub) return sub;
+  }
   if (p === '/fwm/grind-methods') {
     const [d, roster] = await Promise.all([seoTimed(seoLoadFwm('fnafworldgrind.json'), 2500), seoTimed(seoLoadFwm('fnafworld.json'), 2500)]);
     let html = '';
@@ -4645,7 +4813,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const PAGE_MOVED = { '/fwm/grind': '/fwm/grind-methods', '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams', '/fntd2/meta-teams-1': '/fntd2/meta-teams', '/fntd2': '/fntd2/fntd2-directory', '/bbn': '/bbn/bite-by-night-directory', '/modes': '/fntd2/fntd2-index', '/faq-fntd2': '/fntd2/fntd2-index', '/faq-fntd1': '/fntd1/faq-fntd1', '/value-list': '/fntd2/trade-calculator', '/fntd2/tradingui': '/fntd2/trade-calculator', '/unit-image-renders': '/fntd2/unit-engine', '/dps-list': '/fntd2/unit-engine', '/tierlists-1': '/fntd2/tierlists-1', '/info-charts': '/fntd2/fntd2-index', '/fntd2/info-charts': '/fntd2/fntd2-index', '/bbn-patch-notes': '/patch-notes/bbn-patch-notes', '/info-guides/night-shift': '/fntd1/night-shift', '/bbn/terminal-survivor': '/bbn/survivor-terminal', '/fntd2/boss-raids': '/fntd2/boss-raids-index', '/old-man-consequences': '/fntd2/boss-raids-index' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
-const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261025o"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261025l"><\/script>';
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261026b"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261026b"><\/script>';
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 const PV_UPDATE = {
   version: '2026-10-20',
@@ -8508,6 +8676,7 @@ export default {
     const pageMoved = PAGE_MOVED[url.pathname.replace(/^\/overhaul(?=\/)/, '').replace(/(\.html|\/)$/, '')];
     if (pageMoved) return Response.redirect(new URL((url.pathname.indexOf('/overhaul/') === 0 ? '/overhaul' : '') + pageMoved + url.search + url.hash, url).toString(), 301);
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap(env, url);
+    if (url.pathname === '/sitemap-fwm.xml') return seoFwmSitemap(env, url);
     if (url.pathname === '/sitemap.xml') return seoSitemap(env, url);
     if (url.pathname === '/llms.txt') return seoLlms();
     if (url.pathname === '/meta-engine.js') {
@@ -8552,7 +8721,7 @@ export default {
     const realPath = url.pathname;
 
     let assetReq = request;
-    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/wiki'];
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/meta-teams', '/fwm/grind-methods', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
       if (realPath.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
@@ -8606,8 +8775,9 @@ export default {
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">' + FWM_PRE_CSS + (ssr.fwWorld.bg ? '<link rel="preload" as="image" href="' + seoAttr(ssr.fwWorld.bg) + '">' : ''), { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
-          if (codesEmpty) el.append('<meta name="robots" content="noindex">', { html: true });
+          if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
         }
       })
       .on('link[rel="icon"]', {
@@ -8631,7 +8801,19 @@ export default {
         }
       })
       .on('.ug-page-title', {
-        element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
+        element(el) {
+          if (!h1Done) { h1Done = true; el.tagName = 'h1'; }
+          if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.fwChar.c.name), { html: true });
+        }
+      })
+      .on('.ug-page-desc', {
+        element(el) { if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.lead), { html: true }); }
+      })
+      .on('html', {
+        element(el) { if (ssr && ssr.fwChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char').trim()); }
+      })
+      .on('div.ad-slot, div#ug-hero', {
+        element(el) { if (ssr && ssr.fwChar) el.remove(); }
       })
       .on('div#ug-content', {
         element(el) {
@@ -8675,6 +8857,7 @@ export default {
       })
       .on('body', {
         element(el) {
+          if (ssr && ssr.fwChar) el.prepend('<div class="fwd-pre" aria-hidden="true"><i style="background-color:' + seoAttr(ssr.fwWorld.color) + (ssr.fwWorld.bg ? ';background-image:url(&quot;' + seoAttr(ssr.fwWorld.bg) + '&quot;)' : '') + '"></i><b></b></div>', { html: true });
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           el.append(PAGE_NOTES_SCRIPT, { html: true });
@@ -8684,9 +8867,11 @@ export default {
           el.append(noInfoPanel || pvMissing ? pollHtml.replace('data-auto="1"', 'data-auto="0"') : pollHtml, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
-          el.append(RAIL_HTML, { html: true });
-          el.append(CONTENT_AD_HTML, { html: true });
-          if (hasInfo) el.append(INFO_HTML, { html: true });
+          if (!(ssr && ssr.fwChar)) {
+            el.append(RAIL_HTML, { html: true });
+            el.append(CONTENT_AD_HTML, { html: true });
+          }
+          if (hasInfo) el.append(INFO_LAZY, { html: true });
           if (!noInfoPanel) {
             el.append('<script>window.PV_UPD=' + JSON.stringify(pageUpds || {}) + '<\/script>' + ACTIVE_SCRIPT, { html: true });
           }

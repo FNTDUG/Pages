@@ -1,5 +1,5 @@
 (function () {
-  var h = document.documentElement, t;
+  var h = document.documentElement, t, solo = h.classList.contains('fw-char');
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   h.classList.add('ov');
   setTimeout(function () { h.classList.add('ov-ready'); }, 2500);
@@ -9,9 +9,10 @@
   h.setAttribute('data-theme', t);
   [
     'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
-    '/overhaul/parvus-home.css',
+    solo ? '' : '/overhaul/parvus-home.css',
     '/overhaul/ov-pop.css'
   ].forEach(function (href) {
+    if (!href) return;
     if (href.indexOf('fonts.googleapis') !== -1 && document.querySelector('link[href*="family=Archivo+Black"]')) return;
     var l = document.createElement('link');
     l.rel = 'stylesheet';
@@ -71,7 +72,7 @@
       return;
     }
     var js = document.createElement('script');
-    js.src = '/overhaul/parvus-home.js';
+    js.src = '/overhaul/parvus-home.js?v=20261026a';
     js.onload = function () {
       var home = document.getElementById('parvusHome');
       sizeScreen();
@@ -584,6 +585,7 @@
   }
   function ready() {
     if (document.getElementById('pv-theme')) return;
+    if (solo) { h.classList.add('ov-ready'); return; }
     try {
       bar();
       pager();

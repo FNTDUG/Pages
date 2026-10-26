@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");var op=HTMLMediaElement.prototype.play,quiet=true;setTimeout(function(){quiet=false},15000);HTMLMediaElement.prototype.play=function(){if(quiet&&this.id==="unitConfirmSound"){quiet=false;return Promise.resolve();}return op.apply(this,arguments);};}}catch(e){}})();</script>
+<style>html.ue-focus #ug-hero-inner>:not(.ad-slot){display:none!important}html.ue-focus #ug-hero{padding-top:0!important;padding-bottom:0!important;min-height:0!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unit Engine / FNTD2 | FNTD Userguide</title>
@@ -1713,13 +1715,99 @@
 
     <script>
     (function() {
+      var unitRe = /\/unit-engine\/[^\/?#]+\/?$/, onUnit = unitRe.test(location.pathname), armed = !onUnit, moved = false;
+      function norm(u) { try { return decodeURIComponent(new URL(u, location.href).pathname).replace(/\/+$/, '').toLowerCase(); } catch (e) { return ''; } }
+      function jump() {
+        var ue = document.getElementById("unitEngine");
+        if (!ue || moved || document.documentElement.classList.contains("ue-focus")) return;
+        ue.scrollIntoView({ block: "start" });
+      }
+      function settle() {
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function (e) { if (e.isTrusted) moved = true; }, { passive: true }); });
+        requestAnimationFrame(jump);
+        [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
+        window.addEventListener("load", jump, { once: true });
+      }
+      var acTop = 0, acWant = null;
+      document.addEventListener("scroll", function (e) { if (e.target && e.target.id === "autocomplete") acTop = e.target.scrollTop; }, true);
+      try { acWant = sessionStorage.getItem("ue-ac"); sessionStorage.removeItem("ue-ac"); } catch (e) {}
+      if (acWant && document.documentElement.classList.contains("ue-focus")) {
+        document.addEventListener("focusin", function f(e) {
+          if (!e.target || e.target.id !== "unitSearch") return;
+          document.removeEventListener("focusin", f, true);
+          setTimeout(function () { var l = document.getElementById("autocomplete"); if (l) { l.scrollTop = +acWant; acTop = l.scrollTop; } }, 0);
+        }, true);
+      }
+      var goTimer = 0;
+      function go(url) {
+        try { var lk = document.createElement("link"); lk.rel = "prefetch"; lk.href = url; document.head.appendChild(lk); } catch (e) {}
+        var snd = document.getElementById("unitConfirmSound"), wait = 0;
+        if (snd && !snd.paused) {
+          var d = snd.duration;
+          wait = isFinite(d) && d > 0 ? Math.max(0, d - snd.currentTime) * 1000 + 40 : 350;
+          wait = Math.min(wait, 700);
+        }
+        clearTimeout(goTimer);
+        goTimer = setTimeout(function () {
+          try { sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
+          location.href = url;
+        }, wait);
+      }
+      var rs = history.replaceState;
+      history.replaceState = function (st, t, url) {
+        if (typeof url === "string" && unitRe.test(url.split(/[?#]/)[0])) {
+          if (norm(url) === norm(location.href)) {
+            if (!armed) { armed = true; settle(); }
+          } else if (armed) {
+            go(url);
+            return;
+          }
+        }
+        return rs.apply(history, arguments);
+      };
+      function pick(name, e) {
+        if (!armed || !name) return;
+        var url = location.pathname.replace(/(\/unit-engine)(\/.*)?$/, "$1") + "/" + encodeURIComponent(String(name).replace(/\s+/g, "-"));
+        if (norm(url) === norm(location.href)) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var inp = document.getElementById("unitSearch"), ac = document.getElementById("autocomplete"), snd = document.getElementById("unitConfirmSound");
+        if (inp) { inp.value = name; inp.blur(); }
+        if (ac) ac.style.display = "none";
+        if (snd) { try { snd.currentTime = 0; snd.volume = 0.4; var pr = snd.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (x) {} }
+        go(url);
+      }
+      document.addEventListener("click", function (e) {
+        var it = e.target && e.target.closest && e.target.closest("#autocomplete .autocomplete-item");
+        if (it) pick(it.textContent.trim(), e);
+      }, true);
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" || !e.isTrusted || !e.target || e.target.id !== "unitSearch") return;
+        var v = e.target.value.trim().toLowerCase(), its = document.querySelectorAll("#autocomplete .autocomplete-item");
+        for (var i = 0; i < its.length; i++) if (its[i].textContent.trim().toLowerCase() === v) { pick(its[i].textContent.trim(), e); return; }
+      }, true);
       var loader = document.getElementById("ue-loader");
-      fetch("https://rawcdn.githack.com/FNTDUG/characters.json/refs/heads/main/Unit-Engine")
+      var URL_UE = "https://rawcdn.githack.com/FNTDUG/characters.json/refs/heads/main/Unit-Engine", hit = null;
+      try { hit = JSON.parse(sessionStorage.getItem("ue-frag") || "null"); } catch (e) { hit = null; }
+      (hit && hit.s && Date.now() - hit.t < 300000 ? Promise.resolve(hit.s) : fetch(URL_UE)
         .then(function(r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.text();
         })
+        .then(function(t) {
+          try { sessionStorage.setItem("ue-frag", JSON.stringify({ t: Date.now(), s: t })); } catch (e) {}
+          return t;
+        }))
         .then(function(html) {
+          var init = null;
+          try { if (document.documentElement.classList.contains("ue-focus")) init = JSON.parse(sessionStorage.getItem("ue-st") || "null"); sessionStorage.removeItem("ue-st"); } catch (e) {}
+          window.__ueInit = init || {};
+          html = html.replace("var currentUnitLevel = 1;", "var currentUnitLevel = Math.max(1, Math.min(100, Math.round(+window.__ueInit.lvl) || 1));")
+            .replace("var isShinyMode = false;", "var isShinyMode = !!window.__ueInit.shiny;")
+            .replace("var isGlitchedMode = false;", "var isGlitchedMode = !!window.__ueInit.glitch; window.__ueState = function () { return { lvl: currentUnitLevel, shiny: isShinyMode, glitch: isGlitchedMode }; };")
+            .replace("function ueLoadExistsData() {", "(function () { try { var c = JSON.parse(sessionStorage.getItem(\"ue-exists\") || \"null\"); if (c && c.u && Date.now() - c.t < 600000) { __ueExists.byBaseName = c.u; __ueExists.loaded = true; } } catch (e) {} })();\n      function ueLoadExistsData() {")
+            .replace("__ueExists.byBaseName = data.units;", "__ueExists.byBaseName = data.units; try { sessionStorage.setItem(\"ue-exists\", JSON.stringify({ t: Date.now(), u: data.units })); } catch (e) {}")
+            .replace("document.addEventListener(\"ue-exists-ready\", function () {", "document.addEventListener(\"ue-exists-ready\", function () { allowDisplayAnimation = false;");
           loader.innerHTML = "";
           var range = document.createRange();
           range.selectNode(loader);
