@@ -1713,12 +1713,43 @@
 
     <script>
     (function() {
+      var unitRe = /\/unit-engine\/[^\/?#]+\/?$/, onUnit = unitRe.test(location.pathname), armed = !onUnit, moved = false;
+      function norm(u) { try { return decodeURIComponent(new URL(u, location.href).pathname).replace(/\/+$/, '').toLowerCase(); } catch (e) { return ''; } }
+      function jump() {
+        var ue = document.getElementById("unitEngine");
+        if (!ue || moved) return;
+        ue.scrollIntoView({ block: "start" });
+      }
+      function settle() {
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function () { moved = true; }, { once: true, passive: true }); });
+        requestAnimationFrame(jump);
+        [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
+        window.addEventListener("load", jump, { once: true });
+      }
+      var rs = history.replaceState;
+      history.replaceState = function (st, t, url) {
+        if (typeof url === "string" && unitRe.test(url.split(/[?#]/)[0])) {
+          if (norm(url) === norm(location.href)) {
+            if (!armed) { armed = true; settle(); }
+          } else if (armed) {
+            location.href = url;
+            return;
+          }
+        }
+        return rs.apply(history, arguments);
+      };
       var loader = document.getElementById("ue-loader");
-      fetch("https://rawcdn.githack.com/FNTDUG/characters.json/refs/heads/main/Unit-Engine")
+      var URL_UE = "https://rawcdn.githack.com/FNTDUG/characters.json/refs/heads/main/Unit-Engine", hit = null;
+      try { hit = JSON.parse(sessionStorage.getItem("ue-frag") || "null"); } catch (e) { hit = null; }
+      (hit && hit.s && Date.now() - hit.t < 300000 ? Promise.resolve(hit.s) : fetch(URL_UE)
         .then(function(r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.text();
         })
+        .then(function(t) {
+          try { sessionStorage.setItem("ue-frag", JSON.stringify({ t: Date.now(), s: t })); } catch (e) {}
+          return t;
+        }))
         .then(function(html) {
           loader.innerHTML = "";
           var range = document.createRange();
