@@ -559,13 +559,13 @@ html.ov:has(#ug-content[data-layout=wide]) .ov-hero{margin-bottom:46px}}
 html.ov:has(#ug-content[data-layout=wide]){--bar:#a39b8d;--backdrop:#857e71;--bar-text:#1d2228;--bar-mute:#2a2830;--bar-hover:rgba(29,34,40,.1)}
 html.ov[data-theme="dark"]:has(#ug-content[data-layout=wide]){--bar:#3b3848;--backdrop:#121117;--bar-text:#fff3df;--bar-mute:#cfc8dc;--bar-hover:rgba(255,255,255,.1)}
 html.ov:has(#ug-content[data-layout=wide]){--hdr-h:72px;--hdr-r:12px;--sheet:0px;--gear-top:14px!important}
-@media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]){--hdr-h:54px;--gear-top:11px!important}}
+@media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]){--hdr-h:62px;--gear-top:15px!important}html.ov:has(#ug-content[data-layout=wide]) #ug-hamburger{top:var(--gear-top)!important}}
 @media (min-width:1680px){html.ov:has(#ug-content[data-layout=wide]){--sheet:24px;--hdr-r:36px;background:var(--backdrop)!important}
 html.ov:has(#ug-content[data-layout=wide]) #ug-main{margin:0 var(--sheet) var(--sheet);background:var(--bg)!important}}
 .pv-bar{display:none}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar{position:fixed;top:0;left:var(--sheet);right:var(--sheet);z-index:1040;display:flex;align-items:stretch;gap:24px;height:var(--hdr-h);padding:0 calc(var(--hdr-r) + var(--menu-w,106px) + var(--info-gap,0px) + var(--gear-size,46px) * 2 + 40px) 0 20px;background:var(--bar);border-bottom:var(--bw) solid var(--ink);box-sizing:border-box}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand{display:flex;align-items:center;gap:10px;flex:none;color:var(--bar-text)!important;text-decoration:none!important;font:400 18px/1 var(--font-head);letter-spacing:.02em;text-transform:uppercase}
-html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand img{width:50px;height:45px;margin:0}
+html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand img{width:60px;height:50px;margin:0;image-rendering:pixelated}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-games{display:flex;gap:4px}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-games a{display:flex;align-items:center;padding:5px 16px 0;color:var(--bar-text)!important;font:700 14px/1 var(--font-body);letter-spacing:.1em;text-decoration:none!important;border-bottom:5px solid transparent;transition:background-color .12s}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-games a:hover{background:var(--bar-hover)}
@@ -574,9 +574,9 @@ html.ov:has(#ug-content[data-layout=wide]) .pv-bar a:focus-visible{outline:3px s
 @media (max-width:768px){html.ov:has(#ug-content[data-layout=wide]) .pv-bar{padding-left:12px}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-games{display:none}
 html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand{font-size:14px;gap:8px}
-html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand img{width:40px;height:36px}}
+}
 @media (max-width:520px){html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand span{display:none}
-html.ov:has(#ug-content[data-layout=wide]) .pv-bar-brand img{width:50px;height:45px}}
+}
 html.ov:has(#ug-content[data-layout=wide]) #ug-hero{padding-top:calc(var(--hdr-h) + 32px)!important}
 @media (max-width:600px){html.ov:has(#ug-content[data-layout=wide]) #ug-hero{padding-top:calc(var(--hdr-h) + 20px)!important}}
 html.ov:has(#ug-content[data-layout=wide]) #ug-hamburger{right:var(--hdr-r)!important}
