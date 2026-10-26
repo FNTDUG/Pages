@@ -1721,7 +1721,7 @@
         ue.scrollIntoView({ block: "start" });
       }
       function settle() {
-        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function () { moved = true; }, { once: true, passive: true }); });
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function (e) { if (e.isTrusted) moved = true; }, { passive: true }); });
         requestAnimationFrame(jump);
         [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
         window.addEventListener("load", jump, { once: true });
