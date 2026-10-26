@@ -311,6 +311,7 @@ button.fwd-char.is-still:hover .fwd-anim{transform:none}
 .fw.fw-page>.fw-tabs,.fw.fw-page>.fw-tools,.fw.fw-page .fw-grids{display:none}
 html.fw-char #ug-hero,html.fw-char .pv-bar,html.fw-char .ov-pager,html.fw-char #ug-hamburger,html.fw-char #ug-info-btn,html.fw-char #ug-sound-btn,html.fw-char .ntf-bell,html.fw-char #pv-theme,html.fw-char #pv-gear,html.fw-char #pv-ask,html.fw-char #pv-a11y,html.fw-char #pv-a11y-panel{display:none!important}
 html.fw-char #ug-content{padding-top:0!important}
+html.fw-char #ug-content>.fw{margin-top:0!important}
 .fwd--page{position:relative;inset:auto;z-index:0;width:100vw;min-height:100vh;margin-left:calc(50% - 50vw)}
 .fwd--page .fwd-scroll{position:relative;inset:auto;overflow:visible}
 .fwd--page .fwd-in{min-height:100vh}
