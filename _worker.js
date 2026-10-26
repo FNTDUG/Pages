@@ -8632,7 +8632,10 @@ export default {
         element(el) { if (!h1Done) { h1Done = true; el.tagName = 'h1'; } }
       })
       .on('div#ug-content', {
-        element(el) { el.tagName = 'main'; }
+        element(el) {
+          el.tagName = 'main';
+          if (!isOvHome && !el.getAttribute('data-layout')) el.setAttribute('data-layout', 'wide');
+        }
       })
       .on('div.ug-section-title, div.update-date', {
         element(el) { el.tagName = 'h2'; }
