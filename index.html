@@ -354,6 +354,18 @@ html.talk-on,html.talk-on body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .btn,.game,.game-top img,.arrow,html.ov #ug-mobile-nav,.rs{transition:none}
 }
+html.ov{--bar:#a39b8d;--backdrop:#857e71;--bar-text:#1d2228;--bar-mute:#2a2830;--home-col:1180px}
+html.ov[data-theme="dark"]{--bar:#3b3848;--backdrop:#121117;--bar-text:#fff3df;--bar-mute:#cfc8dc}
+.wrap{max-width:var(--home-col)}
+.hero{padding:128px 0 72px;background:var(--bar);border-bottom:var(--bw) solid var(--ink)}
+.hero-in{width:calc(100% - 48px);max-width:calc(var(--home-col) - 48px);padding:40px;background:var(--surface);border:var(--bw) solid var(--ink);box-shadow:var(--shadow)}
+html.ov #ug-footer{background:var(--bar);color:var(--bar-mute)}
+html.ov #ug-footer .ov-foot-legal a,html.ov #ug-footer .ov-foot-sep{color:var(--bar-text)!important}
+@media (min-width:1500px){.hero{padding-top:80px}}
+@media (min-width:1680px){html.ov{--home-col:calc(100vw - 468px)}html.ov,html.ov body{background:var(--backdrop)}html.ov #ug-main{margin:0 24px 24px;background:var(--bg)}}
+@media (max-width:960px){.hero{padding:128px 0 56px}}
+@media (max-width:768px){.hero{padding:96px 0 48px}}
+@media (max-width:600px){.hero-in{width:calc(100% - 32px);padding:20px}}
 </style>
 </head>
 <body>
