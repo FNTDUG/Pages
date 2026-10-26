@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");}}catch(e){}})();</script>
+<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");var op=HTMLMediaElement.prototype.play,quiet=true;setTimeout(function(){quiet=false},15000);HTMLMediaElement.prototype.play=function(){if(quiet&&this.id==="unitConfirmSound"){quiet=false;return Promise.resolve();}return op.apply(this,arguments);};}}catch(e){}})();</script>
 <style>html.ue-focus #ug-hero{display:none!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1728,13 +1728,23 @@
         [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
         window.addEventListener("load", jump, { once: true });
       }
+      var acTop = 0, acWant = null;
+      document.addEventListener("scroll", function (e) { if (e.target && e.target.id === "autocomplete") acTop = e.target.scrollTop; }, true);
+      try { acWant = sessionStorage.getItem("ue-ac"); sessionStorage.removeItem("ue-ac"); } catch (e) {}
+      if (acWant && document.documentElement.classList.contains("ue-focus")) {
+        document.addEventListener("focusin", function f(e) {
+          if (!e.target || e.target.id !== "unitSearch") return;
+          document.removeEventListener("focusin", f, true);
+          setTimeout(function () { var l = document.getElementById("autocomplete"); if (l) { l.scrollTop = +acWant; acTop = l.scrollTop; } }, 0);
+        }, true);
+      }
       var rs = history.replaceState;
       history.replaceState = function (st, t, url) {
         if (typeof url === "string" && unitRe.test(url.split(/[?#]/)[0])) {
           if (norm(url) === norm(location.href)) {
             if (!armed) { armed = true; settle(); }
           } else if (armed) {
-            try { sessionStorage.setItem("ue-focus", "1"); } catch (e) {}
+            try { sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-ac", String(acTop)); } catch (e) {}
             location.href = url;
             return;
           }
