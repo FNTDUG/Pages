@@ -2791,6 +2791,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ugInfoClose(
     .catch(function(){});
 })();
 <\/script>`;
+const INFO_LAZY = (() => {
+  const a = INFO_HTML.indexOf('<script>'), b = INFO_HTML.lastIndexOf('</script>');
+  if (a === -1 || b < a) return INFO_HTML;
+  const boot = '<script>(function(){var done=false;window.ugInfoToggle=function(){if(!done){done=true;var src=document.getElementById("ug-info-js");var s=document.createElement("script");s.text=src.textContent;document.body.appendChild(s);src.parentNode.removeChild(src);}if(window.ugInfoToggle&&!window.ugInfoToggle._boot)window.ugInfoToggle();};window.ugInfoToggle._boot=1;})();<\/script>';
+  return INFO_HTML.slice(0, a) + '<script type="text/plain" id="ug-info-js">' + INFO_HTML.slice(a + 8, b) + '</script>' + boot + INFO_HTML.slice(b + 9);
+})();
 
 
 const WIP_PAGES = {
@@ -8779,7 +8785,7 @@ export default {
             el.append(RAIL_HTML, { html: true });
             el.append(CONTENT_AD_HTML, { html: true });
           }
-          if (hasInfo) el.append(INFO_HTML, { html: true });
+          if (hasInfo) el.append(INFO_LAZY, { html: true });
           if (!noInfoPanel) {
             el.append('<script>window.PV_UPD=' + JSON.stringify(pageUpds || {}) + '<\/script>' + ACTIVE_SCRIPT, { html: true });
           }
