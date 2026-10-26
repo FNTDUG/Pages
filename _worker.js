@@ -438,7 +438,7 @@ const RAIL_HTML = `<script>
     var sy=window.scrollY||window.pageYOffset,top=(first?first.getBoundingClientRect().top:box.top)+sy,h=(last?last.getBoundingClientRect().bottom:box.bottom)+sy-top;
     if(h<700){hide();return;}
     var pos={left:Math.round(box.left-card),right:Math.round(vw-box.right-card)};
-    var n=Math.max(1,Math.floor(h/Math.max(1.5*window.innerHeight,1200)));
+    var n=Math.max(1,Math.floor(h/Math.max(window.innerHeight,1000)));
     ['left','right'].forEach(function(side){
       var w=rails[side].wrap;
       if(w.getAttribute('data-dismissed'))return;
