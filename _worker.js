@@ -4410,7 +4410,7 @@ function seoFwmSubMeta(x, base) {
   else if (x.kind === 'party') desc += ' Health, moves, skins and how to unlock it.';
   else if (x.kind === 'boss' || x.kind === 'enemy') desc += ' Health, attack, moves and where to fight it.';
   else if (x.kind === 'move') desc += ' ' + (c.description ? c.description + ' ' : '') + 'Damage, and which characters have it.';
-  else if (x.kind === 'grind') desc = c.name + ': a FNaF World Multiplayer grind method on Roblox. ' + (c.kicker ? c.kicker + '. ' : '') + 'Rewards per win, the team to use and step-by-step tips.';
+  else if (x.kind === 'grind') desc = c.name + ': a FNaF World Multiplayer grind method' + (c.kicker ? ' for ' + c.kicker : '') + ' on Roblox' + (x.foe ? ', fighting ' + x.foe.c.name : '') + '. Rewards per win, the team to use and step-by-step tips.';
   else desc += ' ' + (c.effect ? c.effect + ' ' : '') + (x.kind === 'chip' ? 'What it does and where to find it.' : 'What it does, its price and how to get it.');
   if (base === '/fwm/tierlist' && x.kind !== 'move') desc = desc.replace(/\.$/, '') + ' TierList rank included.';
   if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
@@ -4418,7 +4418,7 @@ function seoFwmSubMeta(x, base) {
 }
 function seoFwmSubLead(x) {
   const c = x.c, w = x.worlds;
-  if (x.kind === 'grind') return 'Grind method in FNaF World Multiplayer' + (x.foe ? ': fight ' + x.foe.c.name : '') + (w.length ? ' in ' + w.join(', ') : '') + '.' + (c.kicker ? ' ' + c.kicker + '.' : '');
+  if (x.kind === 'grind') return 'Grind method' + (c.kicker ? ' for ' + c.kicker : '') + ' in FNaF World Multiplayer' + (x.foe ? ': fight ' + x.foe.c.name : '') + (w.length ? ' in ' + w.join(', ') : '') + '.';
   if (x.kind === 'move') return 'Move in FNaF World Multiplayer' + (c.type ? ' (' + c.type + ')' : '') + '.' + (c.description ? ' ' + c.description : '');
   if (x.kind === 'byte' || x.kind === 'chip' || x.kind === 'armor') return x.label + (c.group ? ' (' + c.group + ')' : '') + ' in FNaF World Multiplayer.' + (c.effect ? ' ' + c.effect : '');
   return x.label + (w.length ? ' from ' + w.join(', ') : '') + ' in FNaF World Multiplayer.' + (c.about ? ' ' + c.about : '');
