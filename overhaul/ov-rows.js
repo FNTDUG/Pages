@@ -246,7 +246,7 @@
       if (!fine) shift = Math.round(box.clientLeft + (box.clientWidth - r0.width / sc) / 2 - (r0.left - br0.left) / sc);
       total = step * base.length;
       var need = box.clientWidth + step;
-      while (total < need) {
+      while (!filled && total < need) {
         base.forEach(function (el) { var c = copy(el); box.appendChild(c); extra.push(c); });
         total += step * base.length;
       }
