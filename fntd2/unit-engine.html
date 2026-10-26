@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus");var op=HTMLMediaElement.prototype.play,quiet=true;setTimeout(function(){quiet=false},15000);HTMLMediaElement.prototype.play=function(){if(quiet&&this.id==="unitConfirmSound"){quiet=false;return Promise.resolve();}return op.apply(this,arguments);};}}catch(e){}})();</script>
-<style>html.ue-focus #ug-hero-inner>:not(.ad-slot){display:none!important}html.ue-focus #ug-hero{padding-top:0!important;padding-bottom:0!important;min-height:0!important}html.ov.ue-focus #ug-content{padding-top:var(--hdr-h,72px)!important}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
+<script>(function(){try{if(/\/unit-engine\/[^\/?#]+\/?$/.test(location.pathname)&&sessionStorage.getItem("ue-focus")){sessionStorage.removeItem("ue-focus");document.documentElement.classList.add("ue-focus","ue-hold");setTimeout(function(){document.documentElement.classList.remove("ue-hold")},2500);var op=HTMLMediaElement.prototype.play,quiet=true;setTimeout(function(){quiet=false},15000);HTMLMediaElement.prototype.play=function(){if(quiet&&this.id==="unitConfirmSound"){quiet=false;return Promise.resolve();}return op.apply(this,arguments);};}}catch(e){}})();</script>
+<style>html.ue-hold #ug-main{visibility:hidden}#ue-loader{min-height:100vh}@view-transition{navigation:auto}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unit Engine / FNTD2 | FNTD Userguide</title>
@@ -1738,6 +1738,33 @@
           setTimeout(function () { var l = document.getElementById("autocomplete"); if (l) { l.scrollTop = +acWant; acTop = l.scrollTop; } }, 0);
         }, true);
       }
+      (function () {
+        var html = document.documentElement, want = null, stop = false;
+        try { want = sessionStorage.getItem("ue-top"); sessionStorage.removeItem("ue-top"); } catch (e) {}
+        if (!html.classList.contains("ue-focus") || want == null || want === "") { html.classList.remove("ue-hold"); return; }
+        want = +want;
+        ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (ev) { window.addEventListener(ev, function (e) { if (e.isTrusted) stop = true; }, { passive: true }); });
+        function place() {
+          var ue = document.getElementById("unitEngine");
+          if (stop || !ue) return;
+          var d = ue.getBoundingClientRect().top - want;
+          if (Math.abs(d) > 1) window.scrollBy(0, d);
+        }
+        function ready() { var r = document.getElementById("result"); return !!(r && r.children.length); }
+        var ro = window.ResizeObserver ? new ResizeObserver(place) : null;
+        if (ro) ro.observe(document.body);
+        var t0 = Date.now(), iv = setInterval(function () {
+          place();
+          if (ready() || Date.now() - t0 > 2500) {
+            clearInterval(iv);
+            place();
+            requestAnimationFrame(function () { place(); html.classList.remove("ue-hold"); });
+          }
+        }, 40);
+        [800, 1500, 2500, 4000].forEach(function (ms) { setTimeout(place, ms); });
+        setTimeout(function () { if (ro) ro.disconnect(); }, 6000);
+        window.addEventListener("load", place, { once: true });
+      })();
       var goTimer = 0;
       function go(url) {
         try { var lk = document.createElement("link"); lk.rel = "prefetch"; lk.href = url; document.head.appendChild(lk); } catch (e) {}
@@ -1749,7 +1776,7 @@
         }
         clearTimeout(goTimer);
         goTimer = setTimeout(function () {
-          try { sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
+          try { var ueb = document.getElementById("unitEngine"); sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-top", String(ueb ? Math.round(ueb.getBoundingClientRect().top) : 0)); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
           location.href = url;
         }, wait);
       }
