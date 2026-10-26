@@ -511,7 +511,7 @@
       if (i >= 0 && !entering && e.target.matches && e.target.matches(':focus-visible')) { box.scrollLeft = 0; glideTo(nearest(i * step)); }
     });
     box.addEventListener('keydown', stopAuto);
-    var outsideAt = -1e9, wheelTo = null, wheelT = 0;
+    var outsideAt = -1e9, wheelTo = null, wheelT = 0, heldAt = -1e9;
     window.addEventListener('wheel', function (e) { if (!box.contains(e.target)) outsideAt = e.timeStamp; }, { passive: true });
     box.addEventListener('wheel', function (e) {
       if (!on || e.ctrlKey) return;
@@ -521,8 +521,12 @@
       if (!d) return;
       if (bounded && !entering) {
         var from = wheelTo === null ? pos : wheelTo;
-        if ((d < 0 && from <= lo0 + 0.5) || (d > 0 && from >= hi0 - 0.5)) return;
+        if ((d < 0 && from <= lo0 + 0.5) || (d > 0 && from >= hi0 - 0.5)) {
+          if (e.timeStamp - heldAt < 400) { heldAt = e.timeStamp; e.preventDefault(); }
+          return;
+        }
       }
+      heldAt = e.timeStamp;
       e.preventDefault();
       stopAuto();
       if (entering) return;
