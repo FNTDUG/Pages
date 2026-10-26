@@ -1062,6 +1062,33 @@
     if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
     if (!dlg) build();
     show(c, 0);
+    var h2 = dlg.querySelector('h2.fwd-name');
+    if (h2) {
+      var h1 = document.createElement('h1');
+      h1.className = h2.className;
+      h1.id = h2.id;
+      h1.innerHTML = h2.innerHTML;
+      h2.parentNode.replaceChild(h1, h2);
+    }
+    var bk = dlg.querySelector('.fwd-back'), ru = null;
+    try { ru = document.referrer ? new URL(document.referrer) : null; } catch (e) { ru = null; }
+    var home = listBase.replace(/\/$/, ''), name = 'Roster';
+    if (ru && ru.origin === location.origin && ru.pathname.indexOf(listBase) !== 0 && ru.pathname.replace(/\/+$/, '') !== home) {
+      var best = null;
+      Array.prototype.forEach.call(document.querySelectorAll('#ug-mobile-nav a[data-nav-href]'), function (a) {
+        var p = a.getAttribute('data-nav-href');
+        if ((ru.pathname === p || ru.pathname.indexOf(p + '/') === 0) && (!best || p.length > best.getAttribute('data-nav-href').length)) best = a;
+      });
+      name = best ? best.firstChild.textContent.trim() : ru.pathname === '/' ? 'Home' : 'Back';
+      bk.href = document.referrer;
+      bk.addEventListener('click', function (e) {
+        if (history.length < 2 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        e.preventDefault();
+        history.back();
+      });
+    }
+    bk.querySelector('span').textContent = name;
+    bk.setAttribute('aria-label', 'Back to ' + name);
   }
   if (!isPage) {
     window.addEventListener('popstate', fromHash);

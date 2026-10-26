@@ -610,6 +610,3 @@ html.ov .ov-pager-list strong{font-weight:700;color:var(--sel-text,var(--yellow)
 html.ov .ov-pager-dot{color:var(--mute)}
 html.ov .ov-pager-list a,html.ov .ov-pager-list strong{white-space:nowrap}
 @media (max-width:600px){html.ov .ov-pager-row{grid-template-columns:1fr}html.ov .ov-pager-next{border-left:0;border-top:2px solid var(--surface2)}html.ov .ov-pager-none{display:none}}
-html.fw-char #ug-hero .ug-page-title-area>:not(.ug-page-title){display:none!important}
-html.fw-char #ug-hero .ov-copy{padding-top:24px;padding-bottom:26px}
-html.fw-char #ug-hero .ug-page-title{margin-bottom:0}
