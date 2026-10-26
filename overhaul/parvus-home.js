@@ -626,7 +626,7 @@ if (document.querySelector("[data-parvus-home]")) {
   WIGGLE.total = WIGGLE.ms.reduce(function (a, b) { return a + b; }, 0);
   var HAT  = { buildersclub: 12, party: 14, pith: 15 };
   var HAT_BOX = { buildersclub: [0, 88], party: [0, 83], pith: [0, 80] };
-  var EYE  = { base: 0, squint: 1, blinkC: 6, blinkR: 7, blinkL: 8, think: 13, pleased: 19 };
+  var EYE  = { base: 0, squint: 1, angry: 4, blinkC: 6, blinkR: 7, blinkL: 8, think: 13, pleased: 19 };
   var LOOK = [12, 14, 13, 15, 17, 16, 11, 18, 10];
   var TIRED_EYES = 9;
   var tired = (function () {
