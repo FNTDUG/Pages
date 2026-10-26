@@ -428,8 +428,10 @@ const RAIL_HTML = `<script>
     if(!rails)build();
     if(!railW)railW=vw>=2280?300:160;
     var card=railW+26,box=content.getBoundingClientRect();
-    var first=content.firstElementChild;
-    while(first&&!first.getBoundingClientRect().height)first=first.nextElementSibling;
+    var list=[],first=null,hero=document.querySelector('.ov-hero');
+    if(hero)for(var e=hero.nextElementSibling;e;e=e.nextElementSibling)list.push(e);
+    list=list.concat([].slice.call(content.children));
+    for(var i=0;i<list.length;i++){if(list[i].classList.contains('ad-slot')||!list[i].getBoundingClientRect().height)continue;first=list[i];break;}
     var last=content.lastElementChild;
     while(last&&!last.getBoundingClientRect().height)last=last.previousElementSibling;
     var sy=window.scrollY||window.pageYOffset,top=(first?first.getBoundingClientRect().top:box.top)+sy,h=(last?last.getBoundingClientRect().bottom:box.bottom)+sy-top;
