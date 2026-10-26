@@ -838,7 +838,7 @@
         if (e.key === 'Escape') { var bb = dlg.querySelector('.fwd-back'); if (bb) bb.click(); return; }
         if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.altKey && !e.ctrlKey && !e.metaKey && order.length > 1) {
           var to = dlg.querySelector(e.key === 'ArrowLeft' ? '.fwd-prev' : '.fwd-next');
-          if (to && to.href) location.href = to.href;
+          if (to && to.href) to.click();
         }
         return;
       }
@@ -869,7 +869,7 @@
       var dx = e.clientX - swipeX, dy = e.clientY - swipeY;
       swipeX = null;
       if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-        if (isPage) { var to = dlg.querySelector(dx < 0 ? '.fwd-next' : '.fwd-prev'); if (to && to.href) location.href = to.href; }
+        if (isPage) { var to = dlg.querySelector(dx < 0 ? '.fwd-next' : '.fwd-prev'); if (to && to.href) to.click(); }
         else step(dx < 0 ? 1 : -1);
       }
     });
@@ -1064,7 +1064,14 @@
     order = FW.order(data, c.kind, (ret && ret.sort) || baseSort, '');
     if (order.indexOf(c) === -1) order = FW.order(data, c.kind, 'world', '');
     if (!dlg) build();
-    show(c, 0);
+    var dir = 0;
+    try { dir = +sessionStorage.getItem('fw-dir') || 0; sessionStorage.removeItem('fw-dir'); } catch (e) {}
+    show(c, dir);
+    var pre = document.querySelector('.fwd-pre');
+    if (pre) requestAnimationFrame(function () { pre.parentNode.removeChild(pre); });
+    Array.prototype.forEach.call(dlg.querySelectorAll('.fwd-prev, .fwd-next'), function (a) {
+      a.addEventListener('click', function () { try { sessionStorage.setItem('fw-dir', a.classList.contains('fwd-next') ? '1' : '-1'); } catch (e) {} });
+    });
     var h2 = dlg.querySelector('h2.fwd-name');
     if (h2) {
       var h1 = document.createElement('h1');
@@ -1099,11 +1106,19 @@
   }
 
   function get(u) {
+    var key = 'fwc:' + u, hit = null;
+    function parse(t) { return JSON.parse(t.replace(/,(\s*[\]}])/g, '$1')); }
+    try { hit = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { hit = null; }
+    if (hit && hit.s && Date.now() - hit.t < 300000) {
+      try { return Promise.resolve(parse(hit.s)); } catch (e) {}
+    }
     return fetch(u, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.text();
     }).then(function (t) {
-      return JSON.parse(t.replace(/,(\s*[\]}])/g, '$1'));
+      var d = parse(t);
+      try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), s: t })); } catch (e) {}
+      return d;
     });
   }
   Promise.all([root.getAttribute('data-src') || DATA].concat(metaSrc ? [root.getAttribute('data-specs'), metaSrc] : []).map(function (u) { return u ? get(u) : null; })).then(function (r) {

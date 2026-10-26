@@ -4329,6 +4329,12 @@ function seoFwmSpecsHtml(d) {
 function seoFwmSlug(s) {
   return String(s || '').toLowerCase().replace(/&/g, 'and').replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
 }
+const FWM_PRE_CSS = '<style>html.fw-char,html.fw-char body{background:#0a1232!important}html.fw-char #ug-main{visibility:hidden}' +
+  '.fwd-pre{position:fixed;inset:0;z-index:2147483646;background:#0a1232;pointer-events:none}.fwd-pre i,.fwd-pre b{position:absolute;inset:0}' +
+  '.fwd-pre i{background-position:center 58%;background-size:cover;background-repeat:no-repeat}' +
+  '.fwd-pre b{background:linear-gradient(90deg,rgba(6,10,30,0) 0%,rgba(6,10,30,.12) 36%,rgba(6,10,30,.84) 56%,rgba(6,10,30,.92) 100%)}' +
+  '@media (max-width:860px){.fwd-pre i{bottom:auto;height:64vh}.fwd-pre b{background:linear-gradient(180deg,rgba(6,10,30,.05) 0%,rgba(6,10,30,.12) 34%,rgba(10,18,50,.9) 54%,#0a1232 64vh,#0a1232 100%)}}' +
+  '@view-transition{navigation:auto}</style>';
 const FWM_KINDS = [['party', 'party', 'Party member'], ['bosses', 'boss', 'Boss'], ['enemies', 'enemy', 'Enemy'], ['npcs', 'npc', 'NPC']];
 function seoFwmChars(d) {
   const out = [], seen = {};
@@ -4481,7 +4487,9 @@ async function seoSsr(realPath, pageSrc) {
     if (!x) return { missing: true, canon: '/fwm/roster', meta: { title: 'Character not found | FWM Wiki', desc: 'There is no FNaF World Multiplayer character at this address. Open the Roster to see every party member, boss, enemy and NPC in FWM on Roblox.' } };
     let html = '';
     try { html = seoFwmCharHtml(x); } catch (e) { html = ''; }
-    return { fwChar: x, lead: seoFwmCharLead(x), meta: seoFwmCharMeta(x), canon: '/fwm/roster/' + encodeURIComponent(x.id), html };
+    const wn = x.c.world || (x.c.worlds || [])[0], d0 = seoFwm['fnafworld.json'] && seoFwm['fnafworld.json'].data, ws = (d0 && d0.worlds) || [];
+    const w = ws.filter(v => v && v.name === wn)[0] || ws[0] || {};
+    return { fwChar: x, fwWorld: { color: w.color || '#0a1232', bg: w.background || '' }, lead: seoFwmCharLead(x), meta: seoFwmCharMeta(x), canon: '/fwm/roster/' + encodeURIComponent(x.id), html };
   }
   if (p === '/fwm/grind-methods') {
     const [d, roster] = await Promise.all([seoTimed(seoLoadFwm('fnafworldgrind.json'), 2500), seoTimed(seoLoadFwm('fnafworld.json'), 2500)]);
@@ -8675,7 +8683,7 @@ export default {
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
-          if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">', { html: true });
+          if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">' + FWM_PRE_CSS + (ssr.fwWorld.bg ? '<link rel="preload" as="image" href="' + seoAttr(ssr.fwWorld.bg) + '">' : ''), { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
           if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
         }
@@ -8757,6 +8765,7 @@ export default {
       })
       .on('body', {
         element(el) {
+          if (ssr && ssr.fwChar) el.prepend('<div class="fwd-pre" aria-hidden="true"><i style="background-color:' + seoAttr(ssr.fwWorld.color) + (ssr.fwWorld.bg ? ';background-image:url(&quot;' + seoAttr(ssr.fwWorld.bg) + '&quot;)' : '') + '"></i><b></b></div>', { html: true });
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
           el.append(PAGE_NOTES_SCRIPT, { html: true });
