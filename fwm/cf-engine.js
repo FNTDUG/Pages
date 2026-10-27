@@ -1059,10 +1059,10 @@ window.CFGame = function (opt) {
       if (e.fixed) { X = e.x + dx; Y = e.y + dy; }
       else {
         var ly = L.layers[e.ly] || [1, 1, 16], fl = ly[2], odx = ox, ndx = nx, ody = oy, ndy = ny;
-        if (fl & 1) { odx = ly[0] * ox; ndx = ly[0] * nx; }
-        if (fl & 2) { ody = ly[1] * oy; ndy = ly[1] * ny; }
-        X = trunc((e.x + odx) - ndx + dx);
-        Y = trunc((e.y + ody) - ndy + dy);
+        if (fl & 1) { odx = trunc(ly[0] * ox); ndx = trunc(ly[0] * nx); }
+        if (fl & 2) { ody = trunc(ly[1] * oy); ndy = trunc(ly[1] * ny); }
+        X = e.x + odx - ndx + dx;
+        Y = e.y + ody - ndy + dy;
       }
       if (X === e.x && Y === e.y) continue;
       if (e.t === 2 && e.hasMove && e.mv) { setX(e, X); setY(e, Y); }
