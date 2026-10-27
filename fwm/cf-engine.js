@@ -1045,12 +1045,12 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {}, GT = 0;
+  var SND_END = {}, GT = 0, quiet = false;
   function playing(name) { return (SND_END[name] || 0) > GT; }
   function play(name, ch, loop) {
     if (!D.sounds[name]) return;
     SND_END[name] = GT + (BUF[name] ? BUF[name].duration * 1000 : 3000);
-    if (muted) return;
+    if (muted || quiet) return;
     if (loop && /\.mp3$/.test(D.sounds[name])) { music(name, ch); return; }
     if (MUS && MUS.ch === ch) stopMusic();
     var a = audio();
@@ -1400,7 +1400,15 @@ window.CFGame = function (opt) {
     stopAll();
     mode = 'title';
     if (opt.title != null) startFrame(opt.title);
-    else { L = null; startFrame(opt.play); L.idle = true; stopAll(); }
+    else {
+      L = null;
+      quiet = true;
+      startFrame(opt.play);
+      for (var i = 0; i < (opt.idleTicks || 0); i++) tick();
+      quiet = false;
+      L.idle = true;
+      stopAll();
+    }
     syncButtons();
   }
   function finish() {

@@ -10,6 +10,7 @@
     ver: '?v=1',
     title: null,
     play: 44,
+    idleTicks: 30,
     defaultReward: 43,
     codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 37, right: 39, jump: 90 },
