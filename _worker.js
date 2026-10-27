@@ -3452,7 +3452,7 @@ async function pushSend(request, env) {
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
 const SEO_OG_V = 5;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-minigames': 'FWM Minigames on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
@@ -3460,6 +3460,7 @@ function seoOgName(p) {
   if (p === '/fwm/meta-teams') return 'fwm-meta';
   if (p === '/fwm/tierlist') return 'fwm-tiers';
   if (p === '/fwm/grind-methods') return 'fwm-grind-methods';
+  if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters') return 'fwm-minigames';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
