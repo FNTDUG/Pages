@@ -1535,8 +1535,10 @@ window.CFGame = function (opt) {
     var a = muted ? null : audio();
     if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
     if (a) { try { var un = a.createBufferSource(); un.buffer = a.createBuffer(1, 1, 22050); un.connect(a.destination); un.start(0); } catch (e) {} }
+    if (PHONE && !isFS() && !pseudo) enterFS();
     endBox.hidden = true;
     paused = false;
+    rotPaused = false;
     mode = 'play';
     KEY = {};
     PREV = {};
@@ -1547,11 +1549,14 @@ window.CFGame = function (opt) {
     GLOBAL.start = Date.now();
     syncButtons();
     run();
+    checkRot();
     try { cv.focus({ preventScroll: true }); } catch (e) { cv.focus(); }
   }
   function toTitle() {
     stopAll();
     mode = 'title';
+    if (stage && (pseudo || (PHONE && isFS()))) exitFS();
+    else if (stage) checkRot();
     if (opt.title != null) startFrame(opt.title);
     else {
       L = null;
@@ -1597,13 +1602,65 @@ window.CFGame = function (opt) {
     }
     syncButtons();
   });
+  var stage = root.querySelector('.fis-stage'), pseudo = false, rotPaused = false;
+  var PHONE = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) && Math.min(screen.width, screen.height) <= 600;
+  if (!document.getElementById('fis-fs-css')) {
+    var fsCss = document.createElement('style');
+    fsCss.id = 'fis-fs-css';
+    fsCss.textContent = '.fis-stage.fis-pseudo{position:fixed;inset:0;z-index:2147483647;max-width:none;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;border:0;box-shadow:none;background:#070b18}' +
+      '.fis-stage.fis-pseudo .fis-canvas{flex:1 1 0;min-height:0;width:auto;height:auto;max-width:100vw;aspect-ratio:800/480;object-fit:contain;margin:0 auto}' +
+      '.fis-stage.fis-pseudo .fis-pad{position:static;flex:none;width:100%;border:0}' +
+      '@media (min-aspect-ratio:41/20){.fis-stage.fis-pseudo .fis-canvas{flex:none;height:100vh;height:100dvh}.fis-stage.fis-pseudo .fis-pad{position:absolute;inset:0;align-items:stretch;padding:12px 10px;background:transparent;pointer-events:none}.fis-stage.fis-pseudo .fis-pad div,.fis-stage.fis-pseudo .fis-pad div+div{flex:none;flex-direction:column;justify-content:center;width:calc((100vw - 100dvh * 5 / 3) / 2 - 18px);pointer-events:auto}.fis-stage.fis-pseudo .fis-pad button{flex:1 1 0;max-height:130px}}' +
+      '.fis-x{display:none;position:absolute;top:6px;left:50%;z-index:4;width:40px;height:40px;margin-left:-20px;align-items:center;justify-content:center;padding:0;font:700 18px/1 system-ui,sans-serif;color:#fff;background:rgba(7,11,24,.55);border:2px solid rgba(255,255,255,.7);border-radius:50%;cursor:pointer}' +
+      '.fis-stage:fullscreen .fis-x,.fis-stage.fis-pseudo .fis-x{display:flex}' +
+      '.fis-rotate{display:none;position:absolute;inset:0;z-index:6;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:#070b18;color:#fff;text-align:center;font:400 13px/1.7 "Press Start 2P",monospace}' +
+      '.fis-rotate-ico{width:46px;height:78px;border:4px solid #fff;border-radius:9px;animation:fisRot 1.8s ease-in-out infinite}' +
+      '@keyframes fisRot{0%,25%{transform:rotate(0)}55%,100%{transform:rotate(90deg)}}' +
+      '@media (prefers-reduced-motion:reduce){.fis-rotate-ico{animation:none;transform:rotate(90deg)}}' +
+      '.fis-stage.fis-portrait .fis-rotate{display:flex}';
+    document.head.appendChild(fsCss);
+  }
+  var rot = document.createElement('div');
+  rot.className = 'fis-rotate';
+  rot.innerHTML = '<div class="fis-rotate-ico" aria-hidden="true"></div><p>Turn your phone sideways to play</p>';
+  stage.appendChild(rot);
+  var xBtn = document.createElement('button');
+  xBtn.type = 'button';
+  xBtn.className = 'fis-x';
+  xBtn.setAttribute('aria-label', 'Exit full screen');
+  xBtn.textContent = '\u2715';
+  stage.appendChild(xBtn);
+  function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function lockLand() { try { var o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(function () {}); } catch (e) {} }
+  function pseudoOn() { pseudo = true; stage.classList.add('fis-pseudo'); document.documentElement.style.overflow = 'hidden'; checkRot(); }
+  function enterFS() {
+    var req = stage.requestFullscreen || stage.webkitRequestFullscreen;
+    if (!req) { pseudoOn(); return; }
+    try {
+      var pr = req.call(stage, { navigationUI: 'hide' });
+      if (pr && pr.then) pr.then(lockLand, pseudoOn); else lockLand();
+    } catch (e) { pseudoOn(); }
+  }
+  function exitFS() {
+    if (isFS()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
+    if (pseudo) { pseudo = false; stage.classList.remove('fis-pseudo'); document.documentElement.style.overflow = ''; }
+    try { screen.orientation.unlock(); } catch (e) {}
+    checkRot();
+  }
+  function checkRot() {
+    var portrait = PHONE && mode === 'play' && window.innerHeight > window.innerWidth;
+    stage.classList.toggle('fis-portrait', portrait);
+    if (portrait && !paused) { rotPaused = true; pause(true); }
+    else if (!portrait && rotPaused) { rotPaused = false; if (paused) pause(false); }
+  }
+  window.addEventListener('resize', checkRot);
+  window.addEventListener('orientationchange', function () { setTimeout(checkRot, 250); });
+  document.addEventListener('fullscreenchange', checkRot);
+  xBtn.addEventListener('click', exitFS);
   if (fullBtn) {
-    var fsTarget = root.querySelector('.fis-stage');
-    if (!(fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen)) fullBtn.hidden = true;
     fullBtn.addEventListener('click', function () {
-      var d = document;
-      if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
-      else (fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen).call(fsTarget);
+      if (isFS() || pseudo) exitFS();
+      else enterFS();
     });
   }
 
