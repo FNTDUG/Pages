@@ -9,7 +9,7 @@
   var api = window.CFGame({
     root: root,
     base: '/fwm/foxyfighters/',
-    ver: '?v=1',
+    ver: '?v=2',
     title: null,
     play: 35,
     defaultReward: 42,
