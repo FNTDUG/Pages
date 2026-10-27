@@ -47,6 +47,7 @@ const MOBILE_NAV_BODY = `
     <a href="/fwm/tierlist"             class="ug-mn-child" data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         class="ug-mn-child" data-nav-href="/fwm/grind-methods">Grind Methods</a>
+    <a href="/fwm/minigames"             class="ug-mn-child" data-nav-href="/fwm/minigames">Minigames</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -110,6 +111,7 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/tierlist"             data-nav-href="/fwm/tierlist">TierList</a>
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         data-nav-href="/fwm/grind-methods">Grind Methods</a>
+    <a href="/fwm/minigames"             data-nav-href="/fwm/minigames">Minigames</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3517,6 +3519,11 @@ const SEO_PAGES = {
   '/fwm/tierlist': ['FWM TierList: Best FNaF World Multiplayer Characters', 'FNaF World Multiplayer tier list for Roblox: every party member, move, Byte and Chip ranked from S to D, with notes on why each one sits where it does.'],
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
   '/fwm/grind-methods': ['FWM Grind Methods: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
+  '/fwm/foxy-exe': ['Foxy.EXE: Play the FNaF World Minigame Remake Online', 'Play Foxy.EXE in your browser, a fan remake of the creepy FNaF World walking minigame. Keep your 3 lives, reach the end and unlock Nightmarionne.'],
+  '/fwm/minigames': ['FWM Minigames: Play the FNaF World Minigames Online', "Play the FNaF World minigames in your browser: FNaF 57: Freddy in Space, Foxy.EXE, Chica's Magic Rainbow and Foxy Fighters, remade from the original game."],
+  '/fwm/foxy-fighters': ['Foxy Fighters: Play the FNaF World Minigame Remake Online', 'Play Foxy Fighters in your browser, a fan remake of the FNaF World space shooter. Fly with the Chica squadron and beat the Souldozer to unlock Nightmare BB.'],
+  '/fwm/chicas-magic-rainbow': ['Chica\'s Magic Rainbow: Play the FNaF World Minigame Online','Play Chica\'s Magic Rainbow in your browser, a fan remake of the FNaF World platformer. Dodge petals, lasers and spikes to unlock Animdude or Mr. Chipper.'],
+  '/fwm/freddy-in-space': ['FNaF 57: Freddy in Space: Play the Fan Remake Online', "Play FNaF 57: Freddy in Space in your browser, a fan remake of the FNaF World minigame. Find 9 cupcakes, beat Scott's Head and unlock Purple Guy."],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/staff': ['FNTD User Guide Staff: Owner, Site Editors & Researchers', 'Meet the staff behind the FNTD User Guide: the owner, site editors, researchers, QA team and management who keep the Roblox guides up to date.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
