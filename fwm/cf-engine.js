@@ -1012,7 +1012,8 @@ window.CFGame = function (opt) {
     if (!D.sounds[name]) return;
     SND_END[name] = performance.now() + (BUF[name] ? BUF[name].duration * 1000 : 3000);
     if (muted) return;
-    if (loop && /\.mp3$/.test(D.sounds[name])) { music(name); return; }
+    if (loop && /\.mp3$/.test(D.sounds[name])) { music(name, ch); return; }
+    if (MUS && MUS.ch === ch) stopMusic();
     var a = audio();
     if (!a) return;
     if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
@@ -1030,11 +1031,13 @@ window.CFGame = function (opt) {
       s.onended = function () { if (CH[ch] === s) delete CH[ch]; };
     });
   }
-  function music(name) {
+  function music(name, ch) {
     if (MUS && MUS.dataset.n === name) return;
     stopMusic();
+    if (CH[ch]) { try { CH[ch].stop(); } catch (e) {} delete CH[ch]; }
     MUS = new Audio(BASE + 'snd/' + encodeURIComponent(D.sounds[name]) + VER);
     MUS.dataset.n = name;
+    MUS.ch = ch;
     MUS.loop = true;
     MUS.volume = MUS_VOL;
     var p = MUS.play();
