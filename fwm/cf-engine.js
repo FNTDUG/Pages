@@ -1358,6 +1358,17 @@ window.CFGame = function (opt) {
     g.drawImage(scene, 0, 0);
   }
 
+  var selLocked = false;
+  function lockSelect(on) {
+    selLocked = on;
+    var st = document.documentElement.style;
+    st.webkitUserSelect = on ? 'none' : '';
+    st.userSelect = on ? 'none' : '';
+    st.webkitTouchCallout = on ? 'none' : '';
+    if (on) { try { var sel = window.getSelection(); if (sel) sel.removeAllRanges(); } catch (e) {} }
+  }
+  document.addEventListener('selectstart', function (e) { if (selLocked) e.preventDefault(); });
+  cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
   var INV = {};
   function inverted(h) {
     if (INV[h]) return INV[h];
@@ -1493,6 +1504,7 @@ window.CFGame = function (opt) {
     muteBtn.textContent = muted ? 'Sound off' : 'Sound on';
     muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
     root.classList.toggle('fis-live', live);
+    if (live !== selLocked) lockSelect(live);
     cv.style.cursor = live && L.noCursor ? 'none' : '';
   }
   function begin() {
@@ -1616,6 +1628,7 @@ window.CFGame = function (opt) {
     b.addEventListener('pointercancel', off);
     b.addEventListener('lostpointercapture', off);
     b.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    b.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
   });
 
   var raf = 0, last = 0, acc = 0, seen = true;

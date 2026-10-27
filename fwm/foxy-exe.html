@@ -27,14 +27,14 @@
 <style>
 .fis{--fis-ink:var(--ink,#1d2228);--fis-surface:var(--surface,#fffaf2);--fis-text:var(--text,#1d2228);max-width:960px;margin:0 auto;color:var(--fis-text);font:500 15px/1.6 var(--font-body,'Space Grotesk',system-ui,sans-serif)}
 .fis-stage{position:relative;background:#070b18;border:3px solid var(--fis-ink);box-shadow:6px 6px 0 var(--fis-ink);overflow:hidden}
-.fis-canvas{display:block;width:100%;height:auto;aspect-ratio:800/480;outline:none;touch-action:manipulation;background:#000}
+.fis-canvas{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:block;width:100%;height:auto;aspect-ratio:800/480;outline:none;touch-action:manipulation;background:#000}
 .fis-start{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);padding:12px 28px;font:400 14px/1 'Press Start 2P',monospace;color:#1d2228;background:#ffd23f;border:3px solid #000;box-shadow:4px 4px 0 #000;cursor:pointer}
 .fis-start:focus-visible,.fis-bar button:focus-visible,.fis-end a:focus-visible,.fis-end button:focus-visible{outline:3px solid #7fd8ff;outline-offset:3px}
 .fis-start:active{transform:translate(calc(-50% + 3px),3px);box-shadow:1px 1px 0 #000}
 .fis-bar{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}
 .fis-bar button,.fis-again{padding:10px 16px;font:700 14px/1 var(--font-body,'Space Grotesk',sans-serif);color:var(--fis-text);background:var(--fis-surface);border:3px solid var(--fis-ink);box-shadow:3px 3px 0 var(--fis-ink);cursor:pointer;min-height:44px}
 .fis-bar button:active,.fis-again:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--fis-ink)}
-.fis-pad{display:none;justify-content:space-between;gap:14px;padding:10px;background:#0d1328;border-top:3px solid var(--fis-ink);touch-action:none;user-select:none;-webkit-user-select:none}
+.fis-pad{display:none;justify-content:space-between;gap:14px;padding:10px;background:#0d1328;border-top:3px solid var(--fis-ink);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .fis-pad div{display:flex;flex:3;gap:8px;min-width:0}.fis-pad div+div{flex:2}
 .fis-pad button{flex:1;min-width:0;min-height:58px;padding:0 2px;white-space:nowrap;font:400 10px/1 'Press Start 2P',monospace;color:#fff;background:#26304f;border:3px solid #000;box-shadow:0 4px 0 #000;border-radius:10px;touch-action:none;-webkit-tap-highlight-color:transparent}
 .fis-pad button.on{transform:translateY(3px);box-shadow:0 1px 0 #000;background:#3a4a78}
@@ -100,8 +100,8 @@
     <p class="fis-note">A fan remake for the FNTD User Guide that runs in your browser. FNaF World, Foxy.EXE and its art are by Scott Cawthon. The game code is our own, and the remake is not affiliated with him.</p>
   </section>
 </div>
-<script src="/fwm/cf-engine.js?v=20261027n" defer></script>
-<script src="/fwm/foxy-exe.js?v=20261027n" defer></script>
+<script src="/fwm/cf-engine.js?v=20261027o" defer></script>
+<script src="/fwm/foxy-exe.js?v=20261027o" defer></script>
 
           <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
