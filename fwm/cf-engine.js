@@ -1052,7 +1052,7 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {}, GT = 0, quiet = false, CHV = {}, CHG = {};
+  var SND_END = {}, SND_TOK = {}, GT = 0, quiet = false, CHV = {}, CHG = {};
   function setVolume(ch, v) {
     CHV[ch] = Math.max(0, Math.min(100, v)) / 100;
     if (CHG[ch]) CHG[ch].gain.value = CHV[ch];
@@ -1066,8 +1066,14 @@ window.CFGame = function (opt) {
   function playing(name) { return (SND_END[name] || 0) > GT; }
   function play(name, ch, loop) {
     if (!D.sounds[name]) return;
-    SND_END[name] = GT + (BUF[name] ? BUF[name].duration * 1000 : 3000);
-    if (muted || quiet) return;
+    var t0 = GT;
+    SND_END[name] = t0 + (BUF[name] ? BUF[name].duration * 1000 : 3000);
+    SND_TOK[name] = t0;
+    if (quiet) return;
+    if (muted) {
+      if (!loop && !BUF[name]) loadSnd(name, function (b) { if (SND_TOK[name] === t0) SND_END[name] = t0 + b.duration * 1000; });
+      return;
+    }
     if (loop && /\.mp3$/.test(D.sounds[name])) { music(name, ch); return; }
     if (MUS && MUS.ch === ch) stopMusic();
     var a = audio();
@@ -1085,7 +1091,7 @@ window.CFGame = function (opt) {
       gn.connect(GAIN || a.destination);
       CHG[ch] = gn;
       s.start();
-      if (!loop) SND_END[name] = GT + b.duration * 1000;
+      if (!loop && SND_TOK[name] === t0) SND_END[name] = GT + b.duration * 1000;
       CH[ch] = s;
       s.onended = function () { if (CH[ch] === s) delete CH[ch]; };
     });
@@ -1106,6 +1112,7 @@ window.CFGame = function (opt) {
   function stopAll() {
     stopMusic();
     SND_END = {};
+    SND_TOK = {};
     for (var k in CH) { try { CH[k].stop(); } catch (e) {} }
     CH = {};
   }
