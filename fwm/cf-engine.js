@@ -356,6 +356,7 @@ window.CFGame = function (opt) {
       e.minS = 0;
       e.maxS = 100;
       L.noCursor = true;
+      L.mouseFrame = true;
     } else {
       e.mv = { t: 0 };
       e.speed = 0;
@@ -1209,6 +1210,8 @@ window.CFGame = function (opt) {
     if (f === 43) each('found new', function (e) { e.val = GLOBAL.found; });
     else hideArt();
     if (START[f]) START[f]();
+    root.classList.toggle('fis-nopad', !!L.mouseFrame);
+    cv.style.cursor = mode === 'play' && L.noCursor ? 'none' : '';
   }
 
   var START = {}, EV = {}, TRIG = {};
@@ -1529,6 +1532,8 @@ window.CFGame = function (opt) {
     root.classList.toggle('fis-live', live);
     if (live !== selLocked) lockSelect(live);
     cv.style.cursor = live && L.noCursor ? 'none' : '';
+    var mousey = !!(L && L.mouseFrame);
+    if (root.classList.contains('fis-nopad') !== mousey) root.classList.toggle('fis-nopad', mousey);
   }
   function begin() {
     if (!loaded) return;
@@ -1618,6 +1623,7 @@ window.CFGame = function (opt) {
       '@media (prefers-reduced-motion:reduce){.fis-rotate-ico{animation:none;transform:rotate(90deg)}}' +
       '.fis-stage.fis-portrait .fis-rotate{display:flex}' +
       '.fis .fis-stage .fis-pad{position:absolute;inset:0;z-index:3;padding:0;margin:0;background:transparent;border:0;pointer-events:none}' +
+      '.fis.fis-nopad .fis-stage .fis-pad{display:none!important}' +
       '.fis .fis-pad .fis-stick-zone{position:absolute;left:0;top:0;bottom:0;width:50%;display:block;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
       '.fis .fis-pad .fis-stick{position:absolute;left:var(--sx,22%);top:var(--sy,70%);display:block;width:var(--ring,110px);height:var(--ring,110px);transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.35);box-sizing:border-box;pointer-events:none}' +
       '.fis .fis-pad .fis-knob{position:absolute;left:27%;top:27%;display:block;width:46%;height:46%;border-radius:50%;background:rgba(255,255,255,.42);border:2px solid rgba(255,255,255,.75);box-sizing:border-box}' +

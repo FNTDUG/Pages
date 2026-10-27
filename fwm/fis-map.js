@@ -1,7 +1,7 @@
 (function () {
   var root = document.getElementById('fm');
   if (!root) return;
-  var BASE = '/fwm/fis57/map/', VER = '?v=1', MW = 8000, MH = 4800, TILE = 1000;
+  var BASE = '/fwm/fis57/map/', VER = '?v=2', MW = 8000, MH = 5000, OFFY = 200, TILE = 1000;
   var DY = { cupcake: -36, spring: -38, teleport: -38, heart: -16, start: -96, boss: 0 };
   var CATS = {
     cupcake: { name: 'Cupcakes', icon: 'cupcake' },
@@ -9,7 +9,7 @@
     boss: { name: 'Boss', icon: 'boss' }
   };
   var PINS = [
-    { cat: 'cupcake', icon: 'cupcake', x: 1407, y: 30, name: 'Cupcake 1' },
+    { cat: 'cupcake', icon: 'cupcake', x: 1407, y: 30, name: 'Cupcake 1', below: true },
     { cat: 'cupcake', icon: 'cupcake', x: 3964, y: 346, name: 'Cupcake 2' },
     { cat: 'cupcake', icon: 'cupcake', x: 1263, y: 815, name: 'Cupcake 3' },
     { cat: 'cupcake', icon: 'cupcake', x: 1999, y: 1103, name: 'Cupcake 4' },
@@ -39,7 +39,7 @@
   PINS.forEach(function (p, i) {
     var b = document.createElement('button');
     b.type = 'button';
-    b.className = 'fm-pin fm-pin--' + p.cat;
+    b.className = 'fm-pin fm-pin--' + p.cat + (p.below ? ' fm-pin--below' : '');
     b.setAttribute('aria-label', p.name);
     b.innerHTML = '<img src="' + BASE + 'i_' + p.icon + '.png' + VER + '" alt="" draggable="false">';
     b.addEventListener('click', function (e) { e.stopPropagation(); openPop(i); });
@@ -81,7 +81,7 @@
       var show = on[p.cat];
       p.el.hidden = !show;
       if (!show) return;
-      p.el.style.transform = 'translate(' + Math.round(tx + p.x * s) + 'px,' + Math.round(ty + (p.y + (DY[p.icon] || 0)) * s) + 'px)';
+      p.el.style.transform = 'translate(' + Math.round(tx + p.x * s) + 'px,' + Math.round(ty + (p.y + OFFY + (p.below ? 26 : DY[p.icon] || 0)) * s) + 'px)';
       p.el.classList.toggle('fm-pin--sm', !big);
     });
     if (openPin != null) placePop();
@@ -98,7 +98,7 @@
   function flyTo(x, y, ns) {
     s = Math.max(minS, Math.min(maxS, ns));
     tx = view.clientWidth / 2 - x * s;
-    ty = view.clientHeight / 2 - y * s;
+    ty = view.clientHeight / 2 - (y + OFFY) * s;
     draw();
   }
   function reset() { minS = fit(); s = minS; tx = 0; ty = 0; draw(); }
@@ -122,9 +122,12 @@
   function placePop() {
     var p = PINS[openPin];
     if (!p || !on[p.cat]) { closePop(); return; }
-    var x = tx + p.x * s, y = ty + (p.y + (DY[p.icon] || 0)) * s - 20, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
-    var left = Math.max(8, Math.min(vw - w - 8, x - w / 2)), top = y - h - 30;
-    if (top < 8) top = y + 30;
+    var big = s >= 0.16, ph = big ? 52 : 36, x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
+    var anchor = ty + (p.y + OFFY + (p.below ? 26 : DY[p.icon] || 0)) * s;
+    var topEdge = p.below ? ty + (p.y + OFFY + (DY[p.icon] || 0)) * s : anchor - ph;
+    var botEdge = p.below ? anchor + ph : ty + (p.y + OFFY + 26) * s;
+    var left = Math.max(8, Math.min(vw - w - 8, x - w / 2)), top = topEdge - h - 10;
+    if (top < 8) top = botEdge + 10;
     pop.style.left = left + 'px';
     pop.style.top = top + 'px';
   }
