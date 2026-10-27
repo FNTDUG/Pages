@@ -1612,7 +1612,7 @@ window.CFGame = function (opt) {
   if (!document.getElementById('fis-fs-css')) {
     var fsCss = document.createElement('style');
     fsCss.id = 'fis-fs-css';
-    fsCss.textContent = '.fis-stage.fis-pseudo{position:fixed;inset:0;z-index:2147483647;max-width:none;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;border:0;box-shadow:none;background:#070b18}' +
+    fsCss.textContent = '.fis-stage.fis-pseudo{position:fixed;inset:0;z-index:2147483647;max-width:none;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;border:0;box-shadow:none;background:#070b18;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) max(env(safe-area-inset-bottom,0px),26px) env(safe-area-inset-left,0);box-sizing:border-box}' +
       '.fis-stage.fis-pseudo .fis-canvas{flex:1 1 0;min-height:0;width:auto;height:auto;max-width:100vw;aspect-ratio:800/480;object-fit:contain;margin:0 auto}' +
       '.fis-x{display:none;position:absolute;top:6px;left:50%;z-index:4;width:40px;height:40px;margin-left:-20px;align-items:center;justify-content:center;padding:0;font:700 18px/1 system-ui,sans-serif;color:#fff;background:rgba(7,11,24,.55);border:2px solid rgba(255,255,255,.7);border-radius:50%;cursor:pointer}' +
       '.fis-stage:fullscreen .fis-x,.fis-stage.fis-pseudo .fis-x{display:flex}' +
