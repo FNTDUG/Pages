@@ -4,8 +4,10 @@
   var api = window.CFGame({
     root: root,
     base: '/fwm/foxyexe/',
+    ver: '?v=2',
     title: null,
     play: 41,
+    first: 40,
     defaultReward: 46,
     codes: { KeyA: 65, KeyD: 68, ArrowLeft: 65, ArrowRight: 68, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 65, right: 68 },
@@ -14,7 +16,22 @@
       var S = api.S, O1 = api.O1, C = api.C, CS = api.CS, CA = api.CA, count = api.count, each = api.each, where = api.where, colSel = api.colSel, notCol = api.notCol, once = api.once, onceOnly = api.onceOnly, every = api.every, create = api.create, lookAt = api.lookAt, nearBorder = api.nearBorder, hide = api.hide, show = api.show, display = api.display, setPos = api.setPos, setX = api.setX, setY = api.setY, setDir = api.setDir, force = api.force, destroy = api.destroy, play = api.play, stopAll = api.stopAll, playing = api.playing, down = api.down, rnd = api.rnd, go = api.go, setAlphaCoef = api.setAlphaCoef, setZoom = api.setZoom, G = api.G;
       var START = {}, EV = {};
 
+      START[40] = function () { stopAll(); play('boot', 1); };
+
+      EV[40] = function () {
+        var cur = O1('Active'), ic = O1('Active 2'), a5 = O1('Active 5');
+        if (!cur || !ic || !a5) return;
+        var click = api.pressed(1), over = colSel([cur], 'Active 2').a.length > 0;
+        if (click && over && ic.alt[0] === 0 && ic.alt[1] === 0) { each('Active 4', show); ic.alt[0] = 15; ic.alt[1] = 2; }
+        if (click && over && ic.alt[0] > 0 && ic.alt[1] === 0) a5.alt[0] = 10;
+        if (ic.alt[0] > 0) ic.alt[0] -= 1;
+        if (ic.alt[1] > 0) ic.alt[1] -= 1;
+        if (a5.alt[0] > 1) { force(a5, 12); a5.alt[0] -= 1; }
+        if (a5.alt[0] === 1) go(41);
+      };
+
       START[41] = function () {
+        api.hideCursor();
         each('Active 9', function (e) { e.alt[0] = 255; });
       };
 
@@ -70,7 +87,7 @@
       START[42] = function () { stopAll(); play('base', 1); };
       EV[42] = function () { if (!playing('base') && every('g2', 100)) go('title'); };
 
-      return { START: START, EV: EV, QCOL: { 41: ['Active', 'trigger', 'trigger 2', 'Active 6', 'Active 7', 'Active 4'] } };
+      return { START: START, EV: EV, QCOL: { 40: ['Active', 'Active 2'], 41: ['Active', 'trigger', 'trigger 2', 'Active 6', 'Active 7', 'Active 4'] } };
     }
   });
   if (!api) return;

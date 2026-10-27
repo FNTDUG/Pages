@@ -344,11 +344,31 @@ window.CFGame = function (opt) {
       if (!m.mas) pathStop(e);
       e.speed = e.mv.speed;
       if (!m.steps.length) pathStop(e);
+    } else if (m.t === 1) {
+      e.mv = { t: 1, x1: m.dx + e.x, x2: m.fx + e.x, y1: m.dy + e.y, y2: m.fy + e.y, stopped: 0, old: 0 };
+      e.speed = 0;
+      e.minS = 0;
+      e.maxS = 100;
+      L.noCursor = true;
     } else {
       e.mv = { t: 0 };
       e.speed = 0;
       e.chk = true;
     }
+  }
+
+  function mouseMove(e) {
+    var mv = e.mv, nx = e.x, ny = e.y;
+    if (MOUSE.on) {
+      nx = Math.max(mv.x1, Math.min(mv.x2, Math.round(MOUSE.x + L.camX)));
+      ny = Math.max(mv.y1, Math.min(mv.y2, Math.round(MOUSE.y + L.camY)));
+    }
+    var sp = Math.min(250, (Math.abs(nx - e.x) + Math.abs(ny - e.y)) << 2);
+    if (sp) { mv.stopped = 0; mv.old = sp; }
+    if (++mv.stopped > 10) mv.old = 0;
+    e.speed = mv.old;
+    e.x = nx;
+    e.y = ny;
   }
 
   function setX(e, x) {
@@ -782,6 +802,7 @@ window.CFGame = function (opt) {
     if (t === 4) ballMove(e);
     else if (t === 5) pathMove(e);
     else if (t === 13) bulletMove(e);
+    else if (t === 1) mouseMove(e);
     else staticMove(e);
   }
 
@@ -1018,7 +1039,7 @@ window.CFGame = function (opt) {
     CH = {};
   }
 
-  var KEY = {}, PREV = {}, TAP = {};
+  var KEY = {}, PREV = {}, TAP = {}, MOUSE = { x: 0, y: 0, on: false };
   function down(k) { return !!KEY[k]; }
   function pressed(k) { return (!!KEY[k] && !PREV[k]) || !!TAP[k]; }
 
@@ -1275,6 +1296,7 @@ window.CFGame = function (opt) {
     muteBtn.textContent = muted ? 'Sound off' : 'Sound on';
     muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
     root.classList.toggle('fis-live', live);
+    cv.style.cursor = live && L.noCursor ? 'none' : '';
   }
   function begin() {
     if (!loaded) return;
@@ -1287,7 +1309,7 @@ window.CFGame = function (opt) {
     PREV = {};
     TAP = {};
     GLOBAL.found = 0;
-    startFrame(opt.play);
+    startFrame(opt.first != null ? opt.first : opt.play);
     GLOBAL.start = Date.now();
     syncButtons();
     run();
@@ -1358,6 +1380,22 @@ window.CFGame = function (opt) {
   window.addEventListener('keyup', function (e) { var k = CODES[e.code]; if (k) KEY[k] = false; });
   window.addEventListener('blur', function () { KEY = {}; pause(true); });
   document.addEventListener('visibilitychange', function () { if (document.hidden) pause(true); });
+  function mouseAt(e) {
+    var r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    MOUSE.x = (e.clientX - r.left) * W / r.width;
+    MOUSE.y = (e.clientY - r.top) * H / r.height;
+    MOUSE.on = true;
+  }
+  cv.addEventListener('pointermove', mouseAt);
+  cv.addEventListener('pointerdown', function (e) {
+    mouseAt(e);
+    if (mode !== 'play' || paused || e.button !== 0) return;
+    if (!KEY[1]) TAP[1] = true;
+    KEY[1] = true;
+  });
+  window.addEventListener('pointerup', function (e) { if (e.button === 0) KEY[1] = false; });
+  cv.addEventListener('pointercancel', function () { KEY[1] = false; });
   Array.prototype.forEach.call(root.querySelectorAll('.fis-pad [data-k]'), function (b) {
     var k = (opt.pad || { left: 37, right: 39, down: 40, jump: 90, fire: 88 })[b.getAttribute('data-k')];
     function on(e) { e.preventDefault(); if (paused) pause(false); if (!KEY[k]) TAP[k] = true; KEY[k] = true; b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (x) {} }
@@ -1426,6 +1464,8 @@ window.CFGame = function (opt) {
   api.begin = begin;
   api.scene = scene;
   api.mode = function () { return mode; };
+  api.mouse = function (x, y) { MOUSE.x = x; MOUSE.y = y; MOUSE.on = true; };
+  api.hideCursor = function () { if (L) L.noCursor = true; };
   api.key = function (k, on) { if (on && !KEY[k]) TAP[k] = true; KEY[k] = on; };
   api.inWall = function (name) { return S(name).filter(function (e) { return !e.dead && !e.sleep && bg(e); }).map(function (e) { return [e.x, e.y]; }); };
   api.objs = function (name) { return S(name).map(function (e) { return { x: e.x, y: e.y, dir: e.dir, vis: e.vis, sleep: e.sleep, dead: e.dead, speed: e.speed, ly: e.ly, frame: e.aFrame, anim: e.aOn, alt: e.alt.slice(0, 11) }; }); };
