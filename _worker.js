@@ -3460,7 +3460,7 @@ function seoOgName(p) {
   if (p === '/fwm/meta-teams') return 'fwm-meta';
   if (p === '/fwm/tierlist') return 'fwm-tiers';
   if (p === '/fwm/grind-methods') return 'fwm-grind-methods';
-  if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters') return 'fwm-minigames';
+  if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/freddy-in-space-map' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters') return 'fwm-minigames';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3524,6 +3524,7 @@ const SEO_PAGES = {
   '/fwm/minigames': ['FWM Minigames: Play the FNaF World Minigames Online', "Play the FNaF World minigames in your browser: FNaF 57: Freddy in Space, Foxy.EXE, Chica's Magic Rainbow and Foxy Fighters, remade from the original game."],
   '/fwm/foxy-fighters': ['Foxy Fighters: Play the FNaF World Minigame Remake Online', 'Play Foxy Fighters in your browser, a fan remake of the FNaF World space shooter. Fly with the Chica squadron and beat the Souldozer to unlock Nightmare BB.'],
   '/fwm/chicas-magic-rainbow': ['Chica\'s Magic Rainbow: Play the FNaF World Minigame Online','Play Chica\'s Magic Rainbow in your browser, a fan remake of the FNaF World platformer. Dodge petals, lasers and spikes to unlock Animdude or Mr. Chipper.'],
+  '/fwm/freddy-in-space-map': ['Freddy in Space Map: All 9 Cupcake Locations', "Interactive map of FNaF 57: Freddy in Space from FNaF World. Zoom in to find all 9 cupcakes, the jump boost, the teleporter and Scott's Head."],
   '/fwm/freddy-in-space': ['FNaF 57: Freddy in Space: Play the Fan Remake Online', "Play FNaF 57: Freddy in Space in your browser, a fan remake of the FNaF World minigame. Find 9 cupcakes, beat Scott's Head and unlock Purple Guy."],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/staff': ['FNTD User Guide Staff: Owner, Site Editors & Researchers', 'Meet the staff behind the FNTD User Guide: the owner, site editors, researchers, QA team and management who keep the Roblox guides up to date.'],

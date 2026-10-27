@@ -1838,6 +1838,7 @@ window.CFGame = function (opt) {
 
   api.tick = function (n) { for (var i = 0; i < (n || 1); i++) tick(); };
   api.begin = begin;
+  api.render = function () { render(); return scene; };
   api.scene = scene;
   api.mode = function () { return mode; };
   api.mousePos = function () { return MOUSE; };
