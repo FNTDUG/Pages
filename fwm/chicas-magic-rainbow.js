@@ -200,8 +200,10 @@
         }
         var hb = one('hit box');
         if (hb && hb.alt[3] === 1 && A) {
-          for (var i = 0; i < 15; i++) create('blood', A, -4, -26);
-          for (var j = 0; j < 7; j++) create('blood', A, 1, -48);
+          if (!(CHEATS && C('deaths') >= 32)) {
+            for (var i = 0; i < 15; i++) create('blood', A, -4, -26);
+            for (var j = 0; j < 7; j++) create('blood', A, 1, -48);
+          }
           play('die', 5);
           destroy(hb);
         }

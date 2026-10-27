@@ -983,10 +983,28 @@ window.CFGame = function (opt) {
     var x = e.x + e.ax - e.hx, y = e.y + e.ay - e.hy;
     return make(ois[0], x, y, e.ly, dirFromPente(tx - x, ty - y) & 31, speed);
   }
+  var TILE = 512;
+  function decal(ly, tx, ty) {
+    var k = ly + ':' + tx + ':' + ty, t = L.decal[k];
+    if (!t) {
+      var c = document.createElement('canvas');
+      c.width = TILE;
+      c.height = TILE;
+      t = L.decal[k] = { c: c, g: c.getContext('2d'), x: tx * TILE, y: ty * TILE, ly: ly };
+      L.decals.push(t);
+    }
+    return t;
+  }
   function paste(e, ob) {
-    if (!e || e.img < 0 || !IM(e.img)) return;
-    var x = e.x - e.hx, y = e.y - e.hy;
-    L.bd[e.ly].push({ o: { t: 1, img: e.img }, x: x, y: y });
+    var im = e && e.img >= 0 && IM(e.img);
+    if (!im) return;
+    var x = Math.round(e.x - e.hx), y = Math.round(e.y - e.hy);
+    for (var tx = Math.floor(x / TILE); tx <= Math.floor((x + im[3] - 1) / TILE); tx++)
+      for (var ty = Math.floor(y / TILE); ty <= Math.floor((y + im[4] - 1) / TILE); ty++) {
+        var t = decal(e.ly, tx, ty);
+        t.g.globalAlpha = e.alpha;
+        t.g.drawImage(SHEETS[im[0]], im[1], im[2], im[3], im[4], x - t.x, y - t.y, im[3], im[4]);
+      }
     if (ob === 1) { L.obst.push([x, y, e.w, e.h, e.ly, e.img]); buildGrid(); }
   }
   function clicked(name) {
@@ -1163,7 +1181,7 @@ window.CFGame = function (opt) {
 
   function startFrame(f) {
     var fr = D.frames[f];
-    L = { f: f, w: fr.w, h: fr.h, layers: fr.layers, all: [], by: {}, names: {}, obst: [], bd: [], camX: 0, camY: 0, loop: 0, ms: 0, once: {}, every: {}, timers: {}, onceOnly: {}, next: null, disp: null, colCount: 0, colPrev: {}, colNow: {}, vblCount: 0, vblStep: 0, moveStep: 0 };
+    L = { f: f, w: fr.w, h: fr.h, layers: fr.layers, all: [], by: {}, names: {}, obst: [], bd: [], camX: 0, camY: 0, loop: 0, ms: 0, once: {}, every: {}, timers: {}, onceOnly: {}, next: null, disp: null, colCount: 0, colPrev: {}, colNow: {}, vblCount: 0, vblStep: 0, moveStep: 0, decal: {}, decals: [] };
     L.kxmin = -480;
     L.kymin = -300;
     L.kxmax = fr.w + 480;
@@ -1335,6 +1353,10 @@ window.CFGame = function (opt) {
         sg.globalAlpha = 1;
       });
       sg.globalAlpha = 1;
+      for (var di = 0; di < L.decals.length; di++) {
+        var dc = L.decals[di], dx = dc.x - ox, dy = dc.y - oy;
+        if (dc.ly === li && dx < W && dy < H && dx + TILE > 0 && dy + TILE > 0) sg.drawImage(dc.c, Math.round(dx), Math.round(dy));
+      }
       for (var i = 0; i < L.all.length; i++) {
         var e = L.all[i];
         if (e.ly !== li || (e.dead && !e.fading) || !e.vis) continue;
