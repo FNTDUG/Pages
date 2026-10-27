@@ -4,6 +4,41 @@
   var VOICE = { 1: 'voice02', 2: 'voice03', 3: 'voice04', 4: 'voice05', 5: 'voice06', 6: 'voice07', 7: 'voice08', 8: 'voice09', 9: 'voice10', 10: 'voice11', 11: 'voice12', 12: 'voice13', 13: 'voice14', 14: 'voice15', 15: 'voice16', 16: 'voice17', 17: 'voice18', 18: 'voice19', 19: 'voice20', 20: 'Ug', 21: 'voice22', 22: 'voice23', 23: 'voice24', 24: 'voice25', 25: 'voice26', 26: 'HA', 27: 'voice28', 28: 'voice29', 29: 'voice30', 30: 'voice31', 31: 'voice32', 32: 'voice33', 33: 'voice34', 34: 'voice17' };
   var PETALS = [256, 1, 16777216, 65536, 16, 268435456, 1048576, 4096];
   var BEAMS = [16777216, 67108864, 4194304, 1048576, 268435456, 1073741824, 262144];
+  var ROUTES = [[1272,1236,416,1012,416,[],[1224,416,1200,416,1176,416,1152,416,1128,416,1104,416,1080,416,1056,416,1032,416,1012,416,1012,416]],[1572,1536,416,1536,416,[],[1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416]],[1972,1937,146,1937,6,[1909,209,1933,155],[1937,128,1937,78,1937,42,1937,12,1937,-8,1937,-24,1937,-30,1937,-24,1937,6,1937,6]],[2372,2337,146,2337,16,[2309,209,2333,155],[2337,128,2337,78,2337,42,2337,12,2337,-8,2337,-24,2337,-30,2337,-24,2337,6,2337,16]],[2722,2686,416,2686,416,[],[2686,389,2686,335,2686,318,2686,348,2686,386,2686,416,2686,416,2686,416,2686,416]],[3722,3686,416,3686,416,[],[3686,416,3686,416,3686,416,3686,416,3686,416,3686,416,3686,416]],[5472,5436,262,5436,189,[5304,418,5328,416,5352,416,5376,389,5400,335,5424,283],[5436,245,5436,215,5436,193,5436,175,5436,169,5436,169,5436,189]],[11172,11136,416,11136,416,[],[11136,416,11136,416,11136,416,11136,416,11136,416,11136,416,11136,416]]];
+  var CHEATS = false, FIRED = {}, CB = [77, 457, 67, 20];
+  try { CHEATS = localStorage.getItem('cmr-cheats') === '1'; } catch (e) {}
+  function setCheats(on) { CHEATS = on; try { localStorage.setItem('cmr-cheats', on ? '1' : '0'); } catch (e) {} }
+  function dot(g, x, y, r, fill) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#0b0d12'; g.fill(); g.beginPath(); g.arc(x, y, r - 1.5, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); }
+  function drawCheats(g, L) {
+    var lab = api.sheet(5856), x = api.sheet(6326);
+    if (lab) {
+      g.drawImage(lab[0], lab[1][1], lab[1][2], lab[1][3], lab[1][4], CB[0], CB[1], lab[1][3], lab[1][4]);
+      g.fillStyle = 'rgb(239,239,239)';
+      g.fillRect(CB[0] + 15, CB[1] + 5, 50, 11);
+      g.fillStyle = '#111';
+      g.font = '900 10px "Arial Black", Arial, sans-serif';
+      g.textAlign = 'left';
+      g.textBaseline = 'alphabetic';
+      g.fillText('CHEATS', CB[0] + 16, CB[1] + 14.5, 47);
+    }
+    if (CHEATS && x) g.drawImage(x[0], x[1][1], x[1][2], x[1][3], x[1][4], CB[0] + 3, CB[1] + 6, x[1][3], x[1][4]);
+    if (!CHEATS) return;
+    var trig = {};
+    api.S('trigger').forEach(function (e) { if (!e.dead) trig[e.x] = e; });
+    var petals = api.count('Active 6') > 0;
+    ROUTES.forEach(function (r) {
+      var t = trig[r[0]];
+      if (!t) return;
+      var f = FIRED[r[0]];
+      if (t.alt[0] !== 0 && !(f != null && (petals || L.loop - f < 30))) return;
+      var cx = L.camX, cy = L.camY, i;
+      if (r[0] - cx < -500 || r[0] - cx > 1300) return;
+      for (i = 0; i < r[5].length; i += 2) dot(g, r[5][i] - cx, r[5][i + 1] - cy, 4, '#f4f4f4');
+      for (i = 0; i < r[6].length; i += 2) dot(g, r[6][i] - cx, r[6][i + 1] - cy, 4.5, '#3fe060');
+      g.beginPath(); g.arc(r[3] - cx, r[4] - cy, 10, 0, Math.PI * 2); g.lineWidth = 5; g.strokeStyle = '#0b0d12'; g.stroke(); g.lineWidth = 3; g.strokeStyle = '#3fe060'; g.stroke();
+      dot(g, r[1] - cx, r[2] - cy, 8, '#ff3b3b');
+    });
+  }
   var api = window.CFGame({
     root: root,
     base: '/fwm/rainbow/',
@@ -11,8 +46,9 @@
     title: null,
     play: 44,
     idleTicks: 30,
+    overlay: function (g, L) { if (L && L.f === 44) drawCheats(g, L); },
     defaultReward: 43,
-    codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, Enter: 13, NumpadEnter: 13, Space: 32 },
+    codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, KeyC: 67, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 37, right: 39, jump: 90 },
     endLine: function () { return ''; },
     setup: function (api) {
@@ -33,7 +69,9 @@
       };
 
       EV[44] = function () {
-        var R = down(39), Lf = down(37), Z = down(90);
+        var R = down(39), Lf = down(37), Z = down(90), mp = api.mousePos();
+        if (pressed(67) || (pressed(1) && mp.on && mp.x >= CB[0] && mp.x < CB[0] + CB[2] && mp.y >= CB[1] && mp.y < CB[1] + CB[3])) setCheats(!CHEATS);
+        S('trigger').forEach(function (e) { if (e.alt[0] === 0) delete FIRED[e.x]; else if (FIRED[e.x] == null) FIRED[e.x] = api.frame().loop; });
         if (R && !bgAny('feel right')) { moveBy('hit box', 4, 0); each('Active', function (e) { setDir(e, 0); }); }
         if (R && bgAny('feel right') && bgAny('floor 1')) each('Active', function (e) { force(e, 0); });
         if (Lf && bgAny('feel left') && bgAny('floor 1')) each('Active', function (e) { force(e, 0); });

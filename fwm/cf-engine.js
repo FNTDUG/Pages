@@ -1354,6 +1354,7 @@ window.CFGame = function (opt) {
         sg.globalAlpha = 1;
       }
     }
+    if (opt.overlay) { sg.setTransform(1, 0, 0, 1, 0, 0); sg.globalAlpha = 1; opt.overlay(sg, L, mode === 'play'); }
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.drawImage(scene, 0, 0);
   }
@@ -1688,6 +1689,8 @@ window.CFGame = function (opt) {
   api.begin = begin;
   api.scene = scene;
   api.mode = function () { return mode; };
+  api.mousePos = function () { return MOUSE; };
+  api.sheet = function (h) { var im = IM(h); return im ? [SHEETS[im[0]], im] : null; };
   api.music = function () { return MUS ? { n: MUS.n, on: !!MUS.src, ctx: AC ? AC.state : null } : null; };
   api.mouse = function (x, y) { MOUSE.x = x; MOUSE.y = y; MOUSE.on = true; };
   api.hideCursor = function () { if (L) L.noCursor = true; };
