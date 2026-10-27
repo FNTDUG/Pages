@@ -1602,27 +1602,28 @@ window.CFGame = function (opt) {
     }
     syncButtons();
   });
-  var stage = root.querySelector('.fis-stage'), pseudo = false, rotPaused = false;
+  var stage = root.querySelector('.fis-stage'), pseudo = false, rotPaused = false, wantFS = false;
   var PHONE = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) && Math.min(screen.width, screen.height) <= 600;
   if (!document.getElementById('fis-fs-css')) {
     var fsCss = document.createElement('style');
     fsCss.id = 'fis-fs-css';
     fsCss.textContent = '.fis-stage.fis-pseudo{position:fixed;inset:0;z-index:2147483647;max-width:none;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;border:0;box-shadow:none;background:#070b18}' +
       '.fis-stage.fis-pseudo .fis-canvas{flex:1 1 0;min-height:0;width:auto;height:auto;max-width:100vw;aspect-ratio:800/480;object-fit:contain;margin:0 auto}' +
-      '.fis-stage.fis-pseudo .fis-pad{position:static;flex:none;width:100%;border:0}' +
-      '@media (min-aspect-ratio:41/20){.fis-stage.fis-pseudo .fis-canvas{flex:none;height:100vh;height:100dvh}.fis-stage.fis-pseudo .fis-pad{position:absolute;inset:0;align-items:stretch;padding:12px 10px;background:transparent;pointer-events:none}.fis-stage.fis-pseudo .fis-pad>div,.fis-stage.fis-pseudo .fis-pad>div+div{flex:none;flex-direction:column;justify-content:center;width:calc((100vw - 100dvh * 5 / 3) / 2 - 18px);pointer-events:auto}.fis-stage.fis-pseudo .fis-pad button{flex:1 1 0;max-height:130px}}' +
       '.fis-x{display:none;position:absolute;top:6px;left:50%;z-index:4;width:40px;height:40px;margin-left:-20px;align-items:center;justify-content:center;padding:0;font:700 18px/1 system-ui,sans-serif;color:#fff;background:rgba(7,11,24,.55);border:2px solid rgba(255,255,255,.7);border-radius:50%;cursor:pointer}' +
       '.fis-stage:fullscreen .fis-x,.fis-stage.fis-pseudo .fis-x{display:flex}' +
-      '.fis-rotate{display:none;position:absolute;inset:0;z-index:6;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:#070b18;color:#fff;text-align:center;font:400 13px/1.7 "Press Start 2P",monospace}' +
-      '.fis-rotate-ico{width:46px;height:78px;border:4px solid #fff;border-radius:9px;animation:fisRot 1.8s ease-in-out infinite}' +
+      '.fis-rotate{display:none;position:absolute;left:0;top:0;z-index:6;width:100%;aspect-ratio:800/480;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;box-sizing:border-box;background:#070b18;color:#fff;text-align:center;font:400 11px/1.7 "Press Start 2P",monospace}' +
+      '.fis-rotate p{margin:0}' +
+      '.fis-rotate-ico{width:30px;height:50px;border:3px solid #fff;border-radius:7px;animation:fisRot 1.8s ease-in-out infinite}' +
       '@keyframes fisRot{0%,25%{transform:rotate(0)}55%,100%{transform:rotate(90deg)}}' +
       '@media (prefers-reduced-motion:reduce){.fis-rotate-ico{animation:none;transform:rotate(90deg)}}' +
       '.fis-stage.fis-portrait .fis-rotate{display:flex}' +
-      '.fis .fis-pad .fis-stick-zone{position:relative;display:block;flex:3;min-height:132px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
-      '.fis .fis-pad .fis-stick{position:absolute;left:50%;top:50%;display:block;width:var(--ring,112px);height:var(--ring,112px);transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.35);box-sizing:border-box;pointer-events:none}' +
+      '.fis .fis-stage .fis-pad{position:absolute;inset:0;z-index:3;padding:0;margin:0;background:transparent;border:0;pointer-events:none}' +
+      '.fis .fis-pad .fis-stick-zone{position:absolute;left:0;top:0;bottom:0;width:50%;display:block;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
+      '.fis .fis-pad .fis-stick{position:absolute;left:var(--sx,22%);top:var(--sy,70%);display:block;width:var(--ring,110px);height:var(--ring,110px);transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.35);box-sizing:border-box;pointer-events:none}' +
       '.fis .fis-pad .fis-knob{position:absolute;left:27%;top:27%;display:block;width:46%;height:46%;border-radius:50%;background:rgba(255,255,255,.42);border:2px solid rgba(255,255,255,.75);box-sizing:border-box}' +
-      '.fis .fis-pad .fis-acts{display:flex;flex:2;align-items:center;justify-content:center;gap:14px;min-width:0}' +
-      '.fis .fis-pad .fis-act{position:relative;flex:none!important;display:flex;align-items:center;justify-content:center;width:var(--act,84px);height:var(--act,84px);min-width:0;min-height:0;max-height:none!important;padding:0;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.28);box-shadow:none;color:#fff;font:900 15px/1 Arial,Helvetica,sans-serif;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.4);touch-action:none;-webkit-tap-highlight-color:transparent}' +
+      '.fis .fis-pad .fis-acts{position:absolute;right:max(14px,4%);bottom:max(14px,6%);display:flex;flex-direction:row;align-items:flex-end;gap:12px;pointer-events:none}' +
+      '.fis .fis-pad .fis-act{position:relative;flex:none!important;display:flex;align-items:center;justify-content:center;width:var(--act,80px);height:var(--act,80px);min-width:0;min-height:0;max-height:none!important;padding:0;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.28);box-shadow:none;color:#fff;font:900 var(--actf,15px)/1 Arial,Helvetica,sans-serif;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent}' +
+      '.fis .fis-pad .fis-act:first-child:not(:last-child){margin-bottom:calc(var(--act,80px) * .55)}' +
       '.fis .fis-pad .fis-act.on{background:rgba(255,255,255,.38);transform:scale(.95)}' +
       '.fis .fis-pad .fis-spark{position:absolute;left:-7%;top:50%;width:28%;height:28%;transform:translateY(-50%);fill:#fff}' +
       '.fis .fis-pad .fis-act span{margin-left:12%}';
@@ -1641,26 +1642,33 @@ window.CFGame = function (opt) {
   function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   function lockLand() { try { var o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(function () {}); } catch (e) {} }
   function pseudoOn() { pseudo = true; stage.classList.add('fis-pseudo'); document.documentElement.style.overflow = 'hidden'; checkRot(); }
-  function enterFS() {
+  function pseudoOff() { pseudo = false; stage.classList.remove('fis-pseudo'); document.documentElement.style.overflow = ''; }
+  function realFS(onFail) {
     var req = stage.requestFullscreen || stage.webkitRequestFullscreen;
-    if (!req) { pseudoOn(); return; }
+    if (!req) { if (onFail) onFail(); return; }
     try {
       var pr = req.call(stage, { navigationUI: 'hide' });
-      if (pr && pr.then) pr.then(lockLand, pseudoOn); else lockLand();
-    } catch (e) { pseudoOn(); }
+      if (pr && pr.then) pr.then(function () { pseudoOff(); lockLand(); }, function () { if (onFail) onFail(); });
+      else { pseudoOff(); lockLand(); }
+    } catch (e) { if (onFail) onFail(); }
   }
-  function exitFS() {
+  function enterFS() { wantFS = true; if (portraitNow()) { checkRot(); return; } realFS(pseudoOn); }
+  function leaveFS() {
     if (isFS()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
-    if (pseudo) { pseudo = false; stage.classList.remove('fis-pseudo'); document.documentElement.style.overflow = ''; }
+    if (pseudo) pseudoOff();
     try { screen.orientation.unlock(); } catch (e) {}
-    checkRot();
   }
+  function exitFS() { wantFS = false; leaveFS(); checkRot(); }
+  function portraitNow() { return PHONE && window.innerHeight > window.innerWidth; }
   function checkRot() {
-    var portrait = PHONE && mode === 'play' && window.innerHeight > window.innerWidth;
+    var portrait = portraitNow() && mode === 'play';
+    if (portrait && (pseudo || isFS())) leaveFS();
+    else if (!portrait && PHONE && wantFS && mode === 'play' && !pseudo && !isFS()) pseudoOn();
     stage.classList.toggle('fis-portrait', portrait);
     if (portrait && !paused) { rotPaused = true; pause(true); }
     else if (!portrait && rotPaused) { rotPaused = false; if (paused) pause(false); }
   }
+  stage.addEventListener('pointerdown', function () { if (PHONE && pseudo && !isFS() && !portraitNow()) realFS(null); }, true);
   window.addEventListener('resize', checkRot);
   window.addEventListener('orientationchange', function () { setTimeout(checkRot, 250); });
   document.addEventListener('fullscreenchange', checkRot);
@@ -1723,14 +1731,13 @@ window.CFGame = function (opt) {
     var ring = zone.querySelector('.fis-stick'), knob = zone.querySelector('.fis-knob'), acts = root.querySelector('.fis-acts');
     var PK = opt.pad || { left: 37, right: 39, down: 40, jump: 90, fire: 88 }, sid = null, scx = 0, scy = 0;
     var sizePad = function () {
-      var zw = zone.clientWidth, zh = zone.clientHeight;
-      if (zw && zh) zone.style.setProperty('--ring', Math.round(Math.max(70, Math.min(140, Math.min(zw, zh) * 0.92))) + 'px');
+      var ch = cv.clientHeight || zone.clientHeight;
+      if (!ch) return;
+      zone.style.setProperty('--ring', Math.round(Math.max(64, Math.min(130, ch * 0.34))) + 'px');
       if (!acts) return;
-      var n = acts.children.length, aw = acts.clientWidth, ah = acts.clientHeight;
-      if (!n || !aw || !ah) return;
-      var col = getComputedStyle(acts).flexDirection === 'column';
-      var sz = col ? Math.min(aw - 6, (ah - 14 * (n - 1)) / n - 4) : Math.min(ah - 6, (aw - 14 * (n - 1)) / n - 4);
-      acts.style.setProperty('--act', Math.round(Math.max(52, Math.min(96, sz))) + 'px');
+      var sz = Math.round(Math.max(46, Math.min(92, ch * 0.21)));
+      acts.style.setProperty('--act', sz + 'px');
+      acts.style.setProperty('--actf', Math.round(Math.max(10, Math.min(16, sz * 0.19))) + 'px');
     };
     var stickKeys = function (ax, ay) {
       var set = function (k, v) { if (k == null) return; if (v && !KEY[k]) TAP[k] = true; KEY[k] = v; };
@@ -1750,6 +1757,7 @@ window.CFGame = function (opt) {
       sid = null;
       ring.style.left = '';
       ring.style.top = '';
+      ring.style.opacity = '';
       knob.style.transform = '';
       stickKeys(0, 0);
     };
@@ -1770,7 +1778,7 @@ window.CFGame = function (opt) {
     ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { zone.addEventListener(t, stickEnd); });
     zone.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
     zone.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-    if (window.ResizeObserver) { var ro = new ResizeObserver(sizePad); ro.observe(zone); if (acts) ro.observe(acts); }
+    if (window.ResizeObserver) { var ro = new ResizeObserver(sizePad); ro.observe(zone); ro.observe(cv); }
     window.addEventListener('resize', sizePad);
     sizePad();
   }
