@@ -302,7 +302,7 @@
         var rk = live('rank').filter(function (e) { return e.vis; });
         if (rk.some(function (e) { return e.alt[0] < 175; })) CS('found new', 42);
         if (rk.some(function (e) { return e.alt[0] >= 175; })) CS('found new', 45);
-        if (rk.length && every('e276', 3000)) { G.found = C('found new') || 42; go(43); return; }
+        if (rk.length && every('e276', 3000)) { G.found = rk.some(function (e) { return e.alt[0] < 160; }) ? 'nightmare-mangle' : C('found new') || 42; go(43); return; }
         if (C('current weapon') > 4) CS('current weapon', 0);
         all('bullet', function (e) {
           if (e.alt[0] === 0 || e.alt[0] === 4) force(e, 0);

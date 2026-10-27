@@ -8,7 +8,6 @@ window.CFGame = function (opt) {
   var scene = document.createElement('canvas'), sg = scene.getContext('2d');
   scene.width = W;
   scene.height = H;
-  var hasFilter = typeof sg.filter === 'string';
   var D = null, SHEETS = [], MASKS = {}, PAT = {}, loaded = false, loadErr = false;
   var COS = [256, 251, 236, 212, 181, 142, 97, 49, 0, -49, -97, -142, -181, -212, -236, -251, -256, -251, -236, -212, -181, -142, -97, -49, 0, 49, 97, 142, 181, 212, 236, 251];
   var SIN = [0, -49, -97, -142, -181, -212, -236, -251, -256, -251, -236, -212, -181, -142, -97, -49, 0, 49, 97, 142, 181, 212, 236, 251, 256, 251, 236, 212, 181, 142, 97, 49];
@@ -18,7 +17,7 @@ window.CFGame = function (opt) {
   var TWO = [0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1];
   var APPROX = [3, 1, 2, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 2, 0, 1, 2, 0, 0, 0, 1, 2, 0, 1, 2, 0, 0, 0, 1, 2, 0, 0, 1, 2, 0];
   var MASKB = [0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF], PLUSANG = [-4, 4, -2, 2, -1, 1], PLUSTRY = [-4, 4, -4, 4, -4, 4];
-  var REWARDS = { 41: ['Jack-O-Bonnie', 'jack-o-bonnie'], 42: ['Jack-O-Chica', 'jack-o-chica'], 43: ['Animdude', 'animdude'], 44: ['Mr. Chipper', 'mr-chipper'], 45: ['Nightmare BB', 'nightmare-balloon-boy'], 46: ['Nightmarionne', 'nightmarionne'], 47: ['Coffee', 'coffee'], 48: ['Purple Guy', 'purple-guy'] };
+  var REWARDS = { 41: ['Jack-O-Bonnie', 'jack-o-bonnie'], 42: ['Jack-O-Chica', 'jack-o-chica'], 43: ['Animdude', 'animdude'], 44: ['Mr. Chipper', 'mr-chipper'], 45: ['Nightmare BB', 'nightmare-balloon-boy'], 46: ['Nightmarionne', 'nightmarionne'], 47: ['Coffee', 'coffee'], 48: ['Purple Guy', 'purple-guy'], 'nightmare-mangle': ['Nightmare Mangle', 'nightmare-mangle', 1] };
   var REB = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 30, 31, 0, 1, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 24, 25, 26, 27, 27, 28, 28, 28, 28, 29, 29, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 16, 17, 18, 19, 19, 20, 20, 20, 20, 21, 21, 22, 23, 24, 25, 28, 27, 26, 25, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 20, 21, 22, 22, 23, 24, 24, 24, 24, 25, 26, 27, 28, 29, 30, 8, 7, 6, 5, 4, 8, 9, 10, 11, 11, 12, 12, 12, 12, 13, 13, 14, 15, 16, 17, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 16, 15, 14, 13, 12, 11, 10, 9, 8, 12, 13, 14, 15, 15, 16, 16, 16, 16, 17, 17, 18, 19, 20, 21, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 3, 3, 4, 4, 4, 4, 5, 5, 6, 7, 8, 9, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 0, 1, 2, 0, 0, 1, 1, 2, 3, 4, 5, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 28, 29, 30, 31, 31, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 26, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 25, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 4, 5, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 11, 12, 13, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
   var QCOL = {}, ONCOL = {}, QBACK = {}, SKIP = null;
 
@@ -1056,7 +1055,7 @@ window.CFGame = function (opt) {
   function setVolume(ch, v) {
     CHV[ch] = Math.max(0, Math.min(100, v)) / 100;
     if (CHG[ch]) CHG[ch].gain.value = CHV[ch];
-    if (MUS && MUS.ch === ch) MUS.volume = MUS_VOL * CHV[ch];
+    if (MUS && MUS.ch === ch && MUS.gain) MUS.gain.gain.value = MUS_VOL * CHV[ch];
   }
   function selectMovement(e, n) { if (e && e.t === 2) initMove(e, n, null); }
   function forceAnimSpeed(e, sp) { if (e && e.t === 2) e.aSpeedForced = sp + 1; }
@@ -1097,18 +1096,32 @@ window.CFGame = function (opt) {
     });
   }
   function music(name, ch) {
-    if (MUS && MUS.dataset.n === name) return;
+    if (MUS && MUS.n === name) return;
     stopMusic();
     if (CH[ch]) { try { CH[ch].stop(); } catch (e) {} delete CH[ch]; }
-    MUS = new Audio(BASE + 'snd/' + encodeURIComponent(D.sounds[name]) + VER);
-    MUS.dataset.n = name;
-    MUS.ch = ch;
-    MUS.loop = true;
-    MUS.volume = MUS_VOL * (CHV[ch] == null ? 1 : CHV[ch]);
-    var p = MUS.play();
-    if (p && p.catch) p.catch(function () {});
+    var a = audio();
+    if (!a) return;
+    if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    var m = MUS = { n: name, ch: ch, src: null, gain: null };
+    loadSnd(name, function (b) {
+      if (MUS !== m) return;
+      var src = a.createBufferSource(), gn = a.createGain();
+      src.buffer = b;
+      src.loop = true;
+      gn.gain.value = MUS_VOL * (CHV[ch] == null ? 1 : CHV[ch]);
+      src.connect(gn);
+      gn.connect(a.destination);
+      src.start();
+      m.src = src;
+      m.gain = gn;
+    });
   }
-  function stopMusic() { if (MUS) { try { MUS.pause(); } catch (e) {} MUS = null; } }
+  function stopMusic() {
+    if (!MUS) return;
+    if (MUS.src) { try { MUS.src.stop(); } catch (e) {} }
+    delete BUF[MUS.n];
+    MUS = null;
+  }
   function stopAll() {
     stopMusic();
     SND_END = {};
@@ -1176,11 +1189,39 @@ window.CFGame = function (opt) {
     });
     buildGrid();
     if (f === 43) each('found new', function (e) { e.val = GLOBAL.found; });
+    else hideArt();
     if (START[f]) START[f]();
   }
 
   var START = {}, EV = {}, TRIG = {};
-  START[43] = function () { stopAll(); play('FANTASY_TONAL_SP_DSL32001', 1); };
+  START[43] = function () {
+    stopAll();
+    play('FANTASY_TONAL_SP_DSL32001', 1);
+    var r = REWARDS[GLOBAL.found];
+    if (r && r[2]) { each('Active', hide); showArt(r[1]); }
+  };
+  var art = null;
+  function placeArt() {
+    if (!art || art.hidden) return;
+    var w = cv.offsetWidth, h = cv.offsetHeight;
+    art.style.left = (cv.offsetLeft + w * 281 / W) + 'px';
+    art.style.top = (cv.offsetTop + h * 148 / H) + 'px';
+    art.style.width = (w * 250 / W) + 'px';
+    art.style.height = (h * 250 / H) + 'px';
+  }
+  function showArt(slug) {
+    if (!art) {
+      art = document.createElement('img');
+      art.alt = '';
+      art.style.cssText = 'position:absolute;pointer-events:none;image-rendering:auto';
+      cv.parentNode.appendChild(art);
+      window.addEventListener('resize', placeArt);
+    }
+    art.src = 'https://fnaf-world.fntduserguide.com/idle/' + slug + '.webp';
+    art.hidden = false;
+    placeArt();
+  }
+  function hideArt() { if (art) art.hidden = true; }
   EV[43] = function () {
     var map = { 41: 0, 42: 12, 43: 13, 44: 14, 45: 15, 46: 16, 47: 17, 48: 18 };
     for (var k = 41; k <= 48; k++) {
@@ -1306,11 +1347,10 @@ window.CFGame = function (opt) {
         if (e.img < 0) { sg.globalAlpha = 1; continue; }
         var im2 = IM(e.img);
         if (!im2 || ex - im2[5] > W || ey - im2[6] > H || ex - im2[5] + im2[3] < 0 || ey - im2[6] + im2[4] < 0) { sg.globalAlpha = 1; continue; }
-        if (e.ink === 1 && hasFilter) sg.filter = 'invert(1)';
         if (e.add) sg.globalCompositeOperation = 'lighter';
-        sg.drawImage(SHEETS[im2[0]], im2[1], im2[2], im2[3], im2[4], Math.round(ex - im2[5]), Math.round(ey - im2[6]), im2[3], im2[4]);
+        if (e.ink === 1) sg.drawImage(inverted(e.img), Math.round(ex - im2[5]), Math.round(ey - im2[6]));
+        else sg.drawImage(SHEETS[im2[0]], im2[1], im2[2], im2[3], im2[4], Math.round(ex - im2[5]), Math.round(ey - im2[6]), im2[3], im2[4]);
         if (e.add) sg.globalCompositeOperation = 'source-over';
-        if (e.ink === 1 && hasFilter) sg.filter = 'none';
         sg.globalAlpha = 1;
       }
     }
@@ -1318,6 +1358,21 @@ window.CFGame = function (opt) {
     g.drawImage(scene, 0, 0);
   }
 
+  var INV = {};
+  function inverted(h) {
+    if (INV[h]) return INV[h];
+    var im = IM(h), c = document.createElement('canvas'), x = c.getContext('2d');
+    c.width = im[3];
+    c.height = im[4];
+    x.drawImage(SHEETS[im[0]], im[1], im[2], im[3], im[4], 0, 0, im[3], im[4]);
+    x.globalCompositeOperation = 'difference';
+    x.fillStyle = '#fff';
+    x.fillRect(0, 0, im[3], im[4]);
+    x.globalCompositeOperation = 'destination-in';
+    x.drawImage(SHEETS[im[0]], im[1], im[2], im[3], im[4], 0, 0, im[3], im[4]);
+    INV[h] = c;
+    return c;
+  }
   var tmp = document.createElement('canvas'), tg = tmp.getContext('2d');
   function le(hex, pos, n) { var v = 0; for (var i = n - 1; i >= 0; i--) v = v * 256 + parseInt(hex.substr(pos + i * 2, 2), 16); return v; }
   function parsePersp(hex) {
@@ -1444,6 +1499,7 @@ window.CFGame = function (opt) {
     if (!loaded) return;
     var a = muted ? null : audio();
     if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    if (a) { try { var un = a.createBufferSource(); un.buffer = a.createBuffer(1, 1, 22050); un.connect(a.destination); un.start(0); } catch (e) {} }
     endBox.hidden = true;
     paused = false;
     mode = 'play';
@@ -1489,7 +1545,7 @@ window.CFGame = function (opt) {
   function pause(on) {
     if (mode !== 'play') return;
     paused = on;
-    if (on) { stopMusic(); if (AC && AC.suspend) AC.suspend(); }
+    if (on) { if (AC && AC.suspend) AC.suspend(); }
     else if (AC && AC.resume) AC.resume();
     syncButtons();
   }
@@ -1500,6 +1556,10 @@ window.CFGame = function (opt) {
     muted = !muted;
     try { localStorage.setItem('fis-mute', muted ? '1' : '0'); } catch (e) {}
     if (muted) stopAll();
+    else {
+      var a = audio();
+      if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    }
     syncButtons();
   });
   if (fullBtn) {
@@ -1615,6 +1675,7 @@ window.CFGame = function (opt) {
   api.begin = begin;
   api.scene = scene;
   api.mode = function () { return mode; };
+  api.music = function () { return MUS ? { n: MUS.n, on: !!MUS.src, ctx: AC ? AC.state : null } : null; };
   api.mouse = function (x, y) { MOUSE.x = x; MOUSE.y = y; MOUSE.on = true; };
   api.hideCursor = function () { if (L) L.noCursor = true; };
   api.key = function (k, on) { if (on && !KEY[k]) TAP[k] = true; KEY[k] = on; };
