@@ -113,6 +113,9 @@
       function alt(name, i, v) { each(name, function (e) { if (!e.dead) e.alt[i] = v; }); }
 
       START[44] = function () {
+        BEAM_UNTIL = -1;
+        FIRED = {};
+        TELE = -1;
         play('Rainbow2', 1, true);
         play('voice01', 2);
         each('Date & Time', function (e) { api.clock(e, 'reset'); api.clock(e, 'start'); });
