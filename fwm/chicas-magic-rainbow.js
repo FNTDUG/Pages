@@ -5,10 +5,60 @@
   var PETALS = [256, 1, 16777216, 65536, 16, 268435456, 1048576, 4096];
   var BEAMS = [16777216, 67108864, 4194304, 1048576, 268435456, 1073741824, 262144];
   var ROUTES = [[1272,1236,416,1012,416,[],[1224,416,1200,416,1176,416,1152,416,1128,416,1104,416,1080,416,1056,416,1032,416,1012,416,1012,416]],[1572,1536,416,1536,416,[],[1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416]],[1972,1937,146,1937,6,[1909,209,1933,155],[1937,128,1937,78,1937,42,1937,12,1937,-8,1937,-24,1937,-30,1937,-24,1937,6,1937,6]],[2372,2337,146,2337,16,[2309,209,2333,155],[2337,128,2337,78,2337,42,2337,12,2337,-8,2337,-24,2337,-30,2337,-24,2337,6,2337,16]],[2722,2686,416,2686,416,[],[2686,389,2686,335,2686,318,2686,348,2686,386,2686,416,2686,416,2686,416,2686,416]],[3722,3686,416,3686,416,[],[3686,416,3686,416,3686,416,3686,416,3686,416,3686,416,3686,416]],[5472,5436,262,5436,189,[5304,418,5328,416,5352,416,5376,389,5400,335,5424,283],[5436,245,5436,215,5436,193,5436,175,5436,169,5436,169,5436,189]],[11172,11136,416,11136,416,[],[11136,416,11136,416,11136,416,11136,416,11136,416,11136,416,11136,416]]];
-  var CHEATS = false, FIRED = {}, CB = [77, 457, 67, 20];
+  var CHEATS = false, FIRED = {}, CB = [77, 457, 67, 20], TELE = -1, BEAM_UNTIL = -1, RAYS = [18, 20, 22, 24, 26, 28, 30];
+  var bar = root.querySelector('.fis-bar'), tp = document.createElement('div');
+  tp.className = 'fis-tp';
+  tp.hidden = true;
+  tp.innerHTML = '<span class="fis-tp-label">Teleport to checkpoint</span>';
+  for (var tpi = 0; tpi < 9; tpi++) {
+    var tb = document.createElement('button');
+    tb.type = 'button';
+    tb.textContent = String(tpi + 1);
+    tb.setAttribute('aria-label', 'Teleport to checkpoint ' + (tpi + 1));
+    tb.setAttribute('data-cp', String(tpi));
+    tp.appendChild(tb);
+  }
+  tp.addEventListener('click', function (e) { var b = e.target.closest('[data-cp]'); if (b) TELE = +b.getAttribute('data-cp'); });
+  if (bar) bar.parentNode.insertBefore(tp, bar.nextSibling);
   try { CHEATS = localStorage.getItem('cmr-cheats') === '1'; } catch (e) {}
   function setCheats(on) { CHEATS = on; try { localStorage.setItem('cmr-cheats', on ? '1' : '0'); } catch (e) {} }
   function dot(g, x, y, r, fill) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#0b0d12'; g.fill(); g.beginPath(); g.arc(x, y, r - 1.5, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); }
+  function rayDots(g, L, x, y, dx, dy, len, step) {
+    for (var k = step; k < len; k += step) {
+      var px = x + dx * k - L.camX, py = y + dy * k - L.camY;
+      if (px < -10 || px > 810 || py < -10 || py > 490) continue;
+      dot(g, px, py, 3.5, '#ff3b3b');
+    }
+  }
+  function blocked(L, x, y) {
+    for (var i = 0; i < L.obst.length; i++) { var r = L.obst[i]; if (r[4] === 3 && r[3] < 100 && x >= r[0] && x < r[0] + r[2] && y >= r[1] && y < r[1] + r[3]) return true; }
+    return false;
+  }
+  function drawAttacks(g, L) {
+    var mr = api.S('magic_rainbow').filter(function (e) { return !e.dead; })[0];
+    if (mr && mr.alt[1] > 0) BEAM_UNTIL = L.loop + 45;
+    api.S('trigger 2').concat(api.S('trigger 9')).forEach(function (t) { if (!t.dead && t.alt[0] === 0 && !(t.o.n === 'trigger 9' && mr && mr.alt[6] === 1)) dot(g, t.x - 36 - L.camX, 416 - L.camY, 8, '#ff3b3b'); });
+    if (mr && L.loop <= BEAM_UNTIL) {
+      var ox = mr.x + mr.ax - mr.hx, oy = mr.y + mr.ay - mr.hy, zones = [];
+      RAYS.forEach(function (d) {
+        var a = d * Math.PI / 16, dx = Math.cos(a), dy = -Math.sin(a), len = (399 - oy) / dy, hit = len, k;
+        for (k = 8; k < len; k += 8) if (blocked(L, ox + dx * k, oy + dy * k)) { hit = k; break; }
+        rayDots(g, L, ox, oy, dx, dy, hit, 26);
+        if (hit < len) return;
+        var x1 = ox + dx * len, x2 = ox + dx * ((431 - oy) / dy), pad = 16 + 12 / Math.abs(dy);
+        zones.push([Math.min(x1, x2) - pad, Math.max(x1, x2) + pad]);
+      });
+      for (var gx = Math.floor(L.camX / 16) * 16 + 8; gx < L.camX + 800; gx += 16) {
+        var bad = zones.some(function (z) { return gx >= z[0] && gx <= z[1]; });
+        dot(g, gx - L.camX, 452 - L.camY, bad ? 4 : 3.5, bad ? '#ff3b3b' : '#3fe060');
+      }
+    }
+    api.S('Active 10').concat(api.S('lazer')).forEach(function (e) {
+      if (e.dead || !e.speed) return;
+      var a = e.dir * Math.PI / 16;
+      rayDots(g, L, e.x, e.y, Math.cos(a), -Math.sin(a), Math.max(120, e.speed * 4), 22);
+    });
+  }
   function drawCheats(g, L) {
     var lab = api.sheet(5856), x = api.sheet(6326);
     if (lab) {
@@ -22,7 +72,9 @@
       g.fillText('CHEATS', CB[0] + 16, CB[1] + 14.5, 47);
     }
     if (CHEATS && x) g.drawImage(x[0], x[1][1], x[1][2], x[1][3], x[1][4], CB[0] + 3, CB[1] + 6, x[1][3], x[1][4]);
+    if (tp.hidden === CHEATS) tp.hidden = !CHEATS;
     if (!CHEATS) return;
+    drawAttacks(g, L);
     var trig = {};
     api.S('trigger').forEach(function (e) { if (!e.dead) trig[e.x] = e; });
     var petals = api.count('Active 6') > 0;
@@ -48,7 +100,7 @@
     idleTicks: 30,
     overlay: function (g, L) { if (L && L.f === 44) drawCheats(g, L); },
     defaultReward: 43,
-    codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, KeyC: 67, Enter: 13, NumpadEnter: 13, Space: 32 },
+    codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, KeyC: 67, Digit1: 49, Digit2: 50, Digit3: 51, Digit4: 52, Digit5: 53, Digit6: 54, Digit7: 55, Digit8: 56, Digit9: 57, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 37, right: 39, jump: 90 },
     endLine: function () { return ''; },
     setup: function (api) {
@@ -71,6 +123,26 @@
       EV[44] = function () {
         var R = down(39), Lf = down(37), Z = down(90), mp = api.mousePos();
         if (pressed(67) || (pressed(1) && mp.on && mp.x >= CB[0] && mp.x < CB[0] + CB[2] && mp.y >= CB[1] && mp.y < CB[1] + CB[3])) setCheats(!CHEATS);
+        for (var dk = 1; dk <= 9; dk++) if (pressed(48 + dk)) TELE = dk - 1;
+        if (TELE >= 0) {
+          var flag = live('Active 5').sort(function (a, b) { return a.x - b.x; })[TELE], cpo = one('checkpoint'), thb = one('hit box');
+          TELE = -1;
+          if (CHEATS && flag && cpo && C('WIN') === 0) {
+            setPos(cpo, flag.x + 15, 416);
+            if (thb) {
+              setPos(thb, cpo.x + 1, cpo.y - 16);
+              CS('jumped', 0); CS('going up', 0); CS('fall', 0);
+              ['trigger', 'trigger 2', 'trigger 5', 'trigger 6', 'trigger 7', 'trigger 8', 'trigger 9'].forEach(function (n) { alt(n, 0, 0); });
+              alt('magic_rainbow', 1, 0);
+              if (flag.x < 8322) alt('magic_rainbow', 6, 0);
+              alt('Active 8', 0, 0); alt('Active 8', 1, 0);
+              each('Active 9', destroy); each('Active 10', destroy); each('Active 6', destroy); each('Active 7', destroy); each('lazer', destroy);
+              each('magic_rainbow', function (e) { setX(e, thb.x); });
+              display(thb.x, thb.y - 58);
+              play('respawn', 5);
+            }
+          }
+        }
         S('trigger').forEach(function (e) { if (e.alt[0] === 0) delete FIRED[e.x]; else if (FIRED[e.x] == null) FIRED[e.x] = api.frame().loop; });
         if (R && !bgAny('feel right')) { moveBy('hit box', 4, 0); each('Active', function (e) { setDir(e, 0); }); }
         if (R && bgAny('feel right') && bgAny('floor 1')) each('Active', function (e) { force(e, 0); });
@@ -166,7 +238,13 @@
         if (count('hit box') === 0) each('Active', hide);
         if (count('hit box') > 0) each('Active', show);
         live('blood').forEach(function (e) { if (e.alt[0] === 0) { e.alt[0] = 1; setSpeed(e, 10 + rnd(70)); } });
-        if (once('e52', count('hit box') === 0)) { CA('deaths', 1); alt('magic_rainbow', 1, 0); }
+        if (once('e52', count('hit box') === 0)) {
+          var prevD = C('deaths');
+          CA('deaths', 1);
+          alt('magic_rainbow', 1, 0);
+          if (CHEATS && prevD >= 33) CS('deaths', 33);
+          else if (CHEATS && C('deaths') >= 33) CS('deaths', 32);
+        }
         for (var d = 1; d <= 34; d++) if (once('v' + d, C('deaths') === d)) { play(VOICE[d], 2); if (d === 34) CS('game over', 1); }
 
         var trg = where(hits('trigger'), function (e) { return e.alt[0] === 0; });
