@@ -295,6 +295,7 @@ window.CFGame = function (opt) {
     if (o.inkraw && o.inkraw.length >= 16) { e.add = parseInt(o.inkraw.slice(0, 2), 16) === 9; e.alpha = parseInt(o.inkraw.slice(14, 16), 16) / 255; }
     if (o.t === 7) { e.val = o.cnt[0]; e.min = o.cnt[1]; e.max = o.cnt[2]; }
     if (o.t >= 32 && o.ext && /^Perspective/.test(o.n)) e.px = parsePersp(o.ext);
+    if (o.t >= 32 && o.ext && /^Date & Time/.test(o.n)) e.clock = parseClock(o.ext);
     if (o.t === 3) e.text = (o.txt && o.txt.paras && o.txt.paras[0] && o.txt.paras[0].text) || '';
     e.fixed = !!(f & 0x800);
     e.hasMove = !!(f & 0x10);
@@ -846,12 +847,19 @@ window.CFGame = function (opt) {
   }
 
   function maskRect(h, bx, by, r) {
-    var rows = mask(h);
+    var rows = mask(h), bm = r[5] != null ? mask(r[5]) : null;
     if (!rows) return true;
     var y1 = Math.max(by, r[1]), y2 = Math.min(by + rows.length, r[1] + r[3]), x1 = r[0] - bx, x2 = r[0] + r[2] - bx;
     for (var y = y1; y < y2; y++) {
       var runs = rows[y - by];
-      for (var i = 0; i < runs.length; i += 2) if (runs[i] < x2 && runs[i + 1] > x1) return true;
+      if (bm) {
+        var br = bm[y - r[1]];
+        if (!br) continue;
+        for (var i = 0; i < runs.length; i += 2)
+          for (var j = 0; j < br.length; j += 2) if (runs[i] + bx < br[j + 1] + r[0] && runs[i + 1] + bx > br[j] + r[0]) return true;
+        continue;
+      }
+      for (var k = 0; k < runs.length; k += 2) if (runs[k] < x2 && runs[k + 1] > x1) return true;
     }
     return false;
   }
@@ -963,6 +971,37 @@ window.CFGame = function (opt) {
     var x = e.x + e.ax - e.hx, y = e.y + e.ay - e.hy;
     return make(ois[0], x, y, e.ly, useDir ? e.dir : dirFromMask(mask), speed);
   }
+  function shootToward(e, name, speed, tx, ty) {
+    var ois = L.names[name];
+    if (!ois || !e) return null;
+    var x = e.x + e.ax - e.hx, y = e.y + e.ay - e.hy;
+    return make(ois[0], x, y, e.ly, dirFromPente(tx - x, ty - y) & 31, speed);
+  }
+  function paste(e, ob) {
+    if (!e || e.img < 0 || !IM(e.img)) return;
+    var x = e.x - e.hx, y = e.y - e.hy;
+    L.bd[e.ly].push({ o: { t: 1, img: e.img }, x: x, y: y });
+    if (ob === 1) { L.obst.push([x, y, e.w, e.h, e.ly, e.img]); buildGrid(); }
+  }
+  function clicked(name) {
+    if (!pressed(1) || !MOUSE.on) return [];
+    var mx = MOUSE.x + L.camX, my = MOUSE.y + L.camY;
+    return S(name).filter(function (e) {
+      if (e.dead || !e.vis || e.img < 0) return false;
+      var px = Math.floor(mx - (e.x - e.hx)), py = Math.floor(my - (e.y - e.hy));
+      if (px < 0 || py < 0 || px >= e.w || py >= e.h) return false;
+      var rows = mask(e.img), r = rows && rows[py];
+      if (!rows) return true;
+      for (var i = 0; r && i < r.length; i += 2) if (px >= r[i] && px < r[i + 1]) return true;
+      return false;
+    });
+  }
+  function clock(e, act) {
+    if (!e || !e.clock) return;
+    if (act === 'reset') e.clock.ms = 0;
+    else if (act === 'start') e.clock.on = true;
+    else if (act === 'stop') e.clock.on = false;
+  }
   function lookAt(e, x, y) {
     var d = dirFromPente(x - e.x, y - e.y) & 31;
     if (e.dir !== d) e.dir = d;
@@ -1006,11 +1045,11 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {};
-  function playing(name) { return (SND_END[name] || 0) > performance.now(); }
+  var SND_END = {}, GT = 0;
+  function playing(name) { return (SND_END[name] || 0) > GT; }
   function play(name, ch, loop) {
     if (!D.sounds[name]) return;
-    SND_END[name] = performance.now() + (BUF[name] ? BUF[name].duration * 1000 : 3000);
+    SND_END[name] = GT + (BUF[name] ? BUF[name].duration * 1000 : 3000);
     if (muted) return;
     if (loop && /\.mp3$/.test(D.sounds[name])) { music(name, ch); return; }
     if (MUS && MUS.ch === ch) stopMusic();
@@ -1026,7 +1065,7 @@ window.CFGame = function (opt) {
       s.loop = !!loop;
       s.connect(GAIN || a.destination);
       s.start();
-      if (!loop) SND_END[name] = performance.now() + b.duration * 1000;
+      if (!loop) SND_END[name] = GT + b.duration * 1000;
       CH[ch] = s;
       s.onended = function () { if (CH[ch] === s) delete CH[ch]; };
     });
@@ -1101,11 +1140,11 @@ window.CFGame = function (opt) {
       var o = D.objs[it[0]];
       if (!o) return;
       if (o.t < 2) {
-        L.bd[it[3]].push({ o: o, x: it[1], y: it[2] });
-        if (o.ob === 1) L.obst.push([it[1], it[2], o.w, o.h, it[3]]);
+        L.bd[it[3]].push({ o: o, x: it[1], y: it[2], a: o.inkraw && o.inkraw.length >= 16 ? parseInt(o.inkraw.slice(14, 16), 16) / 255 : 1 });
+        if (o.ob === 1) L.obst.push([it[1], it[2], o.w, o.h, it[3], o.t === 1 && o.coll !== 0 ? o.img : null]);
         return;
       }
-      if (SKIP && SKIP(f, o)) return;
+      if (it[4] || (SKIP && SKIP(f, o))) return;
       make(it[0], it[1], it[2], it[3], -1);
     });
     buildGrid();
@@ -1130,7 +1169,7 @@ window.CFGame = function (opt) {
   function setAlphaCoef(e, c) { if (e) e.alpha = Math.max(0, Math.min(255, 255 - c)) / 255; }
   function setZoom(e, z) { if (e && e.px) e.px.zoom = z; }
   function frameInfo() { return L; }
-  var api = { S: S, O1: O1, C: C, CS: CS, CA: CA, count: count, each: each, where: where, colSel: colSel, notCol: notCol, once: once, onceOnly: onceOnly, every: every, timer: timer, create: create, shoot: shoot, lookAt: lookAt, facing: facing, nearBorder: nearBorder, hide: hide, show: show, flash: flash, toFront: toFront, pick: pick, display: display, setPos: setPos, setX: setX, setY: setY, setDir: setDir, setSpeed: setSpeed, speedOf: speedOf, stopObj: stopObj, startObj: startObj, nextMovement: nextMovement, force: force, bg: bg, destroy: destroy, bounce: bounce, play: play, stopAll: stopAll, playing: playing, pressed: pressed, down: down, rnd: rnd, go: go, setAlphaCoef: setAlphaCoef, setZoom: setZoom, frame: frameInfo, G: GLOBAL };
+  var api = { S: S, O1: O1, C: C, CS: CS, CA: CA, count: count, each: each, where: where, colSel: colSel, notCol: notCol, once: once, onceOnly: onceOnly, every: every, timer: timer, create: create, shoot: shoot, lookAt: lookAt, facing: facing, nearBorder: nearBorder, hide: hide, show: show, flash: flash, toFront: toFront, pick: pick, display: display, setPos: setPos, setX: setX, setY: setY, setDir: setDir, setSpeed: setSpeed, speedOf: speedOf, stopObj: stopObj, startObj: startObj, nextMovement: nextMovement, force: force, bg: bg, destroy: destroy, bounce: bounce, play: play, stopAll: stopAll, playing: playing, pressed: pressed, down: down, rnd: rnd, go: go, setAlphaCoef: setAlphaCoef, setZoom: setZoom, frame: frameInfo, G: GLOBAL, shootToward: shootToward, paste: paste, clicked: clicked, clock: clock };
   var CFG = opt.setup(api) || {};
   ['START', 'EV', 'TRIG'].forEach(function (k) { var src = CFG[k] || {}; var dst = k === 'START' ? START : k === 'EV' ? EV : TRIG; for (var f in src) dst[f] = src[f]; });
   QCOL = CFG.QCOL || {};
@@ -1142,6 +1181,8 @@ window.CFGame = function (opt) {
     if (!L) return;
     L.loop++;
     L.ms += DT;
+    GT += DT;
+    for (var ci = 0; ci < L.all.length; ci++) if (L.all[ci].clock && L.all[ci].clock.on) L.all[ci].clock.ms += DT;
     L.colNow = {};
     for (var i = 0; i < L.all.length; i++) handle(L.all[i]);
     var ev = EV[L.f];
@@ -1201,10 +1242,13 @@ window.CFGame = function (opt) {
       if (!(ly[2] & 16) || (ly[2] & 131072)) continue;
       L.bd[li].forEach(function (b) {
         var o = b.o, x = b.x - ox, y = b.y - oy;
+        if (b.a === 0) return;
+        sg.globalAlpha = b.a == null ? 1 : b.a;
         if (o.t === 1) {
           var im = IM(o.img);
           if (!im || x > W || y > H || x + im[3] < 0 || y + im[4] < 0) return;
           sg.drawImage(SHEETS[im[0]], im[1], im[2], im[3], im[4], Math.round(x), Math.round(y), im[3], im[4]);
+          sg.globalAlpha = 1;
           return;
         }
         if (x > W || y > H || x + o.w < 0 || y + o.h < 0) return;
@@ -1220,11 +1264,13 @@ window.CFGame = function (opt) {
           sg.fillStyle = '#' + o.col;
           sg.fillRect(Math.round(x), Math.round(y), o.w, o.h);
         }
+        sg.globalAlpha = 1;
       });
+      sg.globalAlpha = 1;
       for (var i = 0; i < L.all.length; i++) {
         var e = L.all[i];
         if (e.ly !== li || (e.dead && !e.fading) || !e.vis) continue;
-        if (e.t >= 32) { if (e.px) persp(e); continue; }
+        if (e.t >= 32) { if (e.px) persp(e); else if (e.clock) drawClock(e); continue; }
         if (e.sleep) continue;
         var ex = e.x - L.camX, ey = e.y - L.camY;
         sg.globalAlpha = e.fading ? e.alpha * Math.max(0, 1 - e.fading.t / e.fading.dur) : e.alpha;
@@ -1252,6 +1298,24 @@ window.CFGame = function (opt) {
     var off = le(hex, 32, 4);
     if (off > 0x7FFFFFFF) off -= 0x100000000;
     return { w: le(hex, 8, 2), h: le(hex, 12, 2), fx: le(hex, 16, 1), vert: le(hex, 18, 1) === 1, zoom: le(hex, 24, 4) | 0, off: off, waves: le(hex, 40, 4) | 0, pdir: le(hex, 48, 1) };
+  }
+  function parseClock(hex) {
+    if (!hex || hex.length < 348) return null;
+    var face = '';
+    for (var i = 0; i < 32; i++) { var c = le(hex, 212 + i * 4, 2); if (!c) break; face += String.fromCharCode(c); }
+    var fh = le(hex, 156, 4);
+    if (fh > 0x7FFFFFFF) fh -= 0x100000000;
+    return { w: le(hex, 0, 2), h: le(hex, 4, 2), size: Math.abs(fh) || 12, bold: le(hex, 188, 4) >= 600, face: face || 'Tahoma', col: '#' + hex.substr(340, 2) + hex.substr(342, 2) + hex.substr(344, 2), on: false, ms: 0 };
+  }
+  function drawClock(e) {
+    var c = e.clock, t = Math.floor(c.ms / 1000);
+    var txt = ('0' + Math.floor(t / 3600)).slice(-2) + ':' + ('0' + (Math.floor(t / 60) % 60)).slice(-2) + ':' + ('0' + (t % 60)).slice(-2);
+    sg.fillStyle = c.col;
+    sg.font = (c.bold ? '700 ' : '400 ') + c.size + 'px ' + c.face + ', sans-serif';
+    sg.textAlign = 'center';
+    sg.textBaseline = 'middle';
+    sg.fillText(txt, e.x + c.w / 2, e.y + c.h / 2);
+    sg.textBaseline = 'alphabetic';
   }
   function persp(e) {
     var p = e.px, X = e.x, Y = e.y, IW = p.w, IH = p.h, Z = p.zoom, i, v;

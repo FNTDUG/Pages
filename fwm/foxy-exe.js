@@ -4,7 +4,7 @@
   var api = window.CFGame({
     root: root,
     base: '/fwm/foxyexe/',
-    ver: '?v=3',
+    ver: '?v=4',
     title: null,
     play: 41,
     first: 40,

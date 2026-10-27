@@ -8,6 +8,7 @@
   var api = window.CFGame({
     root: root,
     base: '/fwm/fis57/',
+    ver: '?v=2',
     title: 37,
     play: 38,
     endLine: function (G, secs) { return (G.cups || 0) + ' of 9 cupcakes in ' + Math.floor(secs / 60) + ':' + ('0' + Math.floor(secs % 60)).slice(-2) + '.'; },
