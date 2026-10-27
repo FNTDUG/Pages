@@ -35,15 +35,16 @@
 .fis-bar button,.fis-again{padding:10px 16px;font:700 14px/1 var(--font-body,'Space Grotesk',sans-serif);color:var(--fis-text);background:var(--fis-surface);border:3px solid var(--fis-ink);box-shadow:3px 3px 0 var(--fis-ink);cursor:pointer;min-height:44px}
 .fis-bar button:active,.fis-again:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--fis-ink)}
 .fis-pad{display:none;justify-content:space-between;gap:14px;padding:10px;background:#0d1328;border-top:3px solid var(--fis-ink);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.fis-pad div{display:flex;flex:3;gap:8px;min-width:0}.fis-pad div+div{flex:2}
+.fis-pad div{display:flex;flex:1;gap:8px;min-width:0}.fis-pad div+div{flex:1}
 .fis-pad button{flex:1;min-width:0;min-height:58px;padding:0 2px;white-space:nowrap;font:400 10px/1 'Press Start 2P',monospace;color:#fff;background:#26304f;border:3px solid #000;box-shadow:0 4px 0 #000;border-radius:10px;touch-action:none;-webkit-tap-highlight-color:transparent}
 .fis-pad button.on{transform:translateY(3px);box-shadow:0 1px 0 #000;background:#3a4a78}
 .fis-pad [data-k=fire]{background:#7a2440}
 .fis-pad [data-k=jump]{background:#1f6a4a}
 @media (pointer:coarse),(max-width:760px){.fis-live .fis-pad{display:flex}}
-.fis-stage:fullscreen{max-width:none;display:flex;flex-direction:column;justify-content:center;border:0;box-shadow:none}
-.fis-stage:fullscreen .fis-canvas{width:auto;max-width:100vw;height:100%;max-height:100vh;margin:0 auto}
-.fis-stage:fullscreen .fis-pad{position:absolute;left:0;right:0;bottom:0;background:transparent;border:0}
+.fis-stage:fullscreen{max-width:none;display:flex;flex-direction:column;justify-content:center;align-items:center;border:0;box-shadow:none}
+.fis-stage:fullscreen .fis-canvas{flex:1 1 0;min-height:0;width:auto;height:auto;max-width:100vw;aspect-ratio:800/480;object-fit:contain;margin:0 auto}
+.fis-stage:fullscreen .fis-pad{position:static;flex:none;width:100%;border:0}
+@media (min-aspect-ratio:41/20){.fis-stage:fullscreen .fis-canvas{flex:none;height:100vh}.fis-stage:fullscreen .fis-pad{position:absolute;inset:0;align-items:stretch;padding:12px 10px;background:transparent;pointer-events:none}.fis-stage:fullscreen .fis-pad div,.fis-stage:fullscreen .fis-pad div+div{flex:none;flex-direction:column;justify-content:center;width:calc((100vw - 100vh * 5 / 3) / 2 - 18px);pointer-events:auto}.fis-stage:fullscreen .fis-pad button{flex:1 1 0;max-height:130px}}
 .fis-end{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:20px 0 0;padding:16px;background:var(--fis-surface);border:3px solid var(--fis-ink);box-shadow:5px 5px 0 var(--fis-ink)}
 .fis-end[hidden]{display:none}
 .fis-end img{width:96px;height:96px;object-fit:contain;image-rendering:auto}
@@ -58,7 +59,8 @@
     <canvas class="fis-canvas" width="800" height="480" tabindex="0" aria-label="Foxy.EXE game screen"></canvas>
     <button type="button" class="fis-start">Start</button>
     <div class="fis-pad">
-      <div><button type="button" tabindex="-1" data-k="left" aria-label="Walk left">&#9664;</button><button type="button" tabindex="-1" data-k="right" aria-label="Walk right">&#9654;</button></div>
+      <div><button type="button" tabindex="-1" data-k="left" aria-label="Walk left">&#9664;</button></div>
+      <div><button type="button" tabindex="-1" data-k="right" aria-label="Walk right">&#9654;</button></div>
     </div>
   </div>
   <div class="fis-bar">
@@ -76,8 +78,8 @@
   </div>
   <p class="fis-note">A fan remake for the FNTD User Guide that runs in your browser. FNaF World, Foxy.EXE and its art are by Scott Cawthon. The game code is our own, and the remake is not affiliated with him.</p>
 </div>
-<script src="/fwm/cf-engine.js?v=20261027p" defer></script>
-<script src="/fwm/foxy-exe.js?v=20261027p" defer></script>
+<script src="/fwm/cf-engine.js?v=20261027s" defer></script>
+<script src="/fwm/foxy-exe.js?v=20261027s" defer></script>
 
           <div class="ad-slot" style="max-width:600px;width:95%;margin:32px auto 8px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7017245771068026" data-ad-slot="9010982209" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>

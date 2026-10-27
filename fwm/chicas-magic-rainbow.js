@@ -4,22 +4,9 @@
   var VOICE = { 1: 'voice02', 2: 'voice03', 3: 'voice04', 4: 'voice05', 5: 'voice06', 6: 'voice07', 7: 'voice08', 8: 'voice09', 9: 'voice10', 10: 'voice11', 11: 'voice12', 12: 'voice13', 13: 'voice14', 14: 'voice15', 15: 'voice16', 16: 'voice17', 17: 'voice18', 18: 'voice19', 19: 'voice20', 20: 'Ug', 21: 'voice22', 22: 'voice23', 23: 'voice24', 24: 'voice25', 25: 'voice26', 26: 'HA', 27: 'voice28', 28: 'voice29', 29: 'voice30', 30: 'voice31', 31: 'voice32', 32: 'voice33', 33: 'voice34', 34: 'voice17' };
   var PETALS = [256, 1, 16777216, 65536, 16, 268435456, 1048576, 4096];
   var BEAMS = [16777216, 67108864, 4194304, 1048576, 268435456, 1073741824, 262144];
-  var ROUTES = [[1272,1236,416,1012,416,[],[1224,416,1200,416,1176,416,1152,416,1128,416,1104,416,1080,416,1056,416,1032,416,1012,416,1012,416]],[1572,1536,416,1536,416,[],[1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416]],[1972,1937,146,1937,6,[1909,209,1933,155],[1937,128,1937,78,1937,42,1937,12,1937,-8,1937,-24,1937,-30,1937,-24,1937,6,1937,6]],[2372,2337,146,2337,16,[2309,209,2333,155],[2337,128,2337,78,2337,42,2337,12,2337,-8,2337,-24,2337,-30,2337,-24,2337,6,2337,16]],[2722,2686,416,2686,416,[],[2686,389,2686,335,2686,318,2686,348,2686,386,2686,416,2686,416,2686,416,2686,416]],[3722,3686,416,3686,416,[],[3686,416,3686,416,3686,416,3686,416,3686,416,3686,416,3686,416]],[5472,5436,262,5436,189,[5304,418,5328,416,5352,416,5376,389,5400,335,5424,283],[5436,245,5436,215,5436,193,5436,175,5436,169,5436,169,5436,189]],[11172,11136,416,11136,416,[],[11136,416,11136,416,11136,416,11136,416,11136,416,11136,416,11136,416]]];
+  var ROUTES = [["trigger",1272,1236,416,1012,416,[],[1224,416,1200,416,1176,416,1152,416,1128,416,1104,416,1080,416,1056,416,1032,416,1012,416,1012,416]],["trigger",1572,1536,416,1536,416,[],[1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416,1536,416]],["trigger",1972,1937,146,1937,6,[1909,209,1933,155],[1937,128,1937,78,1937,42,1937,12,1937,-8,1937,-24,1937,-30,1937,-24,1937,6,1937,6]],["trigger",2372,2337,146,2337,16,[2309,209,2333,155],[2337,128,2337,78,2337,42,2337,12,2337,-8,2337,-24,2337,-30,2337,-24,2337,6,2337,16]],["trigger",2722,2686,416,2686,416,[],[2686,389,2686,335,2686,318,2686,348,2686,386,2686,416,2686,416,2686,416,2686,416]],["trigger",3722,3686,416,3686,416,[],[3686,416,3686,416,3686,416,3686,416,3686,416,3686,416,3686,416]],["trigger",5472,5436,262,5436,189,[5304,418,5328,416,5352,416,5376,389,5400,335,5424,283],[5436,245,5436,215,5436,193,5436,175,5436,169,5436,169,5436,189]],["trigger",11172,11136,416,11136,416,[],[11136,416,11136,416,11136,416,11136,416,11136,416,11136,416,11136,416]],["trigger 8",7372,7338,416,7290,416,[],[7334,407,7310,353,7286,299,7262,255,7238,225,7214,199,7190,181,7166,171,7162,190,7162,215,7162,215,7174,188,7198,134,7222,82,7246,44,7270,14,7290,-5,7290,25,7290,59,7290,101,7290,151,7290,205,7290,271,7290,337,7290,403,7290,416,7290,416,7290,416,7290,416,7290,416,7290,416,7290,416,7290,416,7290,416,7290,416]],["trigger 7",7772,7736,416,7736,416,[],[7736,416,7736,416,7736,389,7736,335,7736,283,7736,245,7736,215,7736,193,7736,175,7736,169,7736,169,7736,199,7736,235,7736,277,7736,329,7736,385,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416,7736,416]],["trigger 8",8126,8089,162,8089,216,[8033,218,8057,216,8081,180],[8089,153,8089,99,8089,55,8089,25,8089,-1,8089,-19,8089,-29,8089,-35,8089,-11,8089,21,8089,63,8089,111,8089,165,8089,217,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216,8089,216]]];
   var CHEATS = false, FIRED = {}, CB = [77, 457, 67, 20], TELE = -1, BEAM_UNTIL = -1, RAYS = [18, 20, 22, 24, 26, 28, 30];
-  var bar = root.querySelector('.fis-bar'), tp = document.createElement('div');
-  tp.className = 'fis-tp';
-  tp.hidden = true;
-  tp.innerHTML = '<span class="fis-tp-label">Teleport to checkpoint</span>';
-  for (var tpi = 0; tpi < 9; tpi++) {
-    var tb = document.createElement('button');
-    tb.type = 'button';
-    tb.textContent = String(tpi + 1);
-    tb.setAttribute('aria-label', 'Teleport to checkpoint ' + (tpi + 1));
-    tb.setAttribute('data-cp', String(tpi));
-    tp.appendChild(tb);
-  }
-  tp.addEventListener('click', function (e) { var b = e.target.closest('[data-cp]'); if (b) TELE = +b.getAttribute('data-cp'); });
-  if (bar) bar.parentNode.insertBefore(tp, bar.nextSibling);
+  var TPX = 150, TPW = 30, TPG = 4;
   try { CHEATS = localStorage.getItem('cmr-cheats') === '1'; } catch (e) {}
   function setCheats(on) { CHEATS = on; try { localStorage.setItem('cmr-cheats', on ? '1' : '0'); } catch (e) {} }
   function dot(g, x, y, r, fill) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#0b0d12'; g.fill(); g.beginPath(); g.arc(x, y, r - 1.5, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); }
@@ -54,7 +41,7 @@
       }
     }
     api.S('Active 10').concat(api.S('lazer')).forEach(function (e) {
-      if (e.dead || !e.speed) return;
+      if (e.dead || !e.speed || (e.o.n === 'lazer' && !e.fromEye)) return;
       var a = e.dir * Math.PI / 16;
       rayDots(g, L, e.x, e.y, Math.cos(a), -Math.sin(a), Math.max(120, e.speed * 4), 22);
     });
@@ -72,23 +59,33 @@
       g.fillText('CHEATS', CB[0] + 16, CB[1] + 14.5, 47);
     }
     if (CHEATS && x) g.drawImage(x[0], x[1][1], x[1][2], x[1][3], x[1][4], CB[0] + 3, CB[1] + 6, x[1][3], x[1][4]);
-    if (tp.hidden === CHEATS) tp.hidden = !CHEATS;
     if (!CHEATS) return;
+    g.font = '900 11px "Arial Black", Arial, sans-serif';
+    g.textAlign = 'center';
+    for (var b = 0; b < 9; b++) {
+      var bx = TPX + b * (TPW + TPG);
+      g.fillStyle = '#3a3d44';
+      g.fillRect(bx, CB[1] + 2, TPW, 16);
+      g.fillStyle = 'rgb(239,239,239)';
+      g.fillRect(bx + 1, CB[1] + 3, TPW - 2, 14);
+      g.fillStyle = '#111';
+      g.fillText(String(b + 1), bx + TPW / 2, CB[1] + 14.5);
+    }
+    g.textAlign = 'left';
     drawAttacks(g, L);
-    var trig = {};
-    api.S('trigger').forEach(function (e) { if (!e.dead) trig[e.x] = e; });
-    var petals = api.count('Active 6') > 0;
+    var trig = {}, HZ = { trigger: 'Active 6', 'trigger 7': 'Active 9', 'trigger 8': 'Active 9' };
+    ['trigger', 'trigger 7', 'trigger 8'].forEach(function (n) { api.S(n).forEach(function (e) { if (!e.dead) trig[n + ':' + e.x] = e; }); });
     ROUTES.forEach(function (r) {
-      var t = trig[r[0]];
+      var key = r[0] + ':' + r[1], t = trig[key];
       if (!t) return;
-      var f = FIRED[r[0]];
-      if (t.alt[0] !== 0 && !(f != null && (petals || L.loop - f < 30))) return;
+      var f = FIRED[key];
+      if (t.alt[0] !== 0 && !(f != null && (api.count(HZ[r[0]]) > 0 || L.loop - f < 30))) return;
       var cx = L.camX, cy = L.camY, i;
-      if (r[0] - cx < -500 || r[0] - cx > 1300) return;
-      for (i = 0; i < r[5].length; i += 2) dot(g, r[5][i] - cx, r[5][i + 1] - cy, 4, '#f4f4f4');
-      for (i = 0; i < r[6].length; i += 2) dot(g, r[6][i] - cx, r[6][i + 1] - cy, 4.5, '#3fe060');
-      g.beginPath(); g.arc(r[3] - cx, r[4] - cy, 10, 0, Math.PI * 2); g.lineWidth = 5; g.strokeStyle = '#0b0d12'; g.stroke(); g.lineWidth = 3; g.strokeStyle = '#3fe060'; g.stroke();
-      dot(g, r[1] - cx, r[2] - cy, 8, '#ff3b3b');
+      if (r[1] - cx < -500 || r[1] - cx > 1300) return;
+      for (i = 0; i < r[6].length; i += 2) dot(g, r[6][i] - cx, r[6][i + 1] - cy, 4, '#f4f4f4');
+      for (i = 0; i < r[7].length; i += 2) dot(g, r[7][i] - cx, r[7][i + 1] - cy, 4.5, '#3fe060');
+      g.beginPath(); g.arc(r[4] - cx, r[5] - cy, 10, 0, Math.PI * 2); g.lineWidth = 5; g.strokeStyle = '#0b0d12'; g.stroke(); g.lineWidth = 3; g.strokeStyle = '#3fe060'; g.stroke();
+      dot(g, r[2] - cx, r[3] - cy, 8, '#ff3b3b');
     });
   }
   var api = window.CFGame({
@@ -124,6 +121,7 @@
         var R = down(39), Lf = down(37), Z = down(90), mp = api.mousePos();
         if (pressed(67) || (pressed(1) && mp.on && mp.x >= CB[0] && mp.x < CB[0] + CB[2] && mp.y >= CB[1] && mp.y < CB[1] + CB[3])) setCheats(!CHEATS);
         for (var dk = 1; dk <= 9; dk++) if (pressed(48 + dk)) TELE = dk - 1;
+        if (CHEATS && pressed(1) && mp.on && mp.y >= CB[1] && mp.y < CB[1] + CB[3] && mp.x >= TPX && mp.x < TPX + 9 * (TPW + TPG)) { var tpn = Math.floor((mp.x - TPX) / (TPW + TPG)); if (mp.x - TPX - tpn * (TPW + TPG) < TPW) TELE = tpn; }
         if (TELE >= 0) {
           var flag = live('Active 5').sort(function (a, b) { return a.x - b.x; })[TELE], cpo = one('checkpoint'), thb = one('hit box');
           TELE = -1;
@@ -143,7 +141,7 @@
             }
           }
         }
-        S('trigger').forEach(function (e) { if (e.alt[0] === 0) delete FIRED[e.x]; else if (FIRED[e.x] == null) FIRED[e.x] = api.frame().loop; });
+        ['trigger', 'trigger 7', 'trigger 8'].forEach(function (n) { S(n).forEach(function (e) { var k = n + ':' + e.x; if (e.alt[0] === 0) delete FIRED[k]; else if (FIRED[k] == null) FIRED[k] = api.frame().loop; }); });
         if (R && !bgAny('feel right')) { moveBy('hit box', 4, 0); each('Active', function (e) { setDir(e, 0); }); }
         if (R && bgAny('feel right') && bgAny('floor 1')) each('Active', function (e) { force(e, 0); });
         if (Lf && bgAny('feel left') && bgAny('floor 1')) each('Active', function (e) { force(e, 0); });
@@ -320,9 +318,9 @@
         if (C('deaths') === 34) { each('magic_rainbow', function (e) { force(e, 0); }); each('Active 3', show); each('Active 4', show); }
         var hb3 = one('hit box');
         if (C('deaths') === 33 && count('hit box') > 0 && every('e133', 250) && !playing('mutesounds')) {
-          live('Active 3').forEach(function (e) { if (hb3) api.shootToward(e, 'lazer', 100, hb3.x, hb3.y); });
+          live('Active 3').forEach(function (e) { var lz = hb3 ? api.shootToward(e, 'lazer', 100, hb3.x, hb3.y) : null; if (lz) lz.fromEye = true; });
           play('rainbow', 6);
-          live('Active 4').forEach(function (e) { if (hb3) api.shootToward(e, 'lazer', 100, hb3.x, hb3.y); });
+          live('Active 4').forEach(function (e) { var lz = hb3 ? api.shootToward(e, 'lazer', 100, hb3.x, hb3.y) : null; if (lz) lz.fromEye = true; });
         }
         if (C('WIN') === 1 && every('e134', 3000)) { G.found = C('found new') || 43; go(43); return; }
         if (C('game over') === 1 && every('e135', 2000)) { go('title'); return; }
