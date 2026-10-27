@@ -826,7 +826,12 @@ window.CFGame = function (opt) {
     if (a2 >= L.xmin && a1 <= L.xmax && b2 >= L.ymin && b1 <= L.ymax) e.sleep = false;
   }
 
-  function destroy(e) { if (e && !e.dead) { e.dead = true; e.noCall = true; } }
+  function destroy(e) {
+    if (!e || e.dead) return;
+    e.dead = true;
+    e.noCall = true;
+    if (e.t === 2 && e.o.fout && e.vis) { e.fading = { t: 0, dur: e.o.fout }; e.sleep = false; }
+  }
 
   function buildGrid() {
     L.grid = {};
@@ -904,7 +909,11 @@ window.CFGame = function (opt) {
   function C(name) { var e = O1(name); return e ? e.val : 0; }
   function CS(name, v) { var e = O1(name); if (e) e.val = Math.max(e.min, Math.min(e.max, v)); }
   function CA(name, v) { var e = O1(name); if (e) CS(name, e.val + v); }
-  function count(name) { return S(name).length; }
+  function count(name) {
+    var n = S(name).length, ois = L.names[name];
+    if (ois) for (var i = 0; i < L.all.length; i++) if (L.all[i].fading && L.all[i].byOut && ois.indexOf(L.all[i].oi) >= 0) n++;
+    return n;
+  }
   function each(name, f) { var l = S(name); for (var i = 0; i < l.length; i++) f(l[i]); }
   function where(list, f) { var o = []; for (var i = 0; i < list.length; i++) if (f(list[i])) o.push(list[i]); return o; }
 
@@ -1134,9 +1143,14 @@ window.CFGame = function (opt) {
     for (var i = 0; i < L.all.length; i++) handle(L.all[i]);
     var ev = EV[L.f];
     if (ev) ev();
-    var keep = [];
-    for (var j = 0; j < L.all.length; j++) if (!L.all[j].dead) keep.push(L.all[j]);
-    if (keep.length !== L.all.length) {
+    var keep = [], gone = false;
+    for (var j = 0; j < L.all.length; j++) {
+      var fe = L.all[j];
+      if (fe.fading) { fe.fading.t += DT; if (fe.fading.t >= fe.fading.dur) fe.fading = null; }
+      if (fe.dead && !fe.byOut) { gone = true; fe.byOut = true; }
+      if (!fe.dead || fe.fading) keep.push(fe);
+    }
+    if (gone || keep.length !== L.all.length) {
       L.all = keep;
       for (var k in L.by) L.by[k] = L.by[k].filter(function (e) { return !e.dead; });
     }
@@ -1206,11 +1220,11 @@ window.CFGame = function (opt) {
       });
       for (var i = 0; i < L.all.length; i++) {
         var e = L.all[i];
-        if (e.ly !== li || e.dead || !e.vis) continue;
+        if (e.ly !== li || (e.dead && !e.fading) || !e.vis) continue;
         if (e.t >= 32) { if (e.px) persp(e); continue; }
         if (e.sleep) continue;
         var ex = e.x - L.camX, ey = e.y - L.camY;
-        sg.globalAlpha = e.alpha;
+        sg.globalAlpha = e.fading ? e.alpha * Math.max(0, 1 - e.fading.t / e.fading.dur) : e.alpha;
         if (e.t === 7) { drawCounter(e, ex, ey); sg.globalAlpha = 1; continue; }
         if (e.t === 3) { drawText(e, ex, ey); sg.globalAlpha = 1; continue; }
         if (e.img < 0) { sg.globalAlpha = 1; continue; }
