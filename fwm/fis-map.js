@@ -19,11 +19,11 @@
     { cat: 'cupcake', icon: 'cupcake', x: 6607, y: 3055, name: 'Cupcake 8' },
     { cat: 'cupcake', icon: 'cupcake', x: 47, y: 4495, name: 'Cupcake 9' },
     { cat: 'place', icon: 'start', x: 254, y: 450, name: 'Start', text: 'Freddy starts the game here.' },
-    { cat: 'place', icon: 'spring', x: 5891, y: 1180, name: 'Jump Boost', text: 'Pick it up to jump 50% higher for the rest of the game.' },
+    { cat: 'place', icon: 'spring', x: 5891, y: 1180, name: 'Jump Boost', short: 'Boost', text: 'Pick it up to jump 50% higher for the rest of the game.' },
     { cat: 'place', icon: 'teleport', x: 5882, y: 111, name: 'Teleporter', text: 'Sends Freddy to the bottom-left corridor.', to: 12, go: 'Show the exit' },
-    { cat: 'place', icon: 'teleport', x: 254, y: 4560, name: 'Teleporter exit', text: 'Where the teleporter drops Freddy.', to: 11, go: 'Show the teleporter' },
+    { cat: 'place', icon: 'teleport', x: 254, y: 4560, name: 'Teleporter exit', short: 'TP exit', text: 'Where the teleporter drops Freddy.', to: 11, go: 'Show the teleporter' },
     { cat: 'place', icon: 'heart', x: 672, y: 1088, name: 'Heart', text: 'Restores some health.' },
-    { cat: 'boss', icon: 'boss', x: 7877, y: 4600, name: "Scott's Head", text: 'The final boss. Beat him to finish the game.' }
+    { cat: 'boss', icon: 'boss', x: 7877, y: 4600, name: "Scott's Head", short: 'Boss', text: 'The final boss. Beat him to finish the game.' }
   ];
   var view = root.querySelector('.fm-view'), world = root.querySelector('.fm-world'), tiles = root.querySelector('.fm-tiles'), pinLayer = root.querySelector('.fm-pins'), pop = root.querySelector('.fm-pop');
   var s = 0.1, tx = 0, ty = 0, minS = 0.05, maxS = 1, loaded = {}, on = { cupcake: true, place: true, boss: true }, openPin = null, raf = 0;
@@ -109,7 +109,6 @@
     var t = '<p class="fm-pop-kick">' + CATS[p.cat].name.replace(/s$/, '') + '</p><h3>' + p.name + '</h3>';
     if (p.cat === 'cupcake') t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
-    t += '<p class="fm-pop-xy">x ' + p.x + ', y ' + p.y + '</p>';
     if (p.to != null) t += '<button type="button" class="fm-pop-go">' + p.go + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
     pop.hidden = false;
@@ -221,7 +220,8 @@
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'fm-item';
-    b.innerHTML = '<img src="' + BASE + 'i_' + p.icon + '.png' + VER + '" alt=""><span>' + p.name + '</span>';
+    b.innerHTML = '<img src="' + BASE + 'i_' + p.icon + '.png' + VER + '" alt=""><span>' + (p.short || p.name) + '</span>';
+    b.setAttribute('aria-label', 'Go to ' + p.name);
     b.addEventListener('click', function () {
       if (!on[p.cat]) { on[p.cat] = true; var cb = legend.querySelectorAll('input')[Object.keys(CATS).indexOf(p.cat)]; if (cb) cb.checked = true; }
       flyTo(p.x, p.y, Math.max(s, 0.45));

@@ -97,6 +97,7 @@
     play: 44,
     idleTicks: 30,
     overlay: function (g, L) { if (L && L.f === 44) drawCheats(g, L); },
+    tapZone: function (x, y) { return y >= CB[1] - 6 && y <= CB[1] + CB[3] + 6 && x < (CHEATS ? TPX + 9 * (TPW + TPG) : CB[0] + CB[2]) + 4; },
     defaultReward: 43,
     codes: { ArrowLeft: 37, ArrowRight: 39, KeyZ: 90, KeyX: 88, KeyC: 67, Digit1: 49, Digit2: 50, Digit3: 51, Digit4: 52, Digit5: 53, Digit6: 54, Digit7: 55, Digit8: 56, Digit9: 57, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 37, right: 39, jump: 90 },
@@ -331,7 +332,8 @@
         if (C('WIN') === 1 && every('e134', 3000)) { G.found = C('found new') || 43; go(43); return; }
         if (C('game over') === 1 && every('e135', 2000)) { go('title'); return; }
         if (C('Counter') > 0 && every('e136', 1000)) CA('Counter', -1);
-        if (api.clicked('Active 12').length && C('deaths') < 33) {
+        var vmp = api.mousePos(), vlab = pressed(1) && vmp.on && vmp.x >= 4 && vmp.x < 74 && vmp.y >= 455 && vmp.y < 480 && live('Active 12').length > 0;
+        if ((api.clicked('Active 12').length || vlab) && C('deaths') < 33) {
           stopAll();
           each('Active 12', destroy);
           CS('deaths', 33);

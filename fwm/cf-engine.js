@@ -1767,8 +1767,19 @@ window.CFGame = function (opt) {
       knob.style.transform = '';
       stickKeys(0, 0);
     };
+    var tapId = null;
     zone.addEventListener('pointerdown', function (e) {
       e.preventDefault();
+      if (opt.tapZone && mode === 'play' && !paused) {
+        var cr = cv.getBoundingClientRect(), gx = (e.clientX - cr.left) * W / cr.width, gy = (e.clientY - cr.top) * H / cr.height;
+        if (opt.tapZone(gx, gy)) {
+          mouseAt(e);
+          tapId = e.pointerId;
+          if (!KEY[1]) TAP[1] = true;
+          KEY[1] = true;
+          return;
+        }
+      }
       if (sid !== null) return;
       if (paused) pause(false);
       sid = e.pointerId;
@@ -1781,7 +1792,7 @@ window.CFGame = function (opt) {
       stickMove(e);
     });
     zone.addEventListener('pointermove', function (e) { if (e.pointerId === sid) stickMove(e); });
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { zone.addEventListener(t, stickEnd); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { zone.addEventListener(t, function (e) { if (e.pointerId === tapId) { tapId = null; KEY[1] = false; return; } stickEnd(e); }); });
     zone.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
     zone.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     if (window.ResizeObserver) { var ro = new ResizeObserver(sizePad); ro.observe(zone); ro.observe(cv); }
