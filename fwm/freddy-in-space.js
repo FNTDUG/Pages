@@ -8,6 +8,7 @@
   var api = window.CFGame({
     root: root,
     base: '/fwm/fis57/',
+    legacyText: true,
     ver: '?v=2',
     title: 37,
     play: 38,

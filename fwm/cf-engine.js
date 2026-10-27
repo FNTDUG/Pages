@@ -292,7 +292,13 @@ window.CFGame = function (opt) {
     var f = o.fl || 0, nm = o.n, fr = L.f;
     var e = { id: seq++, oi: oi, o: o, t: o.t, x: x, y: y, cx: 0, cy: 0, ly: ly, vis: o.t < 2 ? true : o.vis !== false, alt: [], dir: 0, speed: 0, minS: 0, maxS: 0, img: -1, w: 0, h: 0, hx: 0, hy: 0, ax: 0, ay: 0, ink: 0, alpha: 1, flash: 0, flashCpt: 0, dead: false, noCall: false, sleep: false, chk: true, moveFlag: false, mv: null, val: 0, text: '', colOn: true };
     for (var i = 0; i < 26; i++) e.alt[i] = (o.vals && o.vals[i]) || 0;
-    if (o.inkraw && o.inkraw.length >= 16) { e.add = parseInt(o.inkraw.slice(0, 2), 16) === 9; e.alpha = parseInt(o.inkraw.slice(14, 16), 16) / 255; }
+    if (o.inkraw && o.inkraw.length >= 16) {
+      var ie = parseInt(o.inkraw.slice(0, 2), 16) | (parseInt(o.inkraw.slice(2, 4), 16) << 8);
+      e.add = (ie & 0xFFF) === 9;
+      if (ie & 0x1000) e.alpha = parseInt(o.inkraw.slice(14, 16), 16) / 255;
+      else if ((ie & 0xFFF) === 1) e.alpha = 1 - Math.min(128, le(o.inkraw, 8, 4)) / 128;
+      else e.alpha = 1;
+    }
     if (o.t === 7) { e.val = o.cnt[0]; e.min = o.cnt[1]; e.max = o.cnt[2]; }
     if (o.t >= 32 && o.ext && /^Perspective/.test(o.n)) e.px = parsePersp(o.ext);
     if (o.t >= 32 && o.ext && /^Date & Time/.test(o.n)) e.clock = parseClock(o.ext);
@@ -703,6 +709,7 @@ window.CFGame = function (opt) {
     if (!mv.back) {
       number++;
       if (number < st.length) { goAvant(e, number); return e.moveFlag; }
+      e.pathEnd = L.loop;
       mv.n = number;
       if (mv.m.rev) {
         mv.back = true;
@@ -1045,7 +1052,17 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {}, GT = 0, quiet = false;
+  var SND_END = {}, GT = 0, quiet = false, CHV = {}, CHG = {};
+  function setVolume(ch, v) {
+    CHV[ch] = Math.max(0, Math.min(100, v)) / 100;
+    if (CHG[ch]) CHG[ch].gain.value = CHV[ch];
+    if (MUS && MUS.ch === ch) MUS.volume = MUS_VOL * CHV[ch];
+  }
+  function selectMovement(e, n) { if (e && e.t === 2) initMove(e, n, null); }
+  function forceAnimSpeed(e, sp) { if (e && e.t === 2) e.aSpeedForced = sp + 1; }
+  function setEffect(e, name) { if (e) e.add = name === 'Add'; }
+  function setText(e, txt) { if (e) e.text = String(txt); }
+  function pathEnded(e) { return !!e && e.pathEnd === L.loop; }
   function playing(name) { return (SND_END[name] || 0) > GT; }
   function play(name, ch, loop) {
     if (!D.sounds[name]) return;
@@ -1060,10 +1077,13 @@ window.CFGame = function (opt) {
     loadSnd(name, function (b) {
       if (!L || L.loop - stamp > 30) return;
       if (CH[ch]) { try { CH[ch].stop(); } catch (e) {} }
-      var s = a.createBufferSource();
+      var s = a.createBufferSource(), gn = a.createGain();
       s.buffer = b;
       s.loop = !!loop;
-      s.connect(GAIN || a.destination);
+      gn.gain.value = CHV[ch] == null ? 1 : CHV[ch];
+      s.connect(gn);
+      gn.connect(GAIN || a.destination);
+      CHG[ch] = gn;
       s.start();
       if (!loop) SND_END[name] = GT + b.duration * 1000;
       CH[ch] = s;
@@ -1078,7 +1098,7 @@ window.CFGame = function (opt) {
     MUS.dataset.n = name;
     MUS.ch = ch;
     MUS.loop = true;
-    MUS.volume = MUS_VOL;
+    MUS.volume = MUS_VOL * (CHV[ch] == null ? 1 : CHV[ch]);
     var p = MUS.play();
     if (p && p.catch) p.catch(function () {});
   }
@@ -1169,7 +1189,7 @@ window.CFGame = function (opt) {
   function setAlphaCoef(e, c) { if (e) e.alpha = Math.max(0, Math.min(255, 255 - c)) / 255; }
   function setZoom(e, z) { if (e && e.px) e.px.zoom = z; }
   function frameInfo() { return L; }
-  var api = { S: S, O1: O1, C: C, CS: CS, CA: CA, count: count, each: each, where: where, colSel: colSel, notCol: notCol, once: once, onceOnly: onceOnly, every: every, timer: timer, create: create, shoot: shoot, lookAt: lookAt, facing: facing, nearBorder: nearBorder, hide: hide, show: show, flash: flash, toFront: toFront, pick: pick, display: display, setPos: setPos, setX: setX, setY: setY, setDir: setDir, setSpeed: setSpeed, speedOf: speedOf, stopObj: stopObj, startObj: startObj, nextMovement: nextMovement, force: force, bg: bg, destroy: destroy, bounce: bounce, play: play, stopAll: stopAll, playing: playing, pressed: pressed, down: down, rnd: rnd, go: go, setAlphaCoef: setAlphaCoef, setZoom: setZoom, frame: frameInfo, G: GLOBAL, shootToward: shootToward, paste: paste, clicked: clicked, clock: clock };
+  var api = { S: S, O1: O1, C: C, CS: CS, CA: CA, count: count, each: each, where: where, colSel: colSel, notCol: notCol, once: once, onceOnly: onceOnly, every: every, timer: timer, create: create, shoot: shoot, lookAt: lookAt, facing: facing, nearBorder: nearBorder, hide: hide, show: show, flash: flash, toFront: toFront, pick: pick, display: display, setPos: setPos, setX: setX, setY: setY, setDir: setDir, setSpeed: setSpeed, speedOf: speedOf, stopObj: stopObj, startObj: startObj, nextMovement: nextMovement, force: force, bg: bg, destroy: destroy, bounce: bounce, play: play, stopAll: stopAll, playing: playing, pressed: pressed, down: down, rnd: rnd, go: go, setAlphaCoef: setAlphaCoef, setZoom: setZoom, frame: frameInfo, G: GLOBAL, shootToward: shootToward, paste: paste, clicked: clicked, clock: clock, setVolume: setVolume, selectMovement: selectMovement, forceAnimSpeed: forceAnimSpeed, setEffect: setEffect, setText: setText, pathEnded: pathEnded, dirFromMask: dirFromMask };
   var CFG = opt.setup(api) || {};
   ['START', 'EV', 'TRIG'].forEach(function (k) { var src = CFG[k] || {}; var dst = k === 'START' ? START : k === 'EV' ? EV : TRIG; for (var f in src) dst[f] = src[f]; });
   QCOL = CFG.QCOL || {};
@@ -1343,6 +1363,24 @@ window.CFGame = function (opt) {
 
   function digitIndex(c) { return c === '-' ? 10 : c === '+' ? 11 : c === '.' ? 12 : c === 'e' ? 13 : +c; }
   function drawCounter(e, x, y) {
+    var bar = e.o.bar;
+    if (bar) {
+      var span = e.max - e.min, horiz = bar[0] === 3, full = horiz ? bar[1] : bar[2];
+      var n = span > 0 ? Math.floor(((e.val - e.min) * full) / span) : 0;
+      if (n <= 0) return;
+      var bw = horiz ? n : bar[1], bh = horiz ? bar[2] : n, inv = (bar[3] & 0x100) !== 0;
+      var bx = x - (horiz && inv ? n - bar[1] : 0), by = y - (!horiz && inv ? n - bar[2] : 0);
+      if (bar[4] === 2) {
+        var c1 = '#' + bar[5], c2 = '#' + bar[6];
+        if (inv) { var tc = c1; c1 = c2; c2 = tc; }
+        var gr = bar[7] ? sg.createLinearGradient(0, by, 0, by + bh) : sg.createLinearGradient(bx, 0, bx + bw, 0);
+        gr.addColorStop(0, c1);
+        gr.addColorStop(1, c2);
+        sg.fillStyle = gr;
+      } else sg.fillStyle = '#' + bar[5];
+      sg.fillRect(Math.round(bx), Math.round(by), bw, bh);
+      return;
+    }
     var dg = e.o.digits;
     if (!dg) return;
     var s = String(Math.round(e.val)), xx = x;
@@ -1354,8 +1392,24 @@ window.CFGame = function (opt) {
     }
   }
 
+  var FACES = { System: 'Arial, Helvetica, sans-serif', Terminal: '"Courier New", Courier, monospace', Tahoma: 'Tahoma, Verdana, sans-serif', 'OCR A Extended': '"OCR A Extended", "OCR A Std", "Courier New", monospace' };
   function drawText(e, x, y) {
     var t = e.o.txt || {}, p = (t.paras && t.paras[0]) || {}, big = p.font === 28;
+    var fnt = !opt.legacyText && D.fonts && D.fonts[p.font];
+    if (fnt) {
+      var size = fnt[1], tw = t.w || 400;
+      sg.font = (fnt[3] ? 'italic ' : '') + (fnt[2] >= 600 ? '700 ' : '400 ') + size + 'px ' + (FACES[fnt[0]] || '"' + fnt[0] + '", sans-serif');
+      sg.fillStyle = '#' + (p.color || 'ffffff');
+      sg.textBaseline = 'top';
+      var al = (p.flags & 1) ? 'center' : (p.flags & 2) ? 'right' : 'left';
+      sg.textAlign = al;
+      var ax = al === 'center' ? x + tw / 2 : al === 'right' ? x + tw : x, out = [], cur = '';
+      String(e.text).split(' ').forEach(function (wd) { var test = cur ? cur + ' ' + wd : wd; if (sg.measureText(test).width > tw && cur) { out.push(cur); cur = wd; } else cur = test; });
+      if (cur) out.push(cur);
+      out.forEach(function (l, i) { sg.fillText(l, Math.round(ax), Math.round(y + i * Math.round(size * 1.2))); });
+      sg.textAlign = 'left';
+      return;
+    }
     sg.font = big ? '700 40px Tahoma, Verdana, sans-serif' : '700 21px "Courier New", Courier, monospace';
     sg.fillStyle = '#' + (p.color || 'ffffff');
     sg.textBaseline = 'top';
@@ -1390,6 +1444,7 @@ window.CFGame = function (opt) {
     PREV = {};
     TAP = {};
     GLOBAL.found = 0;
+    CHV = {};
     startFrame(opt.first != null ? opt.first : opt.play);
     GLOBAL.start = Date.now();
     syncButtons();
