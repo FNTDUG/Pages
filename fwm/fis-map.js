@@ -49,6 +49,7 @@
   route.setAttribute('viewBox', '0 0 ' + MW + ' ' + MH);
   route.setAttribute('width', MW);
   route.setAttribute('height', MH);
+  if (C.labels) C.labels.forEach(function (l) { var d = document.createElement('div'); d.className = 'fm-label'; d.textContent = l.t; d.style.left = l.x + 'px'; d.style.top = (l.y + OFFY) + 'px'; if (l.size) d.style.setProperty('--ls', l.size + 'px'); d.setAttribute('aria-hidden', 'true'); world.appendChild(d); });
   world.appendChild(route);
   function svgEl(tag, at) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); route.appendChild(e); return e; }
   function showPath(p) {
@@ -99,7 +100,7 @@
     raf = 0;
     clamp();
     world.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
-    route.style.setProperty('--k', (1 / s).toFixed(4));
+    world.style.setProperty('--k', (1 / s).toFixed(4));
     Array.prototype.forEach.call(route.querySelectorAll('circle'), function (c) { c.setAttribute('r', (+c.getAttribute('data-r')) / s); });
     if (s >= 0.22) {
       var x0 = Math.max(0, Math.floor(-tx / s / TILE)), y0 = Math.max(0, Math.floor(-ty / s / TILE));
