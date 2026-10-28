@@ -149,8 +149,13 @@
     var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
     var all = p.path.concat(C.start ? [[C.start[0], C.start[1]]] : []);
     all.forEach(function (seg) { for (var i = 0; i < seg.length; i += 2) { x0 = Math.min(x0, seg[i]); x1 = Math.max(x1, seg[i]); y0 = Math.min(y0, seg[i + 1]); y1 = Math.max(y1, seg[i + 1]); } });
-    var pad = 160, ns = Math.min(view.clientWidth / (x1 - x0 + pad * 2), view.clientHeight / (y1 - y0 + pad * 2));
-    flyTo((x0 + x1) / 2, (y0 + y1) / 2, Math.min(0.6, ns));
+    var vw = view.clientWidth, vh = view.clientHeight, l = 8, t = 8, r = vw - 56, b = vh - 8, pad = 30;
+    if (vw < 600) r = vw - 48;
+    if (!pop.hidden && pop.parentNode === view) l = pop.offsetLeft + pop.offsetWidth + 10;
+    s = Math.max(minS, Math.min(maxS, 0.6, (r - l - pad * 2) / Math.max(1, x1 - x0), (b - t - pad * 2) / Math.max(1, y1 - y0)));
+    tx = (l + r) / 2 - (x0 + x1) / 2 * s;
+    ty = (t + b) / 2 - ((y0 + y1) / 2 + OFFY) * s;
+    draw();
   }
   function reset() { minS = fit(); s = minS; tx = 0; ty = 0; draw(); }
 
@@ -160,13 +165,12 @@
     var t = '<p class="fm-pop-kick">' + (p.kick || CATS[p.cat].kick || CATS[p.cat].name.replace(/s$/, '')) + '</p><h3>' + p.name + '</h3>';
     if (p.cat === 'cupcake' && !C.pins) t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
-    if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.</p><button type="button" class="fm-pop-go fm-pop-fit">Show the whole route</button>';
+    if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.</p>';
     if (p.to != null || p.dest) t += '<button type="button" class="fm-pop-go">' + (p.go || 'Go there') + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
     pop.hidden = false;
-    var fitb = pop.querySelector('.fm-pop-fit');
-    if (fitb) fitb.addEventListener('click', function () { fitRoute(p); placePop(); });
-    var go = pop.querySelector('.fm-pop-go:not(.fm-pop-fit)');
+    pop.classList.toggle('fm-pop--dock', !!p.path);
+    var go = pop.querySelector('.fm-pop-go');
     if (go) go.addEventListener('click', function () {
       if (p.dest) { flyTo(p.dest[0], p.dest[1], Math.max(s, 0.35)); var hit = -1; PINS.forEach(function (q, k) { if (hit < 0 && Math.abs(q.x - p.dest[0]) < 60 && Math.abs(q.y - p.dest[1]) < 60) hit = k; }); if (hit >= 0) openPop(hit); else placePop(); return; }
       var d = PINS[p.to]; flyTo(d.x, d.y, Math.max(s, 0.35)); openPop(p.to);
@@ -174,11 +178,17 @@
     PINS.forEach(function (q, k) { q.el.classList.toggle('fm-pin--on', k === i); });
     showPath(p);
     placePop();
+    if (p.path) fitRoute(p);
   }
   function closePop() { showPath(null); openPin = null; pop.hidden = true; PINS.forEach(function (q) { q.el.classList.remove('fm-pin--on'); }); }
   function placePop() {
     var p = PINS[openPin];
     if (!p || !on[p.cat]) { closePop(); return; }
+    var below = !!p.path && view.clientWidth < 600 && window.matchMedia('(max-width: 900px)').matches;
+    if (below !== (pop.parentNode !== view)) { if (below) view.parentNode.insertBefore(pop, view.nextSibling); else view.appendChild(pop); }
+    pop.classList.toggle('fm-pop--below', below);
+    if (below) { pop.style.left = ''; pop.style.top = ''; return; }
+    if (p.path) { pop.style.left = '8px'; pop.style.top = '8px'; return; }
     var big = s >= (C.bigAt || 0.16) && view.clientWidth >= 600, ph = big ? 58 : (view.clientWidth < 600 ? 32 : 42), x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
     var anchor = ty + (p.y + OFFY + (p.below ? 26 : DY[p.icon] || 0)) * s;
     var topEdge = p.below ? ty + (p.y + OFFY + (DY[p.icon] || 0)) * s : anchor - ph;
@@ -286,7 +296,7 @@
     b.setAttribute('aria-label', 'Go to ' + p.name);
     b.addEventListener('click', function () {
       if (!on[p.cat]) { on[p.cat] = true; var cb = legend.querySelectorAll('input')[Object.keys(CATS).indexOf(p.cat)]; if (cb) cb.checked = true; }
-      if (p.path) fitRoute(p); else flyTo(p.x, p.y, Math.max(s, 0.45));
+      if (!p.path) flyTo(p.x, p.y, Math.max(s, 0.45));
       openPop(i);
       if (window.matchMedia('(max-width: 900px)').matches) view.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
