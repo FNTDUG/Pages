@@ -66,9 +66,10 @@
       var a = pts[k][pts[k].length - 1].split(','), b = pts[k + 1][0].split(',');
       svgEl('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: 'fm-route-jump' });
     }
-    pts.forEach(function (seg) {
+    pts.forEach(function (seg, k) {
+      var g = p.pathk && p.pathk.charAt(k) === 'g' ? ' fm-route-line--g' : '';
       svgEl('polyline', { points: seg.join(' '), class: 'fm-route-edge' });
-      svgEl('polyline', { points: seg.join(' '), class: 'fm-route-line' });
+      svgEl('polyline', { points: seg.join(' '), class: 'fm-route-line' + g });
     });
     for (var j = 0; j + 1 < pts.length; j++) {
       var e1 = pts[j][pts[j].length - 1].split(','), e2 = pts[j + 1][0].split(',');
@@ -166,7 +167,7 @@
     var t = '<p class="fm-pop-kick">' + (p.kick || CATS[p.cat].kick || CATS[p.cat].name.replace(/s$/, '')) + '</p><h3>' + p.name + '</h3>';
     if (p.cat === 'cupcake' && !C.pins) t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
-    if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.</p>';
+    if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.' + (p.pathk && p.pathk.indexOf('g') >= 0 ? ' The pink part is inside &amp;*___TWRE, the glitched layer, where you can walk straight through the scenery.' : '') + '</p>';
     if (p.to != null || p.dest) t += '<button type="button" class="fm-pop-go">' + (p.go || 'Go there') + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
     pop.hidden = false;
