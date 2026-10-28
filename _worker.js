@@ -48,6 +48,7 @@ const MOBILE_NAV_BODY = `
     <a href="/fwm/meta-teams"            class="ug-mn-child" data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         class="ug-mn-child" data-nav-href="/fwm/grind-methods">Grind Methods</a>
     <a href="/fwm/minigames"             class="ug-mn-child" data-nav-href="/fwm/minigames">Minigames</a>
+    <a href="/fwm/world-map"             class="ug-mn-child" data-nav-href="/fwm/world-map">World Map</a>
   </div>
 </div>
 <div class="ug-mn-section">
@@ -112,6 +113,7 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/meta-teams"            data-nav-href="/fwm/meta-teams">Meta Teams</a>
     <a href="/fwm/grind-methods"         data-nav-href="/fwm/grind-methods">Grind Methods</a>
     <a href="/fwm/minigames"             data-nav-href="/fwm/minigames">Minigames</a>
+    <a href="/fwm/world-map"             data-nav-href="/fwm/world-map">World Map</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3524,6 +3526,7 @@ const SEO_PAGES = {
   '/fwm/minigames': ['FWM Minigames: Play the FNaF World Minigames Online', "Play the FNaF World minigames in your browser: FNaF 57: Freddy in Space, Foxy.EXE, Chica's Magic Rainbow and Foxy Fighters, remade from the original game."],
   '/fwm/foxy-fighters': ['Foxy Fighters: Play the FNaF World Minigame Remake Online', 'Play Foxy Fighters in your browser, a fan remake of the FNaF World space shooter. Fly with the Chica squadron and beat the Souldozer to unlock Nightmare BB.'],
   '/fwm/chicas-magic-rainbow': ['Chica\'s Magic Rainbow: Play the FNaF World Minigame Online','Play Chica\'s Magic Rainbow in your browser, a fan remake of the FNaF World platformer. Dodge petals, lasers and spikes to unlock Animdude or Mr. Chipper.'],
+  '/fwm/world-map': ['FNaF World Map: Every Chip, Shop, Boss and Glitch', "Interactive FNaF World overworld map from the game files: every chip chest, Lolbit shop, boss and the glitched objects that lead to the Flipside."],
   '/fwm/freddy-in-space-map': ['Freddy in Space Map: All 9 Cupcake Locations', "Interactive map of FNaF 57: Freddy in Space from FNaF World. Zoom in to find all 9 cupcakes, the jump boost, the teleporter and Scott's Head."],
   '/fwm/freddy-in-space': ['FNaF 57: Freddy in Space: Play the Fan Remake Online', "Play FNaF 57: Freddy in Space in your browser, a fan remake of the FNaF World minigame. Find 9 cupcakes, beat Scott's Head and unlock Purple Guy."],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],

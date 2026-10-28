@@ -1,14 +1,15 @@
 (function () {
   var root = document.getElementById('fm');
   if (!root) return;
-  var BASE = '/fwm/fis57/map/', VER = '?v=3', MW = 8000, MH = 5000, OFFY = 200, TILE = 1000;
-  var DY = { cupcake: -36, spring: -38, teleport: -38, heart: -16, start: -96, boss: 0 };
-  var CATS = {
+  var C = window.FM_CFG || {};
+  var BASE = C.base || '/fwm/fis57/map/', VER = C.ver || '?v=3', MW = C.w || 8000, MH = C.h || 5000, OFFY = C.offy != null ? C.offy : 200, TILE = 1000, STORE = C.store || 'fm-cats';
+  var DY = C.dy || { cupcake: -36, spring: -38, teleport: -38, heart: -16, start: -96, boss: 0 };
+  var CATS = C.cats || {
     cupcake: { name: 'Cupcakes', icon: 'cupcake' },
     place: { name: 'Landmarks', icon: 'spring' },
     boss: { name: 'Boss', icon: 'boss' }
   };
-  var PINS = [
+  var PINS = C.pins || [
     { cat: 'cupcake', icon: 'cupcake', x: 1263, y: 815, name: 'Cupcake 1' },
     { cat: 'cupcake', icon: 'cupcake', x: 1999, y: 1103, name: 'Cupcake 2' },
     { cat: 'cupcake', icon: 'cupcake', x: 2511, y: 2255, name: 'Cupcake 3' },
@@ -25,15 +26,23 @@
     { cat: 'place', icon: 'heart', x: 672, y: 1088, name: 'Heart', text: 'Restores some health.' },
     { cat: 'boss', icon: 'boss', x: 7877, y: 4600, name: "Scott's Head", short: 'Boss', text: 'The final boss. Beat him to finish the game.' }
   ];
+  function icon(p) { return p.img || (BASE + 'i_' + p.icon + '.png' + VER); }
   var view = root.querySelector('.fm-view'), world = root.querySelector('.fm-world'), tiles = root.querySelector('.fm-tiles'), pinLayer = root.querySelector('.fm-pins'), pop = root.querySelector('.fm-pop');
-  var s = 0.1, tx = 0, ty = 0, minS = 0.05, maxS = 1, loaded = {}, on = { cupcake: true, place: true, boss: true }, openPin = null, raf = 0;
-  try { var saved = JSON.parse(localStorage.getItem('fm-cats') || 'null'); if (saved) for (var k in on) if (k in saved) on[k] = !!saved[k]; } catch (e) {}
+  var s = 0.1, tx = 0, ty = 0, minS = 0.05, maxS = 1, loaded = {}, on = {}, openPin = null, raf = 0;
+  Object.keys(CATS).forEach(function (c) { on[c] = CATS[c].off ? false : true; });
+  try { var saved = JSON.parse(localStorage.getItem(STORE) || 'null'); if (saved) for (var k in on) if (k in saved) on[k] = !!saved[k]; } catch (e) {}
 
+  world.style.width = MW + 'px';
+  world.style.height = MH + 'px';
+  tiles.style.width = MW + 'px';
+  tiles.style.height = MH + 'px';
   var ov = document.createElement('img');
   ov.className = 'fm-ov';
   ov.src = BASE + 'overview.webp' + VER;
   ov.alt = '';
   ov.draggable = false;
+  ov.style.width = MW + 'px';
+  ov.style.height = MH + 'px';
   world.insertBefore(ov, tiles);
 
   PINS.forEach(function (p, i) {
@@ -41,7 +50,7 @@
     b.type = 'button';
     b.className = 'fm-pin fm-pin--' + p.cat + (p.below ? ' fm-pin--below' : '');
     b.setAttribute('aria-label', p.name);
-    b.innerHTML = '<img src="' + BASE + 'i_' + p.icon + '.png' + VER + '" alt="" draggable="false">';
+    b.innerHTML = '<img src="' + icon(p) + '" alt="" draggable="false">';
     b.addEventListener('click', function (e) { e.stopPropagation(); openPop(i); });
     p.el = b;
     pinLayer.appendChild(b);
@@ -76,7 +85,7 @@
       }
     }
     tiles.style.visibility = s >= 0.22 ? '' : 'hidden';
-    var big = s >= 0.16 && view.clientWidth >= 600;
+    var big = s >= (C.bigAt || 0.16) && view.clientWidth >= 600;
     PINS.forEach(function (p) {
       var show = on[p.cat];
       p.el.hidden = !show;
@@ -106,8 +115,8 @@
   function openPop(i) {
     var p = PINS[i];
     openPin = i;
-    var t = '<p class="fm-pop-kick">' + CATS[p.cat].name.replace(/s$/, '') + '</p><h3>' + p.name + '</h3>';
-    if (p.cat === 'cupcake') t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
+    var t = '<p class="fm-pop-kick">' + (p.kick || CATS[p.cat].kick || CATS[p.cat].name.replace(/s$/, '')) + '</p><h3>' + p.name + '</h3>';
+    if (p.cat === 'cupcake' && !C.pins) t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
     if (p.to != null) t += '<button type="button" class="fm-pop-go">' + p.go + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
@@ -121,7 +130,7 @@
   function placePop() {
     var p = PINS[openPin];
     if (!p || !on[p.cat]) { closePop(); return; }
-    var big = s >= 0.16 && view.clientWidth >= 600, ph = big ? 58 : (view.clientWidth < 600 ? 32 : 42), x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
+    var big = s >= (C.bigAt || 0.16) && view.clientWidth >= 600, ph = big ? 58 : (view.clientWidth < 600 ? 32 : 42), x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
     var anchor = ty + (p.y + OFFY + (p.below ? 26 : DY[p.icon] || 0)) * s;
     var topEdge = p.below ? ty + (p.y + OFFY + (DY[p.icon] || 0)) * s : anchor - ph;
     var botEdge = p.below ? anchor + ph : ty + (p.y + OFFY + 26) * s;
@@ -211,10 +220,10 @@
     var n = PINS.filter(function (p) { return p.cat === c; }).length;
     var lab = document.createElement('label');
     lab.className = 'fm-cat';
-    lab.innerHTML = '<input type="checkbox"' + (on[c] ? ' checked' : '') + '><img src="' + BASE + 'i_' + CATS[c].icon + '.png' + VER + '" alt=""><span>' + CATS[c].name + '</span><b>' + n + '</b>';
+    lab.innerHTML = '<input type="checkbox"' + (on[c] ? ' checked' : '') + '><img src="' + (CATS[c].img || BASE + 'i_' + CATS[c].icon + '.png' + VER) + '" alt=""><span>' + CATS[c].name + '</span><b>' + n + '</b>';
     lab.querySelector('input').addEventListener('change', function (e) {
       on[c] = e.target.checked;
-      try { localStorage.setItem('fm-cats', JSON.stringify(on)); } catch (x) {}
+      try { localStorage.setItem(STORE, JSON.stringify(on)); } catch (x) {}
       draw();
     });
     legend.appendChild(lab);
@@ -224,7 +233,7 @@
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'fm-item';
-    b.innerHTML = '<img src="' + BASE + 'i_' + p.icon + '.png' + VER + '" alt=""><span>' + (p.short || p.name) + '</span>';
+    b.innerHTML = '<img src="' + icon(p) + '" alt=""><span>' + (p.short || p.name) + '</span>';
     b.setAttribute('aria-label', 'Go to ' + p.name);
     b.addEventListener('click', function () {
       if (!on[p.cat]) { on[p.cat] = true; var cb = legend.querySelectorAll('input')[Object.keys(CATS).indexOf(p.cat)]; if (cb) cb.checked = true; }
