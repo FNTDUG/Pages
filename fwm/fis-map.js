@@ -76,7 +76,7 @@
       }
     }
     tiles.style.visibility = s >= 0.22 ? '' : 'hidden';
-    var big = s >= 0.16;
+    var big = s >= 0.16 && view.clientWidth >= 600;
     PINS.forEach(function (p) {
       var show = on[p.cat];
       p.el.hidden = !show;
@@ -121,12 +121,13 @@
   function placePop() {
     var p = PINS[openPin];
     if (!p || !on[p.cat]) { closePop(); return; }
-    var big = s >= 0.16, ph = big ? 52 : 36, x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
+    var big = s >= 0.16 && view.clientWidth >= 600, ph = big ? 58 : (view.clientWidth < 600 ? 32 : 42), x = tx + p.x * s, w = pop.offsetWidth, h = pop.offsetHeight, vw = view.clientWidth;
     var anchor = ty + (p.y + OFFY + (p.below ? 26 : DY[p.icon] || 0)) * s;
     var topEdge = p.below ? ty + (p.y + OFFY + (DY[p.icon] || 0)) * s : anchor - ph;
     var botEdge = p.below ? anchor + ph : ty + (p.y + OFFY + 26) * s;
-    var left = Math.max(8, Math.min(vw - w - 8, x - w / 2)), top = topEdge - h - 10;
+    var vh = view.clientHeight, left = Math.max(8, Math.min(vw - w - 8, x - w / 2)), top = topEdge - h - 10;
     if (top < 8) top = botEdge + 10;
+    if (top + h > vh - 8) top = Math.max(8, vh - h - 8);
     pop.style.left = left + 'px';
     pop.style.top = top + 'px';
   }
@@ -180,6 +181,9 @@
       drag = null;
     } else if (ids.length === 1) { var p = pts[ids[0]]; drag = { x: p.x, y: p.y, tx: tx, ty: ty }; }
   }
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { view.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); });
+  view.addEventListener('touchmove', function (e) { if (e.touches.length > 1 || drag) e.preventDefault(); }, { passive: false });
+  view.addEventListener('touchstart', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
   view.addEventListener('pointerup', up);
   view.addEventListener('pointercancel', up);
   view.addEventListener('wheel', function (e) {
