@@ -1,7 +1,7 @@
 (function () {
   var root = document.getElementById('fm');
   if (!root) return;
-  var BASE = '/fwm/fis57/map/', VER = '?v=2', MW = 8000, MH = 5000, OFFY = 200, TILE = 1000;
+  var BASE = '/fwm/fis57/map/', VER = '?v=3', MW = 8000, MH = 5000, OFFY = 200, TILE = 1000;
   var DY = { cupcake: -36, spring: -38, teleport: -38, heart: -16, start: -96, boss: 0 };
   var CATS = {
     cupcake: { name: 'Cupcakes', icon: 'cupcake' },
@@ -9,14 +9,14 @@
     boss: { name: 'Boss', icon: 'boss' }
   };
   var PINS = [
-    { cat: 'cupcake', icon: 'cupcake', x: 1407, y: 30, name: 'Cupcake 1', below: true },
-    { cat: 'cupcake', icon: 'cupcake', x: 3964, y: 346, name: 'Cupcake 2' },
-    { cat: 'cupcake', icon: 'cupcake', x: 1263, y: 815, name: 'Cupcake 3' },
-    { cat: 'cupcake', icon: 'cupcake', x: 1999, y: 1103, name: 'Cupcake 4' },
-    { cat: 'cupcake', icon: 'cupcake', x: 2511, y: 2255, name: 'Cupcake 5' },
+    { cat: 'cupcake', icon: 'cupcake', x: 1263, y: 815, name: 'Cupcake 1' },
+    { cat: 'cupcake', icon: 'cupcake', x: 1999, y: 1103, name: 'Cupcake 2' },
+    { cat: 'cupcake', icon: 'cupcake', x: 2511, y: 2255, name: 'Cupcake 3' },
+    { cat: 'cupcake', icon: 'cupcake', x: 6607, y: 3055, name: 'Cupcake 4' },
+    { cat: 'cupcake', icon: 'cupcake', x: 2479, y: 3599, name: 'Cupcake 5' },
     { cat: 'cupcake', icon: 'cupcake', x: 6959, y: 2511, name: 'Cupcake 6' },
-    { cat: 'cupcake', icon: 'cupcake', x: 2479, y: 3599, name: 'Cupcake 7' },
-    { cat: 'cupcake', icon: 'cupcake', x: 6607, y: 3055, name: 'Cupcake 8' },
+    { cat: 'cupcake', icon: 'cupcake', x: 1407, y: 30, name: 'Cupcake 7', below: true },
+    { cat: 'cupcake', icon: 'cupcake', x: 3964, y: 346, name: 'Cupcake 8' },
     { cat: 'cupcake', icon: 'cupcake', x: 47, y: 4495, name: 'Cupcake 9' },
     { cat: 'place', icon: 'start', x: 254, y: 450, name: 'Start', text: 'Freddy starts the game here.' },
     { cat: 'place', icon: 'spring', x: 5891, y: 1180, name: 'Jump Boost', short: 'Boost', text: 'Pick it up to jump 50% higher for the rest of the game.' },
