@@ -44,6 +44,39 @@
   ov.style.width = MW + 'px';
   ov.style.height = MH + 'px';
   world.insertBefore(ov, tiles);
+  var NS = 'http://www.w3.org/2000/svg', route = document.createElementNS(NS, 'svg');
+  route.setAttribute('class', 'fm-route');
+  route.setAttribute('viewBox', '0 0 ' + MW + ' ' + MH);
+  route.setAttribute('width', MW);
+  route.setAttribute('height', MH);
+  world.appendChild(route);
+  function svgEl(tag, at) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); route.appendChild(e); return e; }
+  function showPath(p) {
+    while (route.firstChild) route.removeChild(route.firstChild);
+    root.classList.remove('fm-routing');
+    if (p && p.dest) {
+      svgEl('line', { x1: p.x, y1: p.y + OFFY, x2: p.dest[0], y2: p.dest[1] + OFFY, class: 'fm-route-jump fm-route-link' });
+      svgEl('circle', { cx: p.dest[0], cy: p.dest[1] + OFFY, 'data-r': 10, r: 10 / s, class: 'fm-route-dest' });
+      root.classList.add('fm-routing');
+    }
+    if (!p || !p.path) return;
+    var pts = p.path.map(function (seg) { var o = []; for (var i = 0; i < seg.length; i += 2) o.push(seg[i] + ',' + (seg[i + 1] + OFFY)); return o; });
+    for (var k = 0; k + 1 < pts.length; k++) {
+      var a = pts[k][pts[k].length - 1].split(','), b = pts[k + 1][0].split(',');
+      svgEl('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: 'fm-route-jump' });
+    }
+    pts.forEach(function (seg) {
+      svgEl('polyline', { points: seg.join(' '), class: 'fm-route-edge' });
+      svgEl('polyline', { points: seg.join(' '), class: 'fm-route-line' });
+    });
+    for (var j = 0; j + 1 < pts.length; j++) {
+      var e1 = pts[j][pts[j].length - 1].split(','), e2 = pts[j + 1][0].split(',');
+      svgEl('circle', { cx: e1[0], cy: e1[1], 'data-r': 5, r: 5 / s, class: 'fm-route-door' });
+      svgEl('circle', { cx: e2[0], cy: e2[1], 'data-r': 5, r: 5 / s, class: 'fm-route-door' });
+    }
+    if (C.start) svgEl('circle', { cx: C.start[0], cy: C.start[1] + OFFY, 'data-r': 9, r: 9 / s, class: 'fm-route-start' });
+    root.classList.add('fm-routing');
+  }
 
   PINS.forEach(function (p, i) {
     var b = document.createElement('button');
@@ -66,6 +99,8 @@
     raf = 0;
     clamp();
     world.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+    route.style.setProperty('--k', (1 / s).toFixed(4));
+    Array.prototype.forEach.call(route.querySelectorAll('circle'), function (c) { c.setAttribute('r', (+c.getAttribute('data-r')) / s); });
     if (s >= 0.22) {
       var x0 = Math.max(0, Math.floor(-tx / s / TILE)), y0 = Math.max(0, Math.floor(-ty / s / TILE));
       var x1 = Math.min(Math.ceil(MW / TILE) - 1, Math.floor((view.clientWidth - tx) / s / TILE)), y1 = Math.min(Math.ceil(MH / TILE) - 1, Math.floor((view.clientHeight - ty) / s / TILE));
@@ -110,6 +145,13 @@
     ty = view.clientHeight / 2 - (y + OFFY) * s;
     draw();
   }
+  function fitRoute(p) {
+    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    var all = p.path.concat(C.start ? [[C.start[0], C.start[1]]] : []);
+    all.forEach(function (seg) { for (var i = 0; i < seg.length; i += 2) { x0 = Math.min(x0, seg[i]); x1 = Math.max(x1, seg[i]); y0 = Math.min(y0, seg[i + 1]); y1 = Math.max(y1, seg[i + 1]); } });
+    var pad = 160, ns = Math.min(view.clientWidth / (x1 - x0 + pad * 2), view.clientHeight / (y1 - y0 + pad * 2));
+    flyTo((x0 + x1) / 2, (y0 + y1) / 2, Math.min(0.6, ns));
+  }
   function reset() { minS = fit(); s = minS; tx = 0; ty = 0; draw(); }
 
   function openPop(i) {
@@ -118,15 +160,22 @@
     var t = '<p class="fm-pop-kick">' + (p.kick || CATS[p.cat].kick || CATS[p.cat].name.replace(/s$/, '')) + '</p><h3>' + p.name + '</h3>';
     if (p.cat === 'cupcake' && !C.pins) t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
-    if (p.to != null) t += '<button type="button" class="fm-pop-go">' + p.go + '</button>';
+    if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.</p><button type="button" class="fm-pop-go fm-pop-fit">Show the whole route</button>';
+    if (p.to != null || p.dest) t += '<button type="button" class="fm-pop-go">' + (p.go || 'Go there') + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
     pop.hidden = false;
-    var go = pop.querySelector('.fm-pop-go');
-    if (go) go.addEventListener('click', function () { var d = PINS[p.to]; flyTo(d.x, d.y, Math.max(s, 0.35)); openPop(p.to); });
+    var fitb = pop.querySelector('.fm-pop-fit');
+    if (fitb) fitb.addEventListener('click', function () { fitRoute(p); placePop(); });
+    var go = pop.querySelector('.fm-pop-go:not(.fm-pop-fit)');
+    if (go) go.addEventListener('click', function () {
+      if (p.dest) { flyTo(p.dest[0], p.dest[1], Math.max(s, 0.35)); var hit = -1; PINS.forEach(function (q, k) { if (hit < 0 && Math.abs(q.x - p.dest[0]) < 60 && Math.abs(q.y - p.dest[1]) < 60) hit = k; }); if (hit >= 0) openPop(hit); else placePop(); return; }
+      var d = PINS[p.to]; flyTo(d.x, d.y, Math.max(s, 0.35)); openPop(p.to);
+    });
     PINS.forEach(function (q, k) { q.el.classList.toggle('fm-pin--on', k === i); });
+    showPath(p);
     placePop();
   }
-  function closePop() { openPin = null; pop.hidden = true; PINS.forEach(function (q) { q.el.classList.remove('fm-pin--on'); }); }
+  function closePop() { showPath(null); openPin = null; pop.hidden = true; PINS.forEach(function (q) { q.el.classList.remove('fm-pin--on'); }); }
   function placePop() {
     var p = PINS[openPin];
     if (!p || !on[p.cat]) { closePop(); return; }
@@ -237,7 +286,7 @@
     b.setAttribute('aria-label', 'Go to ' + p.name);
     b.addEventListener('click', function () {
       if (!on[p.cat]) { on[p.cat] = true; var cb = legend.querySelectorAll('input')[Object.keys(CATS).indexOf(p.cat)]; if (cb) cb.checked = true; }
-      flyTo(p.x, p.y, Math.max(s, 0.45));
+      if (p.path) fitRoute(p); else flyTo(p.x, p.y, Math.max(s, 0.45));
       openPop(i);
       if (window.matchMedia('(max-width: 900px)').matches) view.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
