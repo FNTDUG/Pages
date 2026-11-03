@@ -1050,6 +1050,9 @@ window.CFGame = function (opt) {
 
   var SFX_VOL = opt.sfxVol || 0.45, MUS_VOL = opt.musVol || 0.4, GAIN = null, AC = null, BUF = {}, LOADING = {}, CH = {}, MUS = null, muted = false;
   try { muted = localStorage.getItem('fis-mute') === '1'; } catch (e) {}
+  function siteMuted() { try { return !!(window.ugSoundMuted && window.ugSoundMuted()); } catch (e) { return false; } }
+  function isMuted() { return muted || siteMuted(); }
+  function wake() { if (AC && AC.state !== 'running' && !isMuted() && !paused) { try { AC.resume(); } catch (e) {} } }
   function audio() {
     if (AC) return AC;
     var A = window.AudioContext || window.webkitAudioContext;
@@ -1089,7 +1092,7 @@ window.CFGame = function (opt) {
     SND_END[name] = t0 + (BUF[name] ? BUF[name].duration * 1000 : 3000);
     SND_TOK[name] = t0;
     if (quiet) return;
-    if (muted) {
+    if (isMuted()) {
       if (!loop && !BUF[name]) loadSnd(name, function (b) { if (SND_TOK[name] === t0) SND_END[name] = t0 + b.duration * 1000; });
       return;
     }
@@ -1097,7 +1100,7 @@ window.CFGame = function (opt) {
     if (MUS && MUS.ch === ch) stopMusic();
     var a = audio();
     if (!a) return;
-    if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    if (a.state !== 'running') { try { a.resume(); } catch (e) {} }
     var stamp = L ? L.loop : 0;
     loadSnd(name, function (b) {
       if (!L || L.loop - stamp > 30) return;
@@ -1121,7 +1124,7 @@ window.CFGame = function (opt) {
     if (CH[ch]) { try { CH[ch].stop(); } catch (e) {} delete CH[ch]; }
     var a = audio();
     if (!a) return;
-    if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    if (a.state !== 'running') { try { a.resume(); } catch (e) {} }
     var m = MUS = { n: name, ch: ch, src: null, gain: null };
     loadSnd(name, function (b) {
       if (MUS !== m) return;
@@ -1241,9 +1244,10 @@ window.CFGame = function (opt) {
     }
     art.src = 'https://fnaf-world.fntduserguide.com/idle/' + slug + '.webp';
     art.hidden = false;
+    art.style.display = '';
     placeArt();
   }
-  function hideArt() { if (art) art.hidden = true; }
+  function hideArt() { if (art) { art.hidden = true; art.style.display = 'none'; } }
   EV[43] = function () {
     var map = { 41: 0, 42: 12, 43: 13, 44: 14, 45: 15, 46: 16, 47: 17, 48: 18 };
     for (var k = 41; k <= 48; k++) {
@@ -1528,8 +1532,8 @@ window.CFGame = function (opt) {
     pauseBtn.hidden = !live;
     pauseBtn.textContent = paused ? 'Resume' : 'Pause';
     pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
-    muteBtn.textContent = muted ? 'Sound off' : 'Sound on';
-    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    muteBtn.textContent = isMuted() ? 'Sound off' : 'Sound on';
+    muteBtn.setAttribute('aria-pressed', isMuted() ? 'true' : 'false');
     root.classList.toggle('fis-live', live);
     if (live !== selLocked) lockSelect(live);
     cv.style.cursor = live && L.noCursor ? 'none' : '';
@@ -1538,8 +1542,9 @@ window.CFGame = function (opt) {
   }
   function begin() {
     if (!loaded) return;
-    var a = muted ? null : audio();
-    if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    var a = audio();
+    if (a && isMuted()) a = null;
+    if (a && a.state !== 'running') { try { a.resume(); } catch (e) {} }
     if (a) { try { var un = a.createBufferSource(); un.buffer = a.createBuffer(1, 1, 22050); un.connect(a.destination); un.start(0); } catch (e) {} }
     if (PHONE && !isFS() && !pseudo) enterFS();
     endBox.hidden = true;
@@ -1597,15 +1602,27 @@ window.CFGame = function (opt) {
     syncButtons();
   }
   startBtn.addEventListener('click', begin);
+  if (window.ugSoundToggle && !window.ugSoundToggle.fis) {
+    var siteToggle = window.ugSoundToggle;
+    window.ugSoundToggle = function () {
+      siteToggle.apply(this, arguments);
+      if (siteMuted()) stopAll();
+      else wake();
+      syncButtons();
+    };
+    window.ugSoundToggle.fis = 1;
+  }
   root.querySelector('.fis-again').addEventListener('click', begin);
   pauseBtn.addEventListener('click', function () { pause(!paused); });
   muteBtn.addEventListener('click', function () {
-    muted = !muted;
+    var on = isMuted();
+    muted = !on;
     try { localStorage.setItem('fis-mute', muted ? '1' : '0'); } catch (e) {}
+    if (on && siteMuted() && window.ugSoundToggle) window.ugSoundToggle();
     if (muted) stopAll();
     else {
       var a = audio();
-      if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+      if (a && a.state !== 'running') { try { a.resume(); } catch (e) {} }
     }
     syncButtons();
   });
@@ -1701,6 +1718,7 @@ window.CFGame = function (opt) {
     }
     if (paused) return;
     e.preventDefault();
+    wake();
     if (!KEY[k] && !e.repeat) TAP[k] = true;
     KEY[k] = true;
   });
@@ -1718,6 +1736,7 @@ window.CFGame = function (opt) {
   cv.addEventListener('pointerdown', function (e) {
     mouseAt(e);
     if (mode !== 'play' || paused || e.button !== 0) return;
+    wake();
     if (!KEY[1]) TAP[1] = true;
     KEY[1] = true;
   });
