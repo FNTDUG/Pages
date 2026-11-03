@@ -1728,7 +1728,17 @@
         [300, 900, 1800].forEach(function (ms) { setTimeout(jump, ms); });
         window.addEventListener("load", jump, { once: true });
       }
-      var acTop = 0, acWant = null;
+      var acTop = 0, acWant = null, preTop = null, preAt = 0;
+      function mark() {
+        var ue = document.getElementById("unitEngine"), inp = document.getElementById("unitSearch");
+        if (!ue || document.activeElement === inp) return;
+        preTop = Math.round(ue.getBoundingClientRect().top);
+        preAt = Date.now();
+      }
+      function onSearch(e) { if (e.target && e.target.id === "unitSearch") mark(); }
+      document.addEventListener("pointerdown", onSearch, true);
+      document.addEventListener("touchstart", onSearch, { capture: true, passive: true });
+      document.addEventListener("focusin", function (e) { if (e.target && e.target.id === "unitSearch" && Date.now() - preAt > 1000) mark(); }, true);
       document.addEventListener("scroll", function (e) { if (e.target && e.target.id === "autocomplete") acTop = e.target.scrollTop; }, true);
       try { acWant = sessionStorage.getItem("ue-ac"); sessionStorage.removeItem("ue-ac"); } catch (e) {}
       if (acWant && document.documentElement.classList.contains("ue-focus")) {
@@ -1776,7 +1786,7 @@
         }
         clearTimeout(goTimer);
         goTimer = setTimeout(function () {
-          try { var ueb = document.getElementById("unitEngine"); sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-top", String(ueb ? Math.round(ueb.getBoundingClientRect().top) : 0)); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
+          try { var ueb = document.getElementById("unitEngine"); sessionStorage.setItem("ue-focus", "1"); sessionStorage.setItem("ue-top", String(preTop != null && Date.now() - preAt < 300000 ? preTop : ueb ? Math.round(ueb.getBoundingClientRect().top) : 0)); sessionStorage.setItem("ue-ac", String(acTop)); sessionStorage.setItem("ue-st", JSON.stringify(window.__ueState ? window.__ueState() : {})); } catch (e) {}
           location.href = url;
         }, wait);
       }
