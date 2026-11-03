@@ -4473,13 +4473,20 @@ async function seoFwmSub(p) {
   const base = Object.keys(FWM_SUBS).filter(b => p.indexOf(b + '/') === 0)[0];
   if (!base) return null;
   const want = decodeURIComponent(p.slice(base.length + 1)).replace(/\/+$/, '');
-  const ix = await seoFwmSubIndex(base, 2500);
-  const x = ix && ix.list.filter(y => y.id === want)[0];
+  let ix = await seoFwmSubIndex(base, 2500), mb = base;
+  let x = ix && ix.list.filter(y => y.id === want)[0];
+  if (!x && ix && FWM_SUBS[base].kinds.indexOf('move') === -1 && FWM_SUBS[base].files[0] === 'fnafworld.json') {
+    const own = seoFwmIndex(await seoTimed(seoLoadFwm('fnafworld.json'), 2500) || {});
+    const m = own.list.filter(y => y.id === want && y.kind === 'move')[0];
+    const tix = m ? await seoFwmSubIndex('/fwm/tierlist', 2500) : null;
+    const t = tix && tix.list.filter(y => y.kind === 'move' && y.c.name === m.c.name)[0];
+    if (t) { x = t; ix = tix; mb = '/fwm/tierlist'; }
+  }
   if (!x) return { missing: true, canon: base, meta: { title: 'Not found | FWM Wiki', desc: 'There is nothing in the FNaF World Multiplayer ' + FWM_SUBS[base].name + ' at this address. Open the ' + FWM_SUBS[base].name + ' to see everything it lists on Roblox.' } };
   let html = '';
-  try { html = seoFwmSubHtml(x, base); } catch (e) { html = ''; }
+  try { html = seoFwmSubHtml(x, mb); } catch (e) { html = ''; }
   const w = ix.worlds.filter(v => v && v.name === x.worlds[0])[0] || ix.worlds[0] || {};
-  return { fwChar: x, fwWorld: { color: w.color || '#0a1232', bg: w.background || '' }, lead: seoFwmSubLead(x), meta: seoFwmSubMeta(x, base), canon: await seoFwmCanon(base, x), html };
+  return { fwChar: x, fwWorld: { color: w.color || '#0a1232', bg: w.background || '' }, lead: seoFwmSubLead(x), meta: seoFwmSubMeta(x, mb), canon: await seoFwmCanon(mb, x), html };
 }
 async function seoFwmSitemap(env, url) {
   return sitemapCached(url, 'sitemap-fwm.xml', async () => {
