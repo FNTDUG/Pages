@@ -37,16 +37,72 @@
 
   var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
   var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || (!document.querySelector('meta[name="ov-stage"]') && !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches));
+  var tbar = false;
+  function hlTitle(t) {
+    var text = t.textContent.trim(), shown = text.replace(PREFIX[game] || /$^/, '') || text;
+    var words = shown.split(' '), last = words.pop();
+    t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
+    return text;
+  }
+  function tbarNotes() {
+    var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
+    if (!inner || !area) return;
+    var anchor = document.createElement('div');
+    anchor.className = 'ov-tbar-anchor';
+    inner.insertBefore(anchor, inner.firstChild);
+    function run() {
+      gatherNotes(anchor, area, inner);
+      var extra = Array.prototype.filter.call(area.children, function (el) { return el.tagName === 'P' && !el.classList.contains('ug-page-desc') && el.textContent.trim(); });
+      if (!extra.length) return;
+      var notes = anchor.nextElementSibling && anchor.nextElementSibling.classList.contains('ov-notes') ? anchor.nextElementSibling : null;
+      if (!notes) {
+        notes = document.createElement('div');
+        notes.className = 'ov-notes';
+        inner.insertBefore(notes, anchor.nextSibling);
+      }
+      var card = document.createElement('div');
+      card.className = 'ov-note-card';
+      extra.forEach(function (el) { el.removeAttribute('style'); card.appendChild(el); });
+      notes.appendChild(card);
+    }
+    run();
+    document.addEventListener('pagenotes:ready', run);
+  }
+  function barFit() {
+    var box = document.querySelector('.pv-bar-title'), t = box && box.querySelector('.ug-page-title');
+    if (!t) return;
+    t.classList.remove('is-wrap');
+    t.style.fontSize = '';
+    var size = parseFloat(getComputedStyle(t).fontSize);
+    function over() {
+      var edge = box.getBoundingClientRect().right + 1, rg = document.createRange();
+      rg.selectNodeContents(t);
+      return Array.prototype.some.call(rg.getClientRects(), function (r) { return r.right > edge; });
+    }
+    while (size > 18 && over()) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
+    if (!over()) return;
+    t.classList.add('is-wrap');
+    function tall() { return t.getBoundingClientRect().height > box.clientHeight - 8; }
+    while (size > 12 && (over() || tall())) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
+  }
   function hero() {
+    if (tbar) {
+      tbarNotes();
+      load('/overhaul/ov-voice.js?v=20261021a');
+      load('/overhaul/ov-ask.js');
+      load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
+      return;
+    }
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
     if (!inner || !area || document.querySelector('.ov-hero')) return;
     var t = area.querySelector('.ug-page-title');
-    if (t) {
-      title = t.textContent.trim();
-      var shown = title.replace(PREFIX[game] || /$^/, '') || title;
-      var words = shown.split(' '), last = words.pop();
-      t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
-    }
+    if (t) title = hlTitle(t);
     var wrap = document.createElement('div');
     var own = document.querySelector('meta[name="ov-stage"]'), tpl = own && document.getElementById(own.content);
     wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '') + (tpl && !bare ? ' ov-hero--own' : '');
@@ -503,12 +559,21 @@
   function intro() {
     var g = window.gsap;
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
-    if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
+    var bx = tbar && document.querySelector('.pv-bar-title');
+    if (!g || reduced) { if (bx) bx.classList.add('is-in'); if (!bare && !tbar) { unwait(); greet(); } return; }
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
-    from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
+    if (bx) {
+      var grow = function () {
+        bx.classList.add('is-in');
+        g.from(bx.querySelector('.ov-hl-bg'), { scaleX: 0, duration: 0.42, ease: 'steps(6)', delay: 0.12 });
+      };
+      if (bx.classList.contains('is-fit')) grow();
+      else bx.addEventListener('ov:fit', grow, { once: true });
+    }
+    from(bx ? '.ov-copy .ov-hl-bg' : '.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
-    if (!bare) {
+    if (!bare && !tbar) {
       from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
       tl.call(function () { drop(g); }, null, 0.5);
     }
@@ -581,12 +646,43 @@
     var links = GAMES.map(function (g) { return '<a href="' + g[2] + '"' + (g[0] === game ? ' aria-current="true"' : '') + '>' + g[1] + '</a>'; }).join('');
     var el = document.createElement('header');
     el.className = 'pv-bar';
+    if (tbar) {
+      var t = document.querySelector('#ug-hero .ug-page-title'), box = document.createElement('div');
+      el.className = 'pv-bar pv-bar--title';
+      box.className = 'pv-bar-title';
+      if (!t) {
+        t = document.createElement('p');
+        t.className = 'ug-page-title';
+        t.textContent = document.getElementById('ug-content').getAttribute('data-hdr-name') || section();
+      }
+      title = hlTitle(t);
+      box.appendChild(t);
+      el.innerHTML = '<a class="pv-bar-brand" href="/" aria-label="FNTD User Guide home"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"></a>';
+      el.appendChild(box);
+      main.insertBefore(el, main.firstChild);
+      var shown = false;
+      function show() {
+        if (shown) return;
+        shown = true;
+        barFit();
+        box.classList.add('is-fit');
+        box.dispatchEvent(new Event('ov:fit'));
+        if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(barFit); }).observe(box);
+        else window.addEventListener('resize', barFit, { passive: true });
+      }
+      var cs = getComputedStyle(t);
+      if (document.fonts && document.fonts.load) document.fonts.load(cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, t.textContent).then(show, show);
+      setTimeout(show, 1500);
+      setTimeout(function () { box.classList.add('is-in'); }, 4000);
+      return;
+    }
     el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
     main.insertBefore(el, main.firstChild);
   }
   function ready() {
     if (document.getElementById('pv-theme')) return;
     if (solo) { h.classList.add('ov-ready'); return; }
+    tbar = !!document.querySelector('#ug-content[data-hdr="title"]');
     try {
       bar();
       pager();
