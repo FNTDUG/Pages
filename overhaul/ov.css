@@ -617,8 +617,9 @@ html.ov:has(#ug-content[data-hdr=title]) #ug-hero-inner>.ov-notes{margin:0 0 var
 html.ov:has(#ug-content[data-hdr=title]) #ug-hero{padding-top:calc(var(--hdr-h) + 24px)!important}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title{display:flex;align-items:center;flex:1;min-width:0}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title:not(.is-fit){visibility:hidden}
+html.ov:has(#ug-content[data-hdr=title]){--gear-size:46px}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title{max-width:100%;margin:0!important;font:400 clamp(24px,2.4vw,34px)/1 var(--font-head);color:var(--bar-text);text-transform:uppercase;white-space:nowrap;font-kerning:none;font-variant-ligatures:none}
 @media (max-width:600px){html.ov:has(#ug-content[data-hdr=title]) #ug-hero{padding-top:calc(var(--hdr-h) + 16px)!important}html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title{font-size:22px}}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title.is-wrap{white-space:normal;line-height:1.12}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title.is-wrap .ov-hl{line-height:1.12}
-@media (max-width:768px){html.ov:has(#ug-content[data-hdr=title]) .pv-bar{gap:10px}html.ov:has(#ug-content[data-hdr=title]) .pv-bar-brand img{width:45px;height:38px}html.ov:has(#ug-content[data-hdr=title]){--menu-w:32px}html.ov:has(#ug-content[data-hdr=title]) #ug-hamburger{width:32px!important;padding:0!important;gap:0!important;justify-content:center;font-size:0!important}html.ov:has(#ug-content[data-hdr=title]) #ug-hamburger .hmb-icon{font-size:17px}}
+@media (max-width:768px){html.ov:has(#ug-content[data-hdr=title]) .pv-bar{gap:10px}html.ov:has(#ug-content[data-hdr=title]) .pv-bar-brand img{width:45px;height:38px}html.ov:has(#ug-content[data-hdr=title]){--menu-w:32px;--gear-size:32px}html.ov:has(#ug-content[data-hdr=title]) #ug-hamburger{width:32px!important;padding:0!important;gap:0!important;justify-content:center;font-size:0!important}html.ov:has(#ug-content[data-hdr=title]) #ug-hamburger .hmb-icon{font-size:17px}}
