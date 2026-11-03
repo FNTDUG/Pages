@@ -7,6 +7,14 @@ Disallow: /wiki-edit
 Disallow: /push/
 Disallow: /poll/admin
 
+User-agent: Googlebot-Image
+Disallow: /overhaul/parvus-tub-front.png
+Disallow: /overhaul/parvus-tub-front-tired.png
+Disallow: /overhaul/parvus_fntdug_px.png
+Disallow: /overhaul/parvus-jump-strip.png
+Disallow: /overhaul/parvus-jump-strip-tired.png
+Disallow: /overhaul/mascot-states.png
+
 Sitemap: https://www.fntduserguide.com/sitemap.xml
 Sitemap: https://www.fntduserguide.com/sitemap-units.xml
 Sitemap: https://www.fntduserguide.com/sitemap-fwm.xml

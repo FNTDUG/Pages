@@ -3588,6 +3588,7 @@ function seoHead(pathname, canonUrl, over, origin) {
   if (games.length) {
     const graph = [ld].concat(games.map(g => SEO_GAMES[g]));
     if (p !== '/') graph.push(Object.assign({ '@type': 'WebPage', '@id': canonUrl, url: canonUrl, name: m.title, about: games.map(g => ({ '@id': SEO_GAMES[g]['@id'] })) }, m.modified ? { dateModified: m.modified } : {}));
+    else graph.push({ '@type': 'WebPage', '@id': SITE_URL + '/', url: SITE_URL + '/', name: m.title, primaryImageOfPage: { '@type': 'ImageObject', url: SITE_URL + '/og/home-square.png', width: 916, height: 916 }, image: [SITE_URL + '/og/home-square.png', SITE_URL + '/og/home.png'] });
     ld = { '@context': 'https://schema.org', '@graph': graph.map(x => { const y = Object.assign({}, x); delete y['@context']; return y; }) };
   }
   return out + '<script type="application/ld+json">' + JSON.stringify(ld).replace(/</g, '\\u003c') + '<\/script>';
