@@ -20,6 +20,7 @@ window.CFGame = function (opt) {
   var REWARDS = { 41: ['Jack-O-Bonnie', 'jack-o-bonnie'], 42: ['Jack-O-Chica', 'jack-o-chica'], 43: ['Animdude', 'animdude'], 44: ['Mr. Chipper', 'mr-chipper'], 45: ['Nightmare BB', 'nightmare-balloon-boy'], 46: ['Nightmarionne', 'nightmarionne'], 47: ['Coffee', 'coffee'], 48: ['Purple Guy', 'purple-guy'], 'nightmare-mangle': ['Nightmare Mangle', 'nightmare-mangle', 1] };
   var REB = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 30, 31, 0, 1, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 24, 25, 26, 27, 27, 28, 28, 28, 28, 29, 29, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 16, 17, 18, 19, 19, 20, 20, 20, 20, 21, 21, 22, 23, 24, 25, 28, 27, 26, 25, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 20, 21, 22, 22, 23, 24, 24, 24, 24, 25, 26, 27, 28, 29, 30, 8, 7, 6, 5, 4, 8, 9, 10, 11, 11, 12, 12, 12, 12, 13, 13, 14, 15, 16, 17, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 16, 15, 14, 13, 12, 11, 10, 9, 8, 12, 13, 14, 15, 15, 16, 16, 16, 16, 17, 17, 18, 19, 20, 21, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 3, 3, 4, 4, 4, 4, 5, 5, 6, 7, 8, 9, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 0, 1, 2, 0, 0, 1, 1, 2, 3, 4, 5, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 28, 29, 30, 31, 31, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 26, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 25, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 4, 5, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 11, 12, 13, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
   var QCOL = {}, ONCOL = {}, QBACK = {}, SKIP = null;
+  if (opt.rewards) for (var rk in opt.rewards) REWARDS[rk] = opt.rewards[rk];
 
   var L = null, GLOBAL = { found: 0, cups: 0, start: 0 }, mode = 'idle', seq = 0;
 
@@ -1577,10 +1578,11 @@ window.CFGame = function (opt) {
   function finish() {
     stopAll();
     var f = GLOBAL.found || opt.defaultReward || 41, r = REWARDS[f] || REWARDS[41], secs = (Date.now() - GLOBAL.start) / 1000;
-    endBox.querySelector('.fis-end-img').src = 'https://fnaf-world.fntduserguide.com/idle/' + r[1] + '.webp';
+    endBox.querySelector('.fis-end-img').src = r[3] || 'https://fnaf-world.fntduserguide.com/idle/' + r[1] + '.webp';
     endBox.querySelector('.fis-end-img').alt = r[0];
     endBox.querySelector('.fis-end-name').textContent = r[0];
-    endBox.querySelector('.fis-end-link').href = '/fwm/roster/' + r[1];
+    endBox.querySelector('.fis-end-link').href = r[4] || '/fwm/roster/' + r[1];
+    if (r[5]) endBox.querySelector('.fis-end-link').textContent = r[5];
     var line = endBox.querySelector('.fis-end-cups');
     if (line) line.textContent = opt.endLine ? opt.endLine(GLOBAL, secs) : 'Finished in ' + Math.floor(secs / 60) + ':' + ('0' + Math.floor(secs % 60)).slice(-2) + '.';
     endBox.hidden = false;

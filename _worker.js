@@ -3462,7 +3462,7 @@ function seoOgName(p) {
   if (p === '/fwm/meta-teams') return 'fwm-meta';
   if (p === '/fwm/tierlist') return 'fwm-tiers';
   if (p === '/fwm/grind-methods') return 'fwm-grind-methods';
-  if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/freddy-in-space-map' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters') return 'fwm-minigames';
+  if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/freddy-in-space-map' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters' || p === '/fwm/deedees-fishing-hole') return 'fwm-minigames';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
@@ -3523,9 +3523,10 @@ const SEO_PAGES = {
   '/fwm/meta-teams': ['FWM Meta Teams: Best FNaF World Multiplayer Teams', 'The best FNaF World Multiplayer teams on Roblox: both parties of four characters, plus the four Bytes and four Chips to equip with each team.'],
   '/fwm/grind-methods': ['FWM Grind Methods: Farm Faz Tokens & EXP Fast', 'How to grind Faz Tokens and EXP in FNaF World Multiplayer on Roblox: the Gold Endo token loop, the Security Owl EXP loop and the best spot in each world.'],
   '/fwm/foxy-exe': ['Foxy.EXE: Play the FNaF World Minigame Remake Online', 'Play Foxy.EXE in your browser, a fan remake of the creepy FNaF World walking minigame. Keep your 3 lives, reach the end and unlock Nightmarionne.'],
-  '/fwm/minigames': ['FWM Minigames: Play the FNaF World Minigames Online', "Play the FNaF World minigames in your browser: FNaF 57: Freddy in Space, Foxy.EXE, Chica's Magic Rainbow and Foxy Fighters, remade from the original game."],
+  '/fwm/minigames': ['FWM Minigames: Play the FNaF World Minigames Online', "Play the FNaF World minigames in your browser: Freddy in Space, Foxy.EXE, Chica's Magic Rainbow, Foxy Fighters and DeeDee's Fishing Hole, remade from the game."],
   '/fwm/foxy-fighters': ['Foxy Fighters: Play the FNaF World Minigame Remake Online', 'Play Foxy Fighters in your browser, a fan remake of the FNaF World space shooter. Fly with the Chica squadron and beat the Souldozer to unlock Nightmare BB.'],
   '/fwm/chicas-magic-rainbow': ['Chica\'s Magic Rainbow: Play the FNaF World Minigame Online','Play Chica\'s Magic Rainbow in your browser, a fan remake of the FNaF World platformer. Dodge petals, lasers and spikes to unlock Animdude or Mr. Chipper.'],
+  '/fwm/deedees-fishing-hole': ['DeeDee\'s Fishing Hole: Play the FNaF World Minigame','Play DeeDee\'s Fishing Hole in your browser, a fan remake of the FNaF World fishing game. Catch fish for Faz Tokens and the Pearl 5 times for The Pearl byte.'],
   '/fwm/flipside-map': ['FNaF World Flipside Map: Glitched Layers and Portals', "Map of the FNaF World Flipside from the game files: all three glitched layers, every portal and where it leads, and the way down to Old Man Consequences."],
   '/fwm/world-map': ['FNaF World Map: Every Chip, Shop, Boss and Glitch', "Interactive FNaF World map from the game files: every chip chest, shop, boss, clock and glitch, the Halloween Backstage, and the route to each one."],
   '/fwm/freddy-in-space-map': ['Freddy in Space Map: All 9 Cupcake Locations', "Interactive map of FNaF 57: Freddy in Space from FNaF World. Zoom in to find all 9 cupcakes, the jump boost, the teleporter and Scott's Head."],
