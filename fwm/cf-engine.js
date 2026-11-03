@@ -1053,6 +1053,7 @@ window.CFGame = function (opt) {
   function siteMuted() { try { return !!(window.ugSoundMuted && window.ugSoundMuted()); } catch (e) { return false; } }
   function isMuted() { return muted || siteMuted(); }
   function wake() { if (AC && AC.state !== 'running' && !isMuted() && !paused) { try { AC.resume(); } catch (e) {} } }
+  function unmuted() { wake(); if (WANT && mode === 'play' && !isMuted()) music(WANT.n, WANT.ch); }
   function audio() {
     if (AC) return AC;
     var A = window.AudioContext || window.webkitAudioContext;
@@ -1074,7 +1075,7 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {}, SND_TOK = {}, GT = 0, quiet = false, CHV = {}, CHG = {};
+  var SND_END = {}, SND_TOK = {}, GT = 0, quiet = false, CHV = {}, CHG = {}, WANT = null;
   function setVolume(ch, v) {
     CHV[ch] = Math.max(0, Math.min(100, v)) / 100;
     if (CHG[ch]) CHG[ch].gain.value = CHV[ch];
@@ -1092,6 +1093,8 @@ window.CFGame = function (opt) {
     SND_END[name] = t0 + (BUF[name] ? BUF[name].duration * 1000 : 3000);
     SND_TOK[name] = t0;
     if (quiet) return;
+    if (loop && /\.mp3$/.test(D.sounds[name])) WANT = { n: name, ch: ch };
+    else if (WANT && WANT.ch === ch) WANT = null;
     if (isMuted()) {
       if (!loop && !BUF[name]) loadSnd(name, function (b) { if (SND_TOK[name] === t0) SND_END[name] = t0 + b.duration * 1000; });
       return;
@@ -1145,7 +1148,8 @@ window.CFGame = function (opt) {
     delete BUF[MUS.n];
     MUS = null;
   }
-  function stopAll() {
+  function stopAll(keep) {
+    if (keep !== true) WANT = null;
     stopMusic();
     SND_END = {};
     SND_TOK = {};
@@ -1606,8 +1610,8 @@ window.CFGame = function (opt) {
     var siteToggle = window.ugSoundToggle;
     window.ugSoundToggle = function () {
       siteToggle.apply(this, arguments);
-      if (siteMuted()) stopAll();
-      else wake();
+      if (siteMuted()) stopAll(true);
+      else unmuted();
       syncButtons();
     };
     window.ugSoundToggle.fis = 1;
@@ -1619,10 +1623,11 @@ window.CFGame = function (opt) {
     muted = !on;
     try { localStorage.setItem('fis-mute', muted ? '1' : '0'); } catch (e) {}
     if (on && siteMuted() && window.ugSoundToggle) window.ugSoundToggle();
-    if (muted) stopAll();
+    if (muted) stopAll(true);
     else {
       var a = audio();
       if (a && a.state !== 'running') { try { a.resume(); } catch (e) {} }
+      unmuted();
     }
     syncButtons();
   });
