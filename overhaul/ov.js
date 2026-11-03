@@ -37,16 +37,24 @@
 
   var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
   var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || (!document.querySelector('meta[name="ov-stage"]') && !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches));
+  var tbar = false;
+  function hlTitle(t) {
+    var text = t.textContent.trim(), shown = text.replace(PREFIX[game] || /$^/, '') || text;
+    var words = shown.split(' '), last = words.pop();
+    t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
+    return text;
+  }
   function hero() {
+    if (tbar) {
+      load('/overhaul/ov-voice.js?v=20261021a');
+      load('/overhaul/ov-ask.js');
+      load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
+      return;
+    }
     var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
     if (!inner || !area || document.querySelector('.ov-hero')) return;
     var t = area.querySelector('.ug-page-title');
-    if (t) {
-      title = t.textContent.trim();
-      var shown = title.replace(PREFIX[game] || /$^/, '') || title;
-      var words = shown.split(' '), last = words.pop();
-      t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
-    }
+    if (t) title = hlTitle(t);
     var wrap = document.createElement('div');
     var own = document.querySelector('meta[name="ov-stage"]'), tpl = own && document.getElementById(own.content);
     wrap.className = 'ov-hero' + (bare ? ' ov-hero--bare' : '') + (tpl && !bare ? ' ov-hero--own' : '');
@@ -503,12 +511,12 @@
   function intro() {
     var g = window.gsap;
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
-    if (!g || reduced) { if (!bare) { unwait(); greet(); } return; }
+    if (!g || reduced) { if (!bare && !tbar) { unwait(); greet(); } return; }
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
-    if (!bare) {
+    if (!bare && !tbar) {
       from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
       tl.call(function () { drop(g); }, null, 0.5);
     }
@@ -581,12 +589,28 @@
     var links = GAMES.map(function (g) { return '<a href="' + g[2] + '"' + (g[0] === game ? ' aria-current="true"' : '') + '>' + g[1] + '</a>'; }).join('');
     var el = document.createElement('header');
     el.className = 'pv-bar';
+    if (tbar) {
+      var t = document.querySelector('#ug-hero .ug-page-title'), box = document.createElement('div');
+      el.className = 'pv-bar pv-bar--title';
+      box.className = 'pv-bar-title';
+      if (!t) {
+        t = document.createElement('p');
+        t.className = 'ug-page-title';
+        t.textContent = document.getElementById('ug-content').getAttribute('data-hdr-name') || section();
+      }
+      title = hlTitle(t);
+      box.appendChild(t);
+      el.appendChild(box);
+      main.insertBefore(el, main.firstChild);
+      return;
+    }
     el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
     main.insertBefore(el, main.firstChild);
   }
   function ready() {
     if (document.getElementById('pv-theme')) return;
     if (solo) { h.classList.add('ov-ready'); return; }
+    tbar = !!document.querySelector('#ug-content[data-hdr="title"]');
     try {
       bar();
       pager();
