@@ -85,7 +85,8 @@
     }
     if (!over()) return;
     t.classList.add('is-wrap');
-    while (size > 13 && over()) {
+    function tall() { return t.getBoundingClientRect().height > box.clientHeight - 8; }
+    while (size > 12 && (over() || tall())) {
       size -= 1;
       t.style.fontSize = size + 'px';
     }
