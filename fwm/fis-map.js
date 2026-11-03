@@ -167,6 +167,7 @@
     var t = '<p class="fm-pop-kick">' + (p.kick || CATS[p.cat].kick || CATS[p.cat].name.replace(/s$/, '')) + '</p><h3>' + p.name + '</h3>';
     if (p.cat === 'cupcake' && !C.pins) t += '<p>' + p.name.split(' ')[1] + ' of 9. Every cupcake you carry powers up your blaster.</p>';
     if (p.text) t += '<p>' + p.text + '</p>';
+    if (p.how) t += '<ol class="fm-pop-how"><li>' + p.how.join('</li><li>') + '</li></ol>';
     if (p.path) t += '<p class="fm-pop-route">The line shows the way from the start (green dot). Dashed lines are entrances and teleports you walk into.' + (p.pathk && p.pathk.indexOf('g') >= 0 ? ' The pink part is inside &amp;*___TWRE, the glitched layer, where you can walk straight through the scenery.' : '') + '</p>';
     if (p.to != null || p.dest) t += '<button type="button" class="fm-pop-go">' + (p.go || 'Go there') + '</button>';
     pop.querySelector('.fm-pop-body').innerHTML = t;
