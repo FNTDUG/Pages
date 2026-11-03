@@ -20,6 +20,7 @@ window.CFGame = function (opt) {
   var REWARDS = { 41: ['Jack-O-Bonnie', 'jack-o-bonnie'], 42: ['Jack-O-Chica', 'jack-o-chica'], 43: ['Animdude', 'animdude'], 44: ['Mr. Chipper', 'mr-chipper'], 45: ['Nightmare BB', 'nightmare-balloon-boy'], 46: ['Nightmarionne', 'nightmarionne'], 47: ['Coffee', 'coffee'], 48: ['Purple Guy', 'purple-guy'], 'nightmare-mangle': ['Nightmare Mangle', 'nightmare-mangle', 1] };
   var REB = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 30, 31, 0, 1, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 24, 25, 26, 27, 27, 28, 28, 28, 28, 29, 29, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 16, 17, 18, 19, 19, 20, 20, 20, 20, 21, 21, 22, 23, 24, 25, 28, 27, 26, 25, 0, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 20, 21, 22, 22, 23, 24, 24, 24, 24, 25, 26, 27, 28, 29, 30, 8, 7, 6, 5, 4, 8, 9, 10, 11, 11, 12, 12, 12, 12, 13, 13, 14, 15, 16, 17, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 16, 15, 14, 13, 12, 11, 10, 9, 8, 12, 13, 14, 15, 15, 16, 16, 16, 16, 17, 17, 18, 19, 20, 21, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 24, 23, 22, 21, 20, 19, 18, 17, 3, 3, 4, 4, 4, 4, 5, 5, 6, 7, 8, 9, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 0, 1, 2, 0, 0, 1, 1, 2, 3, 4, 5, 8, 7, 6, 5, 4, 3, 2, 1, 0, 31, 30, 29, 28, 27, 26, 25, 24, 28, 29, 30, 31, 31, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 26, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 31, 30, 29, 28, 27, 25, 25, 24, 25, 26, 27, 28, 29, 30, 31, 0, 4, 5, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 11, 12, 13, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
   var QCOL = {}, ONCOL = {}, QBACK = {}, SKIP = null;
+  if (opt.rewards) for (var rk in opt.rewards) REWARDS[rk] = opt.rewards[rk];
 
   var L = null, GLOBAL = { found: 0, cups: 0, start: 0 }, mode = 'idle', seq = 0;
 
@@ -1049,6 +1050,10 @@ window.CFGame = function (opt) {
 
   var SFX_VOL = opt.sfxVol || 0.45, MUS_VOL = opt.musVol || 0.4, GAIN = null, AC = null, BUF = {}, LOADING = {}, CH = {}, MUS = null, muted = false;
   try { muted = localStorage.getItem('fis-mute') === '1'; } catch (e) {}
+  function siteMuted() { try { return !!(window.ugSoundMuted && window.ugSoundMuted()); } catch (e) { return false; } }
+  function isMuted() { return muted || siteMuted(); }
+  function wake() { if (AC && AC.state !== 'running' && !isMuted() && !paused) { try { AC.resume(); } catch (e) {} } }
+  function unmuted() { wake(); if (WANT && mode === 'play' && !isMuted()) music(WANT.n, WANT.ch); }
   function audio() {
     if (AC) return AC;
     var A = window.AudioContext || window.webkitAudioContext;
@@ -1070,7 +1075,7 @@ window.CFGame = function (opt) {
       delete LOADING[name];
     }).catch(function () { delete LOADING[name]; });
   }
-  var SND_END = {}, SND_TOK = {}, GT = 0, quiet = false, CHV = {}, CHG = {};
+  var SND_END = {}, SND_TOK = {}, GT = 0, quiet = false, CHV = {}, CHG = {}, WANT = null;
   function setVolume(ch, v) {
     CHV[ch] = Math.max(0, Math.min(100, v)) / 100;
     if (CHG[ch]) CHG[ch].gain.value = CHV[ch];
@@ -1088,7 +1093,9 @@ window.CFGame = function (opt) {
     SND_END[name] = t0 + (BUF[name] ? BUF[name].duration * 1000 : 3000);
     SND_TOK[name] = t0;
     if (quiet) return;
-    if (muted) {
+    if (loop && /\.mp3$/.test(D.sounds[name])) WANT = { n: name, ch: ch };
+    else if (WANT && WANT.ch === ch) WANT = null;
+    if (isMuted()) {
       if (!loop && !BUF[name]) loadSnd(name, function (b) { if (SND_TOK[name] === t0) SND_END[name] = t0 + b.duration * 1000; });
       return;
     }
@@ -1096,7 +1103,7 @@ window.CFGame = function (opt) {
     if (MUS && MUS.ch === ch) stopMusic();
     var a = audio();
     if (!a) return;
-    if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    if (a.state !== 'running') { try { a.resume(); } catch (e) {} }
     var stamp = L ? L.loop : 0;
     loadSnd(name, function (b) {
       if (!L || L.loop - stamp > 30) return;
@@ -1120,7 +1127,7 @@ window.CFGame = function (opt) {
     if (CH[ch]) { try { CH[ch].stop(); } catch (e) {} delete CH[ch]; }
     var a = audio();
     if (!a) return;
-    if (a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    if (a.state !== 'running') { try { a.resume(); } catch (e) {} }
     var m = MUS = { n: name, ch: ch, src: null, gain: null };
     loadSnd(name, function (b) {
       if (MUS !== m) return;
@@ -1141,7 +1148,8 @@ window.CFGame = function (opt) {
     delete BUF[MUS.n];
     MUS = null;
   }
-  function stopAll() {
+  function stopAll(keep) {
+    if (keep !== true) WANT = null;
     stopMusic();
     SND_END = {};
     SND_TOK = {};
@@ -1240,9 +1248,10 @@ window.CFGame = function (opt) {
     }
     art.src = 'https://fnaf-world.fntduserguide.com/idle/' + slug + '.webp';
     art.hidden = false;
+    art.style.display = '';
     placeArt();
   }
-  function hideArt() { if (art) art.hidden = true; }
+  function hideArt() { if (art) { art.hidden = true; art.style.display = 'none'; } }
   EV[43] = function () {
     var map = { 41: 0, 42: 12, 43: 13, 44: 14, 45: 15, 46: 16, 47: 17, 48: 18 };
     for (var k = 41; k <= 48; k++) {
@@ -1527,8 +1536,8 @@ window.CFGame = function (opt) {
     pauseBtn.hidden = !live;
     pauseBtn.textContent = paused ? 'Resume' : 'Pause';
     pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
-    muteBtn.textContent = muted ? 'Sound off' : 'Sound on';
-    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    muteBtn.textContent = isMuted() ? 'Sound off' : 'Sound on';
+    muteBtn.setAttribute('aria-pressed', isMuted() ? 'true' : 'false');
     root.classList.toggle('fis-live', live);
     if (live !== selLocked) lockSelect(live);
     cv.style.cursor = live && L.noCursor ? 'none' : '';
@@ -1537,8 +1546,9 @@ window.CFGame = function (opt) {
   }
   function begin() {
     if (!loaded) return;
-    var a = muted ? null : audio();
-    if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+    var a = audio();
+    if (a && isMuted()) a = null;
+    if (a && a.state !== 'running') { try { a.resume(); } catch (e) {} }
     if (a) { try { var un = a.createBufferSource(); un.buffer = a.createBuffer(1, 1, 22050); un.connect(a.destination); un.start(0); } catch (e) {} }
     if (PHONE && !isFS() && !pseudo) enterFS();
     endBox.hidden = true;
@@ -1577,10 +1587,11 @@ window.CFGame = function (opt) {
   function finish() {
     stopAll();
     var f = GLOBAL.found || opt.defaultReward || 41, r = REWARDS[f] || REWARDS[41], secs = (Date.now() - GLOBAL.start) / 1000;
-    endBox.querySelector('.fis-end-img').src = 'https://fnaf-world.fntduserguide.com/idle/' + r[1] + '.webp';
+    endBox.querySelector('.fis-end-img').src = r[3] || 'https://fnaf-world.fntduserguide.com/idle/' + r[1] + '.webp';
     endBox.querySelector('.fis-end-img').alt = r[0];
     endBox.querySelector('.fis-end-name').textContent = r[0];
-    endBox.querySelector('.fis-end-link').href = '/fwm/roster/' + r[1];
+    endBox.querySelector('.fis-end-link').href = r[4] || '/fwm/roster/' + r[1];
+    if (r[5]) endBox.querySelector('.fis-end-link').textContent = r[5];
     var line = endBox.querySelector('.fis-end-cups');
     if (line) line.textContent = opt.endLine ? opt.endLine(GLOBAL, secs) : 'Finished in ' + Math.floor(secs / 60) + ':' + ('0' + Math.floor(secs % 60)).slice(-2) + '.';
     endBox.hidden = false;
@@ -1595,15 +1606,28 @@ window.CFGame = function (opt) {
     syncButtons();
   }
   startBtn.addEventListener('click', begin);
+  if (window.ugSoundToggle && !window.ugSoundToggle.fis) {
+    var siteToggle = window.ugSoundToggle;
+    window.ugSoundToggle = function () {
+      siteToggle.apply(this, arguments);
+      if (siteMuted()) stopAll(true);
+      else unmuted();
+      syncButtons();
+    };
+    window.ugSoundToggle.fis = 1;
+  }
   root.querySelector('.fis-again').addEventListener('click', begin);
   pauseBtn.addEventListener('click', function () { pause(!paused); });
   muteBtn.addEventListener('click', function () {
-    muted = !muted;
+    var on = isMuted();
+    muted = !on;
     try { localStorage.setItem('fis-mute', muted ? '1' : '0'); } catch (e) {}
-    if (muted) stopAll();
+    if (on && siteMuted() && window.ugSoundToggle) window.ugSoundToggle();
+    if (muted) stopAll(true);
     else {
       var a = audio();
-      if (a && a.state === 'suspended') { try { a.resume(); } catch (e) {} }
+      if (a && a.state !== 'running') { try { a.resume(); } catch (e) {} }
+      unmuted();
     }
     syncButtons();
   });
@@ -1699,6 +1723,7 @@ window.CFGame = function (opt) {
     }
     if (paused) return;
     e.preventDefault();
+    wake();
     if (!KEY[k] && !e.repeat) TAP[k] = true;
     KEY[k] = true;
   });
@@ -1716,6 +1741,7 @@ window.CFGame = function (opt) {
   cv.addEventListener('pointerdown', function (e) {
     mouseAt(e);
     if (mode !== 'play' || paused || e.button !== 0) return;
+    wake();
     if (!KEY[1]) TAP[1] = true;
     KEY[1] = true;
   });
