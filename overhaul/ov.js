@@ -44,8 +44,55 @@
     t.innerHTML = (words.length ? esc(words.join(' ')) + ' ' : '') + '<span class="ov-hl"><span class="ov-hl-bg"></span>' + esc(last) + '</span>';
     return text;
   }
+  function tbarNotes() {
+    var inner = document.getElementById('ug-hero-inner'), area = document.querySelector('.ug-page-title-area');
+    if (!inner || !area) return;
+    var anchor = document.createElement('div');
+    anchor.className = 'ov-tbar-anchor';
+    inner.insertBefore(anchor, inner.firstChild);
+    function run() {
+      gatherNotes(anchor, area, inner);
+      var extra = Array.prototype.filter.call(area.children, function (el) { return el.tagName === 'P' && !el.classList.contains('ug-page-desc') && el.textContent.trim(); });
+      if (!extra.length) return;
+      var notes = anchor.nextElementSibling && anchor.nextElementSibling.classList.contains('ov-notes') ? anchor.nextElementSibling : null;
+      if (!notes) {
+        notes = document.createElement('div');
+        notes.className = 'ov-notes';
+        inner.insertBefore(notes, anchor.nextSibling);
+      }
+      var card = document.createElement('div');
+      card.className = 'ov-note-card';
+      extra.forEach(function (el) { el.removeAttribute('style'); card.appendChild(el); });
+      notes.appendChild(card);
+    }
+    run();
+    document.addEventListener('pagenotes:ready', run);
+  }
+  function barFit() {
+    var box = document.querySelector('.pv-bar-title'), t = box && box.querySelector('.ug-page-title');
+    if (!t) return;
+    t.classList.remove('is-wrap');
+    t.style.fontSize = '';
+    var size = parseFloat(getComputedStyle(t).fontSize);
+    function over() {
+      var edge = box.getBoundingClientRect().right + 1, rg = document.createRange();
+      rg.selectNodeContents(t);
+      return Array.prototype.some.call(rg.getClientRects(), function (r) { return r.right > edge; });
+    }
+    while (size > 18 && over()) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
+    if (!over()) return;
+    t.classList.add('is-wrap');
+    while (size > 13 && over()) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
+  }
   function hero() {
     if (tbar) {
+      tbarNotes();
       load('/overhaul/ov-voice.js?v=20261021a');
       load('/overhaul/ov-ask.js');
       load('/overhaul/ov-ink.js', function () { load('/overhaul/ov-talk.js'); });
@@ -516,6 +563,7 @@
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
+    if (tbar) tl.call(barFit, null, 0.7);
     if (!bare && !tbar) {
       from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
       tl.call(function () { drop(g); }, null, 0.5);
@@ -600,8 +648,12 @@
       }
       title = hlTitle(t);
       box.appendChild(t);
+      el.innerHTML = '<a class="pv-bar-brand" href="/" aria-label="FNTD User Guide home"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"></a>';
       el.appendChild(box);
       main.insertBefore(el, main.firstChild);
+      barFit();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(barFit);
+      window.addEventListener('resize', barFit, { passive: true });
       return;
     }
     el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
