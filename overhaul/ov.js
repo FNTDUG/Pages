@@ -562,9 +562,16 @@
     var bx = tbar && document.querySelector('.pv-bar-title');
     if (!g || reduced) { if (bx) bx.classList.add('is-in'); if (!bare && !tbar) { unwait(); greet(); } return; }
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
-    if (bx) bx.classList.add('is-in');
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
-    from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
+    if (bx) {
+      var grow = function () {
+        bx.classList.add('is-in');
+        g.from(bx.querySelector('.ov-hl-bg'), { scaleX: 0, duration: 0.42, ease: 'steps(6)', delay: 0.12 });
+      };
+      if (bx.classList.contains('is-fit')) grow();
+      else bx.addEventListener('ov:fit', grow, { once: true });
+    }
+    from(bx ? '.ov-copy .ov-hl-bg' : '.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
     if (!bare && !tbar) {
       from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
@@ -659,6 +666,7 @@
         shown = true;
         barFit();
         box.classList.add('is-fit');
+        box.dispatchEvent(new Event('ov:fit'));
         if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(barFit); }).observe(box);
         else window.addEventListener('resize', barFit, { passive: true });
       }
