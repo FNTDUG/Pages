@@ -559,8 +559,10 @@
   function intro() {
     var g = window.gsap;
     if (g && window.ovRowLoop) Array.prototype.forEach.call(document.querySelectorAll('.info-card, .ov-dir'), function (row) { try { window.ovRowLoop(row, row.classList.contains('ov-dir') ? { fit: 'wrap' } : undefined); } catch (e) {} });
-    if (!g || reduced) { if (!bare && !tbar) { unwait(); greet(); } return; }
+    var bx = tbar && document.querySelector('.pv-bar-title');
+    if (!g || reduced) { if (bx) bx.classList.add('is-in'); if (!bare && !tbar) { unwait(); greet(); } return; }
     var tl = g.timeline({ defaults: { ease: 'back.out(1.6)' } });
+    if (bx) bx.classList.add('is-in');
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
@@ -663,6 +665,7 @@
       var cs = getComputedStyle(t);
       if (document.fonts && document.fonts.load) document.fonts.load(cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, t.textContent).then(show, show);
       setTimeout(show, 1500);
+      setTimeout(function () { box.classList.add('is-in'); }, 4000);
       return;
     }
     el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';

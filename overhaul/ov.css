@@ -617,6 +617,7 @@ html.ov:has(#ug-content[data-hdr=title]) #ug-hero-inner>.ov-notes{margin:0 0 var
 html.ov:has(#ug-content[data-hdr=title]) #ug-hero{padding-top:calc(var(--hdr-h) + 24px)!important}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title{display:flex;align-items:center;flex:1;min-width:0}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title:not(.is-fit){visibility:hidden}
+html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title:not(.is-in) .ov-hl-bg{transform:scaleX(0)}
 html.ov:has(#ug-content[data-hdr=title]){--gear-size:46px}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title{max-width:100%;margin:0!important;font:400 clamp(24px,2.4vw,34px)/1 var(--font-head);color:var(--bar-text);text-transform:uppercase;white-space:nowrap;font-kerning:none;font-variant-ligatures:none}
 @media (max-width:600px){html.ov:has(#ug-content[data-hdr=title]) #ug-hero{padding-top:calc(var(--hdr-h) + 16px)!important}html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title .ug-page-title{font-size:22px}}
