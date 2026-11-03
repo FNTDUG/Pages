@@ -366,6 +366,17 @@ html.ov #ug-footer .ov-foot-legal a,html.ov #ug-footer .ov-foot-sep{color:var(--
 @media (max-width:960px){.hero{padding:128px 0 56px}}
 @media (max-width:768px){.hero{padding:96px 0 48px}}
 @media (max-width:600px){.hero-in{width:calc(100% - 32px);padding:20px}}
+html.ov{--menu-w:32px;--gear-top:11px!important}
+html.ov #ug-hamburger{width:var(--menu-w);padding:0;gap:0;justify-content:center;font-size:0}
+html.ov #ug-hamburger .hmb-icon{display:block;flex:none;width:16px;height:14px;font-size:0;line-height:0;background:linear-gradient(currentColor,currentColor) 0 0/100% 2px no-repeat,linear-gradient(currentColor,currentColor) 0 6px/100% 2px no-repeat,linear-gradient(currentColor,currentColor) 0 12px/100% 2px no-repeat}
+html.ov #pv-gear,html.ov .pv-tray,html.ov #pv-a11y{right:calc(24px + var(--menu-w))!important}
+html.ov #pv-ask{right:calc(34px + var(--menu-w) + var(--gear-size))!important}
+@media (min-width:769px){
+  html.ov{--menu-w:46px;--gear-top:14px!important}
+  html.ov #ug-hamburger{height:46px;padding:0;font-size:0}
+  html.ov #ug-hamburger .hmb-icon{width:20px;height:17px;margin-top:1px;background-size:100% 3px;background-position:0 0,0 7px,0 14px}
+  html.ov #pv-a11y-panel{right:calc(36px + var(--menu-w) + var(--gear-size))!important}
+}
 </style>
 </head>
 <body>
