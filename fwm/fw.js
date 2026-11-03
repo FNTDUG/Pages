@@ -57,6 +57,7 @@
       });
     });
     var users = {};
+    ix.moveByName = {};
     ['party', 'boss', 'enemy'].forEach(function (k) {
       ix.tabs[k].forEach(function (c) { (c.attacks || []).forEach(function (n) { (users[n] = users[n] || []).push(c); }); });
     });
@@ -66,6 +67,7 @@
       c.id = slug(n);
       while (ix.byId[c.id]) c.id += '-move';
       ix.byId[c.id] = c;
+      ix.moveByName[n] = c;
       ix.tabs.move.push(c);
     });
     data._ix = ix;
@@ -196,10 +198,12 @@
   }
   function movesPanel(data, c) {
     if (!c.attacks || !c.attacks.length) return '';
+    var mv = index(data).moveByName;
     return panel('Moves', '<ul class="fwd-atks">' + c.attacks.map(function (n) {
-      var a = (data.attacks || {})[n] || {};
+      var a = (data.attacks || {})[n] || {}, m = mv[n];
       var li = '<li class="fwd-atk" style="--c:' + esc(a.hex || '#888') + '">';
-      li += a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="214" height="50" loading="lazy" decoding="async">' : '';
+      var img = a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="214" height="50" loading="lazy" decoding="async">' : '';
+      li += img && m ? '<a class="fwd-atk-a" href="#' + esc(m.id) + '" data-id="' + esc(m.id) + '" data-google-vignette="false" aria-label="' + esc(n) + ': move info">' + img + '</a>' : img;
       li += '<div class="fwd-atk-b"><p class="fwd-atk-n">' + esc(n) + (a.type ? ' <span class="fwd-tag">' + esc(a.type) + '</span>' : '') + '</p>';
       if (a.description) li += '<p class="fwd-atk-d">' + esc(a.description) + '</p>';
       if (a.damage) li += '<p class="fwd-atk-f">Damage: <code>' + esc(a.damage) + '</code></p>';
@@ -846,13 +850,15 @@
           return;
         }
       }
-      var u = e.target.closest ? e.target.closest('.fwd-users a[data-id]') : null;
+      var u = e.target.closest ? e.target.closest('.fwd-users a[data-id], .fwd-atk-a[data-id]') : null;
       var c = u && ix.byId[u.getAttribute('data-id')];
       if (!c || !cur || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
       e.preventDefault();
-      if (isPage) { if (cur.users) ordSet(cur.users.map(function (x) { return x.id; })); location.href = pageUrl(c); return; }
+      var sib = cur.users || (cur.attacks || []).map(function (n) { return ix.moveByName[n]; }).filter(function (x, i, a) { return x && a.indexOf(x) === i; });
+      if (sib.indexOf(c) === -1) sib = [c];
+      if (isPage) { ordSet(sib.map(function (x) { return x.id; })); location.href = pageUrl(c); return; }
       history.pushState({ fw: 1, from: cur.id }, '', '#' + c.id);
-      order = (cur.users || [c]).slice();
+      order = sib.slice();
       show(c, 1);
       dlg.focus({ preventScroll: true });
     });
@@ -1050,7 +1056,7 @@
     return f && f.kind === 'move' ? f : null;
   }
   function close() {
-    if (fromMove()) {
+    if (fromMove() || (history.state && history.state.from && ix.byId[history.state.from])) {
       history.back();
       return;
     }
