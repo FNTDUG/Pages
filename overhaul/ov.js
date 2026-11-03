@@ -564,7 +564,6 @@
     function from(t, vars, at) { var els = g.utils.toArray(t); if (els.length) tl.from(els, vars, at); }
     from('.ov-hl-bg', { scaleX: 0, duration: 0.42, ease: 'steps(6)' }, 0.2);
     tl.call(fitTitle, null, 0.7);
-    if (tbar) tl.call(barFit, null, 0.7);
     if (!bare && !tbar) {
       from('.ov-screen', { scaleY: 0.02, filter: 'brightness(3)', duration: 0.45, ease: 'steps(5)', clearProps: 'transform,filter' }, 0);
       tl.call(function () { drop(g); }, null, 0.5);
@@ -652,9 +651,18 @@
       el.innerHTML = '<a class="pv-bar-brand" href="/" aria-label="FNTD User Guide home"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"></a>';
       el.appendChild(box);
       main.insertBefore(el, main.firstChild);
-      barFit();
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(barFit);
-      window.addEventListener('resize', barFit, { passive: true });
+      var shown = false;
+      function show() {
+        if (shown) return;
+        shown = true;
+        barFit();
+        box.classList.add('is-fit');
+        if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(barFit); }).observe(box);
+        else window.addEventListener('resize', barFit, { passive: true });
+      }
+      var cs = getComputedStyle(t);
+      if (document.fonts && document.fonts.load) document.fonts.load(cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, t.textContent).then(show, show);
+      setTimeout(show, 1500);
       return;
     }
     el.innerHTML = '<a class="pv-bar-brand" href="/"><img src="/overhaul/parvus_fntdug_px.png?v=2" alt="" width="60" height="50"><span>FNTD User Guide</span></a><nav class="pv-bar-games" aria-label="Games">' + links + '</nav>';
