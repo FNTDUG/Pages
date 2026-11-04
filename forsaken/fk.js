@@ -20,14 +20,15 @@
   function plain(s) { return String(s || '').replace(/\*\*/g, '').replace(/\u27e6([^|\u27e7]*)\|?([^\u27e7]*)\u27e7/g, function (m, n, l) { return n + (l ? ' ' + lvl(l) : ''); }); }
   function pills(h) {
     return h.replace(/\u27e6([^|\u27e7]*)\|?([^\u27e7]*)\u27e7/g, function (m, n, l) {
-      var col = SE[n.toLowerCase()] || '#cfcfcf';
-      return '<span class="fk-se" style="--se:' + col + '">' + n + (l ? ' <i>' + lvl(l) + '</i>' : '') + '</span>';
+      var key = n.toLowerCase(), col = SE[key] || '#cfcfcf', inner = n + (l ? ' <i>' + lvl(l) + '</i>' : '');
+      if (data && data.effects && data.effects[key]) return '<button type="button" class="fk-se" data-se="' + esc(key) + '" aria-expanded="false" style="--se:' + col + '">' + inner + '</button>';
+      return '<span class="fk-se" style="--se:' + col + '">' + inner + '</span>';
     });
   }
   function c1(c) { return (c.colors && c.colors[0]) || '#333'; }
   function c2(c) { return (c.colors && c.colors[c.colors.length - 1]) || '#000'; }
   function vars(c) { return '--c1:' + esc(c1(c)) + ';--c2:' + esc(c2(c)); }
-  function inline(s) { return pills(esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')); }
+  function inline(s) { return pills(esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*\*/g, '')); }
 
   function rich(text) {
     var lines = String(text || '').split('\n'), out = '', depth = 0, para = [];
@@ -35,13 +36,14 @@
     function setDepth(d) { while (depth < d) { out += '<ul>'; depth++; } while (depth > d) { out += '</ul>'; depth--; } }
     lines.forEach(function (raw) {
       var l = raw.replace(/\s+$/, '');
-      var bullet = /^(\*+)\s*(.*)$/.exec(l);
-      if (bullet && !/^\*\*[^*]+\*\*/.test(l)) {
+      var bullet = /^(\u2022+)\s*(.*)$/.exec(l), stars = bullet ? bullet[1].length : 0, rest = bullet ? bullet[2] : l;
+      if (stars > 0) {
         flushPara();
-        setDepth(Math.min(bullet[1].length, 3));
-        out += '<li>' + inline(bullet[2]) + '</li>';
+        setDepth(Math.min(stars, 3));
+        out += '<li>' + inline(rest) + '</li>';
         return;
       }
+      l = rest;
       setDepth(0);
       if (!l.trim()) { flushPara(); return; }
       para.push(inline(l.trim()));
@@ -74,7 +76,6 @@
   function match(c) {
     if (c.side !== st.tab) return false;
     if (st.tab === 'survivor' && st.cls !== 'all' && c.cls !== st.cls) return false;
-    if (st.q && c.name.toLowerCase().indexOf(st.q) < 0) return false;
     return true;
   }
 
@@ -89,21 +90,19 @@
       b.tabIndex = on ? 0 : -1;
     });
     Array.prototype.forEach.call(chips.querySelectorAll('.fk-chip'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-cls') === st.cls ? 'true' : 'false'); });
-    var q = gridView.querySelector('.fk-q');
-    q.placeholder = st.tab === 'killer' ? 'Search Killers' : 'Search Survivors';
     var html = '';
-    if (st.tab === 'survivor' && !st.q) {
+    if (st.tab === 'survivor') {
       CLS.forEach(function (k) {
         if (st.cls !== 'all' && st.cls !== k) return;
         var list = order.survivor.map(function (id) { return byId[id]; }).filter(function (c) { return c.cls === k; });
         if (!list.length) return;
-        html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(k) + 's <span aria-hidden="true">&middot;</span> ' + list.length + '</h2>' +
+        html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(k) + 's <b>' + list.length + '</b></h2>' +
           (data.classes && data.classes[k] ? '<p class="fk-cls-d">' + esc(data.classes[k]) + '</p>' : '') +
           '<div class="fk-cards">' + list.map(deal).join('') + '</div></section>';
       });
     } else {
       var list = order[st.tab].map(function (id) { return byId[id]; }).filter(match);
-      html = list.length ? '<div class="fk-cards">' + list.map(deal).join('') + '</div>' : '<p class="fk-none">No ' + (st.tab === 'killer' ? 'Killers' : 'Survivors') + ' match &ldquo;' + esc(st.q) + '&rdquo;.</p>';
+      html = '<div class="fk-cards">' + list.map(deal).join('') + '</div>';
     }
     box.innerHTML = html;
     if (anim && !reduced) {
@@ -121,58 +120,59 @@
     }
   }
 
-  function stat(label, val, extra) {
+  function stat(label, val, cls, unit) {
     if (val == null || val === '') return '';
-    return '<tr><th scope="row">' + esc(label) + '</th><td>' + esc(val) + (extra || '') + '</td></tr>';
+    return '<div class="fk-stat' + (cls ? ' ' + cls : '') + '"><dt>' + esc(label) + '</dt><dd>' + esc(val) + (unit ? '<small>' + esc(unit) + '</small>' : '') + '</dd></div>';
   }
 
-
   function stats(c) {
-    return '<table class="fk-stats">' +
-      stat('Health', c.health) +
+    var terror = c.terror ? String(c.terror).replace(/\s*studs?$/i, '') : '';
+    return '<dl class="fk-stats">' +
+      stat('Health', c.health, 'fk-stat--hp') +
+      stat('Max stamina', c.stamina) +
       stat('Walk speed', c.speed) +
       stat('Sprint speed', c.sprint) +
-      stat('Stamina', c.stamina) +
-      stat('Stamina drain', c.staminaLoss != null ? c.staminaLoss + '/s' : null) +
-      stat('Stamina regen', c.staminaGain != null ? c.staminaGain + '/s' : null) +
-      stat('Terror radius', c.terror) +
+      stat('Stamina loss', c.staminaLoss, '', '/s') +
+      stat('Stamina gain', c.staminaGain, '', '/s') +
+      stat('Terror radius', terror, '', terror && /^[\d.]+$/.test(terror) ? 'studs' : '') +
       stat('Cost', c.cost) +
       stat('Difficulty', c.difficulty) +
-      stat('Pronouns', c.pronouns) +
-      '</table>';
+      stat('Pronouns', c.pronouns, c.terror ? '' : 'fk-stat--wide') +
+      '</dl>';
   }
 
   function isPassive(a) { return /passive/i.test(a.key); }
   function isSub(a) { return / - /.test(a.name); }
   function abId(a) { return 'ab-' + slug(a.name); }
-  function keyLabel(a) { return isPassive(a) ? 'Passive' : a.key; }
 
-  function slotIcon(a, big) {
-    var img = a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="64" height="64" loading="lazy" decoding="async">' : '';
+  function slotIcon(a) {
+    var img = a.icon ? '<img src="' + esc(a.icon) + '" alt="" width="80" height="80" loading="lazy" decoding="async">' : '';
     if (isPassive(a)) return '<span class="fk-dia">' + img + '</span>';
-    return '<span class="fk-circ' + (a.icon ? ' fk-has' : '') + '">' + img + '<span class="fk-cd" aria-hidden="true"></span>' + (a.key ? '<span class="fk-key">' + esc(a.key) + '</span>' : '') + '</span>';
+    return '<span class="fk-circ' + (a.icon ? ' fk-has' : '') + '">' + img + '<span class="fk-cd" aria-hidden="true"></span></span>';
   }
 
   function loadout(c) {
     var main = c.abilities.filter(function (a) { return !isSub(a); });
     if (!main.length) return '';
     var pas = main.filter(isPassive), act = main.filter(function (a) { return !isPassive(a); });
-    return '<div class="fk-load fk-rv" role="list" aria-label="Ability slots">' + pas.concat(act).map(function (a) {
-      return '<a role="listitem" class="fk-slot" href="#' + abId(a) + '" data-ab="' + abId(a) + '" aria-label="' + esc(a.name) + ', ' + esc(keyLabel(a)) + (a.cd && a.cd !== 'N/A' ? ', cooldown ' + esc(a.cd) : '') + '">' + slotIcon(a) + '<span class="fk-slot-l" aria-hidden="true">' + esc(a.name) + '</span></a>';
+    return '<div class="fk-load fk-drawn fk-rv" role="list" aria-label="Abilities">' + pas.concat(act).map(function (a) {
+      return '<a role="listitem" class="fk-slot" href="#' + abId(a) + '" data-ab="' + abId(a) + '" aria-label="' + esc(a.name) + (isPassive(a) ? ', passive' : '') + (a.cd && !/^n\/?a$/i.test(a.cd) ? ', cooldown ' + esc(a.cd) : '') + '">' + slotIcon(a) + '<span class="fk-slot-l" aria-hidden="true">' + esc(a.name) + '</span></a>';
     }).join('') + '</div>';
   }
 
   function ability(a, i) {
     var long = (a.desc || '').length > 520;
-    var kc = isPassive(a) ? '<span class="fk-kc fk-kc--p">Passive</span>' : a.key ? '<span class="fk-kc">' + esc(a.key) + '</span>' : '';
-    var cd = a.cd && !/^n\/?a$/i.test(a.cd) ? '<span class="fk-cdp">Cooldown ' + esc(a.cd) + '</span>' : '';
-    return '<article class="fk-ab fk-rv" id="' + abId(a) + '" style="--i:' + Math.min(i + 6, 14) + '">' +
-      '<div class="fk-ab-i">' + slotIcon(a) + '</div><div>' +
-      '<div class="fk-ab-h"><h3 class="fk-ab-n">' + esc(a.name) + '</h3>' + kc + cd + '</div>' +
+    var meta = [];
+    if (isPassive(a)) meta.push('<b>Passive</b>');
+    if (a.cd && !/^n\/?a$/i.test(a.cd)) meta.push('<span>Cooldown:</span> <b>' + esc(a.cd) + '</b>');
+    return '<article class="fk-ab fk-drawn fk-rv" id="' + abId(a) + '" style="--i:' + Math.min(i + 6, 14) + '">' +
+      '<h3 class="fk-ab-n">' + esc(a.name) + '</h3>' +
       (a.quote ? '<p class="fk-ab-q">' + esc(plain(a.quote)).replace(/\n+/g, '<br>') + '</p>' : '') +
+      '<div class="fk-ab-b"><div class="fk-ab-i">' + slotIcon(a) + '</div><div>' +
+      (meta.length ? '<p class="fk-ab-meta">' + meta.join('</p><p class="fk-ab-meta">') + '</p>' : '') +
       '<div class="fk-rich' + (long ? ' fk-clip' : '') + '">' + rich(a.desc) + '</div>' +
-      (long ? '<button type="button" class="fk-more" aria-expanded="false">Show more</button>' : '') +
-      '</div></article>';
+      (long ? '<button type="button" class="fk-btn fk-more" aria-expanded="false">Show more</button>' : '') +
+      '</div></div></article>';
   }
 
   var GROUPS = ['Milestone', 'Shop', 'Limited', 'Free'];
@@ -240,23 +240,18 @@
       return '<button type="button" class="fk-node' + (k.group === 'Limited' ? ' fk-taken' : '') + '" data-n="' + i + '" data-g="' + k.group + '" aria-pressed="false" aria-label="' + esc(k.name) + ' (' + esc(k.how || k.group) + ')" style="left:' + p.x.toFixed(2) + '%;top:' + p.y.toFixed(2) + '%;--r:' + p.ring + ';--k:' + p.k + '"><i></i><b>' +
         (k.img ? '<img data-src="' + esc(k.img) + '" alt="" referrerpolicy="no-referrer" decoding="async">' : '') + '</b></button>';
     }).join('');
-    var chips = '<div class="fk-chips" role="group" aria-label="Show skins">' +
-      '<button type="button" class="fk-chip" data-sg="all" aria-pressed="true">All<b>' + s.length + '</b></button>' +
-      GROUPS.filter(function (g) { return counts[g]; }).map(function (g) { return '<button type="button" class="fk-chip" data-sg="' + g + '" aria-pressed="false">' + g + '<b>' + counts[g] + '</b></button>'; }).join('') + '</div>';
+    var chips = '<div class="fk-sk-tools" role="group" aria-label="Show skins">' +
+      '<button type="button" class="fk-btn" data-sg="all" aria-pressed="true">All <b>' + s.length + '</b></button>' +
+      GROUPS.filter(function (g) { return counts[g]; }).map(function (g) { return '<button type="button" class="fk-btn" data-sg="' + g + '" aria-pressed="false">' + g + ' <b>' + counts[g] + '</b></button>'; }).join('') + '</div>';
     var legend = '<div class="fk-legend" aria-hidden="true">' + GROUPS.filter(function (g) { return counts[g]; }).map(function (g) {
       return '<span><i style="background:' + GCOL[g] + '"></i>' + (g === 'Limited' ? 'Limited (no longer sold)' : g === 'Milestone' ? 'Milestone (character level)' : g) + '</span>';
     }).join('') + '</div>';
-    var rows = s.map(function (k, i) {
-      return '<tr data-g="' + k.group + '"><td>' + (k.img ? '<img data-src="' + esc(k.img) + '" alt="" referrerpolicy="no-referrer" width="44" height="44" decoding="async">' : '') + '</td><td><b>' + esc(k.name) + '</b></td><td>' + esc(k.group) + '</td><td>' + esc(k.how || '?') + '</td></tr>';
-    }).join('');
     root._web = { skins: s, parent: parent, rings: L.rings };
-    return '<section class="fk-sec fk-rv" style="--i:8" aria-labelledby="fk-skins-h"><h2 class="fk-h2" id="fk-skins-h">Skins <small>' + s.length + ' skins</small></h2>' +
-      '<div class="fk-sk-tools">' + chips + '<div class="fk-views" role="group" aria-label="Skin view"><button type="button" class="fk-view" data-v="web" aria-pressed="true">Web</button><button type="button" class="fk-view" data-v="list" aria-pressed="false">List</button></div></div>' +
-      '<div class="fk-skins">' +
+    return '<section class="fk-sec fk-rv" style="--i:8" aria-labelledby="fk-skins-h"><h2 class="fk-h2" id="fk-skins-h">Skins <small>' + s.length + '</small></h2>' + chips +
+      '<div class="fk-skins"><div class="fk-webbox fk-drawn">' +
       '<div class="fk-web fk-pre" style="--ns:' + L.ns.toFixed(2) + '%;--fd:' + (L.rings * 210 + 350) + 'ms"><svg class="fk-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + paths + '</svg><div class="fk-fog" aria-hidden="true"></div>' + nodes +
-      '<button type="button" class="fk-core" style="' + vars(c) + '" aria-label="Default ' + esc(c.name) + '"><img src="' + esc(c.image) + '" alt="" decoding="async"></button></div>' +
-      '<div class="fk-pick" aria-live="polite"></div>' +
-      '<div class="fk-sk-list" hidden><table class="fk-sk-table"><thead><tr><th scope="col"><span class="fk-sr">Picture</span></th><th scope="col">Skin</th><th scope="col">Type</th><th scope="col">How to get</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<button type="button" class="fk-core" style="' + vars(c) + '" aria-label="Default ' + esc(c.name) + '"><img src="' + esc(c.image) + '" alt="" decoding="async"></button></div></div>' +
+      '<div class="fk-pick fk-drawn" aria-live="polite"></div>' +
       '</div>' + legend + '</section>';
   }
 
@@ -268,7 +263,7 @@
     Array.prototype.forEach.call(det.querySelectorAll('.fk-node'), function (n) { n.setAttribute('aria-pressed', String(+n.getAttribute('data-n') === i)); });
     Array.prototype.forEach.call(det.querySelectorAll('.fk-lines path'), function (p) { p.classList.remove('fk-hot'); });
     if (i < 0) {
-      box.innerHTML = '<div class="fk-pick-img" style="' + vars(c) + ';background:linear-gradient(160deg,' + esc(c1(c)) + ',' + esc(c2(c)) + ')"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" style="object-fit:cover"></div><div><p class="fk-pick-n">Default</p><p class="fk-pick-how">Comes with ' + esc(c.name) + '</p><p class="fk-pick-cap">Pick a node in the web to see a skin.</p></div>';
+      box.innerHTML = '<div class="fk-pick-img" style="' + vars(c) + ';background:linear-gradient(160deg,' + esc(c1(c)) + ',' + esc(c2(c)) + ')"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" style="object-fit:cover"></div><div><p class="fk-pick-n">Default</p><p class="fk-pick-how">Comes with ' + esc(c.name) + '</p><p class="fk-pick-cap">Pick a skin in the web to see it here.</p></div>';
       return;
     }
     var k = w.skins[i];
@@ -285,7 +280,7 @@
     }
     var list = order[c.side], i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
-    var html = '<nav class="fk-nav fk-rv" style="--i:9" aria-label="Forsaken Roster"><div class="fk-nav-h">Forsaken Roster</div>';
+    var html = '<nav class="fk-nav fk-drawn fk-rv" style="--i:9" aria-label="Forsaken Roster"><div class="fk-nav-h">Forsaken Roster</div>';
     CLS.forEach(function (k) { html += row(k + 's', order.survivor.filter(function (id) { return byId[id].cls === k; })); });
     html += row('Killers', order.killer);
     html += '<div class="fk-pn"><a href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" rel="prev" data-google-vignette="false">&lsaquo; Previous<em>' + esc(prev.name) + '</em></a><a href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" rel="next" data-google-vignette="false">Next &rsaquo;<em>' + esc(next.name) + '</em></a></div></nav>';
@@ -298,25 +293,27 @@
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
     var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.cost ? '<span class="fk-tag">' + esc(c.cost) + '</span>' : '');
     var nameArt = c.title ? '<img src="' + esc(c.title) + '" alt="' + esc(c.name) + '" decoding="async">' : '<span>' + esc(c.name) + '</span>';
-    return '<div class="fk-top"><a class="fk-back" href="' + BASE + '" data-back="1" data-google-vignette="false"><span aria-hidden="true">&lsaquo;</span> Roster</a>' +
+    var bg = c.bg ? '<div class="fk-bg" aria-hidden="true" style="--fk-map:url(&quot;' + esc(c.bg) + '&quot;)"><i></i><b></b></div>' : '';
+    return bg + '<div class="fk-page">' +
+      '<div class="fk-top">' +
+      '<a class="fk-btn fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
       '<span class="fk-count">' + side + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
-      '<a class="fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
-      '<a class="fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a></div>' +
+      '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
+      '<a class="fk-btn fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
       '<div class="fk-art fk-rv" style="--i:0"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" width="900" height="900" decoding="async"><span class="fk-art-glow" aria-hidden="true"></span></div>' +
       '<div class="fk-side">' +
-      '<div class="fk-name fk-rv" style="--i:1">' + nameArt + '</div>' +
-      '<div class="fk-tags fk-rv" style="--i:2">' + tags + '</div>' +
-      (c.caption ? '<p class="fk-cap fk-rv" style="--i:3">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') +
-      '<div class="fk-box fk-rv" style="--i:4"><h2 class="fk-box-h">Stats</h2>' + stats(c) + '</div>' +
+      '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><div class="fk-name">' + nameArt + '</div><div class="fk-tags">' + tags + '</div>' +
+      (c.caption ? '<p class="fk-cap">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') + '</div>' +
+      '<div class="fk-statbox fk-drawn fk-rv" style="--i:3"><h2 class="fk-box-h">Stats</h2>' + stats(c) + '</div>' +
       '</div></div>' +
-      '<section class="fk-sec fk-rv" style="--i:5" aria-labelledby="fk-ov-h"><h2 class="fk-h2" id="fk-ov-h">Overview</h2>' +
+      '<section class="fk-sec fk-rv" style="--i:5" aria-labelledby="fk-ov-h"><h2 class="fk-h2" id="fk-ov-h">Overview</h2><div class="fk-ov fk-drawn">' +
       (c.lead ? '<p class="fk-lead">' + inline(c.lead) + '</p>' : '') +
-      (c.description ? '<blockquote class="fk-desc">' + esc(plain(c.description)) + '</blockquote>' : '') + '</section>' +
-      (c.abilities.length ? '<section class="fk-sec" aria-labelledby="fk-ab-h"><h2 class="fk-h2 fk-rv" style="--i:6" id="fk-ab-h">Abilities <small>' + c.abilities.length + '</small></h2>' + loadout(c) + '<div class="fk-abs">' + c.abilities.map(ability).join('') + '</div></section>' : '') +
+      (c.description ? '<blockquote class="fk-desc">' + esc(plain(c.description)) + '</blockquote>' : '') + '</div></section>' +
+      (c.abilities.length ? '<section class="fk-sec" aria-labelledby="fk-ab-h"><h2 class="fk-h2 fk-rv" style="--i:6" id="fk-ab-h">Abilities</h2>' + loadout(c) + '<div class="fk-abs">' + c.abilities.map(ability).join('') + '</div></section>' : '') +
       skinsSection(c) +
       navbox(c) +
-      '<p class="fk-src">Stats, abilities and skins are from the FORSAKEN Wiki on Fandom.</p>';
+      '<p class="fk-src">' + (c.map ? 'Background: ' + esc(c.map) + '. ' : '') + 'Stats, abilities and skins are from the FORSAKEN Wiki on Fandom.</p></div>';
   }
 
   function headerFor(c) {
@@ -369,7 +366,8 @@
     var c = byId[id];
     if (!c) { showMissing(id); return; }
     cur = c;
-    det.innerHTML = '<div class="fk-page">' + detailHtml(c) + '</div>';
+    hideTip();
+    det.innerHTML = detailHtml(c);
     det.classList.remove('fk-reveal');
     gridView.inert = true;
     gridView.setAttribute('aria-hidden', 'true');
@@ -385,7 +383,7 @@
 
   function showMissing(id) {
     cur = null;
-    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-back" href="' + BASE + '" data-back="1"><span aria-hidden="true">&lsaquo;</span> Roster</a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
+    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-btn fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster">Roster</a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
     gridView.inert = true;
     gridView.setAttribute('aria-hidden', 'true');
     det.hidden = false;
@@ -396,6 +394,7 @@
   }
 
   function showGrid() {
+    hideTip();
     if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
     cur = null;
     if (webIO) { webIO.disconnect(); webIO = null; }
@@ -587,11 +586,44 @@
     gridView.querySelector('.fk-tab[data-tab="' + st.tab + '"]').focus();
   });
 
-  gridView.addEventListener('input', function (e) {
-    if (!e.target.classList.contains('fk-q')) return;
-    st.q = e.target.value.trim().toLowerCase();
-    renderGrid();
-  });
+  var tip = null, tipFor = null;
+  function hideTip() {
+    if (!tip || !tipFor) return;
+    tip.classList.remove('fk-tip-on');
+    tipFor.setAttribute('aria-expanded', 'false');
+    tipFor.removeAttribute('aria-describedby');
+    tipFor = null;
+  }
+  function showTip(btn) {
+    var key = btn.getAttribute('data-se'), txt = data && data.effects && data.effects[key];
+    if (!txt) return;
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.className = 'fk-tip';
+      tip.id = 'fk-tip';
+      tip.setAttribute('role', 'tooltip');
+      document.body.appendChild(tip);
+    }
+    if (tipFor && tipFor !== btn) tipFor.setAttribute('aria-expanded', 'false');
+    tipFor = btn;
+    tip.style.setProperty('--se', btn.style.getPropertyValue('--se'));
+    tip.innerHTML = '<strong>' + btn.innerHTML.replace(/<\/?i>/g, '') + '</strong>' + esc(txt);
+    tip.style.left = '0px'; tip.style.top = '0px';
+    var r = btn.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = Math.max(12, Math.min(window.innerWidth - tw - 12, r.left + r.width / 2 - tw / 2));
+    var y = r.top - th - 12;
+    if (y < 8) y = r.bottom + 12;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    btn.setAttribute('aria-expanded', 'true');
+    btn.setAttribute('aria-describedby', 'fk-tip');
+    tip.classList.add('fk-tip-on');
+  }
+  det.addEventListener('pointerover', function (e) { var b = e.target.closest('button.fk-se'); if (b && e.pointerType === 'mouse') showTip(b); });
+  det.addEventListener('pointerout', function (e) { var b = e.target.closest('button.fk-se'); if (b && b === tipFor && e.pointerType === 'mouse' && !b.contains(e.relatedTarget)) hideTip(); });
+  det.addEventListener('focusin', function (e) { var b = e.target.closest('button.fk-se'); if (b) showTip(b); });
+  det.addEventListener('focusout', function (e) { if (e.target === tipFor) hideTip(); });
+  det.addEventListener('scroll', hideTip, { passive: true });
+  window.addEventListener('resize', hideTip);
 
   det.addEventListener('click', function (e) {
     var back = e.target.closest('[data-back]');
@@ -623,6 +655,9 @@
       more.textContent = open ? 'Show more' : 'Show less';
       return;
     }
+    var se = e.target.closest('button.fk-se');
+    if (se) { showTip(se); return; }
+    if (tipFor) hideTip();
     var node = e.target.closest('.fk-node');
     if (node) { pick(cur, +node.getAttribute('data-n')); return; }
     if (e.target.closest('.fk-core')) { pick(cur, -1); return; }
@@ -630,19 +665,8 @@
     if (sg) {
       var g = sg.getAttribute('data-sg');
       Array.prototype.forEach.call(det.querySelectorAll('[data-sg]'), function (b) { b.setAttribute('aria-pressed', String(b === sg)); });
-      Array.prototype.forEach.call(det.querySelectorAll('.fk-node, .fk-sk-table tbody tr'), function (n) { n.classList.toggle('fk-off', g !== 'all' && n.getAttribute('data-g') !== g); });
+      Array.prototype.forEach.call(det.querySelectorAll('.fk-node'), function (n) { n.classList.toggle('fk-off', g !== 'all' && n.getAttribute('data-g') !== g); });
       return;
-    }
-    var v = e.target.closest('.fk-view');
-    if (v) {
-      var list = v.getAttribute('data-v') === 'list';
-      Array.prototype.forEach.call(det.querySelectorAll('.fk-view'), function (b) { b.setAttribute('aria-pressed', String(b === v)); });
-      det.querySelector('.fk-web').hidden = list;
-      det.querySelector('.fk-pick').hidden = list;
-      var tbl = det.querySelector('.fk-sk-list');
-      tbl.hidden = !list;
-      det.querySelector('.fk-skins').style.gridTemplateColumns = list ? 'minmax(0,1fr)' : '';
-      if (list) Array.prototype.forEach.call(tbl.querySelectorAll('img[data-src]'), function (im) { im.loading = 'lazy'; im.src = im.getAttribute('data-src'); im.removeAttribute('data-src'); });
     }
   });
 
@@ -652,7 +676,7 @@
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
-    else if (e.key === 'Escape') { backToGrid(); }
+    else if (e.key === 'Escape') { if (tipFor) hideTip(); else backToGrid(); }
   });
 
   window.addEventListener('popstate', function () {
@@ -666,6 +690,7 @@
   get(SRC).then(function (d) {
     data = d;
     index();
+    if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
     gridView.querySelector('.fk-tab[data-tab="survivor"] .fk-tab-n').textContent = order.survivor.length;
     gridView.querySelector('.fk-tab[data-tab="killer"] .fk-tab-n').textContent = order.killer.length;
     renderGrid();
