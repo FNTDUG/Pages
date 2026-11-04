@@ -34,14 +34,15 @@
 .fk-cls::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.5),transparent)}
 .fk-cls-d{margin:0 0 14px;color:#cfcfcf;font-size:17px;font-style:italic}
 .fk-group{margin:0 0 22px}
+.fk-list>.fk-cards{margin:0 0 22px}
 .fk-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
 .fk-none{color:var(--fk-dim);font-style:italic;padding:20px 0}
 
 .fk-card{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#050505;text-decoration:none;isolation:isolate;transition:transform .18s cubic-bezier(.2,.8,.3,1.35),filter .2s}
-.fk-card img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 24%;transition:transform .35s cubic-bezier(.2,.7,.2,1),filter .35s}
+.fk-card img{position:absolute;inset:3px;width:calc(100% - 6px)!important;height:calc(100% - 6px)!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 24%;transition:transform .35s cubic-bezier(.2,.7,.2,1),filter .35s}
 .fk-card::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55) 80%,rgba(0,0,0,.8));pointer-events:none}
-.fk-card::after{content:"";position:absolute;inset:-1px;z-index:3;background:var(--fk-tear) center/100% 100% no-repeat;pointer-events:none}
-.fk-card-n{position:absolute;left:12px;right:10px;bottom:12px;z-index:4;font-family:var(--fk-title);font-weight:800;font-size:18px;line-height:1.05;color:#fff;-webkit-text-stroke:4px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,0 3px 6px rgba(0,0,0,.6)}
+.fk-card::after{content:"";position:absolute;inset:0;z-index:3;background:var(--fk-tear) center/100% 100% no-repeat;pointer-events:none}
+.fk-card-n{position:absolute;left:12px;bottom:12px;z-index:4;max-width:calc(100% - 22px);white-space:nowrap;overflow-wrap:normal;word-break:normal;font-family:var(--fk-title);font-weight:800;font-size:18px;line-height:1.05;color:#fff;-webkit-text-stroke:4px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,0 3px 6px rgba(0,0,0,.6)}
 .fk-card:hover,.fk-card:focus-visible{transform:scale(1.05);z-index:2;filter:drop-shadow(0 6px 14px rgba(0,0,0,.8)) drop-shadow(0 0 10px rgba(255,255,255,.18))}
 .fk-card[data-side=killer]:hover,.fk-card[data-side=killer]:focus-visible{filter:drop-shadow(0 6px 14px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(255,0,60,.45))}
 .fk-card:hover img,.fk-card:focus-visible img{filter:brightness(1.1)}
@@ -51,9 +52,9 @@
 
 .fk-detail{position:fixed;inset:0;z-index:2147483600;overflow-y:auto;overscroll-behavior:contain;background:#000;outline:none;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fk-detail::-webkit-scrollbar{display:none}
-.fk-sb{position:fixed;z-index:2147483610;top:12px;bottom:12px;right:8px;width:30px;background:url("/forsaken/img/ui-sb-track.webp") center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(0,0,0,.6);cursor:pointer;touch-action:none}
+.fk-sb{position:fixed;z-index:2147483610;top:12px;bottom:12px;right:8px;width:30px;background:url("/forsaken/img/ui-sb-track.webp?v=2") center top/100% auto repeat-y;box-shadow:0 0 0 1px rgba(0,0,0,.6);cursor:pointer;touch-action:none}
 .fk-sb[hidden]{display:none}
-.fk-sb-t{position:absolute;left:50%;top:0;width:14px;margin-left:-7px;min-height:44px;border-style:solid;border-color:transparent;border-width:9px 0;border-image:url("/forsaken/img/ui-sb-thumb.webp") 20 0 fill / 9px 0 stretch;cursor:grab;transition:filter .15s}
+.fk-sb-t{position:absolute;left:50%;top:0;width:14px;margin-left:-7px;min-height:44px;border-style:solid;border-color:transparent;border-width:9px 0;border-image:url("/forsaken/img/ui-sb-thumb.webp") 24 0 fill / 10px 0 round;cursor:grab;transition:filter .15s}
 .fk-sb-t:hover,.fk-sb.fk-drag .fk-sb-t{filter:drop-shadow(0 0 4px rgba(255,255,255,.7))}
 .fk-sb.fk-drag .fk-sb-t{cursor:grabbing}
 .fk-bg{position:fixed;inset:0;pointer-events:none;background:#000}
@@ -239,9 +240,9 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-shell{padding:12px 10px 4px}
 .fk-page{padding:0 30px 44px 12px}
 .fk-sb{width:20px;right:4px}
-.fk-sb-t{width:10px;margin-left:-5px;border-width:7px 0;border-image-width:7px 0}
+.fk-sb-t{width:10px;margin-left:-5px;border-width:8px 0;border-image-width:8px 0}
 .fk-cards{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
-.fk-card-n{font-size:15px;left:9px;bottom:9px;-webkit-text-stroke:3.5px #000}
+.fk-card-n{font-size:15px;left:9px;bottom:9px;max-width:calc(100% - 16px);-webkit-text-stroke:3.5px #000}
 .fk-tabs .fk-btn{flex:1 1 0;font-size:20px;padding:3px 10px}
 .fk-chips .fk-btn{font-size:17px;padding:2px 12px}
 .fk-ab{padding:14px 14px 12px}

@@ -119,6 +119,7 @@
       html = '<div class="fk-cards">' + list.map(deal).join('') + '</div>';
     }
     box.innerHTML = html;
+    fitNames();
     if (anim && !reduced) {
       box.classList.remove('fk-deal');
       void box.offsetWidth;
@@ -133,6 +134,21 @@
       box._t = setTimeout(function () { box.classList.remove('fk-deal'); }, 1400);
     }
   }
+
+  function fitNames() {
+    Array.prototype.forEach.call(gridView.querySelectorAll('.fk-card-n'), function (n) {
+      n.style.fontSize = '';
+      var room = n.parentNode.clientWidth - (parseFloat(getComputedStyle(n).left) || 12) * 2 + 2;
+      var w = n.scrollWidth;
+      if (room > 0 && w > room) {
+        var fs = parseFloat(getComputedStyle(n).fontSize);
+        n.style.fontSize = Math.max(10, Math.floor(fs * room / w * 10) / 10) + 'px';
+      }
+    });
+  }
+  var fitT = 0;
+  window.addEventListener('resize', function () { cancelAnimationFrame(fitT); fitT = requestAnimationFrame(fitNames); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!CHAR) fitNames(); });
 
   function stat(label, val, cls, unit) {
     if (val == null || val === '') return '';
