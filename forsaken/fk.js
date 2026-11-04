@@ -9,7 +9,7 @@
   var data = null, byId = {}, order = { survivor: [], killer: [] };
   var CLS = ['Survivalist', 'Sentinel', 'Support'];
   var st = { tab: 'survivor', cls: 'all', q: '' };
-  var gridY = 0, cur = null, busy = false, webIO = null;
+  var cur = null, busy = false, webIO = null;
   var titleEl = null, titleHtml = '', descEl = null, descText = '', docTitle = document.title;
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -65,8 +65,8 @@
     data.characters.forEach(function (c) { if (c.side === 'killer') order.killer.push(c.id); });
   }
 
-  function card(c) {
-    return '<a class="fk-card" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + '">' +
+  function card(c, i) {
+    return '<a class="fk-card" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
       '<img src="' + esc(c.image) + '" alt="" width="300" height="300" loading="lazy" decoding="async">' +
       '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
@@ -78,8 +78,9 @@
     return true;
   }
 
-  function renderGrid() {
-    var box = gridView.querySelector('.fk-list');
+  function renderGrid(anim) {
+    var box = gridView.querySelector('.fk-list'), n = 0;
+    function deal(c) { return card(c, n++); }
     var chips = gridView.querySelector('.fk-chips');
     chips.hidden = st.tab !== 'survivor';
     Array.prototype.forEach.call(gridView.querySelectorAll('.fk-tab'), function (b) {
@@ -98,13 +99,26 @@
         if (!list.length) return;
         html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(k) + 's <span aria-hidden="true">&middot;</span> ' + list.length + '</h2>' +
           (data.classes && data.classes[k] ? '<p class="fk-cls-d">' + esc(data.classes[k]) + '</p>' : '') +
-          '<div class="fk-cards">' + list.map(card).join('') + '</div></section>';
+          '<div class="fk-cards">' + list.map(deal).join('') + '</div></section>';
       });
     } else {
       var list = order[st.tab].map(function (id) { return byId[id]; }).filter(match);
-      html = list.length ? '<div class="fk-cards">' + list.map(card).join('') + '</div>' : '<p class="fk-none">No ' + (st.tab === 'killer' ? 'Killers' : 'Survivors') + ' match &ldquo;' + esc(st.q) + '&rdquo;.</p>';
+      html = list.length ? '<div class="fk-cards">' + list.map(deal).join('') + '</div>' : '<p class="fk-none">No ' + (st.tab === 'killer' ? 'Killers' : 'Survivors') + ' match &ldquo;' + esc(st.q) + '&rdquo;.</p>';
     }
     box.innerHTML = html;
+    if (anim && !reduced) {
+      box.classList.remove('fk-deal');
+      void box.offsetWidth;
+      box.classList.add('fk-deal');
+      var pulse = root.querySelector('.fk-pulse');
+      if (pulse && anim === 'tab') {
+        pulse.className = 'fk-pulse';
+        void pulse.offsetWidth;
+        pulse.className = 'fk-pulse fk-pulse--' + st.tab;
+      }
+      clearTimeout(box._t);
+      box._t = setTimeout(function () { box.classList.remove('fk-deal'); }, 1400);
+    }
   }
 
   function stat(label, val, extra) {
@@ -112,21 +126,13 @@
     return '<tr><th scope="row">' + esc(label) + '</th><td>' + esc(val) + (extra || '') + '</td></tr>';
   }
 
-  function maxOf(side, key) {
-    var m = 0;
-    data.characters.forEach(function (c) { var v = parseFloat(String(c[key]).replace(/,/g, '')); if (c.side === side && isFinite(v)) m = Math.max(m, v); });
-    return m || 1;
-  }
 
   function stats(c) {
-    var hp = parseFloat(String(c.health).replace(/,/g, '').split('-').pop());
-    var hpBar = isFinite(hp) ? '<span class="fk-hpbar" aria-hidden="true"><i style="width:' + Math.round(Math.min(1, hp / maxOf(c.side, 'health')) * 100) + '%"></i></span>' : '';
-    var stBar = isFinite(c.stamina) ? '<span class="fk-stbar" aria-hidden="true"><i style="width:' + Math.round(Math.min(1, c.stamina / 110) * 100) + '%"></i></span>' : '';
     return '<table class="fk-stats">' +
-      stat('Health', c.health, hpBar) +
+      stat('Health', c.health) +
       stat('Walk speed', c.speed) +
       stat('Sprint speed', c.sprint) +
-      stat('Stamina', c.stamina, stBar) +
+      stat('Stamina', c.stamina) +
       stat('Stamina drain', c.staminaLoss != null ? c.staminaLoss + '/s' : null) +
       stat('Stamina regen', c.staminaGain != null ? c.staminaGain + '/s' : null) +
       stat('Terror radius', c.terror) +
@@ -188,18 +194,25 @@
     var caps = [6, 12, 18, 24, 30, 36], rings = [], left = n, i = 0;
     while (left > 0) { var k = Math.min(caps[Math.min(i, caps.length - 1)], left); rings.push(k); left -= k; i++; }
     if (rings.length > 1 && rings[rings.length - 1] < 4) { rings[rings.length - 2] += rings.pop(); }
-    var R = rings.length, minR = R === 1 ? 26 : 17, maxR = R === 1 ? 26 : 40.5;
-    var pos = [], ns = 11;
+    var R = rings.length, ns = 10, minR = 26, maxR = 26, rad = [];
+    for (var it = 0; it < 4; it++) {
+      minR = R === 1 ? 26 : 8.5 + ns / 2 + 3;
+      maxR = R === 1 ? 26 : 49.5 - ns / 2;
+      var gap = R === 1 ? 99 : (maxR - minR) / (R - 1), lim = Math.min(11, gap * 0.8);
+      rad = rings.map(function (count, ri) { return R === 1 ? minR : minR + gap * ri; });
+      rings.forEach(function (count, ri) { lim = Math.min(lim, (2 * Math.PI * rad[ri] / count) * 0.78); });
+      ns = lim;
+    }
+    var pos = [];
     rings.forEach(function (count, ri) {
-      var r = R === 1 ? minR : minR + (maxR - minR) * ri / (R - 1);
+      var r = rad[ri];
       var off = (ri % 2 ? 0.5 : 0) * (Math.PI * 2 / count) - Math.PI / 2;
-      ns = Math.min(ns, (2 * Math.PI * r / count) * 0.74);
       for (var j = 0; j < count; j++) {
         var a = off + j / count * Math.PI * 2;
         pos.push({ x: 50 + Math.cos(a) * r, y: 50 + Math.sin(a) * r, a: a, ring: ri + 1, k: j });
       }
     });
-    return { pos: pos, rings: R, ns: Math.max(5.2, ns) };
+    return { pos: pos, rings: R, ns: ns };
   }
 
   function angDist(a, b) { var d = Math.abs(a - b) % (Math.PI * 2); return d > Math.PI ? Math.PI * 2 - d : d; }
@@ -356,35 +369,42 @@
     var c = byId[id];
     if (!c) { showMissing(id); return; }
     cur = c;
-    det.innerHTML = detailHtml(c);
+    det.innerHTML = '<div class="fk-page">' + detailHtml(c) + '</div>';
     det.classList.remove('fk-reveal');
-    gridView.hidden = true;
+    gridView.inert = true;
+    gridView.setAttribute('aria-hidden', 'true');
     det.hidden = false;
+    document.documentElement.classList.add('fk-on');
     headerFor(c);
     pick(c, -1);
-    window.scrollTo(0, 0);
+    det.scrollTop = 0;
+    try { det.focus({ preventScroll: true }); } catch (e) {}
     if (!reduced && mode !== 'quiet') { void det.offsetWidth; det.classList.add('fk-reveal'); }
     startWeb();
   }
 
   function showMissing(id) {
     cur = null;
-    det.innerHTML = '<div class="fk-top"><a class="fk-back" href="' + BASE + '" data-back="1"><span aria-hidden="true">&lsaquo;</span> Roster</a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p>';
-    gridView.hidden = true;
+    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-back" href="' + BASE + '" data-back="1"><span aria-hidden="true">&lsaquo;</span> Roster</a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
+    gridView.inert = true;
+    gridView.setAttribute('aria-hidden', 'true');
     det.hidden = false;
+    document.documentElement.classList.add('fk-on');
     var m = document.createElement('meta');
     m.name = 'robots'; m.content = 'noindex';
     document.head.appendChild(m);
   }
 
   function showGrid() {
+    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
     cur = null;
     if (webIO) { webIO.disconnect(); webIO = null; }
     det.hidden = true;
     det.innerHTML = '';
-    gridView.hidden = false;
+    gridView.inert = false;
+    gridView.removeAttribute('aria-hidden');
+    document.documentElement.classList.remove('fk-on');
     headerFor(null);
-    window.scrollTo(0, gridY);
   }
 
   function idFromPath() {
@@ -424,7 +444,7 @@
     sh.addColorStop(0.52, 'rgba(0,0,0,0)'); sh.addColorStop(0.78, 'rgba(0,0,0,.55)'); sh.addColorStop(1, 'rgba(0,0,0,.85)');
     o.fillStyle = sh; o.fillRect(0, 0, W, H);
     var nameEl = cardEl.querySelector('.fk-card-n'), fs = parseFloat(getComputedStyle(nameEl).fontSize) * dpr;
-    o.font = '800 ' + fs + 'px "Spectral", Georgia, serif';
+    o.font = '800 ' + fs + 'px "Rubik", system-ui, sans-serif';
     o.textBaseline = 'alphabetic';
     o.lineJoin = 'round';
     o.lineWidth = 4 * dpr; o.strokeStyle = '#000';
@@ -538,6 +558,7 @@
   function backToGrid() {
     var n = depth();
     if (n > 0) { history.go(-n); return; }
+    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
     history.pushState({ fkn: 0 }, '', BASE);
     showGrid();
     renderGrid();
@@ -545,14 +566,13 @@
 
   gridView.addEventListener('click', function (e) {
     var tab = e.target.closest('.fk-tab');
-    if (tab) { st.tab = tab.getAttribute('data-tab'); st.cls = 'all'; renderGrid(); return; }
+    if (tab) { if (tab.getAttribute('data-tab') === st.tab) return; st.tab = tab.getAttribute('data-tab'); st.cls = 'all'; renderGrid('tab'); return; }
     var chip = e.target.closest('.fk-chip');
-    if (chip) { st.cls = chip.getAttribute('data-cls'); renderGrid(); return; }
+    if (chip) { if (chip.getAttribute('data-cls') === st.cls) return; st.cls = chip.getAttribute('data-cls'); renderGrid('cls'); return; }
     var a = e.target.closest('.fk-card');
     if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || busy) return;
     e.preventDefault();
     busy = true;
-    gridY = window.scrollY;
     var id = a.getAttribute('data-id');
     burn(a, function () { push(id); showDetail(id); busy = false; });
   });
@@ -563,7 +583,7 @@
     e.preventDefault();
     st.tab = st.tab === 'survivor' ? 'killer' : 'survivor';
     st.cls = 'all';
-    renderGrid();
+    renderGrid('tab');
     gridView.querySelector('.fk-tab[data-tab="' + st.tab + '"]').focus();
   });
 

@@ -8843,10 +8843,12 @@ export default {
     const hasInfo = !noInfoPanel && !pvMissing && infoPanelActive(realPath);
     const isOvHome = realPath === '/';
     const nav = { mobile: MOBILE_NAV_BODY, desktop: DESKTOP_NAV_INNER, footer: FOOTER_HTML };
+    const fkChar = okPage && /^\/forsaken\/roster\/[^/]+\/?$/.test(realPath);
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
+          if (fkChar) el.append('<meta name="ov-bare" content="1"><style>html.fk-char,html.fk-char body{background:#000!important}html.fk-char #ug-main{visibility:hidden}html.fk-char .fk-detail{visibility:visible}html.fk-char #ug-hamburger,html.fk-char #ug-info-btn,html.fk-char #ug-sound-btn,html.fk-char .ntf-bell{display:none!important}</style>', { html: true });
           if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">' + FWM_PRE_CSS + (ssr.fwWorld.bg ? '<link rel="preload" as="image" href="' + seoAttr(ssr.fwWorld.bg) + '">' : ''), { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
           if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -8882,10 +8884,10 @@ export default {
         element(el) { if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.lead), { html: true }); }
       })
       .on('html', {
-        element(el) { if (ssr && ssr.fwChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char').trim()); }
+        element(el) { if ((ssr && ssr.fwChar) || fkChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char' + (fkChar ? ' fk-char fk-on' : '')).trim()); }
       })
       .on('div.ad-slot, div#ug-hero', {
-        element(el) { if (ssr && ssr.fwChar) el.remove(); }
+        element(el) { if ((ssr && ssr.fwChar) || fkChar) el.remove(); }
       })
       .on('div#ug-content', {
         element(el) {
@@ -8940,7 +8942,7 @@ export default {
           el.append(noInfoPanel || pvMissing ? pollHtml.replace('data-auto="1"', 'data-auto="0"') : pollHtml, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
-          if (!(ssr && ssr.fwChar)) {
+          if (!(ssr && ssr.fwChar) && !fkChar) {
             el.append(RAIL_HTML, { html: true });
             el.append(CONTENT_AD_HTML, { html: true });
           }
