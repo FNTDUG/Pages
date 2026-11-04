@@ -76,19 +76,23 @@
 
   function index() {
     data.characters.forEach(function (c) { byId[c.id] = c; });
-    CLS.forEach(function (k) { data.characters.forEach(function (c) { if (c.side === 'survivor' && c.cls === k) order.survivor.push(c.id); }); });
-    data.characters.forEach(function (c) { if (c.side === 'survivor' && CLS.indexOf(c.cls) < 0) order.survivor.push(c.id); });
-    data.characters.forEach(function (c) { if (c.side === 'killer') order.killer.push(c.id); });
+    var G = data.groups || {};
+    [['survivor', CLS], ['killer', data.killerClasses || []]].forEach(function (pair) {
+      pair[1].forEach(function (k) { (G[k] || []).forEach(function (id) { if (byId[id] && byId[id].side === pair[0] && order[pair[0]].indexOf(id) < 0) order[pair[0]].push(id); }); });
+      data.characters.forEach(function (c) { if (c.side === pair[0] && order[pair[0]].indexOf(c.id) < 0) order[pair[0]].push(c.id); });
+    });
   }
 
   function card(c, i) {
-    return '<a class="fk-card" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
+    var multi = catsOf(c).length > 1;
+    return '<a class="fk-card' + (multi ? ' fk-multi' : '') + '" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
       '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async">' +
-      '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
+      (multi ? '<span class="fk-mo" aria-hidden="true"></span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
   function groupsFor(tab) { return tab === 'killer' ? ((data && data.killerClasses) || []) : CLS; }
-  function catsOf(c) { return c.side === 'killer' ? (c.cats || []) : [c.cls]; }
+  function catsOf(c) { return c.cats && c.cats.length ? c.cats : c.cls && c.cls !== 'Killer' ? [c.cls] : []; }
+  function groupIds(k, side) { var g = data.groups && data.groups[k]; return (g || order[side].filter(function (id) { return catsOf(byId[id]).indexOf(k) >= 0; })).filter(function (id) { return byId[id] && byId[id].side === side; }); }
   function groupTitle(tab, k) { return tab === 'killer' ? k : k + 's'; }
 
   function renderGrid(anim) {
@@ -110,7 +114,7 @@
     var html = '';
     groups.forEach(function (k) {
       if (st.cls !== 'all' && st.cls !== k) return;
-      var list = order[st.tab].map(function (id) { return byId[id]; }).filter(function (c) { return catsOf(c).indexOf(k) >= 0; });
+      var list = groupIds(k, st.tab).map(function (id) { return byId[id]; });
       if (!list.length) return;
       html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(groupTitle(st.tab, k)) + ' <b>' + list.length + '</b></h2>' +
         (data.classes && data.classes[k] ? '<p class="fk-cls-d">' + esc(data.classes[k]) + '</p>' : '') +
@@ -310,7 +314,7 @@
     var list = order[c.side], i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var html = '<nav class="fk-nav fk-drawn fk-rv" style="--i:9" aria-label="Forsaken Roster"><div class="fk-nav-h">Forsaken Roster</div>';
-    CLS.forEach(function (k) { html += row(k + 's', order.survivor.filter(function (id) { return byId[id].cls === k; })); });
+    CLS.forEach(function (k) { html += row(k + 's', groupIds(k, 'survivor')); });
     html += row('Killers', order.killer);
     html += '<div class="fk-pn"><a href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" rel="prev" data-google-vignette="false">&lsaquo; Previous<em>' + esc(prev.name) + '</em></a><a href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" rel="next" data-google-vignette="false">Next &rsaquo;<em>' + esc(next.name) + '</em></a></div></nav>';
     return html;
@@ -320,7 +324,7 @@
     var list = order[c.side], i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
-    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.side === 'killer' ? (c.cats || []).map(function (k) { return '<span class="fk-tag">' + esc(k) + '</span>'; }).join('') : '');
+    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + catsOf(c).map(function (k) { var note = c.catNotes && c.catNotes[k]; return '<span class="fk-tag' + (note ? ' fk-tag--note' : '') + '"' + (note ? ' title="' + esc(note) + '" tabindex="0" aria-label="' + esc(k + ': ' + note) + '"' : '') + '>' + esc(k) + (note ? '<sup aria-hidden="true">*</sup>' : '') + '</span>'; }).join('');
     var nameArt = c.title ? '<img src="' + esc(c.title) + '" alt="' + esc(c.name) + '" decoding="async">' : '<span>' + esc(c.name) + '</span>';
     var bg = c.bg ? '<div class="fk-bg" aria-hidden="true" style="--fk-map:url(&quot;' + esc(c.bg) + '&quot;)"><i></i><b></b></div>' : '';
     return bg + '<div class="fk-page">' +
@@ -496,6 +500,19 @@
     o.strokeText(c.name, 12 * dpr, H - 12 * dpr);
     o.fillStyle = '#fff'; o.fillText(c.name, 12 * dpr, H - 12 * dpr);
     if (tearImg && tearImg.complete && tearImg.naturalWidth) { try { o.drawImage(tearImg, 0, 0, W, H); } catch (e) {} }
+    if (cardEl.classList.contains('fk-multi')) {
+      var mo = getComputedStyle(cardEl.querySelector('.fk-mo')), mc = mo.getPropertyValue('--mo').trim() || '#ff2a46';
+      var L = Math.round(Math.min(W, H) * 0.24), T = Math.max(2, Math.round(3.5 * dpr)), I = Math.round(2 * dpr);
+      o.save();
+      o.shadowColor = mc; o.shadowBlur = 6 * dpr; o.fillStyle = mc;
+      o.globalAlpha = 0.55; o.lineWidth = 1 * dpr; o.strokeStyle = mc; o.strokeRect(I + 0.5, I + 0.5, W - 2 * I - 1, H - 2 * I - 1);
+      o.globalAlpha = 1;
+      [[I, I, 1, 1], [W - I, I, -1, 1], [I, H - I, 1, -1], [W - I, H - I, -1, -1]].forEach(function (k) {
+        o.fillRect(k[2] > 0 ? k[0] : k[0] - L, k[3] > 0 ? k[1] : k[1] - T, L, T);
+        o.fillRect(k[2] > 0 ? k[0] : k[0] - T, k[3] > 0 ? k[1] : k[1] - L, T, L);
+      });
+      o.restore();
+    }
     var base;
     try { base = o.getImageData(0, 0, W, H).data; } catch (e) { done(); return; }
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
