@@ -53,7 +53,7 @@
 .fk-arrow:hover{border-color:#fff}
 
 .fk-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:24px;align-items:start}
-.fk-art{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(160deg,var(--c1,#222),var(--c2,#000))}
+.fk-art{position:relative;aspect-ratio:1/1;overflow:hidden;background:linear-gradient(160deg,var(--c1,#222),var(--c2,#000))}
 .fk-art img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 28%}
 .fk-art::after{content:"";position:absolute;inset:0;border:9px solid transparent;border-image:var(--fk-frame) 30 / 11px stretch;pointer-events:none}
 .fk-art-glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 100%,rgba(255,122,26,.55),transparent 70%);mix-blend-mode:screen;opacity:0;pointer-events:none}
@@ -207,6 +207,7 @@
 
 @media (max-width:860px){
 .fk-hero{grid-template-columns:minmax(0,1fr)}
+.fk-art{aspect-ratio:4/3}
 .fk-skins{grid-template-columns:minmax(0,1fr)}
 .fk-pick{position:relative;top:auto;display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:start}
 .fk-pick-img{margin:0}
