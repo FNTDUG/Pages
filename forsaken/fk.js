@@ -556,9 +556,9 @@
   }
 
   function backToGrid() {
+    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
     var n = depth();
     if (n > 0) { history.go(-n); return; }
-    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
     history.pushState({ fkn: 0 }, '', BASE);
     showGrid();
     renderGrid();
