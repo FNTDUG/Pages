@@ -3105,6 +3105,36 @@ const ADSENSE_LOADER =
 
 const GAME_UNIVERSES = ['5479908441', '7934320560', '8202280624', '7344880866', '10743048214', '5569032992', '6331902150', '6739698191', '4391829435', '4053293514'];
 
+async function placeUniverse(place) {
+  if (!/^\d{1,20}$/.test(place)) return null;
+  const r = await fetch('https://apis.roblox.com/universes/v1/places/' + place + '/universe', { cf: { cacheTtlByStatus: { '200-299': 2592000, '300-599': 0 }, cacheEverything: true } }).catch(() => null);
+  const j = r && r.ok ? await r.json().catch(() => null) : null;
+  return j && j.universeId ? String(j.universeId) : null;
+}
+
+async function gameStats(url) {
+  const places = [...new Set((url.searchParams.get('places') || '').split(',').filter(p => /^\d{1,20}$/.test(p)))].slice(0, 20);
+  const pairs = await Promise.all(places.map(async p => [p, await placeUniverse(p)]));
+  const ids = [...new Set(pairs.map(x => x[1]).filter(Boolean))];
+  let games = [];
+  if (ids.length) {
+    const r = await fetch('https://games.roblox.com/v1/games?universeIds=' + ids.join(','), { cf: { cacheTtlByStatus: { '200-299': 30, '300-599': 0 }, cacheEverything: true } }).catch(() => null);
+    const j = r && r.ok ? await r.json().catch(() => null) : null;
+    games = j && Array.isArray(j.data) ? j.data : [];
+  }
+  const byU = {};
+  games.forEach(g => { byU[String(g.id)] = g; });
+  const data = pairs.map(([p, u]) => {
+    const g = u && byU[u];
+    return g ? { place: p, universe: u, playing: Number(g.playing) || 0, visits: Number(g.visits) || 0 } : { place: p, universe: u };
+  });
+  const ok = !ids.length || games.length;
+  return new Response(JSON.stringify({ data }), {
+    status: ok ? 200 : 502,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': ok ? 'public, max-age=30' : 'no-store' }
+  });
+}
+
 const EXTRA_ITEMS = {
   materials: {
     'Tokens': { rarity: 'mythic',    image: 'https://images.fntduserguide.com/coins.webp' },
@@ -8727,9 +8757,11 @@ export default {
       });
     }
 
+    if (url.pathname === '/game-stats') return gameStats(url);
     if (url.pathname.startsWith('/game-thumb/')) {
-      const id = url.pathname.slice('/game-thumb/'.length);
-      if (!GAME_UNIVERSES.includes(id)) return new Response('Not found', { status: 404 });
+      const tid = url.pathname.slice('/game-thumb/'.length);
+      const id = GAME_UNIVERSES.includes(tid) ? tid : await placeUniverse(tid);
+      if (!id) return new Response('Not found', { status: 404 });
       const THUMB_CACHE_V = 2;
       const api = 'https://thumbnails.roblox.com/v1/games/icons?universeIds=' + id +
                   '&size=512x512&format=Png&isCircular=false&r=' + THUMB_CACHE_V;
