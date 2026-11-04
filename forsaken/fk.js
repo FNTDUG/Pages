@@ -755,7 +755,16 @@
     try { if (sessionStorage.getItem('fk-restore')) ret = JSON.parse(sessionStorage.getItem('fk-ret') || 'null'); sessionStorage.removeItem('fk-restore'); } catch (e) {}
     if (ret) { if (ret.tab === 'killer' || ret.tab === 'survivor') st.tab = ret.tab; if (ret.cls) st.cls = ret.cls; }
     renderGrid();
-    if (ret && ret.y) window.scrollTo(0, ret.y);
+    if (ret && ret.y) {
+      var mine = false, tries = 0;
+      var stop = function () { mine = true; };
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
+      (function again() {
+        if (mine) return;
+        if (Math.abs(window.scrollY - ret.y) > 2) window.scrollTo(0, ret.y);
+        if (++tries < 14) setTimeout(again, tries < 4 ? 80 : 200);
+      })();
+    }
   }).catch(function () {
     gridView.querySelector('.fk-list').innerHTML = '<p class="fk-none">The roster could not load. Refresh the page to try again.</p>';
   });
