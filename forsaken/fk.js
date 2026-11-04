@@ -466,6 +466,57 @@
     window.addEventListener('load', sbSync);
   }
 
+  var CORNER = (function () {
+    var seed = 11;
+    function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    function j(a) { return (rnd() * 2 - 1) * a; }
+    var p = [], t = 5.2, x, y;
+    for (x = 2; x <= 37; x += 1.5) p.push([x + j(0.3), 2 + j(0.55)]);
+    p.push([39 + j(0.6), 2.6 + j(0.4)], [39.6 + j(0.4), 4.2 + j(0.5)], [38.4 + j(0.5), 2 + t + j(0.4)]);
+    for (x = 36.5; x >= 2 + t; x -= 1.5) p.push([x + j(0.3), 2 + t + j(x > 30 ? 0.9 : 0.5)]);
+    for (y = 2 + t + 1.5; y <= 37; y += 1.5) p.push([2 + t + j(y > 30 ? 0.9 : 0.5), y + j(0.3)]);
+    p.push([2 + t + j(0.4), 38.6 + j(0.5)], [4.1 + j(0.5), 39.6 + j(0.4)], [2.6 + j(0.4), 39 + j(0.6)]);
+    for (y = 37; y >= 2; y -= 1.5) p.push([2 + j(0.55), y + j(0.3)]);
+    var nicks = [];
+    for (var n = 0; n < 5; n++) { var along = 12 + rnd() * 22, horiz = rnd() > 0.5; nicks.push(horiz ? [along, 2 + rnd() * t, 0.6 + rnd() * 1.1, 0.7 + rnd() * 0.9] : [2 + rnd() * t, along, 0.7 + rnd() * 0.9, 0.6 + rnd() * 1.1]); }
+    return { pts: p, nicks: nicks };
+  })();
+  var MO_COL = '#ece6da';
+  function cornerPath(fx, fy) {
+    var d = CORNER.pts.map(function (q, i) { return (i ? 'L' : 'M') + (fx ? 40 - q[0] : q[0]).toFixed(2) + ' ' + (fy ? 40 - q[1] : q[1]).toFixed(2); }).join('') + 'Z';
+    var cut = CORNER.nicks.map(function (k) { var x = fx ? 40 - k[0] - k[2] : k[0], y = fy ? 40 - k[1] - k[3] : k[1]; return '<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + k[2].toFixed(2) + '" height="' + k[3].toFixed(2) + '"/>'; }).join('');
+    return { d: d, cut: cut };
+  }
+  function cornerUri(fx, fy) {
+    var c = cornerPath(fx, fy);
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><mask id="m"><rect width="40" height="40" fill="#fff"/><g fill="#000">' + c.cut + '</g></mask></defs><path mask="url(#m)" fill="' + MO_COL + '" d="' + c.d + '"/></svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/\(/g, '%28').replace(/\)/g, '%29') + '")';
+  }
+  if (!CHAR) { root.style.setProperty('--mo-tl', cornerUri(0, 0)); root.style.setProperty('--mo-tr', cornerUri(1, 0)); root.style.setProperty('--mo-bl', cornerUri(0, 1)); root.style.setProperty('--mo-br', cornerUri(1, 1)); }
+  function drawCorners(dst, x0, y0, w, h, dpr) {
+    var size = w * 0.26, sc = size / 40;
+    var layer = document.createElement('canvas');
+    layer.width = dst.canvas.width; layer.height = dst.canvas.height;
+    var o = layer.getContext('2d');
+    o.save();
+    [[0, 0], [1, 0], [0, 1], [1, 1]].forEach(function (f) {
+      var ox = f[0] ? x0 + w - size : x0, oy = f[1] ? y0 + h - size : y0;
+      o.save();
+      o.beginPath();
+      CORNER.pts.forEach(function (q, i) { var px = ox + (f[0] ? 40 - q[0] : q[0]) * sc, py = oy + (f[1] ? 40 - q[1] : q[1]) * sc; if (i) o.lineTo(px, py); else o.moveTo(px, py); });
+      o.closePath();
+      o.fillStyle = MO_COL; o.fill();
+      o.globalCompositeOperation = 'destination-out';
+      CORNER.nicks.forEach(function (k) { var nx = f[0] ? 40 - k[0] - k[2] : k[0], ny = f[1] ? 40 - k[1] - k[3] : k[1]; o.fillRect(ox + nx * sc, oy + ny * sc, k[2] * sc, k[3] * sc); });
+      o.restore();
+    });
+    o.restore();
+    dst.save();
+    dst.shadowColor = 'rgba(0,0,0,.9)'; dst.shadowBlur = 2 * dpr;
+    dst.drawImage(layer, 0, 0);
+    dst.restore();
+  }
+
   var tearImg = null;
   if (!CHAR) { tearImg = new Image(); tearImg.src = '/forsaken/img/ui-card.webp'; }
 
@@ -500,19 +551,7 @@
     o.strokeText(c.name, 12 * dpr, H - 12 * dpr);
     o.fillStyle = '#fff'; o.fillText(c.name, 12 * dpr, H - 12 * dpr);
     if (tearImg && tearImg.complete && tearImg.naturalWidth) { try { o.drawImage(tearImg, 0, 0, W, H); } catch (e) {} }
-    if (cardEl.classList.contains('fk-multi')) {
-      var mo = getComputedStyle(cardEl.querySelector('.fk-mo')), mc = mo.getPropertyValue('--mo').trim() || '#ff2a46';
-      var L = Math.round(Math.min(W, H) * 0.24), T = Math.max(2, Math.round(3.5 * dpr)), I = Math.round(2 * dpr);
-      o.save();
-      o.shadowColor = mc; o.shadowBlur = 6 * dpr; o.fillStyle = mc;
-      o.globalAlpha = 0.55; o.lineWidth = 1 * dpr; o.strokeStyle = mc; o.strokeRect(I + 0.5, I + 0.5, W - 2 * I - 1, H - 2 * I - 1);
-      o.globalAlpha = 1;
-      [[I, I, 1, 1], [W - I, I, -1, 1], [I, H - I, 1, -1], [W - I, H - I, -1, -1]].forEach(function (k) {
-        o.fillRect(k[2] > 0 ? k[0] : k[0] - L, k[3] > 0 ? k[1] : k[1] - T, L, T);
-        o.fillRect(k[2] > 0 ? k[0] : k[0] - T, k[3] > 0 ? k[1] : k[1] - L, T, L);
-      });
-      o.restore();
-    }
+    if (cardEl.classList.contains('fk-multi')) drawCorners(o, 2 * dpr, 2 * dpr, W - 4 * dpr, H - 4 * dpr, dpr);
     var base;
     try { base = o.getImageData(0, 0, W, H).data; } catch (e) { done(); return; }
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
