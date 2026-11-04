@@ -87,37 +87,36 @@
       '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
-  function match(c) {
-    if (c.side !== st.tab) return false;
-    if (st.tab === 'survivor' && st.cls !== 'all' && c.cls !== st.cls) return false;
-    return true;
-  }
+  function groupsFor(tab) { return tab === 'killer' ? ((data && data.killerClasses) || []) : CLS; }
+  function catsOf(c) { return c.side === 'killer' ? (c.cats || []) : [c.cls]; }
+  function groupTitle(tab, k) { return tab === 'killer' ? k : k + 's'; }
 
   function renderGrid(anim) {
     var box = gridView.querySelector('.fk-list'), n = 0;
     function deal(c) { return card(c, n++); }
-    var chips = gridView.querySelector('.fk-chips');
-    chips.hidden = st.tab !== 'survivor';
+    var groups = groupsFor(st.tab);
+    if (st.cls !== 'all' && groups.indexOf(st.cls) < 0) st.cls = 'all';
     Array.prototype.forEach.call(gridView.querySelectorAll('.fk-tab'), function (b) {
       var on = b.getAttribute('data-tab') === st.tab;
       b.setAttribute('aria-selected', on ? 'true' : 'false');
       b.tabIndex = on ? 0 : -1;
     });
-    Array.prototype.forEach.call(chips.querySelectorAll('.fk-chip'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-cls') === st.cls ? 'true' : 'false'); });
+    var chips = gridView.querySelector('.fk-chips');
+    chips.setAttribute('aria-label', st.tab === 'killer' ? 'Killer type' : 'Survivor class');
+    chips.hidden = !groups.length;
+    chips.innerHTML = ['all'].concat(groups).map(function (k) {
+      return '<button type="button" class="fk-chip fk-btn" data-cls="' + esc(k) + '" aria-pressed="' + (k === st.cls ? 'true' : 'false') + '">' + (k === 'all' ? 'All' : esc(k)) + '</button>';
+    }).join('');
     var html = '';
-    if (st.tab === 'survivor') {
-      CLS.forEach(function (k) {
-        if (st.cls !== 'all' && st.cls !== k) return;
-        var list = order.survivor.map(function (id) { return byId[id]; }).filter(function (c) { return c.cls === k; });
-        if (!list.length) return;
-        html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(k) + 's <b>' + list.length + '</b></h2>' +
-          (data.classes && data.classes[k] ? '<p class="fk-cls-d">' + esc(data.classes[k]) + '</p>' : '') +
-          '<div class="fk-cards">' + list.map(deal).join('') + '</div></section>';
-      });
-    } else {
-      var list = order[st.tab].map(function (id) { return byId[id]; }).filter(match);
-      html = '<div class="fk-cards">' + list.map(deal).join('') + '</div>';
-    }
+    groups.forEach(function (k) {
+      if (st.cls !== 'all' && st.cls !== k) return;
+      var list = order[st.tab].map(function (id) { return byId[id]; }).filter(function (c) { return catsOf(c).indexOf(k) >= 0; });
+      if (!list.length) return;
+      html += '<section class="fk-group" aria-labelledby="fk-g-' + slug(k) + '"><h2 class="fk-cls" id="fk-g-' + slug(k) + '">' + esc(groupTitle(st.tab, k)) + ' <b>' + list.length + '</b></h2>' +
+        (data.classes && data.classes[k] ? '<p class="fk-cls-d">' + esc(data.classes[k]) + '</p>' : '') +
+        '<div class="fk-cards">' + list.map(deal).join('') + '</div></section>';
+    });
+    if (!html) html = '<div class="fk-cards">' + order[st.tab].map(function (id) { return deal(byId[id]); }).join('') + '</div>';
     box.innerHTML = html;
     fitNames();
     if (anim && !reduced) {
@@ -321,7 +320,7 @@
     var list = order[c.side], i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
-    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.cost ? '<span class="fk-tag">' + esc(c.cost) + '</span>' : '');
+    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.side === 'killer' ? (c.cats || []).map(function (k) { return '<span class="fk-tag">' + esc(k) + '</span>'; }).join('') : '') + (c.cost ? '<span class="fk-tag">' + esc(c.cost) + '</span>' : '');
     var nameArt = c.title ? '<img src="' + esc(c.title) + '" alt="' + esc(c.name) + '" decoding="async">' : '<span>' + esc(c.name) + '</span>';
     var bg = c.bg ? '<div class="fk-bg" aria-hidden="true" style="--fk-map:url(&quot;' + esc(c.bg) + '&quot;)"><i></i><b></b></div>' : '';
     return bg + '<div class="fk-page">' +
