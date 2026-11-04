@@ -320,7 +320,7 @@
     var list = order[c.side], i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
-    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.side === 'killer' ? (c.cats || []).map(function (k) { return '<span class="fk-tag">' + esc(k) + '</span>'; }).join('') : '') + (c.cost ? '<span class="fk-tag">' + esc(c.cost) + '</span>' : '');
+    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + (c.side === 'survivor' && c.cls ? '<span class="fk-tag">' + esc(c.cls) + '</span>' : '') + (c.side === 'killer' ? (c.cats || []).map(function (k) { return '<span class="fk-tag">' + esc(k) + '</span>'; }).join('') : '');
     var nameArt = c.title ? '<img src="' + esc(c.title) + '" alt="' + esc(c.name) + '" decoding="async">' : '<span>' + esc(c.name) + '</span>';
     var bg = c.bg ? '<div class="fk-bg" aria-hidden="true" style="--fk-map:url(&quot;' + esc(c.bg) + '&quot;)"><i></i><b></b></div>' : '';
     return bg + '<div class="fk-page">' +
