@@ -87,7 +87,7 @@
     var nc = catsOf(c).length, multi = nc > 1;
     return '<a class="fk-card' + (multi ? ' fk-multi' : '') + '" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
       '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async">' +
-      '<span class="fk-mo" aria-hidden="true"></span>' + (multi ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + ' categories</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
+      '<span class="fk-mo" aria-hidden="true"></span>' + (nc ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + (nc === 1 ? ' category' : ' categories') + '</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
   function groupsFor(tab) { return tab === 'killer' ? ((data && data.killerClasses) || []) : CLS; }
@@ -152,6 +152,13 @@
   var fitT = 0;
   window.addEventListener('resize', function () { cancelAnimationFrame(fitT); fitT = requestAnimationFrame(fitNames); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!CHAR) fitNames(); });
+
+  function scopeOf(c) {
+    var sc = null;
+    try { sc = JSON.parse(sessionStorage.getItem('fk-scope') || 'null'); } catch (e) {}
+    if (sc && sc.side === c.side && sc.ids && sc.ids.indexOf(c.id) >= 0) return { ids: sc.ids, label: sc.cls };
+    return { ids: order[c.side], label: c.side === 'killer' ? 'Killer' : 'Survivor' };
+  }
 
   function stat(label, val, cls, unit) {
     if (val == null || val === '') return '';
@@ -311,7 +318,7 @@
         return '<a href="' + BASE + '/' + id + '" data-go="' + id + '" data-google-vignette="false"' + (id === c.id ? ' aria-current="page"' : '') + '>' + esc(x.name) + '</a>';
       }).join('<span aria-hidden="true">&middot;</span>') + '</div></div>';
     }
-    var list = order[c.side], i = list.indexOf(c.id);
+    var sc = scopeOf(c), list = sc.ids, i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var html = '<nav class="fk-nav fk-drawn fk-rv" style="--i:9" aria-label="Forsaken Roster"><div class="fk-nav-h">Forsaken Roster</div>';
     CLS.forEach(function (k) { html += row(k + 's', groupIds(k, 'survivor')); });
@@ -321,7 +328,7 @@
   }
 
   function detailHtml(c) {
-    var list = order[c.side], i = list.indexOf(c.id);
+    var sc = scopeOf(c), list = sc.ids, i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
     var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + catsOf(c).map(function (k) { var note = c.catNotes && c.catNotes[k]; return '<span class="fk-tag' + (note ? ' fk-tag--note' : '') + '"' + (note ? ' title="' + esc(note) + '" tabindex="0" aria-label="' + esc(k + ': ' + note) + '"' : '') + '>' + esc(k) + (note ? '<sup aria-hidden="true">*</sup>' : '') + '</span>'; }).join('');
@@ -330,7 +337,7 @@
     return bg + '<div class="fk-page">' +
       '<div class="fk-top">' +
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
-      '<span class="fk-count">' + side + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
+      '<span class="fk-count">' + esc(sc.label) + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
       '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
@@ -667,7 +674,7 @@
 
   function step(dir) {
     if (!cur || busy) return;
-    var list = order[cur.side], i = list.indexOf(cur.id);
+    var list = scopeOf(cur).ids, i = list.indexOf(cur.id);
     leave(BASE + '/' + list[(i + dir + list.length) % list.length], dir);
   }
 
@@ -707,6 +714,7 @@
     e.preventDefault();
     var id = a.getAttribute('data-id');
     try { sessionStorage.setItem('fk-ret', JSON.stringify({ tab: st.tab, cls: st.cls, y: window.scrollY })); } catch (err) {}
+    try { if (st.cls !== 'all') sessionStorage.setItem('fk-scope', JSON.stringify({ side: st.tab, cls: st.cls, ids: groupIds(st.cls, st.tab) })); else sessionStorage.removeItem('fk-scope'); } catch (err) {}
     busy = true;
     burn(a, function () { busy = false; leave(BASE + '/' + id, 0); });
   });
