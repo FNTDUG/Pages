@@ -11,6 +11,13 @@
   var st = { tab: 'survivor', cls: 'all', q: '' };
   var cur = null, busy = false, webIO = null;
   var titleEl = null, titleHtml = '', descEl = null, descText = '', docTitle = document.title;
+  function idFromPath() {
+    var p = location.pathname.replace(/\/+$/, '');
+    if (p.indexOf(BASE + '/') !== 0) return '';
+    return decodeURIComponent(p.slice(BASE.length + 1).split('/')[0]);
+  }
+  var CHAR = idFromPath();
+  if (CHAR) document.documentElement.classList.add('fk-char', 'fk-on');
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -54,10 +61,17 @@
   }
 
   function get(url) {
+    var key = 'fkc:' + url, hit = null;
+    try { hit = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) {}
+    if (hit && Date.now() - hit.t < 300000) return Promise.resolve(JSON.parse(hit.v));
     return fetch(url, { credentials: 'omit' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.text();
-    }).then(function (t) { return JSON.parse(t.replace(/,(\s*[\]}])/g, '$1')); });
+    }).then(function (t) {
+      var v = t.replace(/,(\s*[\]}])/g, '$1');
+      try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {}
+      return JSON.parse(v);
+    });
   }
 
   function index() {
@@ -69,7 +83,7 @@
 
   function card(c, i) {
     return '<a class="fk-card" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
-      '<img src="' + esc(c.image) + '" alt="" width="300" height="300" loading="lazy" decoding="async">' +
+      '<img src="' + esc(c.card || c.image) + '" alt="" width="440" height="550" loading="lazy" decoding="async">' +
       '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
@@ -299,7 +313,7 @@
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
       '<span class="fk-count">' + side + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
-      '<a class="fk-btn fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
+      '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
       '<div class="fk-art fk-rv" style="--i:0"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" width="900" height="900" decoding="async"><span class="fk-art-glow" aria-hidden="true"></span></div>' +
       '<div class="fk-side">' +
@@ -362,62 +376,79 @@
     webIO.observe(web);
   }
 
-  function showDetail(id, mode) {
+  function showDetail(id) {
     var c = byId[id];
     if (!c) { showMissing(id); return; }
     cur = c;
-    hideTip();
     det.innerHTML = detailHtml(c);
-    det.classList.remove('fk-reveal');
-    gridView.inert = true;
-    gridView.setAttribute('aria-hidden', 'true');
+    gridView.hidden = true;
     det.hidden = false;
-    document.documentElement.classList.add('fk-on');
     headerFor(c);
     pick(c, -1);
-    det.scrollTop = 0;
     try { det.focus({ preventScroll: true }); } catch (e) {}
-    if (!reduced && mode !== 'quiet') { void det.offsetWidth; det.classList.add('fk-reveal'); }
+    scrollbar();
+    var dir = 0;
+    try { dir = +sessionStorage.getItem('fk-dir') || 0; sessionStorage.removeItem('fk-dir'); } catch (e) {}
+    if (!reduced) { if (dir) unwipe(dir); else det.classList.add('fk-reveal'); }
     startWeb();
   }
 
   function showMissing(id) {
     cur = null;
-    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-btn fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster">Roster</a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
-    gridView.inert = true;
-    gridView.setAttribute('aria-hidden', 'true');
+    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster"></a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
+    gridView.hidden = true;
     det.hidden = false;
-    document.documentElement.classList.add('fk-on');
     var m = document.createElement('meta');
     m.name = 'robots'; m.content = 'noindex';
     document.head.appendChild(m);
   }
 
-  function showGrid() {
-    hideTip();
-    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
-    cur = null;
-    if (webIO) { webIO.disconnect(); webIO = null; }
-    det.hidden = true;
-    det.innerHTML = '';
-    gridView.inert = false;
-    gridView.removeAttribute('aria-hidden');
-    document.documentElement.classList.remove('fk-on');
-    headerFor(null);
+  var sb = null, sbT = null;
+  function sbSync() {
+    if (!sb) return;
+    var ch = det.clientHeight, sh = det.scrollHeight, th = sb.clientHeight;
+    if (sh <= ch + 2) { sb.hidden = true; return; }
+    sb.hidden = false;
+    var h = Math.max(44, Math.round(th * ch / sh));
+    sbT.style.height = h + 'px';
+    sbT.style.transform = 'translateY(' + Math.round((th - h) * det.scrollTop / (sh - ch)) + 'px)';
+  }
+  function scrollbar() {
+    if (sb) { sbSync(); return; }
+    sb = document.createElement('div');
+    sb.className = 'fk-sb';
+    sb.setAttribute('aria-hidden', 'true');
+    sbT = document.createElement('div');
+    sbT.className = 'fk-sb-t';
+    sb.appendChild(sbT);
+    document.body.appendChild(sb);
+    det.addEventListener('scroll', sbSync, { passive: true });
+    window.addEventListener('resize', sbSync);
+    if ('ResizeObserver' in window) new ResizeObserver(sbSync).observe(det.firstElementChild || det);
+    var startY = 0, startTop = 0;
+    function ratio() { var th = sb.clientHeight - sbT.offsetHeight; return th > 0 ? (det.scrollHeight - det.clientHeight) / th : 0; }
+    sbT.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      startY = e.clientY; startTop = det.scrollTop;
+      sb.classList.add('fk-drag');
+      try { sbT.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    sbT.addEventListener('pointermove', function (e) { if (sb.classList.contains('fk-drag')) det.scrollTop = startTop + (e.clientY - startY) * ratio(); });
+    function end(e) { sb.classList.remove('fk-drag'); try { sbT.releasePointerCapture(e.pointerId); } catch (err) {} }
+    sbT.addEventListener('pointerup', end);
+    sbT.addEventListener('pointercancel', end);
+    sb.addEventListener('pointerdown', function (e) {
+      if (e.target !== sb) return;
+      var r = sbT.getBoundingClientRect();
+      det.scrollBy({ top: (e.clientY < r.top ? -1 : 1) * det.clientHeight * 0.9, behavior: reduced ? 'auto' : 'smooth' });
+    });
+    sbSync();
+    setTimeout(sbSync, 400);
+    window.addEventListener('load', sbSync);
   }
 
-  function idFromPath() {
-    var p = location.pathname.replace(/\/+$/, '');
-    if (p.indexOf(BASE + '/') !== 0) return '';
-    return decodeURIComponent(p.slice(BASE.length + 1).split('/')[0]);
-  }
-
-  function depth() { return (history.state && history.state.fkn) || 0; }
-
-  function push(id) {
-    var n = depth() + 1;
-    history.pushState({ fk: id, fkn: n }, '', BASE + '/' + id);
-  }
+  var tearImg = null;
+  if (!CHAR) { tearImg = new Image(); tearImg.src = '/forsaken/img/ui-card.webp'; }
 
   function burn(cardEl, done) {
     var img = cardEl.querySelector('img');
@@ -447,9 +478,9 @@
     o.textBaseline = 'alphabetic';
     o.lineJoin = 'round';
     o.lineWidth = 4 * dpr; o.strokeStyle = '#000';
-    o.strokeText(c.name, 10 * dpr, H - 9 * dpr);
-    o.fillStyle = '#fff'; o.fillText(c.name, 10 * dpr, H - 9 * dpr);
-    o.strokeStyle = '#fff'; o.lineWidth = 2.2 * dpr; o.strokeRect(4 * dpr, 4 * dpr, W - 8 * dpr, H - 8 * dpr);
+    o.strokeText(c.name, 12 * dpr, H - 12 * dpr);
+    o.fillStyle = '#fff'; o.fillText(c.name, 12 * dpr, H - 12 * dpr);
+    if (tearImg && tearImg.complete && tearImg.naturalWidth) { try { o.drawImage(tearImg, 0, 0, W, H); } catch (e) {} }
     var base;
     try { base = o.getImageData(0, 0, W, H).data; } catch (e) { done(); return; }
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
@@ -514,54 +545,79 @@
       cv.remove();
     }
     function finish() {
-      cardEl.style.visibility = '';
-      cardEl.classList.remove('fk-burning');
-      gridView.classList.remove('fk-dim');
       done();
       setTimeout(function () { if (cv.isConnected) cv.remove(); }, 900);
     }
     requestAnimationFrame(frame);
   }
 
-  function wipe(dir, mid) {
-    if (reduced || !Element.prototype.animate) { mid(); return; }
+  function shade(dir, done) {
+    if (reduced || !Element.prototype.animate) { done(); return; }
     var w = document.createElement('div');
     w.className = 'fk-wipe';
     document.body.appendChild(w);
-    var L = dir < 0;
-    var from = L ? 'polygon(100% 0,100% 0,100% 100%,100% 100%)' : 'polygon(0 0,0 0,0 100%,0 100%)';
-    var full = 'polygon(0 0,100% 0,100% 100%,0 100%)';
-    var to = L ? 'polygon(0 0,0 0,0 100%,0 100%)' : 'polygon(100% 0,100% 0,100% 100%,100% 100%)';
-    var cover = L ? 'polygon(-12% 0,100% 0,100% 100%,0 100%)' : 'polygon(0 0,112% 0,100% 100%,0 100%)';
-    var a = w.animate([{ clipPath: from }, { clipPath: cover, offset: 0.85 }, { clipPath: full }], { duration: 230, easing: 'cubic-bezier(.6,0,.4,1)', fill: 'forwards' });
-    a.onfinish = function () {
-      mid();
-      var b = w.animate([{ clipPath: full }, { clipPath: to }], { duration: 300, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-      b.onfinish = function () { w.remove(); };
-    };
+    var full = 'polygon(0 0,100% 0,100% 100%,0 100%)', a;
+    if (!dir) {
+      w.style.clipPath = full;
+      a = w.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, easing: 'ease-in', fill: 'forwards' });
+    } else {
+      var L = dir < 0;
+      var from = L ? 'polygon(100% 0,100% 0,100% 100%,100% 100%)' : 'polygon(0 0,0 0,0 100%,0 100%)';
+      var cover = L ? 'polygon(-12% 0,100% 0,100% 100%,0 100%)' : 'polygon(0 0,112% 0,100% 100%,0 100%)';
+      a = w.animate([{ clipPath: from }, { clipPath: cover, offset: 0.85 }, { clipPath: full }], { duration: 240, easing: 'cubic-bezier(.6,0,.4,1)', fill: 'forwards' });
+    }
+    a.onfinish = done;
+  }
+
+  function unwipe(dir) {
+    if (reduced || !Element.prototype.animate) return;
+    var w = document.createElement('div');
+    w.className = 'fk-wipe';
+    w.style.clipPath = 'polygon(0 0,100% 0,100% 100%,0 100%)';
+    document.body.appendChild(w);
+    var to = dir < 0 ? 'polygon(0 0,0 0,0 100%,0 100%)' : 'polygon(100% 0,100% 0,100% 100%,100% 100%)';
+    var b = w.animate([{ clipPath: 'polygon(0 0,100% 0,100% 100%,0 100%)' }, { clipPath: to }], { duration: 320, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+    b.onfinish = function () { w.remove(); };
+  }
+
+  function leave(url, dir) {
+    if (busy) return;
+    busy = true;
+    try { if (dir) sessionStorage.setItem('fk-dir', String(dir)); else sessionStorage.removeItem('fk-dir'); } catch (e) {}
+    shade(dir, function () { location.assign(url); });
   }
 
   function step(dir) {
     if (!cur || busy) return;
     var list = order[cur.side], i = list.indexOf(cur.id);
-    var id = list[(i + dir + list.length) % list.length];
-    goTo(id, dir);
+    leave(BASE + '/' + list[(i + dir + list.length) % list.length], dir);
   }
 
-  function goTo(id, dir) {
-    if (busy) return;
-    busy = true;
-    wipe(dir || 1, function () { push(id); showDetail(id, 'quiet'); busy = false; });
+  function toRoster() {
+    try { sessionStorage.setItem('fk-restore', '1'); } catch (e) {}
+    leave(BASE, 0);
   }
 
-  function backToGrid() {
-    if (document.documentElement.classList.contains('fk-char')) { location.href = BASE; return; }
-    var n = depth();
-    if (n > 0) { history.go(-n); return; }
-    history.pushState({ fkn: 0 }, '', BASE);
-    showGrid();
-    renderGrid();
+  var fetched = {};
+  function prefetch(url, img) {
+    [url, img].forEach(function (u) {
+      if (!u || fetched[u]) return;
+      fetched[u] = 1;
+      var l = document.createElement('link');
+      l.rel = 'prefetch';
+      l.href = u;
+      document.head.appendChild(l);
+    });
   }
+  function warm(e) {
+    var a = e.target.closest && e.target.closest('.fk-card, [data-go]');
+    if (!a) return;
+    var id = a.getAttribute('data-id') || a.getAttribute('data-go'), c = byId[id];
+    prefetch(BASE + '/' + id, c && c.image);
+  }
+  root.addEventListener('pointerover', warm, { passive: true });
+  root.addEventListener('focusin', warm);
+  root.addEventListener('touchstart', warm, { passive: true });
 
   gridView.addEventListener('click', function (e) {
     var tab = e.target.closest('.fk-tab');
@@ -571,9 +627,10 @@
     var a = e.target.closest('.fk-card');
     if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || busy) return;
     e.preventDefault();
-    busy = true;
     var id = a.getAttribute('data-id');
-    burn(a, function () { push(id); showDetail(id); busy = false; });
+    try { sessionStorage.setItem('fk-ret', JSON.stringify({ tab: st.tab, cls: st.cls, y: window.scrollY })); } catch (err) {}
+    busy = true;
+    burn(a, function () { busy = false; leave(BASE + '/' + id, 0); });
   });
 
   gridView.addEventListener('keydown', function (e) {
@@ -627,14 +684,14 @@
 
   det.addEventListener('click', function (e) {
     var back = e.target.closest('[data-back]');
-    if (back && !(e.metaKey || e.ctrlKey || e.shiftKey || e.button)) { e.preventDefault(); backToGrid(); return; }
+    if (back && !(e.metaKey || e.ctrlKey || e.shiftKey || e.button)) { e.preventDefault(); toRoster(); return; }
     var go = e.target.closest('[data-go]');
     if (go && !(e.metaKey || e.ctrlKey || e.shiftKey || e.button)) {
       e.preventDefault();
       var id = go.getAttribute('data-go');
       if (cur && id === cur.id) return;
-      var dir = +go.getAttribute('data-dir') || (cur && order[byId[id].side].indexOf(id) < order[cur.side].indexOf(cur.id) ? -1 : 1);
-      goTo(id, dir);
+      var dir = +go.getAttribute('data-dir') || (cur && byId[id].side === cur.side && order[cur.side].indexOf(id) < order[cur.side].indexOf(cur.id) ? -1 : 1);
+      leave(BASE + '/' + id, dir);
       return;
     }
     var slot = e.target.closest('.fk-slot');
@@ -676,33 +733,29 @@
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
-    else if (e.key === 'Escape') { if (tipFor) hideTip(); else backToGrid(); }
+    else if (e.key === 'Escape') { if (tipFor) hideTip(); else toRoster(); }
   });
 
-  window.addEventListener('popstate', function () {
-    if (!data) return;
-    var id = idFromPath();
-    if (id) { if (!cur || cur.id !== id) showDetail(id, 'quiet'); }
-    else if (cur || det.hidden === false) { showGrid(); }
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    busy = false;
+    Array.prototype.forEach.call(document.querySelectorAll('.fk-wipe, .fk-burn'), function (x) { x.remove(); });
+    gridView.classList.remove('fk-dim');
+    Array.prototype.forEach.call(gridView.querySelectorAll('.fk-burning'), function (x) { x.classList.remove('fk-burning'); x.style.visibility = ''; });
   });
 
-  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
   get(SRC).then(function (d) {
     data = d;
     index();
+    if (CHAR) { showDetail(CHAR); return; }
     if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
     gridView.querySelector('.fk-tab[data-tab="survivor"] .fk-tab-n').textContent = order.survivor.length;
     gridView.querySelector('.fk-tab[data-tab="killer"] .fk-tab-n').textContent = order.killer.length;
+    var ret = null;
+    try { if (sessionStorage.getItem('fk-restore')) ret = JSON.parse(sessionStorage.getItem('fk-ret') || 'null'); sessionStorage.removeItem('fk-restore'); } catch (e) {}
+    if (ret) { if (ret.tab === 'killer' || ret.tab === 'survivor') st.tab = ret.tab; if (ret.cls) st.cls = ret.cls; }
     renderGrid();
-    var id = idFromPath();
-    if (id) {
-      if (byId[id]) st.tab = byId[id].side;
-      renderGrid();
-      history.replaceState({ fk: id, fkn: 0 }, '', location.pathname);
-      showDetail(id);
-    } else {
-      history.replaceState({ fkn: 0 }, '', location.pathname + location.search);
-    }
+    if (ret && ret.y) window.scrollTo(0, ret.y);
   }).catch(function () {
     gridView.querySelector('.fk-list').innerHTML = '<p class="fk-none">The roster could not load. Refresh the page to try again.</p>';
   });
