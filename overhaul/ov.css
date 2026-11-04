@@ -540,7 +540,7 @@ html.ov #ug-content .ug-section>*{margin-top:0!important;margin-bottom:var(--ov-
 html.ov #ug-content .ug-section>:is(.info-card,.ug-starry-panel,h2.ug-section-title:not(:first-child)){margin-top:var(--ov-gap)!important}
 html.ov #ug-content .update-log-wrapper{margin-top:0!important;margin-bottom:var(--ov-gap)!important}
 html.ov:has(#ug-content[data-layout=wide]){--ov-col:min(1320px,100vw)}
-@media (min-width:1680px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 420px)}}
+@media (min-width:1280px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 420px)}}
 @media (min-width:2280px){html.ov:has(#ug-content[data-layout=wide]){--ov-col:calc(100vw - 700px)}}
 html.ov #ug-content[data-layout=wide]{max-width:var(--ov-col)!important}
 html.ov:has(#ug-content[data-layout=wide]) .ov-copy p{max-width:62ch}
