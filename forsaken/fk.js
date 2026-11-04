@@ -84,10 +84,10 @@
   }
 
   function card(c, i) {
-    var multi = catsOf(c).length > 1;
+    var nc = catsOf(c).length, multi = nc > 1;
     return '<a class="fk-card' + (multi ? ' fk-multi' : '') + '" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
       '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async">' +
-      (multi ? '<span class="fk-mo" aria-hidden="true"></span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
+      '<span class="fk-mo" aria-hidden="true"></span>' + (multi ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + ' categories</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
   function groupsFor(tab) { return tab === 'killer' ? ((data && data.killerClasses) || []) : CLS; }
@@ -141,7 +141,7 @@
   function fitNames() {
     Array.prototype.forEach.call(gridView.querySelectorAll('.fk-card-n'), function (n) {
       n.style.fontSize = '';
-      var room = n.parentNode.clientWidth - (parseFloat(getComputedStyle(n).left) || 12) * 2 + 2;
+      var room = n.parentNode.clientWidth - 20;
       var w = n.scrollWidth;
       if (room > 0 && w > room) {
         var fs = parseFloat(getComputedStyle(n).fontSize);
@@ -548,10 +548,17 @@
     o.textBaseline = 'alphabetic';
     o.lineJoin = 'round';
     o.lineWidth = 4 * dpr; o.strokeStyle = '#000';
-    o.strokeText(c.name, 12 * dpr, H - 12 * dpr);
-    o.fillStyle = '#fff'; o.fillText(c.name, 12 * dpr, H - 12 * dpr);
+    o.textAlign = 'center';
+    o.strokeText(c.name, W / 2, H - 12 * dpr);
+    o.fillStyle = getComputedStyle(nameEl).color; o.fillText(c.name, W / 2, H - 12 * dpr);
+    o.textAlign = 'start';
     if (tearImg && tearImg.complete && tearImg.naturalWidth) { try { o.drawImage(tearImg, 0, 0, W, H); } catch (e) {} }
-    if (cardEl.classList.contains('fk-multi')) drawCorners(o, 2 * dpr, 2 * dpr, W - 4 * dpr, H - 4 * dpr, dpr);
+    drawCorners(o, 2 * dpr, 2 * dpr, W - 4 * dpr, H - 4 * dpr, dpr);
+    var bdg = cardEl.querySelector('.fk-badge');
+    if (bdg && bdg.complete && bdg.naturalWidth) {
+      var br = bdg.getBoundingClientRect();
+      try { o.drawImage(bdg, (br.left - r.left) * dpr, (br.top - r.top) * dpr, br.width * dpr, br.height * dpr); } catch (e) {}
+    }
     var base;
     try { base = o.getImageData(0, 0, W, H).data; } catch (e) { done(); return; }
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
