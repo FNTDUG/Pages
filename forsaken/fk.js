@@ -236,6 +236,21 @@
     if (scrollbar) sbSync();
   }
 
+  function itemsSection(c) {
+    var items = data && data.items;
+    if (c.side !== 'survivor' || !items || !items.length) return '';
+    return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-it-h"><h2 class="fk-h2" id="fk-it-h">Items</h2>' +
+      '<p class="fk-it-lead">Items lie around the maps for any Survivor to pick up and use. Killers cannot pick them up.</p><div class="fk-items">' +
+      items.map(function (it) {
+        var note = it.notes && it.notes[c.id], off = it.blocked && it.blocked.indexOf(c.id) >= 0;
+        return '<article class="fk-item fk-drawn' + (off ? ' fk-item--off' : '') + '"><div class="fk-item-h"><span class="fk-circ fk-has"><img src="' + esc(it.icon) + '" alt="" width="80" height="80" loading="lazy" decoding="async"></span><div>' +
+          '<h3 class="fk-item-n">' + esc(it.name) + '</h3>' + (it.quote ? '<p class="fk-item-q">&ldquo;' + esc(it.quote) + '&rdquo;</p>' : '') + '</div></div>' +
+          (note ? '<p class="fk-item-note">' + pills(esc(note)) + '</p>' : '') +
+          '<div class="fk-rich">' + rich(it.desc) + '</div>' +
+          (it.where ? '<p class="fk-item-w"><span>Found:</span> ' + esc(it.where) + '</p>' : '') + '</article>';
+      }).join('') + '</div></section>';
+  }
+
   function ability(a, i) {
     var meta = [];
     if (isPassive(a)) meta.push('<b>Passive</b>');
@@ -543,6 +558,7 @@
       (c.lead ? '<p class="fk-lead">' + inline(c.lead) + '</p>' : '') +
       (c.description ? '<blockquote class="fk-desc">' + esc(plain(c.description)) + '</blockquote>' : '') + '</div></section>' +
       abilitiesSection(c) +
+      itemsSection(c) +
       '<div class="fk-audio" data-audio="' + esc(c.audio || '') + '"></div>' +
       skinsSection(c) +
       navbox(c) +
