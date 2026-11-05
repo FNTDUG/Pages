@@ -174,7 +174,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-sk-tools .fk-btn{min-height:40px;padding:2px 18px;font-size:19px}
 .fk-skins{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
 .fk-webbox{padding:6px}
-.fk-web{position:relative;aspect-ratio:1/1;width:min(100%,640px,max(480px,calc(100vh - 400px)));margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
+.fk-web{position:relative;aspect-ratio:1/1;width:min(100%,760px,max(420px,calc(100vh - 360px)));margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
 .fk-web svg.fk-lines{position:absolute;inset:0;width:100%;height:100%}
 .fk-web svg.fk-lines path{fill:none;stroke:#8a6a48;stroke-width:.35;stroke-linecap:round;opacity:.8}
 .fk-web svg.fk-lines path.fk-hot{stroke:#ffd27a;opacity:1;stroke-width:.55}
@@ -194,12 +194,13 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-node.fk-taken b img{filter:grayscale(.85) brightness(.55)}
 .fk-core{position:absolute;left:50%;top:50%;width:17%;aspect-ratio:1/1;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;z-index:3;padding:0;border:0;cursor:pointer;background:linear-gradient(160deg,var(--c1,#222),var(--c2,#000));box-shadow:0 0 0 3px #000,0 0 0 5px #fff,0 0 24px rgba(255,90,60,.45)}
 .fk-core img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 20%}
-.fk-pick{display:grid;grid-template-columns:200px minmax(0,1fr);gap:8px 22px;align-items:start;padding:16px}
+.fk-pick{display:grid;grid-template-columns:168px minmax(0,1fr);gap:8px 22px;align-items:start;padding:16px}
 .fk-pick>.fk-themes,.fk-pick>.fk-pick-sub,.fk-pick>.fk-pick-vl{grid-column:1/-1}
 .fk-pick-info{padding-top:6px}
 .fk-pick-info .fk-pick-how{font-size:20px}
 .fk-pick-info .fk-pick-cap{font-size:18px}
-.fk-scard{grid-row:span 1;width:100%;cursor:default;background:none}
+.fk-scard{grid-row:span 1;width:100%;cursor:default;background:none;-webkit-mask:url("/forsaken/img/ui-card-edge.webp") center/100% 100% no-repeat;mask:url("/forsaken/img/ui-card-edge.webp") center/100% 100% no-repeat}
+.fk-scard .fk-mo{inset:5.5% 5.5%}
 .fk-scard img{object-position:50% 20%}
 .fk-card.fk-scard:hover{transform:none;filter:none}
 .fk-card.fk-scard:hover img{filter:none}

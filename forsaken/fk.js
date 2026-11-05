@@ -350,6 +350,11 @@
     box.innerHTML = skinCard(c, k.img && big(k.img), k.name, k.name + ' skin') + '<div class="fk-pick-info"><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
     paintPlay();
     sbSync();
+    var sc = box.querySelector('.fk-scard');
+    if (sc && window.innerWidth > 860) {
+      var r = sc.getBoundingClientRect(), over = r.bottom + 16 - window.innerHeight;
+      if (over > 0) window.scrollBy({ top: over, behavior: reduced ? 'auto' : 'smooth' });
+    }
   }
 
   function navbox(c) {
