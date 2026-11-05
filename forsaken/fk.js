@@ -393,21 +393,55 @@
     if (m.abilities) o.abilities = m.abilities;
     return o;
   }
+  function snapText(dd) {
+    var r = dd.getBoundingClientRect();
+    if (r.width < 4 || !document.createRange) return null;
+    var dpr = Math.min(2, window.devicePixelRatio || 1), P = 18, X = 6;
+    var W = Math.round((r.width + 2 * X) * dpr), H = Math.round((r.height + 4) * dpr);
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H + Math.round(P * dpr);
+    var c = cv.getContext('2d');
+    Array.prototype.forEach.call(dd.childNodes, function (n) {
+      var el = n.nodeType === 1 ? n : dd, txt = n.textContent;
+      if (!txt || !/\S/.test(txt)) return;
+      var rr;
+      if (n.nodeType === 1) rr = n.getBoundingClientRect();
+      else { var rg = document.createRange(); rg.selectNodeContents(n); rr = rg.getBoundingClientRect(); }
+      var cs = getComputedStyle(el);
+      c.font = cs.fontWeight + ' ' + parseFloat(cs.fontSize) * dpr + 'px ' + cs.fontFamily;
+      c.fillStyle = cs.color;
+      c.textBaseline = 'alphabetic';
+      var m = c.measureText(txt), asc = m.actualBoundingBoxAscent || parseFloat(cs.fontSize) * dpr * 0.75, desc = m.actualBoundingBoxDescent || 0;
+      c.fillText(txt, (rr.left - r.left + X) * dpr, P * dpr + ((rr.top - r.top) + rr.height / 2) * dpr + (asc - desc) / 2);
+    });
+    var base;
+    try { base = c.getImageData(0, Math.round(P * dpr), W, H).data; } catch (e) { return null; }
+    return { cv: cv, ctx: c, base: base, W: W, H: H, P: Math.round(P * dpr), dpr: dpr, x: dd.offsetLeft - X, y: dd.offsetTop - P, w: r.width + 2 * X, h: r.height + 4 + P };
+  }
+  function burnText(tile, s, delay) {
+    var dd = tile.querySelector('dd'), DUR = 560;
+    s.cv.className = 'fk-ash-t';
+    s.cv.style.cssText = 'left:' + s.x + 'px;top:' + s.y + 'px;width:' + s.w + 'px;height:' + s.h + 'px';
+    tile.appendChild(s.cv);
+    if (dd.animate) dd.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1 }], { duration: DUR, delay: delay, easing: 'ease-out', fill: 'backwards' });
+    setTimeout(function () { ash(s.ctx, s.base, s.W, s.H, s.P, s.dpr, DUR, function () {}, function () { s.cv.remove(); }); }, delay);
+  }
   function applyMode(i) {
     if (!cur) return;
     var mc = modeChar(cur, i);
     var dl = det.querySelector('.fk-stats');
     if (dl) {
       var old = {};
-      Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { old[s.querySelector('dt').textContent] = s.querySelector('dd').textContent; });
+      Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { var dd = s.querySelector('dd'); old[s.querySelector('dt').textContent] = { text: dd.textContent, dd: dd }; });
       var box = document.createElement('div');
       box.innerHTML = stats(mc);
-      var nd = box.firstChild;
+      var nd = box.firstChild, burns = [];
       Array.prototype.forEach.call(nd.querySelectorAll('.fk-stat'), function (s) {
-        var k = s.querySelector('dt').textContent;
-        if (old[k] !== s.querySelector('dd').textContent && !reduced) s.classList.add('fk-chg');
+        var k = s.querySelector('dt').textContent, o = old[k];
+        if (o && o.text !== s.querySelector('dd').textContent && !reduced) { var snap = snapText(o.dd); if (snap) burns.push([s, snap]); }
       });
       dl.parentNode.replaceChild(nd, dl);
+      burns.forEach(function (b, i) { burnText(b[0], b[1], 90 + i * 110); });
     }
     var sec = det.querySelector('section[aria-labelledby="fk-ab-h"]');
     if (sec) {
@@ -841,7 +875,7 @@
         if (d < 0) { px[j + 3] = 0; continue; }
         if (d < 0.03) {
           var e = d / 0.03;
-          px[j] = 255; px[j + 1] = e < 0.35 ? 236 : e < 0.7 ? 140 : 70; px[j + 2] = e < 0.35 ? 160 : e < 0.7 ? 36 : 12; px[j + 3] = 255;
+          px[j] = 255; px[j + 1] = e < 0.35 ? 236 : e < 0.7 ? 140 : 70; px[j + 2] = e < 0.35 ? 160 : e < 0.7 ? 36 : 12; px[j + 3] = base[j + 3];
           continue;
         }
         var f = d < 0.14 ? 0.15 + 0.85 * Math.pow((d - 0.03) / 0.11, 0.7) : 1;
@@ -849,9 +883,9 @@
       }
       ctx.clearRect(0, 0, W, H + P);
       ctx.putImageData(out, 0, P);
-      for (var sp = 0; sp < 40 && k < 0.97; sp++) {
+      for (var sp = 0; sp < (W * H > 60000 ? 40 : 160) && k < 0.97; sp++) {
         var rx = (Math.random() * W) | 0, ry = (Math.random() * H) | 0, dd = field[ry * W + rx] - th;
-        if (dd > -0.01 && dd < 0.035) parts.push({ x: rx, y: ry + P, vx: (Math.random() - 0.5) * 30 * dpr, vy: -(40 + Math.random() * 70) * dpr, life: 0.5 + Math.random() * 0.5, age: 0, r: (0.8 + Math.random() * 1.6) * dpr });
+        if (dd > -0.01 && dd < 0.035 && base[(ry * W + rx) * 4 + 3] > 40) parts.push({ x: rx, y: ry + P, vx: (Math.random() - 0.5) * 30 * dpr, vy: -(40 + Math.random() * 70) * dpr, life: 0.5 + Math.random() * 0.5, age: 0, r: (0.8 + Math.random() * 1.6) * dpr });
       }
       ctx.globalCompositeOperation = 'lighter';
       for (var pi = parts.length - 1; pi >= 0; pi--) {
