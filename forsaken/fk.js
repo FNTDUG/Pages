@@ -510,7 +510,7 @@
     var sc = scopeOf(c), list = sc.ids, i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
     var side = c.side === 'killer' ? 'Killer' : 'Survivor';
-    var tags = '<span class="fk-tag' + (c.side === 'killer' ? ' fk-tag--killer' : '') + '">' + side + '</span>' + catsOf(c).map(function (k) { var note = c.catNotes && c.catNotes[k]; return '<span class="fk-tag' + (note ? ' fk-tag--note' : '') + '"' + (note ? ' title="' + esc(note) + '" tabindex="0" aria-label="' + esc(k + ': ' + note) + '"' : '') + '>' + esc(k) + (note ? '<sup aria-hidden="true">*</sup>' : '') + '</span>'; }).join('');
+    var tags = '<span class="fk-tag ' + (c.side === 'killer' ? 'fk-tag--killer' : 'fk-tag--survivor') + '">' + side + '</span>' + catsOf(c).map(function (k) { var note = c.catNotes && c.catNotes[k]; return '<span class="fk-tag' + (note ? ' fk-tag--note' : '') + '"' + (note ? ' title="' + esc(note) + '" tabindex="0" aria-label="' + esc(k + ': ' + note) + '"' : '') + '>' + esc(k) + (note ? '<sup aria-hidden="true">*</sup>' : '') + '</span>'; }).join('');
     var nameArt = c.title ? '<img src="' + esc(c.title) + '" alt="' + esc(c.name) + '" decoding="async">' : '<span>' + esc(c.name) + '</span>';
     var bg = c.bg ? '<div class="fk-bg" aria-hidden="true" style="--fk-map:url(&quot;' + esc(c.bg) + '&quot;)"><i></i><b></b></div>' : '';
     return bg + '<div class="fk-page">' +
