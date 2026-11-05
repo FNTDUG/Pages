@@ -96,7 +96,7 @@
     Array.prototype.forEach.call(gs, function (g) { io.observe(g); });
   }
 
-  function digits(t) { return esc(t).replace(/\d+/g, '<span class="fkt-d">$&</span>'); }
+  function digits(t) { return String(t).split(/(\d+)/).map(function (x, i) { return i % 2 ? '<span class="fkt-d">' + x + '</span>' : esc(x); }).join(''); }
   function notesOf(tiers) {
     var out = '';
     tiers.forEach(function (tx) {
@@ -130,7 +130,7 @@
         (xs.length ? '<ul class="fkt-tlist">' + xs.map(function (x) { return '<li class="fkt-tc">' + card(x.c, x.c.name + ': ' + t + ' tier') + '</li>'; }).join('') + '</ul>' : '<p class="fkt-tnone">None</p>') + '</section>';
     }).join('') + '</div>';
     var notes = notesOf(order.map(function (t) { return [t, by[t]]; }));
-    if (notes) html += '<section class="fkt-notes fk-drawn" aria-labelledby="fkt-why-h"><h2 class="fk-h2" id="fkt-why-h">Why they are ranked here</h2><dl>' + notes + '</dl></section>';
+    if (notes) html += '<div class="fkt-notes fk-drawn"><details class="fkt-mwhy"><summary>Why they are ranked here</summary><dl>' + notes + '</dl></details></div>';
     return html;
   }
 
@@ -153,6 +153,36 @@
     side = b.getAttribute('data-tab');
     Array.prototype.forEach.call(tabs.querySelectorAll('.fk-tab'), function (t) { var on = t === b; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
     render();
+  });
+  list.addEventListener('click', function (e) {
+    var sm = e.target.closest('.fkt-mwhy > summary');
+    if (!sm || reduced) return;
+    var d = sm.parentNode, body = d.querySelector('dl');
+    if (!body) return;
+    e.preventDefault();
+    var size = function () { var h = body.scrollHeight; body.style.setProperty('--bh', h + 'px'); return h; };
+    if (d.open && !body.classList.contains('fkt-bout')) {
+      body.style.setProperty('--bd', Math.max(.45, Math.min(1.1, size() / 1600)) + 's');
+      body.classList.remove('fkt-bin');
+      void body.offsetWidth;
+      body.classList.add('fkt-bout');
+      var done = function (ev) {
+        if (ev.target !== body) return;
+        body.removeEventListener('animationend', done);
+        if (body.classList.contains('fkt-bout')) { body.classList.remove('fkt-bout'); d.open = false; }
+        else body.classList.remove('fkt-bin');
+      };
+      body.addEventListener('animationend', done);
+    } else {
+      var fin = function (ev) { if (ev.target !== body) return; body.removeEventListener('animationend', fin); body.classList.remove('fkt-bin'); };
+      body.addEventListener('animationend', fin);
+      body.classList.remove('fkt-bout');
+      d.open = true;
+      body.style.setProperty('--bd', Math.max(.6, Math.min(1.4, size() / 1200)) + 's');
+      body.classList.remove('fkt-bin');
+      void body.offsetWidth;
+      body.classList.add('fkt-bin');
+    }
   });
   list.addEventListener('click', function (e) {
     var b = e.target.closest('[data-mmr]');

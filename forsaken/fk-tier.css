@@ -126,3 +126,15 @@
 .fkt-mwhy dl{margin:0;padding:2px 6px 4px}
 @media (max-width:600px){.fkt-mwhy summary{font-size:16px}}
 .fkt-d{font-family:"Source Serif 4",Georgia,serif;font-size:.94em}
+.fkt-notes{padding:0 16px 8px}
+.fkt-notes .fkt-mwhy{margin:0;border-top:0}
+@property --bp{syntax:"<number>";inherits:true;initial-value:1}
+.fkt-mwhy dl{position:relative;--bt:calc(var(--bp) * (var(--bh,1000px) + 300px) - 300px)}
+.fkt-mwhy dl.fkt-bin,.fkt-mwhy dl.fkt-bout{-webkit-mask:linear-gradient(#000,#000) 0 0/100% max(0px,var(--bt)) no-repeat,url("/forsaken/img/ui-burn-mask.webp") 0 var(--bt)/100% 300px no-repeat;mask:linear-gradient(#000,#000) 0 0/100% max(0px,var(--bt)) no-repeat,url("/forsaken/img/ui-burn-mask.webp") 0 var(--bt)/100% 300px no-repeat}
+.fkt-mwhy dl.fkt-bin::after,.fkt-mwhy dl.fkt-bout::after{content:"";position:absolute;inset:0;pointer-events:none;background:url("/forsaken/img/ui-burn-edge.webp") 0 var(--bt)/100% 300px no-repeat}
+@keyframes fkt-bin{from{--bp:0}to{--bp:1}}
+@keyframes fkt-bout{from{--bp:1}to{--bp:0}}
+.fkt-mwhy dl.fkt-bin{animation:fkt-bin var(--bd,.8s) cubic-bezier(.35,.5,.45,1) both}
+.fkt-mwhy dl.fkt-bout{animation:fkt-bout var(--bd,.5s) cubic-bezier(.55,0,.75,.6) both}
+@media (prefers-reduced-motion:reduce){.fkt-mwhy dl,.fkt-mwhy dl::after{animation:none!important}}
+@media (max-width:600px){.fkt-notes{padding:0 10px 6px}}
