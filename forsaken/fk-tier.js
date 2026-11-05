@@ -1,11 +1,11 @@
 (function () {
   var root = document.getElementById('fkt');
   if (!root) return;
-  var list = root.querySelector('.fkt-maps'), tabs = root.querySelector('.fk-tabs');
+  var list = root.querySelector('.fkt-maps'), tabs = root.querySelector('.fk-tabs'), top = root.querySelector('.fkt-top');
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var BASE = '/forsaken/roster/';
   var TIERS = ['D', 'C', 'B', 'A', 'S'];
-  var data = null, side = 'survivor', byId = {}, sample = false;
+  var data = null, side = 'killer', mmr = 'high', byId = {}, sample = false;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -27,14 +27,19 @@
   }
 
   function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967295; }
+  function sampleRank(a, b) { return TIERS[Math.floor(hash(a + b) * 5)] + Math.floor(hash(b + a) * 11); }
   function sampleList(d) {
-    var maps = {}, out = [];
+    var maps = {}, out = [], high = {}, low = {};
     d.characters.forEach(function (c) { if (c.map && c.bg && !maps[c.map]) { maps[c.map] = 1; out.push({ name: c.map, image: c.bg }); } });
-    return out.map(function (m) {
-      var ranks = {};
-      d.characters.forEach(function (c) { var x = hash(m.name + c.id); ranks[c.id] = TIERS[Math.floor(x * 5)] + Math.floor(hash(c.id + m.name) * 11); });
-      return { name: m.name, image: m.image, sided: Math.round(hash(m.name) * 100), ranks: ranks };
-    });
+    d.characters.forEach(function (c) { if (c.side === 'survivor') { high[c.id] = sampleRank('high', c.id); low[c.id] = sampleRank('low', c.id); } });
+    return {
+      maps: out.map(function (m) {
+        var ranks = {};
+        d.characters.forEach(function (c) { if (c.side === 'killer') ranks[c.id] = sampleRank(m.name, c.id); });
+        return { name: m.name, image: m.image, sided: Math.round(hash(m.name) * 100), ranks: ranks };
+      }),
+      survivors: { high: high, low: low }
+    };
   }
 
   function gauge(s) {
@@ -49,25 +54,26 @@
     return '<span class="fkt-bar" aria-hidden="true"><span class="fkt-bar-f"></span><span class="fkt-bar-o"></span><span class="fkt-mk" style="--p:' + p.toFixed(2) + '%"></span></span>';
   }
 
+  function card(c, label) {
+    return '<a class="fk-card" data-side="' + esc(c.side) + '" href="' + BASE + esc(c.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '" data-google-vignette="false">' +
+      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 84px, 96px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>';
+  }
   function item(c, r) {
-    var label = c.name + ': ' + r.tier + ' tier, ' + r.n + ' out of 10';
-    return '<li class="fkt-ch"><a class="fk-card" data-side="' + esc(c.side) + '" href="' + BASE + esc(c.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '" data-google-vignette="false">' +
-      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 84px, 96px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>' +
-      bar(r) + '</li>';
+    return '<li class="fkt-ch">' + card(c, c.name + ': ' + r.tier + ' tier, ' + r.n + ' out of 10') + bar(r) + '</li>';
   }
 
   function row(m, i) {
     var s = sidedOf(m.sided), ranks = m.ranks || {}, rows = [];
     Object.keys(ranks).forEach(function (id) {
       var c = byId[id], r = parseRank(ranks[id]);
-      if (c && r && c.side === side) rows.push({ c: c, r: r });
+      if (c && r && c.side === 'killer') rows.push({ c: c, r: r });
     });
     rows.sort(function (a, b) { return b.r.score - a.r.score || a.c.name.localeCompare(b.c.name); });
     var id = 'fkt-' + slug(m.name);
     return '<section class="fkt-row" aria-labelledby="' + id + '" style="--i:' + i + '">' +
       '<div class="fkt-map fk-drawn">' + (m.image ? '<img class="fkt-map-bg" src="' + esc(m.image) + '" alt="" loading="lazy" decoding="async">' : '') +
       '<h2 class="fkt-map-n" id="' + id + '">' + esc(m.name) + '</h2>' + gauge(s) + '</div>' +
-      '<div class="fkt-chars fk-drawn">' + (rows.length ? '<ul class="fkt-list" aria-label="' + esc(m.name) + ' ' + (side === 'killer' ? 'Killer' : 'Survivor') + ' rankings, best first">' + rows.map(function (x) { return item(x.c, x.r); }).join('') + '</ul>' : '<p class="fkt-empty">No ' + (side === 'killer' ? 'Killer' : 'Survivor') + ' rankings for this map yet.</p>') + '</div>' +
+      '<div class="fkt-chars fk-drawn">' + (rows.length ? '<ul class="fkt-list" aria-label="' + esc(m.name) + ' Killer rankings, best first">' + rows.map(function (x) { return item(x.c, x.r); }).join('') + '</ul>' : '<p class="fkt-empty">No Killer rankings for this map yet.</p>') + '</div>' +
       '</section>';
   }
 
@@ -88,9 +94,30 @@
     Array.prototype.forEach.call(gs, function (g) { io.observe(g); });
   }
 
+  function board() {
+    var sv = (data.tierlist && data.tierlist.survivors) || {}, ranks = sv[mmr] || {}, by = { S: [], A: [], B: [], C: [], D: [] }, any = false;
+    Object.keys(ranks).forEach(function (id) {
+      var c = byId[id], r = parseRank(ranks[id]);
+      if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r }); any = true; }
+    });
+    var name = mmr === 'low' ? 'Low MMR' : 'High MMR';
+    var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['high', 'low'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>';
+    if (!any) return html + '<div class="fkt-board fk-drawn"><p class="fkt-empty">No ' + name + ' Survivor rankings yet.</p></div>';
+    return html + '<div class="fkt-board fk-drawn" role="list" aria-label="' + name + ' Survivor tier list">' + TIERS.slice().reverse().map(function (t) {
+      var xs = by[t].sort(function (a, b) { return b.r.n - a.r.n || a.c.name.localeCompare(b.c.name); });
+      return '<section class="fkt-tier" role="listitem" data-t="' + t + '" aria-label="' + t + ' tier"><h2 class="fkt-tl" aria-hidden="true">' + t + '</h2>' +
+        (xs.length ? '<ul class="fkt-tlist">' + xs.map(function (x) { return '<li class="fkt-tc">' + card(x.c, x.c.name + ': ' + t + ' tier') + '</li>'; }).join('') + '</ul>' : '<p class="fkt-tnone">None</p>') + '</section>';
+    }).join('') + '</div>';
+  }
+
   function render() {
-    var maps = (data.tierlist && data.tierlist.maps) || [];
-    list.innerHTML = maps.length ? maps.map(row).join('') : '<p class="fkt-empty">No maps have been ranked yet.</p>';
+    if (top) top.hidden = side !== 'killer';
+    if (side === 'survivor') {
+      list.innerHTML = board();
+    } else {
+      var maps = (data.tierlist && data.tierlist.maps) || [];
+      list.innerHTML = maps.length ? maps.map(row).join('') : '<p class="fkt-empty">No maps have been ranked yet.</p>';
+    }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(list); });
     fit(list);
     watch();
@@ -102,6 +129,14 @@
     side = b.getAttribute('data-tab');
     Array.prototype.forEach.call(tabs.querySelectorAll('.fk-tab'), function (t) { var on = t === b; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
     render();
+  });
+  list.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-mmr]');
+    if (!b || b.getAttribute('data-mmr') === mmr) return;
+    mmr = b.getAttribute('data-mmr');
+    render();
+    var nb = list.querySelector('[data-mmr="' + mmr + '"]');
+    if (nb) nb.focus();
   });
   tabs.addEventListener('keydown', function (e) {
     if (!/^(ArrowLeft|ArrowRight)$/.test(e.key)) return;
@@ -118,8 +153,7 @@
     data = d;
     d.characters.forEach(function (c) { byId[c.id] = c; });
     if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
-    var maps = d.tierlist && d.tierlist.maps;
-    if (!maps || !maps.length) { sample = true; d.tierlist = { maps: sampleList(d) }; }
+    if (!d.tierlist) { sample = true; d.tierlist = sampleList(d); }
     render();
   }).catch(function () {
     list.innerHTML = '<p class="fkt-empty">The tier list could not load. Try refreshing the page.</p>';
