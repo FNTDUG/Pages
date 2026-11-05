@@ -140,8 +140,8 @@
     }
   }
 
-  function fitNames() {
-    Array.prototype.forEach.call(gridView.querySelectorAll('.fk-card-n'), function (n) {
+  function fitNames(scope) {
+    Array.prototype.forEach.call((scope || gridView).querySelectorAll('.fk-card-n'), function (n) {
       n.style.fontSize = '';
       var room = n.parentNode.clientWidth - 20;
       var w = n.scrollWidth;
@@ -152,8 +152,8 @@
     });
   }
   var fitT = 0;
-  window.addEventListener('resize', function () { cancelAnimationFrame(fitT); fitT = requestAnimationFrame(fitNames); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!CHAR) fitNames(); });
+  window.addEventListener('resize', function () { cancelAnimationFrame(fitT); fitT = requestAnimationFrame(function () { fitNames(); var pk = det.querySelector('.fk-pick'); if (pk) fitNames(pk); }); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!CHAR) fitNames(); else { var pk = det.querySelector('.fk-pick'); if (pk) fitNames(pk); } });
 
   function scopeOf(c) {
     var sc = null;
@@ -348,6 +348,7 @@
     var sa = AUDIO && AUDIO.skins[k.name];
     var audio = sa ? (sa.themes.length ? '<ul class="fk-themes fk-themes--sm">' + sa.themes.map(function (t) { return themeCard(t, c); }).join('') + '</ul>' : '') + (sa.voice.length ? '<p class="fk-pick-sub">Voicelines <b>' + sa.voice.length + '</b></p><div class="fk-pick-vl">' + voiceList(sa.voice, 6) + '</div>' : '') : (k.au ? '<p class="fk-pick-cap">Loading audio...</p>' : '');
     box.innerHTML = skinCard(c, k.img && big(k.img), k.name, k.name + ' skin') + '<div class="fk-pick-info"><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
+    fitNames(box);
     paintPlay();
     sbSync();
     var sc = box.querySelector('.fk-scard');

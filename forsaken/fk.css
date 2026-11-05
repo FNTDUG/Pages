@@ -199,12 +199,9 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-pick-info{padding-top:6px}
 .fk-pick-info .fk-pick-how{font-size:20px}
 .fk-pick-info .fk-pick-cap{font-size:18px}
-.fk-scard{grid-row:span 1;width:100%;cursor:default;background:none;-webkit-mask:url("/forsaken/img/ui-card-edge.webp") center/100% 100% no-repeat;mask:url("/forsaken/img/ui-card-edge.webp") center/100% 100% no-repeat}
-.fk-scard .fk-mo{inset:5.5% 5.5%}
-.fk-scard img{object-position:50% 20%}
+.fk-scard{width:100%;cursor:default}
 .fk-card.fk-scard:hover{transform:none;filter:none}
 .fk-card.fk-scard:hover img{filter:none}
-.fk-scard .fk-card-n{white-space:normal;width:calc(100% - 20px);font-size:20px}
 .fk-pick-n{margin:0 0 4px;font-family:var(--fk-title);font-weight:700;font-size:22px;line-height:1.2}
 .fk-pick-how{margin:0 0 10px;font-family:var(--fk-serif);font-weight:600;font-size:16px}
 .fk-pick-how[data-g=Milestone]{color:var(--fk-gold)}
@@ -336,7 +333,6 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-slot{min-width:82px}
 .fk-load{gap:26px 10px;padding:26px 6px 28px}
 .fk-pick{grid-template-columns:140px minmax(0,1fr);gap:8px 14px;padding:12px}
-.fk-scard .fk-card-n{font-size:15px;bottom:9px;-webkit-text-stroke:3.5px #000}
 .fk-pick-info{padding-top:0}
 .fk-pick-info .fk-pick-how{font-size:17px}
 .fk-pick-info .fk-pick-cap{font-size:16px}
