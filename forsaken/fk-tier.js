@@ -155,36 +155,6 @@
     render();
   });
   list.addEventListener('click', function (e) {
-    var sm = e.target.closest('.fkt-mwhy > summary');
-    if (!sm || reduced) return;
-    var d = sm.parentNode, body = d.querySelector('dl');
-    if (!body) return;
-    e.preventDefault();
-    var size = function () { var h = body.scrollHeight; body.style.setProperty('--bh', h + 'px'); return h; };
-    if (d.open && !body.classList.contains('fkt-bout')) {
-      body.style.setProperty('--bd', Math.max(.45, Math.min(1.1, size() / 1600)) + 's');
-      body.classList.remove('fkt-bin');
-      void body.offsetWidth;
-      body.classList.add('fkt-bout');
-      var done = function (ev) {
-        if (ev.target !== body) return;
-        body.removeEventListener('animationend', done);
-        if (body.classList.contains('fkt-bout')) { body.classList.remove('fkt-bout'); d.open = false; }
-        else body.classList.remove('fkt-bin');
-      };
-      body.addEventListener('animationend', done);
-    } else {
-      var fin = function (ev) { if (ev.target !== body) return; body.removeEventListener('animationend', fin); body.classList.remove('fkt-bin'); };
-      body.addEventListener('animationend', fin);
-      body.classList.remove('fkt-bout');
-      d.open = true;
-      body.style.setProperty('--bd', Math.max(.6, Math.min(1.4, size() / 1200)) + 's');
-      body.classList.remove('fkt-bin');
-      void body.offsetWidth;
-      body.classList.add('fkt-bin');
-    }
-  });
-  list.addEventListener('click', function (e) {
     var b = e.target.closest('[data-mmr]');
     if (!b || b.getAttribute('data-mmr') === mmr) return;
     mmr = b.getAttribute('data-mmr');
