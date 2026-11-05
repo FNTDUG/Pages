@@ -225,7 +225,7 @@
   function showAbility(tab, focus) {
     var list = tab.parentNode, id = tab.getAttribute('data-ab');
     Array.prototype.forEach.call(list.querySelectorAll('.fk-slot'), function (t) { var on = t === tab; if (!on) { var x = t.querySelector('.fk-cd.fk-cding'); if (x) x.classList.remove('fk-cding'); } t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
-    Array.prototype.forEach.call(det.querySelectorAll('.fk-abp'), function (p) {
+    Array.prototype.forEach.call((list.closest('section') || det).querySelectorAll('.fk-abp'), function (p) {
       var on = p.id === id;
       p.hidden = !on;
       if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
@@ -239,16 +239,21 @@
   function itemsSection(c) {
     var items = data && data.items;
     if (c.side !== 'survivor' || !items || !items.length) return '';
-    return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-it-h"><h2 class="fk-h2" id="fk-it-h">Items</h2>' +
-      '<p class="fk-it-lead">Items lie around the maps for any Survivor to pick up and use. Killers cannot pick them up.</p><div class="fk-items">' +
-      items.map(function (it) {
-        var note = it.notes && it.notes[c.id], off = it.blocked && it.blocked.indexOf(c.id) >= 0;
-        return '<article class="fk-item fk-drawn' + (off ? ' fk-item--off' : '') + '"><div class="fk-item-h"><span class="fk-circ fk-has"><img src="' + esc(it.icon) + '" alt="" width="80" height="80" loading="lazy" decoding="async"></span><div>' +
-          '<h3 class="fk-item-n">' + esc(it.name) + '</h3>' + (it.quote ? '<p class="fk-item-q">&ldquo;' + esc(it.quote) + '&rdquo;</p>' : '') + '</div></div>' +
-          (note ? '<p class="fk-item-note">' + pills(esc(note)) + '</p>' : '') +
-          '<div class="fk-rich">' + rich(it.desc) + '</div>' +
-          (it.where ? '<p class="fk-item-w"><span>Found:</span> ' + esc(it.where) + '</p>' : '') + '</article>';
-      }).join('') + '</div></section>';
+    var tabs = items.map(function (it, i) {
+      var id = 'it-' + slug(it.id || it.name), off = it.blocked && it.blocked.indexOf(c.id) >= 0;
+      return '<button type="button" role="tab" class="fk-slot' + (off ? ' fk-slot--off' : '') + '" id="tab-' + id + '" data-ab="' + id + '" aria-controls="' + id + '" aria-selected="' + (i === 0) + '" tabindex="' + (i === 0 ? 0 : -1) + '" aria-label="' + esc(it.name) + (off ? ', cannot be used' : '') + '"><span class="fk-circ fk-has"><img src="' + esc(it.icon) + '" alt="" width="80" height="80" loading="lazy" decoding="async"></span><span class="fk-slot-l" aria-hidden="true">' + esc(it.name) + '</span></button>';
+    }).join('');
+    var panels = items.map(function (it, i) {
+      var id = 'it-' + slug(it.id || it.name), note = it.notes && it.notes[c.id], off = it.blocked && it.blocked.indexOf(c.id) >= 0;
+      return '<div class="fk-abp" role="tabpanel" id="' + id + '" aria-labelledby="tab-' + id + '"' + (i ? ' hidden' : '') + '><article class="fk-ab fk-drawn' + (off ? ' fk-item--off' : '') + '">' +
+        '<h3 class="fk-ab-n">' + esc(it.name) + '</h3>' + (it.quote ? '<p class="fk-ab-q">&ldquo;' + esc(it.quote) + '&rdquo;</p>' : '') +
+        '<div class="fk-ab-b"><div class="fk-ab-i"><span class="fk-circ fk-has"><img src="' + esc(it.icon) + '" alt="" width="80" height="80" loading="lazy" decoding="async"></span></div><div>' +
+        (note ? '<p class="fk-item-note">' + pills(esc(note)) + '</p>' : '') +
+        '<div class="fk-rich">' + rich(it.desc) + '</div>' +
+        (it.where ? '<p class="fk-ab-meta"><span>Found:</span> <b>' + esc(it.where) + '</b></p>' : '') +
+        '</div></div></article></div>';
+    }).join('');
+    return '<section class="fk-sec" aria-labelledby="fk-it-h"><h2 class="fk-h2 fk-rv" style="--i:7" id="fk-it-h">Items</h2><div class="fk-load fk-drawn fk-rv" style="--i:7" role="tablist" aria-label="Items">' + tabs + '</div><div class="fk-abs fk-rv" style="--i:7">' + panels + '</div></section>';
   }
 
   function ability(a, i) {
