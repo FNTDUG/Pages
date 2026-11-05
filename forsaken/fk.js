@@ -393,38 +393,53 @@
     if (m.abilities) o.abilities = m.abilities;
     return o;
   }
+  var APPLE = /Apple/.test(navigator.vendor || '');
+  function thinFor(light, dpr) {
+    if (APPLE) return dpr >= 2.5 ? (light ? 0.12 : 0.18) : (light ? 0.2 : 0.22);
+    return light ? Math.max(0.2, Math.min(0.6, 0.72 - 0.15 * dpr)) : Math.max(0.3, Math.min(0.55, 0.6 - 0.07 * dpr));
+  }
   function snapText(el) {
     var r = el.getBoundingClientRect();
     if (r.width < 4 || !document.createRange || !document.createTreeWalker) return null;
-    var dpr = Math.min(2, window.devicePixelRatio || 1), P = 18;
+    var dpr = Math.min(3, window.devicePixelRatio || 1), P = 18;
     var W = Math.round(r.width * dpr), H = Math.round(r.height * dpr), PP = Math.round(P * dpr);
     var cv = document.createElement('canvas');
     cv.width = W; cv.height = H + PP;
-    var c = cv.getContext('2d'), tw = document.createTreeWalker(el, 4), n;
+    var c = cv.getContext('2d'), tw = document.createTreeWalker(el, 4), n, rg = document.createRange();
     c.textBaseline = 'alphabetic';
+    if ('fontKerning' in c) c.fontKerning = 'normal';
     while ((n = tw.nextNode())) {
       var txt = n.textContent;
       if (!txt || !/\S/.test(txt)) continue;
-      var rg = document.createRange(); rg.selectNodeContents(n);
-      var rr = rg.getBoundingClientRect(), cs = getComputedStyle(n.parentNode);
-      c.font = cs.fontWeight + ' ' + parseFloat(cs.fontSize) * dpr + 'px ' + cs.fontFamily;
+      var cs = getComputedStyle(n.parentNode);
+      c.font = (cs.fontStyle === 'normal' ? '' : cs.fontStyle + ' ') + cs.fontWeight + ' ' + parseFloat(cs.fontSize) * dpr + 'px ' + cs.fontFamily;
       c.fillStyle = cs.color;
-      var m = c.measureText(txt), asc = m.actualBoundingBoxAscent || parseFloat(cs.fontSize) * dpr * 0.75, desc = m.actualBoundingBoxDescent || 0;
-      c.fillText(txt, (rr.left - r.left) * dpr, PP + ((rr.top - r.top) + rr.height / 2) * dpr + (asc - desc) / 2);
+      var fm = c.measureText('Hg'), fa = fm.fontBoundingBoxAscent, fd = fm.fontBoundingBoxDescent;
+      var thin = thinFor(+cs.fontWeight < 600, dpr) * dpr;
+      for (var i = 0; i < txt.length; i++) {
+        var ch = txt.charAt(i);
+        if (!/\S/.test(ch)) continue;
+        rg.setStart(n, i); rg.setEnd(n, i + 1);
+        var cr = rg.getBoundingClientRect();
+        if (!cr.width && !cr.height) continue;
+        var base = fa && fd ? (cr.top - r.top) * dpr + cr.height * dpr * fa / (fa + fd) : (cr.top - r.top + cr.height * 0.78) * dpr;
+        c.fillText(ch, (cr.left - r.left) * dpr, PP + base);
+        if (thin) { c.save(); c.globalCompositeOperation = 'destination-out'; c.lineWidth = thin; c.strokeText(ch, (cr.left - r.left) * dpr, PP + base); c.restore(); }
+      }
     }
-    var base;
-    try { base = c.getImageData(0, PP, W, H).data; } catch (e) { return null; }
-    return { cv: cv, ctx: c, base: base, W: W, H: H, P: PP, dpr: dpr, y: -P, w: r.width, h: r.height + P };
+    var data;
+    try { data = c.getImageData(0, PP, W, H).data; } catch (e) { return null; }
+    return { cv: cv, ctx: c, base: data, W: W, H: H, P: PP, dpr: dpr, y: -P, w: r.width, h: r.height + P };
   }
   function burnText(tile, s, delay) {
-    var DUR = 560;
+    var DUR = 620;
     s.cv.className = 'fk-ash-t';
     s.cv.style.cssText = 'left:0;top:' + s.y + 'px;width:' + s.w + 'px;height:' + s.h + 'px';
     tile.appendChild(s.cv);
     Array.prototype.forEach.call(tile.querySelectorAll('dt,dd'), function (x) {
-      if (x.animate) x.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1 }], { duration: DUR, delay: delay, easing: 'ease-out', fill: 'backwards' });
+      if (x.animate) x.animate([{ opacity: 0 }, { opacity: 0, offset: 0.55 }, { opacity: 1 }], { duration: DUR + 120, delay: delay, easing: 'ease-out', fill: 'backwards' });
     });
-    setTimeout(function () { ash(s.ctx, s.base, s.W, s.H, s.P, s.dpr, DUR, function () {}, function () { s.cv.remove(); }); }, delay);
+    setTimeout(function () { ash(s.ctx, s.base, s.W, s.H, s.P, s.dpr, DUR, function () {}, function () { s.cv.remove(); }, null, 0.035); }, delay);
   }
   function applyMode(i) {
     if (!cur) return;
@@ -851,7 +866,8 @@
     }, function () { cv.remove(); });
   }
 
-  function ash(ctx, base, W, H, P, dpr, DUR, finish, end, over) {
+  function ash(ctx, base, W, H, P, dpr, DUR, finish, end, over, soft) {
+    soft = soft || 0.11;
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
     for (var q = 0; q < grid.length; q++) grid[q] = Math.random();
     var GS2 = 22 * dpr, gw2 = Math.ceil(W / GS2) + 2, grid2 = new Float32Array(gw2 * (Math.ceil(H / GS2) + 2));
@@ -886,7 +902,7 @@
           px[j] = 255; px[j + 1] = e < 0.35 ? 236 : e < 0.7 ? 140 : 70; px[j + 2] = e < 0.35 ? 160 : e < 0.7 ? 36 : 12; px[j + 3] = base[j + 3];
           continue;
         }
-        var f = d < 0.14 ? 0.15 + 0.85 * Math.pow((d - 0.03) / 0.11, 0.7) : 1;
+        var f = d < 0.03 + soft ? 0.15 + 0.85 * Math.pow((d - 0.03) / soft, 0.7) : 1;
         px[j] = base[j] * f; px[j + 1] = base[j + 1] * f; px[j + 2] = base[j + 2] * f; px[j + 3] = base[j + 3];
       }
       ctx.clearRect(0, 0, W, H + P);
