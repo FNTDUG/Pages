@@ -330,20 +330,24 @@
 
   function big(url) { return media(String(url || '').replace(/-200\.webp$/, '-520.webp')); }
 
+  function skinCard(c, src, name, alt) {
+    return '<div class="fk-card fk-scard" data-side="' + esc(c.side) + '" style="' + vars(c) + '">' + (src ? '<img src="' + esc(src) + '" alt="' + esc(alt) + '" decoding="async">' : '') + '<span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(name) + '</span></div>';
+  }
+
   function pick(c, i) {
     var w = root._web, box = det.querySelector('.fk-pick');
     if (!w || !box) return;
     Array.prototype.forEach.call(det.querySelectorAll('.fk-node'), function (n) { n.setAttribute('aria-pressed', String(+n.getAttribute('data-n') === i)); });
     Array.prototype.forEach.call(det.querySelectorAll('.fk-lines path'), function (p) { p.classList.remove('fk-hot'); });
     if (i < 0) {
-      box.innerHTML = '<div class="fk-pick-img" style="' + vars(c) + ';background:linear-gradient(160deg,' + esc(c1(c)) + ',' + esc(c2(c)) + ')"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" style="object-fit:cover"></div><div><p class="fk-pick-n">Default</p><p class="fk-pick-how">Comes with ' + esc(c.name) + '</p><p class="fk-pick-cap">Pick a skin in the web to see it here.</p></div>';
+      box.innerHTML = skinCard(c, c.card || c.image, c.name, c.name) + '<div class="fk-pick-info"><p class="fk-pick-how">Default &middot; Comes with ' + esc(c.name) + '</p><p class="fk-pick-cap">Pick a skin in the web to see it here.</p></div>';
       return;
     }
     var k = w.skins[i];
     for (var n = i; n >= 0; n = w.parent[n]) { var p = det.querySelector('.fk-lines path[data-n="' + n + '"]'); if (p) p.classList.add('fk-hot'); }
     var sa = AUDIO && AUDIO.skins[k.name];
     var audio = sa ? (sa.themes.length ? '<ul class="fk-themes fk-themes--sm">' + sa.themes.map(function (t) { return themeCard(t, c); }).join('') + '</ul>' : '') + (sa.voice.length ? '<p class="fk-pick-sub">Voicelines <b>' + sa.voice.length + '</b></p><div class="fk-pick-vl">' + voiceList(sa.voice, 6) + '</div>' : '') : (k.au ? '<p class="fk-pick-cap">Loading audio...</p>' : '');
-    box.innerHTML = '<div class="fk-pick-img">' + (k.img ? '<img src="' + esc(big(k.img)) + '" alt="' + esc(k.name) + ' skin">' : '') + '</div><div class="fk-pick-info"><p class="fk-pick-n">' + esc(k.name) + '</p><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
+    box.innerHTML = skinCard(c, k.img && big(k.img), k.name, k.name + ' skin') + '<div class="fk-pick-info"><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
     paintPlay();
     sbSync();
   }
@@ -789,7 +793,7 @@
     var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" preserveAspectRatio="none"><defs>' + masks + '</defs>' + body + '</svg>';
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/\(/g, '%28').replace(/\)/g, '%29') + '")';
   }
-  if (!CHAR) root.style.setProperty('--mo', cornerSetUri());
+  root.style.setProperty('--mo', cornerSetUri());
   function drawCorners(dst, x0, y0, w, h, dpr) {
     var size = w * 0.26, sc = size / 40;
     var layer = document.createElement('canvas');
@@ -990,7 +994,7 @@
     });
   }
   function warm(e) {
-    var a = e.target.closest && e.target.closest('.fk-card, [data-go]');
+    var a = e.target.closest && e.target.closest('a.fk-card, [data-go]');
     if (!a) return;
     var id = a.getAttribute('data-id') || a.getAttribute('data-go'), c = byId[id];
     prefetch(BASE + '/' + id, c && c.image);
