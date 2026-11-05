@@ -256,8 +256,8 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-play:hover,.fk-play:focus-visible{transform:scale(1.1)}
 .fk-play.fk-on{color:#ffd27a}
 @keyframes fk-spin{to{transform:rotate(360deg)}}
-.fk-play.fk-wait{background:radial-gradient(circle,#1d1d1d 0 58%,transparent 59%),conic-gradient(#fff 0 25%,rgba(255,255,255,.18) 0);animation:fk-spin .8s linear infinite}
-.fk-play.fk-wait svg{opacity:.5}
+@keyframes fk-pulse{50%{opacity:.25}}
+.fk-play.fk-wait svg{animation:fk-pulse .7s ease-in-out infinite}
 .fk-play.fk-err{opacity:.35;cursor:not-allowed}
 .fk-play--big{width:58px;height:58px}
 .fk-themes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
