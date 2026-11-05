@@ -41,7 +41,7 @@
     var a = s == null ? 270 : 180 + s * 1.8;
     return '<div class="fkt-gauge' + (s == null ? ' fkt-unset' : '') + '" role="img" aria-label="' + esc(leanText(s) + (s == null ? '' : ', ' + s + ' out of 100')) + '" style="--a:' + a + 'deg">' +
       '<b class="fkt-gs" aria-hidden="true">S</b><b class="fkt-gk" aria-hidden="true">K</b><i class="fkt-needle" aria-hidden="true"></i></div>' +
-      '<p class="fkt-lean">' + esc(leanText(s)) + (s == null ? '' : ' <span>' + s + '</span>') + '</p>';
+      '<p class="fkt-lean">' + esc(leanText(s)) + '</p>';
   }
 
   function bar(r) {
@@ -53,7 +53,7 @@
     var label = c.name + ': ' + r.tier + ' tier, ' + r.n + ' out of 10';
     return '<li class="fkt-ch"><a class="fk-card" data-side="' + esc(c.side) + '" href="' + BASE + esc(c.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '" data-google-vignette="false">' +
       '<img src="' + esc(c.card || c.image) + '" alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>' +
-      bar(r) + '<span class="fkt-rk" aria-hidden="true">' + r.tier + '<small>' + r.n + '</small></span></li>';
+      bar(r) + '</li>';
   }
 
   function row(m, i) {
