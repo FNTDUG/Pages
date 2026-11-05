@@ -144,6 +144,8 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-slot[aria-selected=true] .fk-slot-l{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.5)}
 .fk-slot[aria-selected=true] .fk-circ{box-shadow:0 0 0 2px #fff,0 0 18px rgba(255,255,255,.55)}
 .fk-slot[aria-selected=true] .fk-dia::before{box-shadow:0 0 0 1px #000,0 0 14px rgba(255,255,255,.8),inset 0 0 14px rgba(255,255,255,.25)}
+.fk-slot::after{content:"";position:absolute;left:50%;top:100%;margin:3px 0 0 -8px;border:0 solid transparent;border-width:0 8px 8px;border-bottom-color:#fff;filter:drop-shadow(0 0 4px rgba(255,255,255,.6));opacity:0;transform:translateY(5px) scale(.4);transition:opacity .15s,transform .2s cubic-bezier(.2,.8,.3,1.3);pointer-events:none}
+.fk-slot[aria-selected=true]::after{opacity:1;transform:none}
 .fk-slot[aria-selected=false]{opacity:.62;transition:opacity .15s}
 .fk-slot[aria-selected=false]:hover,.fk-slot[aria-selected=false]:focus-visible{opacity:1}
 .fk-ab{padding:16px 20px 14px;scroll-margin-top:76px}
@@ -227,7 +229,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 
 @property --cd{syntax:"<angle>";inherits:false;initial-value:0deg}
 @keyframes fk-cd{0%{--cd:360deg;opacity:1}90%{opacity:1}100%{--cd:0deg;opacity:0}}
-.fk-slot:hover .fk-cd,.fk-slot:focus-visible .fk-cd{animation:fk-cd 1.3s linear}
+.fk-cd.fk-cding{animation:fk-cd 1.3s linear}
 @keyframes fk-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes fk-glow{0%{opacity:.95}100%{opacity:0}}
 @keyframes fk-art{from{filter:brightness(0) saturate(0)}60%{filter:brightness(1.25) saturate(1.2)}to{filter:none}}
@@ -336,11 +338,11 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-count{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-.fk-deal .fk-card,.fk-deal .fk-cls,.fk-deal .fk-cls-d,.fk-pulse,.fk-reveal .fk-rv,.fk-reveal .fk-art img,.fk-reveal .fk-art-glow,.fk-reveal .fk-bg i,.fk-web.fk-go .fk-node,.fk-web.fk-go svg.fk-lines path,.fk-web.fk-go .fk-core,.fk-web.fk-go .fk-fog,.fk-slot:hover .fk-cd,.fk-slot:focus-visible .fk-cd{animation:none!important}
+.fk-deal .fk-card,.fk-deal .fk-cls,.fk-deal .fk-cls-d,.fk-pulse,.fk-reveal .fk-rv,.fk-reveal .fk-art img,.fk-reveal .fk-art-glow,.fk-reveal .fk-bg i,.fk-web.fk-go .fk-node,.fk-web.fk-go svg.fk-lines path,.fk-web.fk-go .fk-core,.fk-web.fk-go .fk-fog,.fk-cd.fk-cding,.fk-slot::after{animation:none!important}
 .fk-web.fk-pre .fk-node{opacity:1}
 .fk-web.fk-pre svg.fk-lines path{stroke-dashoffset:0}
 .fk-web .fk-fog{opacity:1}
-.fk-card,.fk-card img,.fk-tip,.fk-btn,.fk-x,.fk-play{transition:none}
+.fk-card,.fk-card img,.fk-tip,.fk-btn,.fk-x,.fk-play,.fk-slot::after{transition:none}
 .fk-abp.fk-swap,.fk-load.fk-swap{animation:none}
 .fk-btn:hover,.fk-btn:focus-visible,.fk-x:hover,.fk-card:hover{transform:none}
 }

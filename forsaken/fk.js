@@ -223,12 +223,14 @@
 
   function showAbility(tab, focus) {
     var list = tab.parentNode, id = tab.getAttribute('data-ab');
-    Array.prototype.forEach.call(list.querySelectorAll('.fk-slot'), function (t) { var on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Array.prototype.forEach.call(list.querySelectorAll('.fk-slot'), function (t) { var on = t === tab; if (!on) { var x = t.querySelector('.fk-cd.fk-cding'); if (x) x.classList.remove('fk-cding'); } t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
     Array.prototype.forEach.call(det.querySelectorAll('.fk-abp'), function (p) {
       var on = p.id === id;
       p.hidden = !on;
       if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
     });
+    var cd = tab.querySelector('.fk-cd');
+    if (cd && !reduced) { cd.classList.remove('fk-cding'); void cd.offsetWidth; cd.classList.add('fk-cding'); }
     if (focus) tab.focus();
     if (scrollbar) sbSync();
   }
