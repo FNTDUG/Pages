@@ -94,3 +94,24 @@
 .fkt-tc,.fkt .fkt-tc .fk-card{width:76px}
 .fkt .fkt-tc .fk-card-n{font-size:12px;bottom:6px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
 }
+.fkt-about{margin:-6px 0 16px;font-size:18px;font-style:italic;color:#e6e6e6}
+.fkt-notes{margin:18px 0 0;padding:0 0 6px;background:var(--fk-glass2)}
+.fkt-notes .fk-h2{margin:0}
+.fkt-notes dl{margin:0;padding:6px 18px}
+.fkt-why{padding:14px 0}
+.fkt-why+.fkt-why{border-top:1px solid rgba(255,255,255,.12)}
+.fkt-why dt{display:flex;align-items:center;gap:12px;margin:0 0 6px;font-family:var(--fk-title);font-weight:700;font-size:20px;line-height:1.2;color:#fff}
+.fkt-why dd{margin:0;padding-left:50px;font-size:17px;line-height:1.5;color:#dcdcdc}
+.fkt-wt{flex:0 0 38px;display:flex;align-items:center;justify-content:center;height:34px;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:24px;color:#050505;background:var(--tc)}
+.fkt-why[data-t=S]{--tc:var(--t4)}
+.fkt-why[data-t=A]{--tc:var(--t3)}
+.fkt-why[data-t=B]{--tc:var(--t2)}
+.fkt-why[data-t=C]{--tc:var(--t1)}
+.fkt-why[data-t=D]{--tc:var(--t0)}
+@media (max-width:600px){
+.fkt-about{font-size:16px}
+.fkt-notes dl{padding:4px 12px}
+.fkt-why dt{font-size:17px;gap:10px}
+.fkt-why dd{padding-left:0;font-size:16px}
+.fkt-wt{flex-basis:32px;height:30px;font-size:20px}
+}

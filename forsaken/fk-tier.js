@@ -94,20 +94,37 @@
     Array.prototype.forEach.call(gs, function (g) { io.observe(g); });
   }
 
+  function names(xs) { var n = xs.map(function (x) { return x.c.name; }); return n.length < 2 ? n[0] : n.slice(0, -1).join(', ') + ' & ' + n[n.length - 1]; }
   function board() {
-    var sv = (data.tierlist && data.tierlist.survivors) || {}, ranks = sv[mmr] || {}, by = { S: [], A: [], B: [], C: [], D: [] }, any = false;
+    var sv = (data.tierlist && data.tierlist.survivors) || {}, list0 = sv[mmr] || {}, ranks = list0.ranks || list0, about = list0.ranks ? list0.about : '';
+    var by = { S: [], A: [], B: [], C: [], D: [] }, any = false;
     Object.keys(ranks).forEach(function (id) {
-      var c = byId[id], r = parseRank(ranks[id]);
-      if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r }); any = true; }
+      var v = ranks[id], o = v && typeof v === 'object' ? v : { rank: v }, c = byId[id], r = parseRank(o.rank);
+      if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r, note: o.note ? String(o.note) : '' }); any = true; }
     });
     var name = mmr === 'low' ? 'Low MMR' : 'High MMR';
-    var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['high', 'low'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>';
+    var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['high', 'low'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>' +
+      (about ? '<p class="fkt-about">' + esc(about) + '</p>' : '');
     if (!any) return html + '<div class="fkt-board fk-drawn"><p class="fkt-empty">No ' + name + ' Survivor rankings yet.</p></div>';
-    return html + '<div class="fkt-board fk-drawn" role="list" aria-label="' + name + ' Survivor tier list">' + TIERS.slice().reverse().map(function (t) {
-      var xs = by[t].sort(function (a, b) { return b.r.n - a.r.n || a.c.name.localeCompare(b.c.name); });
+    var order = TIERS.slice().reverse();
+    order.forEach(function (t) { by[t].sort(function (a, b) { return b.r.n - a.r.n || a.c.name.localeCompare(b.c.name); }); });
+    html += '<div class="fkt-board fk-drawn" role="list" aria-label="' + name + ' Survivor tier list">' + order.map(function (t) {
+      var xs = by[t];
       return '<section class="fkt-tier" role="listitem" data-t="' + t + '" aria-label="' + t + ' tier"><h2 class="fkt-tl" aria-hidden="true">' + t + '</h2>' +
         (xs.length ? '<ul class="fkt-tlist">' + xs.map(function (x) { return '<li class="fkt-tc">' + card(x.c, x.c.name + ': ' + t + ' tier') + '</li>'; }).join('') + '</ul>' : '<p class="fkt-tnone">None</p>') + '</section>';
     }).join('') + '</div>';
+    var notes = '';
+    order.forEach(function (t) {
+      var groups = [];
+      by[t].forEach(function (x) {
+        if (!x.note) return;
+        var g = groups.filter(function (q) { return q.note === x.note; })[0];
+        if (g) g.xs.push(x); else groups.push({ note: x.note, xs: [x] });
+      });
+      groups.forEach(function (g) { notes += '<div class="fkt-why" data-t="' + t + '"><dt><b class="fkt-wt" aria-label="' + t + ' tier">' + t + '</b>' + esc(names(g.xs)) + '</dt><dd>' + esc(g.note) + '</dd></div>'; });
+    });
+    if (notes) html += '<section class="fkt-notes fk-drawn" aria-labelledby="fkt-why-h"><h2 class="fk-h2" id="fkt-why-h">Why they are ranked here</h2><dl>' + notes + '</dl></section>';
+    return html;
   }
 
   function render() {
