@@ -8848,7 +8848,7 @@ export default {
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
-          if (fkChar) el.append('<meta name="ov-bare" content="1"><style>html.fk-char,html.fk-char body{background:#000!important}html.fk-char #ug-main{visibility:hidden}html.fk-char .fk-detail{visibility:visible}html.fk-char #ug-hamburger,html.fk-char #ug-info-btn,html.fk-char #ug-sound-btn,html.fk-char .ntf-bell{display:none!important}</style>', { html: true });
+          if (fkChar) el.append('<meta name="ov-bare" content="1"><style>html.fk-char,html.fk-char body,html.fk-char.fk-on.ov:has(#ug-content[data-hdr]),html.fk-char.fk-on.ov[data-theme]:has(#ug-content[data-hdr]){background:#000!important}html.fk-char #ug-main{visibility:hidden}html.fk-char .fk-detail{visibility:visible}html.fk-char #ug-hamburger,html.fk-char #ug-info-btn,html.fk-char #ug-sound-btn,html.fk-char .ntf-bell{display:none!important}.fk-cover{position:fixed;inset:0;z-index:2147483600;background:#000;pointer-events:none;animation:fk-cover-x 0s 8s forwards}@keyframes fk-cover-x{to{visibility:hidden}}</style>', { html: true });
           if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">' + FWM_PRE_CSS + (ssr.fwWorld.bg ? '<link rel="preload" as="image" href="' + seoAttr(ssr.fwWorld.bg) + '">' : ''), { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
           if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -8932,6 +8932,7 @@ export default {
       })
       .on('body', {
         element(el) {
+          if (fkChar) el.prepend('<div class="fk-cover" aria-hidden="true"></div>', { html: true });
           if (ssr && ssr.fwChar) el.prepend('<div class="fwd-pre" aria-hidden="true"><i style="background-color:' + seoAttr(ssr.fwWorld.color) + (ssr.fwWorld.bg ? ';background-image:url(&quot;' + seoAttr(ssr.fwWorld.bg) + '&quot;)' : '') + '"></i><b></b></div>', { html: true });
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });

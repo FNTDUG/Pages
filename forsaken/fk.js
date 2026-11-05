@@ -234,7 +234,6 @@
   }
 
   function ability(a, i) {
-    var long = (a.desc || '').length > 520;
     var meta = [];
     if (isPassive(a)) meta.push('<b>Passive</b>');
     if (a.cd && !/^n\/?a$/i.test(a.cd)) meta.push('<span>Cooldown:</span> <b>' + esc(a.cd) + '</b>');
@@ -243,8 +242,7 @@
       (a.quote ? '<p class="fk-ab-q">' + esc(plain(a.quote)).replace(/\n+/g, '<br>') + '</p>' : '') +
       '<div class="fk-ab-b"><div class="fk-ab-i">' + slotIcon(a) + '</div><div>' +
       (meta.length ? '<p class="fk-ab-meta">' + meta.join('</p><p class="fk-ab-meta">') + '</p>' : '') +
-      '<div class="fk-rich' + (long ? ' fk-clip' : '') + '">' + rich(a.desc) + '</div>' +
-      (long ? '<button type="button" class="fk-btn fk-more" aria-expanded="false">Show more</button>' : '') +
+      '<div class="fk-rich">' + rich(a.desc) + '</div>' +
       '</div></div></article>';
   }
 
@@ -364,6 +362,38 @@
     return html;
   }
 
+  function modesOf(c) { return c.modes && c.modes.length > 1 ? c.modes : [{ name: c.name, image: c.image }]; }
+  function artImgs(c) {
+    return modesOf(c).map(function (m, i) { return '<img class="fk-art-m' + (i ? '' : ' fk-on') + '" src="' + esc(m.image) + '" alt="' + esc(m.name) + '"' + (i ? ' aria-hidden="true"' : '') + ' width="1200" height="1200" decoding="async" loading="eager">'; }).join('');
+  }
+  function modesHtml(c) {
+    if (!(c.modes && c.modes.length > 1)) return '';
+    return '<div class="fk-modes fk-rv" style="--i:2" role="group" aria-label="' + esc(c.name) + ' forms">' + c.modes.map(function (m, i) { return '<button type="button" class="fk-btn fk-mode" data-mode="' + i + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + esc(m.name) + '</button>'; }).join('') + '</div>';
+  }
+  function swapMode(btn) {
+    var art = det.querySelector('.fk-art'), imgs = art && art.querySelectorAll('.fk-art-m');
+    if (!imgs) return;
+    var to = imgs[+btn.getAttribute('data-mode')], from = art.querySelector('.fk-art-m.fk-on');
+    if (!to || to === from || art._ash) return;
+    Array.prototype.forEach.call(btn.parentNode.querySelectorAll('.fk-mode'), function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+    function go() {
+      from.classList.remove('fk-on'); from.setAttribute('aria-hidden', 'true');
+      to.classList.add('fk-on'); to.removeAttribute('aria-hidden');
+    }
+    var r = art.getBoundingClientRect();
+    if (reduced || !from.complete || !from.naturalWidth || r.width < 20) { go(); return; }
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1), W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+    var cv = document.createElement('canvas');
+    cv.className = 'fk-ash';
+    cv.width = W; cv.height = H;
+    var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, base;
+    try { o.drawImage(from, (W - dw) / 2, (H - dh) * 0.28, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
+    art._ash = 1;
+    art.insertBefore(cv, art.querySelector('.fk-art-glow'));
+    go();
+    ash(o, base, W, H, 0, dpr, 760, function () {}, function () { cv.remove(); art._ash = 0; });
+  }
+
   function detailHtml(c) {
     var sc = scopeOf(c), list = sc.ids, i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
@@ -378,7 +408,7 @@
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
       '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
-      '<div class="fk-art fk-rv" style="--i:0"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" width="900" height="900" decoding="async"><span class="fk-art-glow" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' +
+      '<div class="fk-artcol"><div class="fk-art fk-rv" style="--i:0">' + artImgs(c) + '<span class="fk-art-glow" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' + modesHtml(c) + '</div>' +
       '<div class="fk-side">' +
       '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><div class="fk-name">' + nameArt + '</div><div class="fk-tags">' + tags + '</div>' +
       (c.caption ? '<p class="fk-cap">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') + '</div>' +
@@ -440,6 +470,11 @@
     webIO.observe(web);
   }
 
+  function dropPre() {
+    var pre = document.querySelector('.fk-cover');
+    if (pre) requestAnimationFrame(function () { if (pre.parentNode) pre.parentNode.removeChild(pre); });
+  }
+
   function showDetail(id) {
     var c = byId[id];
     if (!c) { showMissing(id); return; }
@@ -454,6 +489,7 @@
     var dir = 0;
     try { dir = +sessionStorage.getItem('fk-dir') || 0; sessionStorage.removeItem('fk-dir'); } catch (e) {}
     if (!reduced) { if (dir) unwipe(dir); else det.classList.add('fk-reveal'); }
+    dropPre();
     startWeb();
     loadAudio(c);
   }
@@ -561,6 +597,7 @@
     var m = document.createElement('meta');
     m.name = 'robots'; m.content = 'noindex';
     document.head.appendChild(m);
+    dropPre();
   }
 
   var sb = null, sbT = null;
@@ -707,6 +744,17 @@
     }
     var base;
     try { base = o.getImageData(0, 0, W, H).data; } catch (e) { done(); return; }
+    cardEl.classList.add('fk-burning');
+    document.body.appendChild(cv);
+    cardEl.style.visibility = 'hidden';
+    gridView.classList.add('fk-dim');
+    ash(ctx, base, W, H, P, dpr, 680, function () {
+      done();
+      setTimeout(function () { if (cv.isConnected) cv.remove(); }, 900);
+    }, function () { cv.remove(); });
+  }
+
+  function ash(ctx, base, W, H, P, dpr, DUR, finish, end) {
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
     for (var q = 0; q < grid.length; q++) grid[q] = Math.random();
     var GS2 = 22 * dpr, gw2 = Math.ceil(W / GS2) + 2, grid2 = new Float32Array(gw2 * (Math.ceil(H / GS2) + 2));
@@ -727,11 +775,7 @@
       }
     }
     var out = ctx.createImageData(W, H), px = out.data;
-    var parts = [], t0 = 0, DUR = 680, last = 0;
-    cardEl.classList.add('fk-burning');
-    document.body.appendChild(cv);
-    cardEl.style.visibility = 'hidden';
-    gridView.classList.add('fk-dim');
+    var parts = [], t0 = 0, last = 0, fired = 0;
     function frame(now) {
       if (!t0) { t0 = now; last = now; }
       var k = Math.min(1, (now - t0) / DUR), dt = Math.min(0.05, (now - last) / 1000);
@@ -764,13 +808,9 @@
         ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, 6.283); ctx.fill();
       }
       ctx.globalCompositeOperation = 'source-over';
-      if (k < 1 || parts.length) { requestAnimationFrame(frame); if (k >= 1 && !cv._fired) { cv._fired = 1; finish(); } return; }
-      if (!cv._fired) finish();
-      cv.remove();
-    }
-    function finish() {
-      done();
-      setTimeout(function () { if (cv.isConnected) cv.remove(); }, 900);
+      if (k < 1 || parts.length) { requestAnimationFrame(frame); if (k >= 1 && !fired) { fired = 1; finish(); } return; }
+      if (!fired) finish();
+      end();
     }
     requestAnimationFrame(frame);
   }
@@ -927,14 +967,8 @@
     if (vm) { var ul = vm.previousElementSibling; ul.classList.remove('fk-vclip'); vm.remove(); sbSync(); return; }
     var um = e.target.closest('.fk-unmute');
     if (um) { if (window.ugSoundToggle && window.ugSoundMuted && window.ugSoundMuted()) window.ugSoundToggle(); hideMuteNote(); if (pending) playBtn(pending); return; }
-    var more = e.target.closest('.fk-more');
-    if (more) {
-      var r = more.previousElementSibling, open = more.getAttribute('aria-expanded') === 'true';
-      r.classList.toggle('fk-clip', open);
-      more.setAttribute('aria-expanded', String(!open));
-      more.textContent = open ? 'Show more' : 'Show less';
-      return;
-    }
+    var md = e.target.closest('.fk-mode');
+    if (md) { swapMode(md); return; }
     var se = e.target.closest('button.fk-se');
     if (se) { showTip(se); return; }
     if (tipFor) hideTip();
@@ -997,6 +1031,7 @@
       })();
     }
   }).catch(function () {
+    dropPre();
     gridView.querySelector('.fk-list').innerHTML = '<p class="fk-none">The roster could not load. Refresh the page to try again.</p>';
   });
 })();
