@@ -393,37 +393,37 @@
     if (m.abilities) o.abilities = m.abilities;
     return o;
   }
-  function snapText(dd) {
-    var r = dd.getBoundingClientRect();
-    if (r.width < 4 || !document.createRange) return null;
-    var dpr = Math.min(2, window.devicePixelRatio || 1), P = 18, X = 6;
-    var W = Math.round((r.width + 2 * X) * dpr), H = Math.round((r.height + 4) * dpr);
+  function snapText(el) {
+    var r = el.getBoundingClientRect();
+    if (r.width < 4 || !document.createRange || !document.createTreeWalker) return null;
+    var dpr = Math.min(2, window.devicePixelRatio || 1), P = 18;
+    var W = Math.round(r.width * dpr), H = Math.round(r.height * dpr), PP = Math.round(P * dpr);
     var cv = document.createElement('canvas');
-    cv.width = W; cv.height = H + Math.round(P * dpr);
-    var c = cv.getContext('2d');
-    Array.prototype.forEach.call(dd.childNodes, function (n) {
-      var el = n.nodeType === 1 ? n : dd, txt = n.textContent;
-      if (!txt || !/\S/.test(txt)) return;
-      var rr;
-      if (n.nodeType === 1) rr = n.getBoundingClientRect();
-      else { var rg = document.createRange(); rg.selectNodeContents(n); rr = rg.getBoundingClientRect(); }
-      var cs = getComputedStyle(el);
+    cv.width = W; cv.height = H + PP;
+    var c = cv.getContext('2d'), tw = document.createTreeWalker(el, 4), n;
+    c.textBaseline = 'alphabetic';
+    while ((n = tw.nextNode())) {
+      var txt = n.textContent;
+      if (!txt || !/\S/.test(txt)) continue;
+      var rg = document.createRange(); rg.selectNodeContents(n);
+      var rr = rg.getBoundingClientRect(), cs = getComputedStyle(n.parentNode);
       c.font = cs.fontWeight + ' ' + parseFloat(cs.fontSize) * dpr + 'px ' + cs.fontFamily;
       c.fillStyle = cs.color;
-      c.textBaseline = 'alphabetic';
       var m = c.measureText(txt), asc = m.actualBoundingBoxAscent || parseFloat(cs.fontSize) * dpr * 0.75, desc = m.actualBoundingBoxDescent || 0;
-      c.fillText(txt, (rr.left - r.left + X) * dpr, P * dpr + ((rr.top - r.top) + rr.height / 2) * dpr + (asc - desc) / 2);
-    });
+      c.fillText(txt, (rr.left - r.left) * dpr, PP + ((rr.top - r.top) + rr.height / 2) * dpr + (asc - desc) / 2);
+    }
     var base;
-    try { base = c.getImageData(0, Math.round(P * dpr), W, H).data; } catch (e) { return null; }
-    return { cv: cv, ctx: c, base: base, W: W, H: H, P: Math.round(P * dpr), dpr: dpr, x: dd.offsetLeft - X, y: dd.offsetTop - P, w: r.width + 2 * X, h: r.height + 4 + P };
+    try { base = c.getImageData(0, PP, W, H).data; } catch (e) { return null; }
+    return { cv: cv, ctx: c, base: base, W: W, H: H, P: PP, dpr: dpr, y: -P, w: r.width, h: r.height + P };
   }
   function burnText(tile, s, delay) {
-    var dd = tile.querySelector('dd'), DUR = 560;
+    var DUR = 560;
     s.cv.className = 'fk-ash-t';
-    s.cv.style.cssText = 'left:' + s.x + 'px;top:' + s.y + 'px;width:' + s.w + 'px;height:' + s.h + 'px';
+    s.cv.style.cssText = 'left:0;top:' + s.y + 'px;width:' + s.w + 'px;height:' + s.h + 'px';
     tile.appendChild(s.cv);
-    if (dd.animate) dd.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1 }], { duration: DUR, delay: delay, easing: 'ease-out', fill: 'backwards' });
+    Array.prototype.forEach.call(tile.querySelectorAll('dt,dd'), function (x) {
+      if (x.animate) x.animate([{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1 }], { duration: DUR, delay: delay, easing: 'ease-out', fill: 'backwards' });
+    });
     setTimeout(function () { ash(s.ctx, s.base, s.W, s.H, s.P, s.dpr, DUR, function () {}, function () { s.cv.remove(); }); }, delay);
   }
   function applyMode(i) {
@@ -432,16 +432,16 @@
     var dl = det.querySelector('.fk-stats');
     if (dl) {
       var old = {};
-      Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { var dd = s.querySelector('dd'); old[s.querySelector('dt').textContent] = { text: dd.textContent, dd: dd }; });
+      if (!reduced) Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { old[s.querySelector('dt').textContent] = snapText(s); });
       var box = document.createElement('div');
       box.innerHTML = stats(mc);
       var nd = box.firstChild, burns = [];
       Array.prototype.forEach.call(nd.querySelectorAll('.fk-stat'), function (s) {
-        var k = s.querySelector('dt').textContent, o = old[k];
-        if (o && o.text !== s.querySelector('dd').textContent && !reduced) { var snap = snapText(o.dd); if (snap) burns.push([s, snap]); }
+        var snap = old[s.querySelector('dt').textContent];
+        if (snap) burns.push([s, snap]);
       });
       dl.parentNode.replaceChild(nd, dl);
-      burns.forEach(function (b, i) { burnText(b[0], b[1], 90 + i * 110); });
+      burns.forEach(function (b, i) { burnText(b[0], b[1], 60 + i * 45); });
     }
     var sec = det.querySelector('section[aria-labelledby="fk-ab-h"]');
     if (sec) {
@@ -475,7 +475,13 @@
     cv.className = 'fk-ash';
     cv.width = W; cv.height = H;
     var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, base;
-    try { o.drawImage(from, (W - dw) / 2, (H - dh) * 0.28, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
+    var bdg = art.querySelector('.fk-art-badge'), br = bdg && bdg.complete && bdg.naturalWidth ? bdg.getBoundingClientRect() : null;
+    try {
+      o.drawImage(from, (W - dw) / 2, (H - dh) * 0.28, dw, dh);
+      if (br) { o.save(); o.shadowColor = 'rgba(0,0,0,.8)'; o.shadowBlur = 5 * dpr; o.shadowOffsetY = 3 * dpr; o.drawImage(bdg, (br.left - r.left) * dpr, (br.top - r.top) * dpr, br.width * dpr, br.height * dpr); o.restore(); }
+      base = o.getImageData(0, 0, W, H).data;
+    } catch (e) { go(); return; }
+    if (br && bdg.animate) bdg.animate([{ opacity: 0, transform: 'scale(.55) rotate(-25deg)' }, { opacity: 1, transform: 'scale(1.08) rotate(3deg)', offset: 0.7 }, { opacity: 1, transform: 'none' }], { duration: 460, delay: 820, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
     var fr = frameLayer(W, H, fb * dpr);
     art._ash = 1;
     art.insertBefore(cv, art.querySelector('.fk-art-glow'));
