@@ -355,7 +355,7 @@
     }
     var sc = scopeOf(c), list = sc.ids, i = list.indexOf(c.id);
     var prev = byId[list[(i - 1 + list.length) % list.length]], next = byId[list[(i + 1) % list.length]];
-    var html = '<nav class="fk-nav fk-drawn fk-rv" style="--i:9" aria-label="Forsaken Roster"><div class="fk-nav-h">Forsaken Roster</div>';
+    var html = '<nav class="fk-nav fk-drawn fk-rv" style="--i:9" aria-label="The Forsaken"><div class="fk-nav-h">The Forsaken</div>';
     CLS.forEach(function (k) { html += row(k + 's', groupIds(k, 'survivor')); });
     html += row('Killers', order.killer);
     html += '<div class="fk-pn"><a href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" rel="prev" data-google-vignette="false">&lsaquo; Previous<em>' + esc(prev.name) + '</em></a><a href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" rel="next" data-google-vignette="false">Next &rsaquo;<em>' + esc(next.name) + '</em></a></div></nav>';
@@ -432,16 +432,18 @@
     var dl = det.querySelector('.fk-stats');
     if (dl) {
       var old = {};
-      if (!reduced) Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { old[s.querySelector('dt').textContent] = snapText(s); });
+      Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { old[s.querySelector('dt').textContent] = { v: s.querySelector('dd').textContent, el: s }; });
       var box = document.createElement('div');
       box.innerHTML = stats(mc);
       var nd = box.firstChild, burns = [];
       Array.prototype.forEach.call(nd.querySelectorAll('.fk-stat'), function (s) {
-        var snap = old[s.querySelector('dt').textContent];
+        var o = old[s.querySelector('dt').textContent];
+        if (reduced || !o || o.v === s.querySelector('dd').textContent) return;
+        var snap = snapText(o.el);
         if (snap) burns.push([s, snap]);
       });
       dl.parentNode.replaceChild(nd, dl);
-      burns.forEach(function (b, i) { burnText(b[0], b[1], 60 + i * 45); });
+      burns.forEach(function (b, i) { burnText(b[0], b[1], 90 + i * 110); });
     }
     var sec = det.querySelector('section[aria-labelledby="fk-ab-h"]');
     if (sec) {
@@ -469,7 +471,7 @@
     }
     var r = art.getBoundingClientRect();
     if (reduced || !from.complete || !from.naturalWidth || r.width < 20) { go(); return; }
-    var fb = parseFloat(getComputedStyle(art, '::after').borderTopWidth) || 0;
+    var fb = parseFloat(getComputedStyle(art).getPropertyValue('--fb')) || 9;
     var dpr = Math.min(1.5, window.devicePixelRatio || 1), W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
     var cv = document.createElement('canvas');
     cv.className = 'fk-ash';
@@ -501,9 +503,9 @@
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
       '<span class="fk-count">' + esc(sc.label) + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
-      '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
+      '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to The Forsaken" title="Back to The Forsaken" data-google-vignette="false">The Forsaken</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
-      '<div class="fk-artcol"><div class="fk-art fk-rv" style="--i:0">' + artImgs(c) + '<span class="fk-art-glow" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' + modesHtml(c) + '</div>' +
+      '<div class="fk-artcol"><div class="fk-art fk-rv" style="--i:0">' + artImgs(c) + '<span class="fk-art-glow" aria-hidden="true"></span><span class="fk-art-f" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' + modesHtml(c) + '</div>' +
       '<div class="fk-side">' +
       '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><div class="fk-name">' + nameArt + '</div><div class="fk-tags">' + tags + '</div>' +
       (c.caption ? '<p class="fk-cap">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') + '</div>' +
@@ -527,7 +529,7 @@
       if (descEl) descText = descEl.textContent;
     }
     if (c) {
-      document.title = c.name + ' | Forsaken Roster | FNTD User Guide';
+      document.title = c.name + ' | The Forsaken | FNTD User Guide';
       if (titleEl) {
         if (titleEl.querySelector('.ov-hl')) {
           var w = c.name.split(' '), last = w.pop();
@@ -686,7 +688,7 @@
 
   function showMissing(id) {
     cur = null;
-    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster"></a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; on the roster.</p></div>';
+    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to The Forsaken"></a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; in The Forsaken.</p></div>';
     gridView.hidden = true;
     det.hidden = false;
     var m = document.createElement('meta');
@@ -1128,6 +1130,6 @@
     }
   }).catch(function () {
     dropPre();
-    gridView.querySelector('.fk-list').innerHTML = '<p class="fk-none">The roster could not load. Refresh the page to try again.</p>';
+    gridView.querySelector('.fk-list').innerHTML = '<p class="fk-none">The characters could not load. Refresh the page to try again.</p>';
   });
 })();
