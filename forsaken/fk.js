@@ -191,13 +191,44 @@
     return '<span class="fk-circ' + (a.icon ? ' fk-has' : '') + '">' + img + '<span class="fk-cd" aria-hidden="true"></span></span>';
   }
 
-  function loadout(c) {
-    var main = c.abilities.filter(function (a) { return !isSub(a); });
-    if (!main.length) return '';
-    var pas = main.filter(isPassive), act = main.filter(function (a) { return !isPassive(a); });
-    return '<div class="fk-load fk-drawn fk-rv" role="list" aria-label="Abilities">' + pas.concat(act).map(function (a) {
-      return '<a role="listitem" class="fk-slot" href="#' + abId(a) + '" data-ab="' + abId(a) + '" aria-label="' + esc(a.name) + (isPassive(a) ? ', passive' : '') + (a.cd && !/^n\/?a$/i.test(a.cd) ? ', cooldown ' + esc(a.cd) : '') + '">' + slotIcon(a) + '<span class="fk-slot-l" aria-hidden="true">' + esc(a.name) + '</span></a>';
-    }).join('') + '</div>';
+  function abGroups(c) {
+    var mains = [], byKey = {};
+    c.abilities.forEach(function (a) {
+      if (isSub(a)) {
+        var key = a.name.split(' - ')[0].trim().toUpperCase();
+        if (byKey[key]) { byKey[key].subs.push(a); return; }
+      }
+      var g = { main: a, subs: [] };
+      mains.push(g);
+      byKey[a.name.toUpperCase()] = g;
+    });
+    return mains.filter(function (g) { return isPassive(g.main); }).concat(mains.filter(function (g) { return !isPassive(g.main); }));
+  }
+
+  function abilitiesSection(c) {
+    var groups = abGroups(c);
+    if (!groups.length) return '';
+    var tabs = groups.map(function (g, i) {
+      var a = g.main, id = abId(a);
+      return '<button type="button" role="tab" class="fk-slot" id="tab-' + id + '" data-ab="' + id + '" aria-controls="' + id + '" aria-selected="' + (i === 0) + '" tabindex="' + (i === 0 ? 0 : -1) + '" aria-label="' + esc(a.name) + (isPassive(a) ? ', passive' : '') + (a.cd && !/^n\/?a$/i.test(a.cd) ? ', cooldown ' + esc(a.cd) : '') + '">' + slotIcon(a) + '<span class="fk-slot-l" aria-hidden="true">' + esc(a.name) + '</span></button>';
+    }).join('');
+    var panels = groups.map(function (g, i) {
+      var id = abId(g.main);
+      return '<div class="fk-abp" role="tabpanel" id="' + id + '" aria-labelledby="tab-' + id + '"' + (i ? ' hidden' : '') + '>' + [g.main].concat(g.subs).map(ability).join('') + '</div>';
+    }).join('');
+    return '<section class="fk-sec" aria-labelledby="fk-ab-h"><h2 class="fk-h2 fk-rv" style="--i:6" id="fk-ab-h">Abilities</h2><div class="fk-load fk-drawn fk-rv" role="tablist" aria-label="Abilities">' + tabs + '</div><div class="fk-abs fk-rv" style="--i:7">' + panels + '</div></section>';
+  }
+
+  function showAbility(tab, focus) {
+    var list = tab.parentNode, id = tab.getAttribute('data-ab');
+    Array.prototype.forEach.call(list.querySelectorAll('.fk-slot'), function (t) { var on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Array.prototype.forEach.call(det.querySelectorAll('.fk-abp'), function (p) {
+      var on = p.id === id;
+      p.hidden = !on;
+      if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
+    });
+    if (focus) tab.focus();
+    if (scrollbar) sbSync();
   }
 
   function ability(a, i) {
@@ -205,7 +236,7 @@
     var meta = [];
     if (isPassive(a)) meta.push('<b>Passive</b>');
     if (a.cd && !/^n\/?a$/i.test(a.cd)) meta.push('<span>Cooldown:</span> <b>' + esc(a.cd) + '</b>');
-    return '<article class="fk-ab fk-drawn fk-rv" id="' + abId(a) + '" style="--i:' + Math.min(i + 6, 14) + '">' +
+    return '<article class="fk-ab fk-drawn"' + (isSub(a) ? ' id="' + abId(a) + '"' : '') + '>' +
       '<h3 class="fk-ab-n">' + esc(a.name) + '</h3>' +
       (a.quote ? '<p class="fk-ab-q">' + esc(plain(a.quote)).replace(/\n+/g, '<br>') + '</p>' : '') +
       '<div class="fk-ab-b"><div class="fk-ab-i">' + slotIcon(a) + '</div><div>' +
@@ -308,7 +339,11 @@
     }
     var k = w.skins[i];
     for (var n = i; n >= 0; n = w.parent[n]) { var p = det.querySelector('.fk-lines path[data-n="' + n + '"]'); if (p) p.classList.add('fk-hot'); }
-    box.innerHTML = '<div class="fk-pick-img">' + (k.img ? '<img src="' + esc(big(k.img)) + '" alt="' + esc(k.name) + ' skin" referrerpolicy="no-referrer">' : '') + '</div><div><p class="fk-pick-n">' + esc(k.name) + '</p><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>';
+    var sa = AUDIO && AUDIO.skins[k.name];
+    var audio = sa ? (sa.themes.length ? '<ul class="fk-themes fk-themes--sm">' + sa.themes.map(function (t) { return themeCard(t, c); }).join('') + '</ul>' : '') + (sa.voice.length ? '<p class="fk-pick-sub">Voicelines <b>' + sa.voice.length + '</b></p><div class="fk-pick-vl">' + voiceList(sa.voice, 6) + '</div>' : '') : (k.au ? '<p class="fk-pick-cap">Loading audio...</p>' : '');
+    box.innerHTML = '<div class="fk-pick-img">' + (k.img ? '<img src="' + esc(big(k.img)) + '" alt="' + esc(k.name) + ' skin" referrerpolicy="no-referrer">' : '') + '</div><div class="fk-pick-info"><p class="fk-pick-n">' + esc(k.name) + '</p><p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
+    paintPlay();
+    sbSync();
   }
 
   function navbox(c) {
@@ -350,7 +385,8 @@
       '<section class="fk-sec fk-rv" style="--i:5" aria-labelledby="fk-ov-h"><h2 class="fk-h2" id="fk-ov-h">Overview</h2><div class="fk-ov fk-drawn">' +
       (c.lead ? '<p class="fk-lead">' + inline(c.lead) + '</p>' : '') +
       (c.description ? '<blockquote class="fk-desc">' + esc(plain(c.description)) + '</blockquote>' : '') + '</div></section>' +
-      (c.abilities.length ? '<section class="fk-sec" aria-labelledby="fk-ab-h"><h2 class="fk-h2 fk-rv" style="--i:6" id="fk-ab-h">Abilities</h2>' + loadout(c) + '<div class="fk-abs">' + c.abilities.map(ability).join('') + '</div></section>' : '') +
+      abilitiesSection(c) +
+      '<div class="fk-audio" data-audio="' + esc(c.audio || '') + '"></div>' +
       skinsSection(c) +
       navbox(c) +
       '<p class="fk-src">' + (c.map ? 'Background: ' + esc(c.map) + '. ' : '') + 'Stats, abilities and skins are from the FORSAKEN Wiki on Fandom.</p></div>';
@@ -417,6 +453,109 @@
     try { dir = +sessionStorage.getItem('fk-dir') || 0; sessionStorage.removeItem('fk-dir'); } catch (e) {}
     if (!reduced) { if (dir) unwipe(dir); else det.classList.add('fk-reveal'); }
     startWeb();
+    loadAudio(c);
+  }
+
+  var AUDIO = null, player = null, playing = null, pending = null, muteNote = null;
+  function fmt(t) { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
+  function playIcon() { return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="fk-pi" d="M8 5.5v13l11-6.5z"/><path class="fk-pa" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>'; }
+  function playButton(src, label, big) { return '<button type="button" class="fk-play' + (big ? ' fk-play--big' : '') + '" data-src="' + esc(src) + '" aria-label="Play ' + esc(label) + '" aria-pressed="false">' + playIcon() + '</button>'; }
+  function themeCard(t, owner) {
+    var kind = t.kind === 'Chase' ? 'Chase theme' : 'Last Man Standing';
+    return '<li class="fk-theme">' + playButton(t.src, t.name, true) + '<div class="fk-theme-b"><p class="fk-theme-k">' + kind + '</p><p class="fk-theme-n">' + esc(t.name) + '</p>' + (t.when ? '<p class="fk-theme-w">' + esc(t.when) + '</p>' : '') + (t.by ? '<p class="fk-theme-by">by ' + esc(t.by) + '</p>' : '') + '<p class="fk-theme-t" aria-hidden="true"></p></div></li>';
+  }
+  function voiceRow(v) {
+    var label = v.text || v.when || 'voiceline';
+    return '<li class="fk-vl">' + playButton(v.src, label) + '<div class="fk-vl-b">' + (v.text ? '<p class="fk-vl-t">' + esc(v.text) + '</p>' : '') + (v.when ? '<p class="fk-vl-w">' + esc(v.when) + '</p>' : '') + '</div></li>';
+  }
+  function voiceList(list, cap) {
+    var clip = list.length > cap;
+    return '<ul class="fk-vls' + (clip ? ' fk-vclip' : '') + '" style="--cap:' + cap + '">' + list.map(voiceRow).join('') + '</ul>' + (clip ? '<button type="button" class="fk-btn fk-vmore">Show all ' + list.length + '</button>' : '');
+  }
+  function loadAudio(c) {
+    var box = det.querySelector('.fk-audio');
+    if (!box || !c.audio) return;
+    get('/forsaken/audio/' + c.id + '.json?v=' + c.audio).then(function (a) {
+      if (!cur || cur.id !== c.id) return;
+      AUDIO = a;
+      var html = '';
+      if (a.themes.length) html += '<section class="fk-sec" aria-labelledby="fk-th-h"><h2 class="fk-h2" id="fk-th-h">Themes <small>' + a.themes.length + '</small></h2><ul class="fk-themes">' + a.themes.map(function (t) { return themeCard(t, c); }).join('') + '</ul></section>';
+      if (a.voice.length) html += '<section class="fk-sec" aria-labelledby="fk-vl-h"><h2 class="fk-h2" id="fk-vl-h">Voicelines <small>' + a.voice.length + '</small></h2><div class="fk-vlbox fk-drawn">' + voiceList(a.voice, 8) + '</div></section>';
+      box.innerHTML = html;
+      Array.prototype.forEach.call(det.querySelectorAll('.fk-node'), function (n) {
+        var k = root._web && root._web.skins[+n.getAttribute('data-n')];
+        if (k && a.skins[k.name] && !n.querySelector('.fk-node-au')) { n.insertAdjacentHTML('beforeend', '<span class="fk-node-au" aria-hidden="true"></span>'); n.setAttribute('aria-label', n.getAttribute('aria-label') + ', has audio'); }
+      });
+      var sel = det.querySelector('.fk-node[aria-pressed="true"]');
+      if (sel) pick(cur, +sel.getAttribute('data-n'));
+      sbSync();
+    }).catch(function () {});
+  }
+  function hideMuteNote() { if (muteNote) muteNote.classList.remove('fk-on'); }
+  function showMuteNote() {
+    if (!muteNote) {
+      muteNote = document.createElement('div');
+      muteNote.className = 'fk-mutenote';
+      muteNote.setAttribute('role', 'status');
+      muteNote.innerHTML = '<span>Site sounds are muted.</span><button type="button" class="fk-btn fk-unmute">Unmute</button>';
+      det.appendChild(muteNote);
+    }
+    muteNote.classList.add('fk-on');
+    clearTimeout(muteNote._t);
+    muteNote._t = setTimeout(hideMuteNote, 7000);
+  }
+  function paintPlay() {
+    Array.prototype.forEach.call(det.querySelectorAll('.fk-play'), function (b) {
+      var on = !!(playing && b.getAttribute('data-src') === playing && player && !player.paused);
+      b.classList.toggle('fk-on', on);
+      b.setAttribute('aria-pressed', String(on));
+      if (!(playing && b.getAttribute('data-src') === playing)) b.style.removeProperty('--p');
+    });
+  }
+  function tick() {
+    if (!player || !playing) return;
+    var p = player.duration ? player.currentTime / player.duration : 0;
+    Array.prototype.forEach.call(det.querySelectorAll('.fk-play'), function (b) {
+      if (b.getAttribute('data-src') !== playing) return;
+      b.style.setProperty('--p', (p * 360).toFixed(1) + 'deg');
+      var t = b.parentNode.querySelector('.fk-theme-t');
+      if (t) t.textContent = fmt(player.currentTime) + (player.duration ? ' / ' + fmt(player.duration) : '');
+    });
+  }
+  function playBtn(b) {
+    var src = b.getAttribute('data-src');
+    if (window.ugSoundMuted && window.ugSoundMuted()) { pending = b; showMuteNote(); return; }
+    pending = null;
+    if (!player) {
+      player = new Audio();
+      player.preload = 'none';
+      player.volume = 0.8;
+      player.addEventListener('timeupdate', tick);
+      player.addEventListener('play', paintPlay);
+      player.addEventListener('pause', paintPlay);
+      player.addEventListener('ended', function () { playing = null; paintPlay(); Array.prototype.forEach.call(det.querySelectorAll('.fk-theme-t'), function (t) { t.textContent = ''; }); });
+      player.addEventListener('error', function () { playing = null; paintPlay(); });
+    }
+    if (playing === src) { if (player.paused) player.play().catch(function () {}); else player.pause(); return; }
+    if (player && !player.paused) player.pause();
+    playing = src;
+    paintPlay();
+    b.classList.add('fk-wait');
+    blobFor(src).then(function (url) {
+      b.classList.remove('fk-wait');
+      if (playing !== src) return;
+      player.src = url;
+      player.currentTime = 0;
+      player.play().catch(function () { playing = null; paintPlay(); });
+    }).catch(function () { b.classList.remove('fk-wait'); b.classList.add('fk-err'); if (playing === src) { playing = null; paintPlay(); } });
+  }
+  var blobs = {};
+  function blobFor(src) {
+    if (!blobs[src]) blobs[src] = fetch(src, { referrerPolicy: 'no-referrer', credentials: 'omit' }).then(function (r) {
+      if (!r.ok || !/audio|ogg|octet/i.test(r.headers.get('content-type') || '')) throw new Error('bad audio');
+      return r.blob();
+    }).then(function (bl) { return URL.createObjectURL(bl); }).catch(function (e) { delete blobs[src]; throw e; });
+    return blobs[src];
   }
 
   function showMissing(id) {
@@ -786,15 +925,13 @@
       return;
     }
     var slot = e.target.closest('.fk-slot');
-    if (slot) {
-      e.preventDefault();
-      var t = document.getElementById(slot.getAttribute('data-ab'));
-      if (t) {
-        t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-        Array.prototype.forEach.call(det.querySelectorAll('.fk-ab'), function (x) { x.classList.toggle('fk-on', x === t); });
-      }
-      return;
-    }
+    if (slot) { e.preventDefault(); showAbility(slot); return; }
+    var pb = e.target.closest('.fk-play');
+    if (pb) { e.preventDefault(); playBtn(pb); return; }
+    var vm = e.target.closest('.fk-vmore');
+    if (vm) { var ul = vm.previousElementSibling; ul.classList.remove('fk-vclip'); vm.remove(); sbSync(); return; }
+    var um = e.target.closest('.fk-unmute');
+    if (um) { if (window.ugSoundToggle && window.ugSoundMuted && window.ugSoundMuted()) window.ugSoundToggle(); hideMuteNote(); if (pending) playBtn(pending); return; }
     var more = e.target.closest('.fk-more');
     if (more) {
       var r = more.previousElementSibling, open = more.getAttribute('aria-expanded') === 'true';
@@ -822,6 +959,14 @@
     if (!cur || det.hidden) return;
     if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
     if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var tl = e.target && e.target.closest && e.target.closest('.fk-load');
+    if (tl && /^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key)) {
+      e.preventDefault();
+      var ts = Array.prototype.slice.call(tl.querySelectorAll('.fk-slot')), at = ts.indexOf(e.target.closest('.fk-slot'));
+      var to = e.key === 'Home' ? 0 : e.key === 'End' ? ts.length - 1 : (at + (e.key === 'ArrowRight' ? 1 : -1) + ts.length) % ts.length;
+      showAbility(ts[to], true);
+      return;
+    }
     if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
     else if (e.key === 'Escape') { if (tipFor) hideTip(); else toRoster(); }
