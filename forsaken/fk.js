@@ -164,7 +164,8 @@
 
   function stat(label, val, cls, unit) {
     if (val == null || val === '') return '';
-    return '<div class="fk-stat' + (cls ? ' ' + cls : '') + '"><dt>' + esc(label) + '</dt><dd>' + esc(val) + (unit ? '<small>' + esc(unit) + '</small>' : '') + '</dd></div>';
+    var x = /^(.*?)\s*\((\+[^)]*)\)$/.exec(String(val));
+    return '<div class="fk-stat' + (cls ? ' ' + cls : '') + '"><dt>' + esc(label) + '</dt><dd>' + esc(x ? x[1] : val) + (unit ? '<small>' + esc(unit) + '</small>' : '') + (x ? '<span class="fk-stat-x">' + esc(x[2]) + '</span>' : '') + '</dd></div>';
   }
 
   function stats(c) {

@@ -354,3 +354,4 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-abp.fk-swap,.fk-load.fk-swap{animation:none}
 .fk-btn:hover,.fk-btn:focus-visible,.fk-x:hover,.fk-card:hover{transform:none}
 }
+.fk-stat-x{display:block;margin-top:3px;font-family:var(--fk-serif);font-weight:400;font-size:16px;line-height:1.2;color:#e6e6e6}
