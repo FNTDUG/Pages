@@ -58,7 +58,7 @@
 
 .fk-detail{position:fixed;inset:0;z-index:2147483600;overflow-y:auto;overscroll-behavior:contain;background:#000;outline:none;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fk-detail::-webkit-scrollbar{display:none}
-.fk-sb{position:fixed;z-index:2147483610;top:12px;bottom:12px;right:8px;width:30px;background:url("/forsaken/img/ui-sb-track.webp?v=2") center top/100% auto repeat-y;box-shadow:0 0 0 1px rgba(0,0,0,.6);cursor:pointer;touch-action:none}
+.fk-sb{position:fixed;z-index:2147483610;top:12px;bottom:12px;right:8px;width:30px;background:url("/forsaken/img/ui-sb-top.webp") center top/100% auto no-repeat,url("/forsaken/img/ui-sb-bot.webp") center bottom/100% auto no-repeat,url("/forsaken/img/ui-sb-track.webp?v=2") center top/100% auto repeat-y;box-shadow:0 0 0 1px rgba(0,0,0,.6);cursor:pointer;touch-action:none}
 .fk-sb[hidden]{display:none}
 .fk-sb-t{position:absolute;left:50%;top:0;width:14px;margin-left:-7px;min-height:44px;border-style:solid;border-color:transparent;border-width:9px 0;border-image:url("/forsaken/img/ui-sb-thumb.webp") 24 0 fill / 10px 0 round;cursor:grab;transition:filter .15s}
 .fk-sb-t:hover,.fk-sb.fk-drag .fk-sb-t{filter:drop-shadow(0 0 4px rgba(255,255,255,.7))}

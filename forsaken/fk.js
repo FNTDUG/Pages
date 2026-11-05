@@ -432,12 +432,12 @@
   var sb = null, sbT = null;
   function sbSync() {
     if (!sb) return;
-    var ch = det.clientHeight, sh = det.scrollHeight, th = sb.clientHeight;
+    var ch = det.clientHeight, sh = det.scrollHeight, cap = Math.round(sb.clientWidth * 34 / 60) + 1, th = sb.clientHeight - cap * 2;
     if (sh <= ch + 2) { sb.hidden = true; return; }
     sb.hidden = false;
     var h = Math.max(44, Math.round(th * ch / sh));
     sbT.style.height = h + 'px';
-    sbT.style.transform = 'translateY(' + Math.round((th - h) * det.scrollTop / (sh - ch)) + 'px)';
+    sbT.style.transform = 'translateY(' + (cap + Math.round((th - h) * det.scrollTop / (sh - ch))) + 'px)';
   }
   function scrollbar() {
     if (sb) { sbSync(); return; }
@@ -452,7 +452,7 @@
     window.addEventListener('resize', sbSync);
     if ('ResizeObserver' in window) new ResizeObserver(sbSync).observe(det.firstElementChild || det);
     var startY = 0, startTop = 0;
-    function ratio() { var th = sb.clientHeight - sbT.offsetHeight; return th > 0 ? (det.scrollHeight - det.clientHeight) / th : 0; }
+    function ratio() { var th = sb.clientHeight - (Math.round(sb.clientWidth * 34 / 60) + 1) * 2 - sbT.offsetHeight; return th > 0 ? (det.scrollHeight - det.clientHeight) / th : 0; }
     sbT.addEventListener('pointerdown', function (e) {
       e.preventDefault(); e.stopPropagation();
       startY = e.clientY; startTop = det.scrollTop;
