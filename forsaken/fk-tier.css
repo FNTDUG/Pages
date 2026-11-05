@@ -23,7 +23,7 @@
 .fkt-map{isolation:isolate}
 .fkt-map-n{margin:0;font-family:var(--fk-serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;text-shadow:0 2px 0 #000,0 0 12px rgba(0,0,0,.9)}
 .fkt-gauge{position:relative;width:100%;max-width:250px;aspect-ratio:640/352;background:url("/forsaken/img/ui-gauge.webp") center/100% 100% no-repeat;container-type:inline-size}
-.fkt-gs,.fkt-gk{position:absolute;top:66%;width:2ch;margin-left:-1ch;text-align:center;font-family:var(--fk-title);font-weight:800;font-size:34px;line-height:1;color:#050505;pointer-events:none}
+.fkt-gs,.fkt-gk{position:absolute;top:66%;width:2ch;margin-left:-1ch;text-align:center;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:34px;line-height:1;color:#050505;pointer-events:none}
 .fkt-gs{left:13.75%}
 .fkt-gk{left:86.25%}
 .fkt-needle{position:absolute;left:calc(50% - 45% * 38 / 420);top:93.75%;width:45%;aspect-ratio:420/76;margin-top:calc(-45% * 38 / 420);background:url("/forsaken/img/ui-needle.webp") center/100% 100% no-repeat;transform-origin:9.05% 50%;transform:rotate(var(--a,270deg))}
