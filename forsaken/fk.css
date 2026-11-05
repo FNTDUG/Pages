@@ -173,12 +173,12 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-sk-tools{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 16px;padding:2px 0}
 .fk-sk-tools .fk-btn{min-height:40px;padding:2px 18px;font-size:19px}
 .fk-skins{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
-.fk-webbox{padding:6px}
-.fk-web{position:relative;aspect-ratio:1/1;width:min(100%,860px,max(600px,calc(100vh - 220px)));margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
+.fk-webbox{--wp:6px;--ws:min(100cqw,860px,max(600px,calc(100vh - 220px)));container-type:inline-size;padding:var(--wp)}
+.fk-web{position:relative;aspect-ratio:1/1;width:var(--ws);margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
 .fk-web svg.fk-lines{position:absolute;inset:0;width:100%;height:100%}
 .fk-web svg.fk-lines path{fill:none;stroke:#8a6a48;stroke-width:.35;stroke-linecap:round;opacity:.8}
 .fk-web svg.fk-lines path.fk-hot{stroke:#ffd27a;opacity:1;stroke-width:.55}
-.fk-fog{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 64.8%,rgba(20,0,0,.5) 81.6%,rgba(0,0,0,.85) 98.4%) center/100% 100% no-repeat;opacity:0}
+.fk-fog{position:absolute;top:calc(0px - var(--wp));bottom:calc(0px - var(--wp));left:calc(50% - 50cqw - var(--wp));right:calc(50% - 50cqw - var(--wp));pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent calc(var(--ws) * .458),rgba(20,0,0,.5) calc(var(--ws) * .577),rgba(0,0,0,.85) calc(var(--ws) * .696));opacity:0}
 .fk-node{position:absolute;width:var(--ns,9%);aspect-ratio:1/1;transform:translate(-50%,-50%);padding:0;border:0;background:none;cursor:pointer;z-index:2}
 .fk-node i{position:absolute;inset:0;clip-path:polygon(25% 3%,75% 3%,97% 50%,75% 97%,25% 97%,3% 50%);background:var(--g,#bbb)}
 .fk-node b{position:absolute;inset:8%;clip-path:polygon(25% 3%,75% 3%,97% 50%,75% 97%,25% 97%,3% 50%);background:radial-gradient(circle at 50% 40%,#2b2b2b,#070707);overflow:hidden}
@@ -245,7 +245,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-reveal .fk-bg i{animation:fk-bgin .9s ease-out both}
 @keyframes fk-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes fk-draw{from{stroke-dashoffset:var(--len,60)}to{stroke-dashoffset:0}}
-@keyframes fk-fog{from{opacity:0;background-size:125% 125%}to{opacity:1;background-size:100% 100%}}
+@keyframes fk-fog{from{opacity:0}to{opacity:1}}
 @keyframes fk-core{0%{box-shadow:0 0 0 3px #000,0 0 0 5px #fff,0 0 0 rgba(255,90,60,0)}50%{box-shadow:0 0 0 3px #000,0 0 0 5px #fff,0 0 46px rgba(255,140,60,.95)}100%{box-shadow:0 0 0 3px #000,0 0 0 5px #fff,0 0 24px rgba(255,90,60,.45)}}
 @keyframes fk-heart{0%{opacity:0}16%{opacity:1}32%{opacity:.2}50%{opacity:.8}100%{opacity:0}}
 @keyframes fk-mist{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
@@ -332,7 +332,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-dia img{inset:8px;width:36px!important;height:36px!important}
 .fk-slot{min-width:82px}
 .fk-load{gap:26px 10px;padding:26px 6px 28px}
-.fk-webbox{margin-inline:-4px;padding:0}
+.fk-webbox{--wp:0px;margin-inline:-4px}
 .fk-web .fk-node{width:calc(var(--ns,9%) * 1.16)}
 .fk-pick{grid-template-columns:140px minmax(0,1fr);gap:8px 14px;padding:12px}
 .fk-pick-info{padding-top:0}
