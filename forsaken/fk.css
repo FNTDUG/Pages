@@ -84,7 +84,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-art img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 28%}
 .fk-art .fk-art-m{z-index:0}
 .fk-art .fk-art-m.fk-on{z-index:1}
-.fk-art canvas.fk-ash{position:absolute;z-index:2;pointer-events:none}
+.fk-art canvas.fk-ash{position:absolute;inset:0;z-index:2;width:100%;height:100%;pointer-events:none}
 .fk-modes{display:flex;justify-content:center;gap:22px;padding:4px 18px 0}
 .fk-mode{flex:1 1 0;max-width:210px;min-height:50px;padding:4px 18px;font-size:23px}
 .fk-art::after{content:"";position:absolute;inset:0;z-index:4;border:9px solid transparent;border-image:var(--fk-frame) 30 / 9px stretch;pointer-events:none}

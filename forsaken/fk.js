@@ -370,6 +370,22 @@
     if (!(c.modes && c.modes.length > 1)) return '';
     return '<div class="fk-modes fk-rv" style="--i:2" role="group" aria-label="' + esc(c.name) + ' forms">' + c.modes.map(function (m, i) { return '<button type="button" class="fk-btn fk-mode" data-mode="' + i + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + esc(m.name) + '</button>'; }).join('') + '</div>';
   }
+  var frameImg = null;
+  if (CHAR) { frameImg = new Image(); frameImg.src = '/forsaken/img/ui-frame.webp'; }
+  function frameLayer(W, H, b) {
+    if (!frameImg || !frameImg.complete || !frameImg.naturalWidth || !b) return null;
+    var f = document.createElement('canvas');
+    f.width = W; f.height = H;
+    var x = f.getContext('2d'), S = 30, iw = frameImg.naturalWidth, ih = frameImg.naturalHeight;
+    var sx = [0, S, iw - S, iw], sy = [0, S, ih - S, ih], dx = [0, b, W - b, W], dy = [0, b, H - b, H];
+    try {
+      for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) {
+        if (i === 1 && j === 1) continue;
+        x.drawImage(frameImg, sx[i], sy[j], sx[i + 1] - sx[i], sy[j + 1] - sy[j], dx[i], dy[j], dx[i + 1] - dx[i], dy[j + 1] - dy[j]);
+      }
+    } catch (e) { return null; }
+    return f;
+  }
   function swapMode(btn) {
     var art = det.querySelector('.fk-art'), imgs = art && art.querySelectorAll('.fk-art-m');
     if (!imgs) return;
@@ -383,18 +399,17 @@
     var r = art.getBoundingClientRect();
     if (reduced || !from.complete || !from.naturalWidth || r.width < 20) { go(); return; }
     var fb = parseFloat(getComputedStyle(art, '::after').borderTopWidth) || 0;
-    var dpr = Math.min(1.5, window.devicePixelRatio || 1), FW = r.width * dpr, FH = r.height * dpr, B = fb * dpr;
-    var W = Math.round(FW - 2 * B), H = Math.round(FH - 2 * B);
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1), W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
     var cv = document.createElement('canvas');
     cv.className = 'fk-ash';
     cv.width = W; cv.height = H;
-    cv.style.cssText = 'left:' + fb + 'px;top:' + fb + 'px;width:' + (r.width - 2 * fb) + 'px;height:' + (r.height - 2 * fb) + 'px';
-    var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(FW / iw, FH / ih), dw = iw * s, dh = ih * s, base;
-    try { o.drawImage(from, (FW - dw) / 2 - B, (FH - dh) * 0.28 - B, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
+    var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, base;
+    try { o.drawImage(from, (W - dw) / 2, (H - dh) * 0.28, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
+    var fr = frameLayer(W, H, fb * dpr);
     art._ash = 1;
     art.insertBefore(cv, art.querySelector('.fk-art-glow'));
     go();
-    ash(o, base, W, H, 0, dpr, 760, function () {}, function () { cv.remove(); art._ash = 0; });
+    ash(o, base, W, H, 0, dpr, 760, function () {}, function () { cv.remove(); art._ash = 0; }, fr && function (c) { c.drawImage(fr, 0, 0); });
   }
 
   function detailHtml(c) {
@@ -757,7 +772,7 @@
     }, function () { cv.remove(); });
   }
 
-  function ash(ctx, base, W, H, P, dpr, DUR, finish, end) {
+  function ash(ctx, base, W, H, P, dpr, DUR, finish, end, over) {
     var GS = 6 * dpr, gw = Math.ceil(W / GS) + 2, gh = Math.ceil(H / GS) + 2, grid = new Float32Array(gw * gh);
     for (var q = 0; q < grid.length; q++) grid[q] = Math.random();
     var GS2 = 22 * dpr, gw2 = Math.ceil(W / GS2) + 2, grid2 = new Float32Array(gw2 * (Math.ceil(H / GS2) + 2));
@@ -811,6 +826,7 @@
         ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, 6.283); ctx.fill();
       }
       ctx.globalCompositeOperation = 'source-over';
+      if (over) over(ctx);
       if (k < 1 || parts.length) { requestAnimationFrame(frame); if (k >= 1 && !fired) { fired = 1; finish(); } return; }
       if (!fired) finish();
       end();
