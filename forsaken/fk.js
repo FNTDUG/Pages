@@ -87,7 +87,7 @@
     var nc = catsOf(c).length, multi = nc > 1;
     return '<a class="fk-card' + (multi ? ' fk-multi' : '') + '" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
       '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async">' +
-      '<span class="fk-mo" aria-hidden="true"></span>' + (nc ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + (nc === 1 ? ' category' : ' categories') + '</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
+      '<span class="fk-mo" aria-hidden="true"></span>' + (nc ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp?v=2" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + (nc === 1 ? ' category' : ' categories') + '</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
   function groupsFor(tab) { return tab === 'killer' ? ((data && data.killerClasses) || []) : CLS; }
@@ -341,7 +341,7 @@
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
       '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster" data-google-vignette="false">Roster</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
-      '<div class="fk-art fk-rv" style="--i:0"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" width="900" height="900" decoding="async"><span class="fk-art-glow" aria-hidden="true"></span></div>' +
+      '<div class="fk-art fk-rv" style="--i:0"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" width="900" height="900" decoding="async"><span class="fk-art-glow" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' +
       '<div class="fk-side">' +
       '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><div class="fk-name">' + nameArt + '</div><div class="fk-tags">' + tags + '</div>' +
       (c.caption ? '<p class="fk-cap">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') + '</div>' +
