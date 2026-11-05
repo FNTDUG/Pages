@@ -12,9 +12,7 @@
 .fkt-legend .fkt-bar-f,.fkt-legend .fkt-bar-o{position:absolute;inset:0}
 .fkt-legend ol{position:absolute;inset:0 1.8%;display:grid;grid-template-columns:repeat(5,1fr);margin:0;padding:0;list-style:none}
 .fkt-legend{container-type:inline-size}
-.fkt-legend li{display:flex;align-items:center;justify-content:center;font-family:"Rubik Dirt",var(--fk-title);font-size:12cqw;line-height:1;color:#050505}
-.fkt-note{margin:0 0 18px;padding:10px 16px;border-left:3px solid var(--fk-gold);background:rgba(0,0,0,.6);font-size:16px;color:#f1e7c8}
-.fkt-note[hidden]{display:none}
+.fkt-legend li{display:flex;align-items:center;justify-content:center;font-family:"Rubik Dirt",var(--fk-title);font-size:6.6cqw;line-height:1;color:#050505}
 .fkt .fk-tabs{margin:0 0 18px}
 .fkt-maps{display:grid;gap:18px}
 .fkt-row{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:stretch}
@@ -66,3 +64,4 @@
 .fkt-row .fkt-needle{transform:rotate(var(--a,270deg))}
 .fkt-row.fkt-in .fkt-needle{transition:none}
 }
+.fkt .fkt-ch .fk-card{will-change:transform;backface-visibility:hidden}

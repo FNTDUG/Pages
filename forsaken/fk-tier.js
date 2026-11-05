@@ -1,7 +1,7 @@
 (function () {
   var root = document.getElementById('fkt');
   if (!root) return;
-  var list = root.querySelector('.fkt-maps'), tabs = root.querySelector('.fk-tabs'), note = root.querySelector('.fkt-note');
+  var list = root.querySelector('.fkt-maps'), tabs = root.querySelector('.fk-tabs');
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var BASE = '/forsaken/roster/';
   var TIERS = ['D', 'C', 'B', 'A', 'S'];
@@ -52,7 +52,7 @@
   function item(c, r) {
     var label = c.name + ': ' + r.tier + ' tier, ' + r.n + ' out of 10';
     return '<li class="fkt-ch"><a class="fk-card" data-side="' + esc(c.side) + '" href="' + BASE + esc(c.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '" data-google-vignette="false">' +
-      '<img src="' + esc(c.card || c.image) + '" alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>' +
+      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 84px, 96px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>' +
       bar(r) + '</li>';
   }
 
@@ -91,7 +91,6 @@
   function render() {
     var maps = (data.tierlist && data.tierlist.maps) || [];
     list.innerHTML = maps.length ? maps.map(row).join('') : '<p class="fkt-empty">No maps have been ranked yet.</p>';
-    if (note) note.hidden = !sample;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(list); });
     fit(list);
     watch();
