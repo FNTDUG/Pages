@@ -386,12 +386,49 @@
     } catch (e) { return null; }
     return f;
   }
+  function modeChar(c, i) {
+    var m = modesOf(c)[i] || {}, o = {}, k;
+    for (k in c) o[k] = c[k];
+    if (m.stats) for (k in m.stats) o[k] = m.stats[k];
+    if (m.abilities) o.abilities = m.abilities;
+    return o;
+  }
+  function applyMode(i) {
+    if (!cur) return;
+    var mc = modeChar(cur, i);
+    var dl = det.querySelector('.fk-stats');
+    if (dl) {
+      var old = {};
+      Array.prototype.forEach.call(dl.querySelectorAll('.fk-stat'), function (s) { old[s.querySelector('dt').textContent] = s.querySelector('dd').textContent; });
+      var box = document.createElement('div');
+      box.innerHTML = stats(mc);
+      var nd = box.firstChild;
+      Array.prototype.forEach.call(nd.querySelectorAll('.fk-stat'), function (s) {
+        var k = s.querySelector('dt').textContent;
+        if (old[k] !== s.querySelector('dd').textContent && !reduced) s.classList.add('fk-chg');
+      });
+      dl.parentNode.replaceChild(nd, dl);
+    }
+    var sec = det.querySelector('section[aria-labelledby="fk-ab-h"]');
+    if (sec) {
+      var wrap = document.createElement('div');
+      wrap.innerHTML = abilitiesSection(mc);
+      var ns = wrap.firstChild;
+      if (ns) {
+        Array.prototype.forEach.call(ns.querySelectorAll('.fk-rv'), function (x) { x.classList.remove('fk-rv'); });
+        if (!reduced) Array.prototype.forEach.call(ns.querySelectorAll('.fk-load, .fk-abp:not([hidden])'), function (x) { x.classList.add('fk-swap'); });
+        sec.parentNode.replaceChild(ns, sec);
+      }
+    }
+    if (scrollbar) sbSync();
+  }
   function swapMode(btn) {
     var art = det.querySelector('.fk-art'), imgs = art && art.querySelectorAll('.fk-art-m');
     if (!imgs) return;
     var to = imgs[+btn.getAttribute('data-mode')], from = art.querySelector('.fk-art-m.fk-on');
     if (!to || to === from || art._ash) return;
     Array.prototype.forEach.call(btn.parentNode.querySelectorAll('.fk-mode'), function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+    applyMode(+btn.getAttribute('data-mode'));
     function go() {
       from.classList.remove('fk-on'); from.setAttribute('aria-hidden', 'true');
       to.classList.add('fk-on'); to.removeAttribute('aria-hidden');
