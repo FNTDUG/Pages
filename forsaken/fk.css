@@ -63,7 +63,7 @@
 .fk-sb-t{position:absolute;left:50%;top:0;width:14px;margin-left:-7px;min-height:44px;border-style:solid;border-color:transparent;border-width:9px 0;border-image:url("/forsaken/img/ui-sb-thumb.webp") 24 0 fill / 10px 0 round;cursor:grab;transition:filter .15s}
 .fk-sb-t:hover,.fk-sb.fk-drag .fk-sb-t{filter:drop-shadow(0 0 4px rgba(255,255,255,.7))}
 .fk-sb.fk-drag .fk-sb-t{cursor:grabbing}
-.fk-bg{position:fixed;inset:0;pointer-events:none;background:#000}
+.fk-bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;background:#000}
 .fk-bg i{position:absolute;inset:-24px;background:var(--fk-map) center/cover no-repeat;filter:blur(4px) saturate(.9);transform:scale(1.03)}
 .fk-bg b{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 20%,rgba(0,0,0,.12),rgba(0,0,0,.62) 78%),linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.42))}
 .fk-page{position:relative;max-width:1320px;margin:0 auto;padding:0 54px 64px 24px;color:#fff;font-family:var(--fk-serif);font-size:18px;line-height:1.5}
@@ -174,11 +174,11 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-sk-tools .fk-btn{min-height:40px;padding:2px 18px;font-size:19px}
 .fk-skins{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
 .fk-webbox{padding:6px}
-.fk-web{position:relative;aspect-ratio:1/1;width:min(100%,760px,max(420px,calc(100vh - 360px)));margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
+.fk-web{position:relative;aspect-ratio:1/1;width:min(100%,860px,max(600px,calc(100vh - 220px)));margin:0 auto;background:radial-gradient(circle at 50% 50%,rgba(40,14,14,.7) 0,rgba(10,4,4,.55) 40%,transparent 72%)}
 .fk-web svg.fk-lines{position:absolute;inset:0;width:100%;height:100%}
 .fk-web svg.fk-lines path{fill:none;stroke:#8a6a48;stroke-width:.35;stroke-linecap:round;opacity:.8}
 .fk-web svg.fk-lines path.fk-hot{stroke:#ffd27a;opacity:1;stroke-width:.55}
-.fk-fog{position:absolute;inset:-10%;pointer-events:none;clip-path:inset(8.3333%);background:radial-gradient(circle at 50% 50%,transparent 54%,rgba(20,0,0,.5) 68%,rgba(0,0,0,.85) 82%) center/100% 100% no-repeat;opacity:0}
+.fk-fog{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 64.8%,rgba(20,0,0,.5) 81.6%,rgba(0,0,0,.85) 98.4%) center/100% 100% no-repeat;opacity:0}
 .fk-node{position:absolute;width:var(--ns,9%);aspect-ratio:1/1;transform:translate(-50%,-50%);padding:0;border:0;background:none;cursor:pointer;z-index:2}
 .fk-node i{position:absolute;inset:0;clip-path:polygon(25% 3%,75% 3%,97% 50%,75% 97%,25% 97%,3% 50%);background:var(--g,#bbb)}
 .fk-node b{position:absolute;inset:8%;clip-path:polygon(25% 3%,75% 3%,97% 50%,75% 97%,25% 97%,3% 50%);background:radial-gradient(circle at 50% 40%,#2b2b2b,#070707);overflow:hidden}
