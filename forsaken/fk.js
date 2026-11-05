@@ -494,12 +494,17 @@
     var cut = CORNER.nicks.map(function (k) { var x = fx ? 40 - k[0] - k[2] : k[0], y = fy ? 40 - k[1] - k[3] : k[1]; return '<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + k[2].toFixed(2) + '" height="' + k[3].toFixed(2) + '"/>'; }).join('');
     return { d: d, cut: cut };
   }
-  function cornerUri(fx, fy) {
-    var c = cornerPath(fx, fy);
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><mask id="m"><rect width="40" height="40" fill="#fff"/><g fill="#000">' + c.cut + '</g></mask></defs><path mask="url(#m)" fill="' + MO_COL + '" d="' + c.d + '"/></svg>';
+  function cornerSetUri() {
+    var size = 160 * 0.26, k = size / 40, body = '', masks = '';
+    [[0, 0], [1, 0], [0, 1], [1, 1]].forEach(function (f, n) {
+      var c = cornerPath(f[0], f[1]);
+      masks += '<mask id="m' + n + '"><rect width="40" height="40" fill="#fff"/><g fill="#000">' + c.cut + '</g></mask>';
+      body += '<g transform="translate(' + (f[0] ? 160 - size : 0).toFixed(2) + ' ' + (f[1] ? 200 - size : 0).toFixed(2) + ') scale(' + k.toFixed(4) + ')"><path mask="url(#m' + n + ')" fill="' + MO_COL + '" d="' + c.d + '"/></g>';
+    });
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" preserveAspectRatio="none"><defs>' + masks + '</defs>' + body + '</svg>';
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/\(/g, '%28').replace(/\)/g, '%29') + '")';
   }
-  if (!CHAR) { root.style.setProperty('--mo-tl', cornerUri(0, 0)); root.style.setProperty('--mo-tr', cornerUri(1, 0)); root.style.setProperty('--mo-bl', cornerUri(0, 1)); root.style.setProperty('--mo-br', cornerUri(1, 1)); }
+  if (!CHAR) root.style.setProperty('--mo', cornerSetUri());
   function drawCorners(dst, x0, y0, w, h, dpr) {
     var size = w * 0.26, sc = size / 40;
     var layer = document.createElement('canvas');
