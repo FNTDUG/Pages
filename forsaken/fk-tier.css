@@ -8,6 +8,7 @@
 .fkt-key .fkt-k{color:#9ad92e}
 .fkt-key-g{flex:0 0 112px}
 .fkt-key-g .fkt-gauge{--a:225deg}
+.fkt-key-g .fkt-gs,.fkt-key-g .fkt-gk{font-size:13px}
 .fkt-legend{position:relative;flex:0 0 min(46%,300px);aspect-ratio:440/60}
 .fkt-legend .fkt-bar-f,.fkt-legend .fkt-bar-o{position:absolute;inset:0}
 .fkt-legend ol{position:absolute;inset:0 1.8%;display:grid;grid-template-columns:repeat(5,1fr);margin:0;padding:0;list-style:none}
@@ -22,7 +23,7 @@
 .fkt-map{isolation:isolate}
 .fkt-map-n{margin:0;font-family:var(--fk-serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;text-shadow:0 2px 0 #000,0 0 12px rgba(0,0,0,.9)}
 .fkt-gauge{position:relative;width:100%;max-width:250px;aspect-ratio:640/352;background:url("/forsaken/img/ui-gauge.webp") center/100% 100% no-repeat;container-type:inline-size}
-.fkt-gs,.fkt-gk{position:absolute;top:61%;width:2ch;margin-left:-1ch;text-align:center;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:17cqw;line-height:1;color:#050505;pointer-events:none}
+.fkt-gs,.fkt-gk{position:absolute;top:68%;width:2ch;margin-left:-1ch;text-align:center;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:30px;line-height:1;color:#050505;pointer-events:none}
 .fkt-gs{left:13.75%}
 .fkt-gk{left:86.25%}
 .fkt-needle{position:absolute;left:calc(50% - 45% * 38 / 420);top:93.75%;width:45%;aspect-ratio:420/76;margin-top:calc(-45% * 38 / 420);background:url("/forsaken/img/ui-needle.webp") center/100% 100% no-repeat;transform-origin:9.05% 50%;transform:rotate(var(--a,270deg))}
@@ -47,12 +48,14 @@
 .fkt-map{flex-direction:row;flex-wrap:wrap;justify-content:center;min-height:0}
 .fkt-map-n{flex:1 1 100%}
 .fkt-map .fkt-gauge{max-width:190px}
+.fkt-map .fkt-gs,.fkt-map .fkt-gk{font-size:23px}
 }
 @media (max-width:600px){
 .fkt .fk-shell{padding:12px 10px 14px}
 .fkt-key{padding:10px 12px;gap:12px}
 .fkt-key p{font-size:15px}
 .fkt-key-g{flex-basis:84px}
+.fkt-key-g .fkt-gs,.fkt-key-g .fkt-gk{font-size:10px}
 .fkt-map-n{font-size:21px}
 .fkt-chars{padding:14px 6px 10px}
 .fkt-list{gap:22px 6px}
