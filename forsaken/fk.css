@@ -115,7 +115,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 
 .fk-sec{margin:34px 0 0}
 .fk-h2{margin:0 0 16px;padding:10px 14px;background:rgba(0,0,0,.88);font-family:var(--fk-serif);font-weight:400;font-size:30px;line-height:1.2;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
-.fk-h2 small{font-family:var(--fk-title);font-size:15px;letter-spacing:0;color:var(--fk-red);margin-left:8px;vertical-align:middle}
+.fk-h2 small{font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:1em;line-height:inherit;letter-spacing:1px;color:var(--fk-red);margin-left:.3em;vertical-align:baseline}
 .fk-ov{padding:18px 20px}
 .fk-desc{margin:12px 0 0;padding:10px 16px;border-left:3px solid #fff;background:rgba(0,0,0,.45);font-style:italic;font-size:16px;color:#e6e6e6}
 .fk-lead{margin:0;color:#ededed;font-size:19px}
@@ -332,6 +332,8 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-dia img{inset:8px;width:36px!important;height:36px!important}
 .fk-slot{min-width:82px}
 .fk-load{gap:26px 10px;padding:26px 6px 28px}
+.fk-webbox{margin-inline:-4px;padding:0}
+.fk-web .fk-node{width:calc(var(--ns,9%) * 1.16)}
 .fk-pick{grid-template-columns:140px minmax(0,1fr);gap:8px 14px;padding:12px}
 .fk-pick-info{padding-top:0}
 .fk-pick-info .fk-pick-how{font-size:17px}
