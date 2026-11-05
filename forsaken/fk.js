@@ -382,12 +382,15 @@
     }
     var r = art.getBoundingClientRect();
     if (reduced || !from.complete || !from.naturalWidth || r.width < 20) { go(); return; }
-    var dpr = Math.min(1.5, window.devicePixelRatio || 1), W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+    var fb = parseFloat(getComputedStyle(art, '::after').borderTopWidth) || 0;
+    var dpr = Math.min(1.5, window.devicePixelRatio || 1), FW = r.width * dpr, FH = r.height * dpr, B = fb * dpr;
+    var W = Math.round(FW - 2 * B), H = Math.round(FH - 2 * B);
     var cv = document.createElement('canvas');
     cv.className = 'fk-ash';
     cv.width = W; cv.height = H;
-    var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s, base;
-    try { o.drawImage(from, (W - dw) / 2, (H - dh) * 0.28, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
+    cv.style.cssText = 'left:' + fb + 'px;top:' + fb + 'px;width:' + (r.width - 2 * fb) + 'px;height:' + (r.height - 2 * fb) + 'px';
+    var o = cv.getContext('2d'), iw = from.naturalWidth, ih = from.naturalHeight, s = Math.max(FW / iw, FH / ih), dw = iw * s, dh = ih * s, base;
+    try { o.drawImage(from, (FW - dw) / 2 - B, (FH - dh) * 0.28 - B, dw, dh); base = o.getImageData(0, 0, W, H).data; } catch (e) { go(); return; }
     art._ash = 1;
     art.insertBefore(cv, art.querySelector('.fk-art-glow'));
     go();
