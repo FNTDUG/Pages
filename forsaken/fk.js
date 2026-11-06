@@ -88,7 +88,7 @@
   function card(c, i) {
     var nc = catsOf(c).length, multi = nc > 1;
     return '<a class="fk-card' + (multi ? ' fk-multi' : '') + '" href="' + BASE + '/' + c.id + '" data-id="' + c.id + '" data-side="' + c.side + '" data-google-vignette="false" style="' + vars(c) + ';--i:' + (i || 0) + '">' +
-      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async">' +
+      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return 'https://forsaken.fntduserguide.com/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 31vw, 200px"' : '') + ' alt="" crossorigin="anonymous" width="440" height="550" loading="lazy" decoding="async">' +
       '<span class="fk-mo" aria-hidden="true"></span>' + (nc ? '<img class="fk-badge" src="/forsaken/img/ui-multi-' + Math.min(nc, 4) + '.webp?v=2" alt="" width="240" height="240" decoding="async"><span class="fk-sr">, in ' + nc + (nc === 1 ? ' category' : ' categories') + '</span>' : '') + '<span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
@@ -293,7 +293,7 @@
     var k = byId[x.id];
     if (!k) return '';
     var w = withText(x);
-    return '<a class="fk-who" href="' + BASE + '/' + k.id + '" data-go="' + k.id + '" data-google-vignette="false"' + (k.id === c.id ? ' aria-current="page"' : '') + '><i aria-hidden="true"><img src="/forsaken/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" loading="lazy" decoding="async"></i><span><b style="color:' + nameCol(k) + '">' + esc(k.name) + '</b>' + (w ? '<small>' + esc(w) + '</small>' : '') + '</span></a>';
+    return '<a class="fk-who" href="' + BASE + '/' + k.id + '" data-go="' + k.id + '" data-google-vignette="false"' + (k.id === c.id ? ' aria-current="page"' : '') + '><i aria-hidden="true"><img src="https://forsaken.fntduserguide.com/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" loading="lazy" decoding="async"></i><span><b style="color:' + nameCol(k) + '">' + esc(k.name) + '</b>' + (w ? '<small>' + esc(w) + '</small>' : '') + '</span></a>';
   }
   function hpList(rows, c) {
     return '<ul class="fk-hp">' + rows.map(function (r) {
@@ -501,7 +501,7 @@
 
   function modesOf(c) { return c.modes && c.modes.length > 1 ? c.modes : [{ name: c.name, image: c.image }]; }
   function artImgs(c) {
-    return modesOf(c).map(function (m, i) { return '<img class="fk-art-m' + (i ? '' : ' fk-on') + '" src="' + esc(m.image) + '" alt="' + esc(m.name) + '"' + (i ? ' aria-hidden="true"' : '') + ' width="1200" height="1200" decoding="async" loading="eager">'; }).join('');
+    return modesOf(c).map(function (m, i) { return '<img class="fk-art-m' + (i ? '' : ' fk-on') + '" src="' + esc(m.image) + '" alt="' + esc(m.name) + '"' + (i ? ' aria-hidden="true"' : '') + ' width="1200" height="1200" crossorigin="anonymous" decoding="async" loading="eager">'; }).join('');
   }
   function modesHtml(c) {
     if (!(c.modes && c.modes.length > 1)) return '';
@@ -1123,6 +1123,7 @@
       var l = document.createElement('link');
       l.rel = 'prefetch';
       l.href = u;
+      if (u === img) l.crossOrigin = 'anonymous';
       document.head.appendChild(l);
     });
   }

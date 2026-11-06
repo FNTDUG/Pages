@@ -9,7 +9,7 @@
 
   function card(c, label, sizes) {
     return '<a class="fk-card" data-side="' + esc(c.side) + '" href="' + BASE + esc(c.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '" data-google-vignette="false">' +
-      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="' + sizes + '"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>';
+      '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return 'https://forsaken.fntduserguide.com/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="' + sizes + '"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
 
   function plural(role, n) { return n === 1 ? role : role + 's'; }
@@ -48,7 +48,7 @@
     var ks = ids.map(function (id) { return byId[id]; }).filter(function (k) { return k && k.side === 'killer'; });
     if (ks.length < 2) return '';
     return '<nav class="fkc-jump" aria-label="Jump to a Killer"><ul>' + ks.map(function (k) {
-      return '<li><a class="fk-card fkc-j" data-side="killer" href="#' + esc(k.id) + '" aria-label="' + esc(k.name) + '"><img src="/forsaken/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(k.name) + '</span></a></li>';
+      return '<li><a class="fk-card fkc-j" data-side="killer" href="#' + esc(k.id) + '" aria-label="' + esc(k.name) + '"><img src="https://forsaken.fntduserguide.com/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(k.name) + '</span></a></li>';
     }).join('') + '</ul></nav>';
   }
 
