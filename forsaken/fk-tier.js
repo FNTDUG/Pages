@@ -11,10 +11,10 @@
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
   function parseRank(v) {
-    var m = /^\s*([DCBAS])\s*[-:]?\s*(\d{1,2})?\s*$/i.exec(String(v == null ? '' : v));
+    var m = /^\s*([DCBAS])\s*[-:]?\s*(\d)?\s*$/i.exec(String(v == null ? '' : v));
     if (!m) return null;
-    var t = TIERS.indexOf(m[1].toUpperCase()), n = m[2] == null ? 5 : Math.max(0, Math.min(10, +m[2]));
-    return { tier: TIERS[t], idx: t, n: n, score: t * 11 + n };
+    var t = TIERS.indexOf(m[1].toUpperCase()), n = m[2] == null ? 2.5 : Math.max(1, Math.min(4, +m[2]));
+    return { tier: TIERS[t], idx: t, n: n, score: t * 5 + n };
   }
   function sidedOf(v) { var n = parseFloat(v); return isFinite(n) ? Math.max(0, Math.min(100, n)) : null; }
   function leanText(s) {
@@ -27,7 +27,7 @@
   }
 
   function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967295; }
-  function sampleRank(a, b) { return TIERS[Math.floor(hash(a + b) * 5)] + Math.floor(hash(b + a) * 11); }
+  function sampleRank(a, b) { return TIERS[Math.floor(hash(a + b) * 5)] + (1 + Math.floor(hash(b + a) * 4)); }
   function sampleList(d) {
     var maps = {}, out = [], high = {}, low = {};
     d.characters.forEach(function (c) { if (c.map && c.bg && !maps[c.map]) { maps[c.map] = 1; out.push({ name: c.map, image: c.bg }); } });
@@ -50,7 +50,7 @@
   }
 
   function bar(r) {
-    var p = 1.8 + (r.idx + r.n / 10) * 19.28;
+    var p = 1.8 + (r.idx + (r.n - 0.5) / 4) * 19.28;
     return '<span class="fkt-bar" aria-hidden="true"><span class="fkt-bar-f"></span><span class="fkt-bar-o"></span><span class="fkt-mk" style="--p:' + p.toFixed(2) + '%"></span></span>';
   }
 
@@ -59,16 +59,16 @@
       '<img src="' + esc(c.card || c.image) + '"' + (c.cards ? ' srcset="' + c.cards.map(function (w) { return '/forsaken/img/card/' + c.id + '-' + w + '.webp ' + w + 'w'; }).join(', ') + '" sizes="(max-width: 600px) 84px, 96px"' : '') + ' alt="" width="440" height="550" loading="lazy" decoding="async"><span class="fk-mo" aria-hidden="true"></span><span class="fk-card-n">' + esc(c.name) + '</span></a>';
   }
   function item(c, r) {
-    return '<li class="fkt-ch">' + card(c, c.name + ': ' + r.tier + ' tier, ' + r.n + ' out of 10') + bar(r) + '</li>';
+    return '<li class="fkt-ch">' + card(c, c.name + ': ' + r.tier + ' tier' + (r.n % 1 ? '' : ', ' + r.n + ' out of 4')) + bar(r) + '</li>';
   }
 
   function row(m, i) {
     var s = sidedOf(m.sided), ranks = m.ranks || {}, rows = [];
     Object.keys(ranks).forEach(function (id) {
       var v = ranks[id], o = v && typeof v === 'object' ? v : { rank: v }, c = byId[id], r = parseRank(o.rank);
-      if (c && r && c.side === 'killer') rows.push({ c: c, r: r, note: o.note ? String(o.note) : '' });
+      if (c && r && c.side === 'killer') rows.push({ c: c, r: r, k: rows.length, note: o.note ? String(o.note) : '' });
     });
-    rows.sort(function (a, b) { return b.r.score - a.r.score || a.c.name.localeCompare(b.c.name); });
+    rows.sort(function (a, b) { return b.r.score - a.r.score || a.k - b.k; });
     var why = notesOf(TIERS.slice().reverse().map(function (t) { return [t, rows.filter(function (x) { return x.r.tier === t; })]; }));
     var id = 'fkt-' + slug(m.name);
     return '<section class="fkt-row" aria-labelledby="' + id + '" style="--i:' + i + '">' +
@@ -116,14 +116,14 @@
     var by = { S: [], A: [], B: [], C: [], D: [] }, any = false;
     Object.keys(ranks).forEach(function (id) {
       var v = ranks[id], o = v && typeof v === 'object' ? v : { rank: v }, c = byId[id], r = parseRank(o.rank);
-      if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r, note: o.note ? String(o.note) : '' }); any = true; }
+      if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r, k: by[r.tier].length, note: o.note ? String(o.note) : '' }); any = true; }
     });
     var name = mmr === 'low' ? 'Low MMR' : 'High MMR';
     var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['high', 'low'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>' +
       (about ? '<p class="fkt-about">' + digits(about) + '</p>' : '');
     if (!any) return html + '<div class="fkt-board fk-drawn"><p class="fkt-empty">No ' + name + ' Survivor rankings yet.</p></div>';
     var order = TIERS.slice().reverse();
-    order.forEach(function (t) { by[t].sort(function (a, b) { return b.r.n - a.r.n || a.c.name.localeCompare(b.c.name); }); });
+    order.forEach(function (t) { by[t].sort(function (a, b) { return b.r.n - a.r.n || a.k - b.k; }); });
     html += '<div class="fkt-board fk-drawn" role="list" aria-label="' + name + ' Survivor tier list">' + order.map(function (t) {
       var xs = by[t];
       return '<section class="fkt-tier" role="listitem" data-t="' + t + '" aria-label="' + t + ' tier"><h2 class="fkt-tl" aria-hidden="true">' + t + '</h2>' +
