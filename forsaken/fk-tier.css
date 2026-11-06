@@ -40,7 +40,7 @@
 .fkt-bar-f,.fkt-bar-o{position:absolute;inset:0;pointer-events:none}
 .fkt-bar-f{background:linear-gradient(90deg,var(--t0) 0 21.08%,var(--t1) 21.08% 40.36%,var(--t2) 40.36% 59.64%,var(--t3) 59.64% 78.92%,var(--t4) 78.92% 100%);-webkit-mask:url("/forsaken/img/ui-bar-fill.webp") center/100% 100% no-repeat;mask:url("/forsaken/img/ui-bar-fill.webp") center/100% 100% no-repeat}
 .fkt-bar-o{background:url("/forsaken/img/ui-bar-frame.webp") center/100% 100% no-repeat}
-.fkt-mk{position:absolute;left:var(--p);top:-22%;bottom:-22%;width:5px;margin-left:-2.5px;background:#fff;border-radius:2px;box-shadow:0 0 0 2px #050505,0 0 6px rgba(255,255,255,.7);transform:rotate(-4deg)}
+.fkt-mk{position:absolute;left:var(--p);top:15%;bottom:11.7%;width:6px;margin-left:-3px;background:#fff;box-shadow:-2px 0 0 #050505,2px 0 0 #050505}
 .fkt-empty{margin:0;padding:18px;text-align:center;font-style:italic;color:#d8d8d8}
 @media (max-width:860px){
 .fkt-top{grid-template-columns:minmax(0,1fr)}
