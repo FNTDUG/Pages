@@ -291,12 +291,12 @@
       return '<li>' + who({ id: r.id }, c) + '<span class="fk-hp-n">' + esc(r.hp) + '<small>Max HP</small></span><p>' + esc(r.how) + '</p></li>';
     }).join('') + '</ul>';
   }
-  function kindTag(k) { return '<span class="fk-st-k' + (/^tech$/i.test(k) ? ' fk-st-k--tech' : '') + '">' + esc(k) + '</span>'; }
-  function stRow(s, c, open) {
+  function kindTag(k) { return '<span class="fk-st-k">' + esc(k) + '</span>'; }
+  function stRow(s, c) {
     var cs = (s.counters || []).map(norm).filter(function (x) { return s['for'] !== 'all' || cSide(x) !== c.side; });
     var body = '<div class="fk-rich">' + (s['for'] === c.id ? refs(rich(s.text), c) : rich(s.text)) + '</div>' + (s.table ? hpList(s.table, c) : '') +
       (cs.length ? '<div class="fk-st-c"><span class="fk-st-ck">Countered by</span><div class="fk-st-w">' + cs.map(function (x) { return who(x, c); }).join('') + '</div></div>' : '');
-    return '<details class="fk-st"' + (open ? ' open' : '') + '><summary><span class="fk-st-n">' + esc(s.name) + '</span>' + kindTag(s.kind) + '</summary><div class="fk-st-b">' + body + '</div></details>';
+    return '<details class="fk-st"><summary><span class="fk-st-n">' + esc(s.name) + '</span>' + kindTag(s.kind) + '</summary><div class="fk-st-b">' + body + '</div></details>';
   }
   function ctRows(c, all) {
     var out = [];
@@ -323,8 +323,8 @@
     if (!all.length) return '';
     var own = all.filter(function (s) { return s['for'] === c.id; }), gen = all.filter(function (s) { return s['for'] === 'all' || s['for'] === c.side; }), ct = ctRows(c, all);
     var tabs = [];
-    if (own.length) tabs.push({ k: 'own', l: c.name, n: own.length, h: own.map(function (s) { return stRow(s, c, true); }).join('') });
-    if (gen.length) tabs.push({ k: 'gen', l: c.side === 'killer' ? 'All Killers' : 'All Survivors', n: gen.length, h: gen.map(function (s) { return stRow(s, c, false); }).join('') });
+    if (own.length) tabs.push({ k: 'own', l: c.name, n: own.length, h: own.map(function (s) { return stRow(s, c); }).join('') });
+    if (gen.length) tabs.push({ k: 'gen', l: 'General', n: gen.length, h: gen.map(function (s) { return stRow(s, c); }).join('') });
     if (ct.length) tabs.push({ k: 'ct', l: 'Counters', n: ct.length, h: ct.join('') });
     if (!tabs.length) return '';
     return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-st-h"><h2 class="fk-h2" id="fk-st-h">Strategies &amp; Techs</h2><div class="fk-st-tabs" role="tablist" aria-label="Strategies">' +
@@ -1189,7 +1189,11 @@
   det.addEventListener('focusin', function (e) { var b = e.target.closest('button.fk-se'); if (b) showTip(b); });
   det.addEventListener('focusout', function (e) { if (e.target === tipFor) hideTip(); });
   det.addEventListener('scroll', hideTip, { passive: true });
-  det.addEventListener('toggle', function () { sbSync(); }, true);
+  det.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (d.classList && d.classList.contains('fk-st') && d.open) Array.prototype.forEach.call(d.parentNode.querySelectorAll('.fk-st[open]'), function (o) { if (o !== d) o.open = false; });
+    sbSync();
+  }, true);
   window.addEventListener('resize', hideTip);
 
   det.addEventListener('click', function (e) {
