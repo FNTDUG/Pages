@@ -278,13 +278,22 @@
   function cSide(x) { return x.id ? (byId[x.id] || {}).side : x.cls ? 'survivor' : x.side || ''; }
   function norm(x) { return typeof x === 'string' ? { id: x } : x; }
   function withText(x) { return (x['with'] || []).map(function (n) { return n.charAt(0) === '⟦' ? plain(n) : tc(n); }).join(', '); }
+  function nameCol(k) {
+    function rgb(h) { h = String(h).replace('#', ''); return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16) || 0; }); }
+    function lum(v) { var l = v.map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2]; }
+    function lift(v) { var t = 0, m = v; while (t < 1 && (lum(m) + 0.05) / 0.054 < 5) { t += 0.05; m = v.map(function (x) { return x + (255 - x) * t; }); } return m; }
+    function sat(v) { var a = Math.max.apply(null, v), b = Math.min.apply(null, v); return a ? (a - b) / a : 0; }
+    var best = [230, 230, 230], bs = -1;
+    (k.colors || []).forEach(function (h) { var v = lift(rgb(h)), q = sat(v); if (q > bs + 0.02) { bs = q; best = v; } });
+    return 'rgb(' + best.map(Math.round).join(',') + ')';
+  }
   function who(x, c) {
     if (x.cls) return '<span class="fk-who fk-who--t">' + esc(x.cls) + 's</span>';
     if (x.text) return '<span class="fk-who fk-who--t">' + esc(x.text) + '</span>';
     var k = byId[x.id];
     if (!k) return '';
     var w = withText(x);
-    return '<a class="fk-who" href="' + BASE + '/' + k.id + '" data-go="' + k.id + '" data-google-vignette="false"' + (k.id === c.id ? ' aria-current="page"' : '') + '><i aria-hidden="true"><img src="/forsaken/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" loading="lazy" decoding="async"></i><span><b>' + esc(k.name) + '</b>' + (w ? '<small>' + esc(w) + '</small>' : '') + '</span></a>';
+    return '<a class="fk-who" href="' + BASE + '/' + k.id + '" data-go="' + k.id + '" data-google-vignette="false"' + (k.id === c.id ? ' aria-current="page"' : '') + '><i aria-hidden="true"><img src="/forsaken/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" loading="lazy" decoding="async"></i><span><b style="color:' + nameCol(k) + '">' + esc(k.name) + '</b>' + (w ? '<small>' + esc(w) + '</small>' : '') + '</span></a>';
   }
   function hpList(rows, c) {
     return '<ul class="fk-hp">' + rows.map(function (r) {
