@@ -1,6 +1,6 @@
-@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-regular.woff") format("woff");font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-italic.woff") format("woff");font-weight:400;font-style:italic;font-display:swap}
-@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-bold.woff") format("woff");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-regular.woff?v=2") format("woff");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-italic.woff?v=2") format("woff");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Accanthis";src:url("/forsaken/font/accanthis-bold.woff?v=2") format("woff");font-weight:700;font-style:normal;font-display:swap}
 .fk{--fk-frame:url("/forsaken/img/ui-frame.webp");--fk-brush:url("/forsaken/img/ui-brush.webp");--fk-tear:url("/forsaken/img/ui-card.webp");--fk-ring:url("/forsaken/img/ui-ring.webp");--fk-glass:rgba(0,0,0,.66);--fk-glass2:rgba(8,8,8,.82);--fk-text:#fff;--fk-dim:#c9c9c9;--fk-red:#ff003c;--fk-blood:#bf0017;--fk-gold:#ffc500;--fk-serif:"Accanthis","Source Serif 4",Georgia,serif;--fk-title:"Rubik",system-ui,sans-serif;--fk-label:"Roboto Condensed","Arial Narrow",system-ui,sans-serif;position:relative;color:var(--fk-text);background:none;font-family:var(--fk-serif);font-size:18px;line-height:1.5;font-variant-numeric:lining-nums;padding:0}
 .fk>.fk-grid-view{position:relative}
 .fk *{box-sizing:border-box}
