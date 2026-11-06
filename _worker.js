@@ -4697,7 +4697,7 @@ function seoFkCompsHtml(d) {
       }).filter(Boolean);
       return xs.length ? '<li>' + seoEsc(role) + ': ' + xs.join(', ') + '</li>' : '';
     }).join('');
-    const tips = notes.concat(o.tip ? [String(o.tip)] : []);
+    const tips = notes.concat([].concat(o.tip || []).filter(Boolean).map(String));
     out += '<h3>Against ' + seoFkLink(k) + '</h3>' + (o.about ? '<p>' + seoEsc(o.about) + '</p>' : '') + (rows ? '<ul>' + rows + '</ul>' : '') + tips.map(t => '<p>' + seoEsc(t) + '</p>').join('');
   });
   if (!out) return '';

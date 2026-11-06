@@ -29,7 +29,7 @@
       [].concat(team[role] || []).forEach(function (x) { var m = slot(x); if (m) { m.role = role; members.push(m); n++; if (m.note) notes.push(m.note); } });
       if (n) mix.push('<li>' + n + ' ' + esc(plural(role, n)) + '</li>');
     });
-    var tips = notes.concat(o.tip ? [String(o.tip)] : []);
+    var tips = notes.concat([].concat(o.tip || []).filter(Boolean).map(String));
     var hid = 'fkc-' + esc(k.id);
     return '<section class="fkc-comp fk-drawn" id="' + esc(k.id) + '" aria-labelledby="' + hid + '">' +
       '<div class="fkc-killer">' + card(k, k.name, '(max-width: 600px) 170px, 220px') +
