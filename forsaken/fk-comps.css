@@ -1,6 +1,18 @@
 .fkc{--mo:url("/forsaken/img/ui-corners.svg")}
 .fkc .fk-shell{padding:18px 18px 22px}
-.fkc-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,620px),1fr));gap:18px}
+.fkc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,620px),1fr));gap:18px;align-items:start}
+.fkc-jump{margin:0 0 18px;padding:14px 12px;background:var(--fk-glass2)}
+.fkc-jump ul{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0;padding:0;list-style:none}
+.fkc-jump li{width:min(92px,calc((100% - 84px) / 8))}
+.fkc .fkc-j{width:100%;will-change:transform;backface-visibility:hidden}
+.fkc .fkc-j .fk-card-n{font-size:13px;bottom:7px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
+.fkc-comp{scroll-margin-top:84px}
+.fkc-or{max-width:100%;margin-top:-4px;font-size:15px;line-height:1.2;color:#bdbdbd;text-align:center}
+.fkc-or a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.fkc-or a:hover,.fkc-or a:focus-visible{color:var(--fk-gold)}
+.fkc-tip{width:100%;max-width:620px;padding:14px 16px 2px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.fkc-tip-h{margin:0 0 8px;font-family:var(--fk-serif);font-weight:400;font-size:18px;letter-spacing:1.5px;text-transform:uppercase;color:var(--fk-gold)}
+.fkc-tip p{margin:0 0 12px;font-size:17px;line-height:1.55;color:#e6e6e6}
 .fkc-comp{display:flex;flex-direction:column;align-items:center;gap:22px;padding:24px 22px 26px;background:var(--fk-glass2)}
 .fkc-killer{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:620px;text-align:center}
 .fkc .fkc-killer .fk-card{width:220px;margin:0 0 6px}
@@ -20,11 +32,18 @@
 .fkc-comp{gap:18px;padding:18px 10px 20px}
 .fkc .fkc-killer .fk-card{width:170px}
 .fkc .fkc-killer .fk-card-n{font-size:20px;bottom:11px;-webkit-text-stroke:4px #000}
-.fkc-kn{font-size:22px}
+.fkc-kn{font-size:24px}
 .fkc-about{font-size:16px}
 .fkc-mix li{font-size:15px;padding:2px 10px}
 .fkc-team{gap:16px 8px;padding:16px 0 0}
 .fkc-m{flex-basis:calc((100% - 16px) / 3);max-width:110px}
 .fkc .fkc-m .fk-card-n{font-size:12px;bottom:6px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
 .fkc-role{font-size:14px}
+.fkc-or{font-size:13px}
+.fkc-jump{padding:10px 6px}
+.fkc-jump ul{gap:8px}
+.fkc-jump li{width:calc((100% - 24px) / 4);max-width:84px}
+.fkc .fkc-j .fk-card-n{font-size:11px;bottom:5px;-webkit-text-stroke:2px #000}
+.fkc-tip{padding:12px 12px 2px}
+.fkc-tip p{font-size:16px}
 }

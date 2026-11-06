@@ -4687,8 +4687,18 @@ function seoFkCompsHtml(d) {
     const k = byId[id], o = comps[id];
     if (!k || k.side !== 'killer' || !o) return;
     const team = o.team || {};
-    const rows = Object.keys(team).map(role => { const xs = [].concat(team[role] || []).map(s => byId[s]).filter(c => c && c.side === 'survivor'); return xs.length ? '<li>' + seoEsc(role) + ': ' + xs.map(seoFkLink).join(', ') + '</li>' : ''; }).join('');
-    out += '<h3>Against ' + seoFkLink(k) + '</h3>' + (o.about ? '<p>' + seoEsc(o.about) + '</p>' : '') + (rows ? '<ul>' + rows + '</ul>' : '');
+    const notes = [];
+    const rows = Object.keys(team).map(role => {
+      const xs = [].concat(team[role] || []).map(x => {
+        const ids = x && typeof x === 'object' && !Array.isArray(x) ? [].concat(x.pick || []) : [].concat(x);
+        const cs = ids.map(s => byId[s]).filter(c => c && c.side === 'survivor');
+        if (cs.length && x && x.note) notes.push(String(x.note));
+        return cs.length ? cs.map(seoFkLink).join(' or ') : '';
+      }).filter(Boolean);
+      return xs.length ? '<li>' + seoEsc(role) + ': ' + xs.join(', ') + '</li>' : '';
+    }).join('');
+    const tips = notes.concat(o.tip ? [String(o.tip)] : []);
+    out += '<h3>Against ' + seoFkLink(k) + '</h3>' + (o.about ? '<p>' + seoEsc(o.about) + '</p>' : '') + (rows ? '<ul>' + rows + '</ul>' : '') + tips.map(t => '<p>' + seoEsc(t) + '</p>').join('');
   });
   if (!out) return '';
   return seoBlock('Forsaken Meta Comps as text', '<h2>Forsaken Meta Comps</h2><p>The best Survivor team to bring against each Killer in Forsaken on Roblox.</p>' + out);
