@@ -47,3 +47,8 @@
 .fkc-tip{padding:12px 12px 2px}
 .fkc-tip p{font-size:16px}
 }
+@supports (grid-template-rows:subgrid){
+.fkc-comp{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:22px;justify-items:center;align-items:start}
+.fkc-tip{align-self:stretch}
+@media (max-width:600px){.fkc-comp{row-gap:18px}}
+}
