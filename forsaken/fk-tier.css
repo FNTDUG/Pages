@@ -30,7 +30,7 @@
 .fkt-row .fkt-needle{transform:rotate(180deg)}
 .fkt-row.fkt-in .fkt-needle{transform:rotate(var(--a,270deg));transition:transform .7s cubic-bezier(.22,1,.36,1)}
 .fkt-unset .fkt-needle{opacity:.35}
-.fkt-lean{margin:0;font-family:var(--fk-serif);font-size:18px;line-height:1.2;color:#fff;text-shadow:0 2px 0 #000,0 0 10px #000}
+.fkt-lean{margin:0;text-align:center;font-family:var(--fk-serif);font-size:18px;line-height:1.2;color:#fff;text-shadow:0 2px 0 #000,0 0 10px #000}
 .fkt-chars{display:flex;align-items:center;justify-content:center;padding:18px 14px 14px;background:var(--fk-glass2)}
 .fkt-list{display:flex;flex-wrap:wrap;justify-content:center;gap:24px 14px;margin:0;padding:0;list-style:none}
 .fkt-ch{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;width:124px}
@@ -45,8 +45,7 @@
 @media (max-width:860px){
 .fkt-top{grid-template-columns:minmax(0,1fr)}
 .fkt-row{grid-template-columns:minmax(0,1fr);gap:10px}
-.fkt-map{flex-direction:row;flex-wrap:wrap;justify-content:center;min-height:0}
-.fkt-map-n{flex:1 1 100%}
+.fkt-map{min-height:0}
 .fkt-map .fkt-gauge{max-width:190px}
 .fkt-map .fkt-gs,.fkt-map .fkt-gk{font-size:27px}
 }
