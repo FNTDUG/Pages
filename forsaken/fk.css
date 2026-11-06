@@ -359,3 +359,52 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-item--off .fk-item-note{border-left-color:#ff6a80;background:rgba(255,60,90,.1);color:#ffd2d9}
 .fk-item--off .fk-ab-i,.fk-item--off .fk-rich,.fk-item--off .fk-ab-meta{opacity:.45}
 .fk-slot--off .fk-circ{opacity:.4;filter:grayscale(1)}
+.fk-st-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 18px;margin:0 0 18px;padding:8px 0}
+.fk-st-tabs .fk-btn{min-height:42px;padding:2px 20px;font-size:20px}
+.fk-stp{padding:4px 18px}
+.fk-stp.fk-swap{animation:fk-in .32s cubic-bezier(.2,.7,.2,1) both}
+.fk-st+.fk-st{border-top:1px solid rgba(255,255,255,.16)}
+.fk-st summary{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:13px 4px 13px 31px;cursor:pointer;list-style:none}
+.fk-st summary::-webkit-details-marker{display:none}
+.fk-st summary::before{content:"";position:absolute;left:7px;top:24px;width:9px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(-45deg);transition:transform .15s}
+.fk-st[open] summary::before{transform:rotate(45deg)}
+.fk-st summary:hover .fk-st-n{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.fk-st-n{font-family:var(--fk-serif);font-size:24px;line-height:1.15;letter-spacing:.5px;text-transform:uppercase;color:#fff}
+.fk-st-k{padding:1px 10px;font-size:14px;line-height:1.5;letter-spacing:1px;text-transform:uppercase;color:#d8d8d8;background:rgba(0,0,0,.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.fk-st-k--tech{color:var(--fk-gold);box-shadow:inset 0 0 0 1px rgba(255,197,0,.6)}
+.fk-st-s{flex-basis:100%;font-size:16px;line-height:1.3;color:#c4c4c4}
+.fk-st-b{padding:0 4px 18px 31px}
+.fk-st-b .fk-rich{font-size:18px}
+.fk-st-c{margin-top:4px}
+.fk-st-ck{display:block;margin:0 0 8px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:#bdbdbd}
+.fk-st-w{display:flex;flex-wrap:wrap;gap:8px}
+.fk-st-o{margin:6px 0 0}
+.fk-who{display:inline-flex;align-items:center;gap:9px;min-height:42px;padding:4px 12px 4px 4px;background:rgba(0,0,0,.65);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3);font-size:16px;line-height:1.2;color:#fff;text-decoration:none;vertical-align:middle}
+.fk-who i{flex:0 0 auto;position:relative;width:38px;height:38px;overflow:hidden;background:#111;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.fk-who img{position:absolute;left:50%;top:-6px;width:68px;height:auto;max-width:none;transform:translateX(-50%)}
+.fk-who b{font-weight:600}
+.fk-who small{display:block;font-size:14px;color:#cfcfcf}
+.fk-who--t{padding:4px 12px;font-style:italic;color:#e6e6e6}
+a.fk-who:hover,a.fk-who:focus-visible{box-shadow:inset 0 0 0 1px #fff;background:rgba(30,30,30,.8)}
+.fk-who[aria-current]{box-shadow:inset 0 0 0 1px var(--fk-gold)}
+.fk-abref{padding:0;border:0;background:none;font:inherit;font-weight:700;color:#fff;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer}
+.fk-abref:hover,.fk-abref:focus-visible{color:var(--fk-gold)}
+.fk-hp{display:grid;gap:8px;margin:4px 0 12px;padding:0;list-style:none}
+.fk-hp li{display:grid;grid-template-columns:170px 70px minmax(0,1fr);align-items:center;gap:8px 14px;padding:6px 10px 6px 6px;background:rgba(0,0,0,.45)}
+.fk-hp .fk-who{justify-self:start}
+.fk-hp-n{font-family:var(--fk-title);font-weight:700;font-size:24px;line-height:1;text-align:center;color:#fff}
+.fk-hp-n small{display:block;margin-top:3px;font-family:var(--fk-serif);font-weight:400;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#c4c4c4}
+.fk-hp p{margin:0;font-size:16px;line-height:1.4;color:#e6e6e6}
+@media (max-width:600px){
+.fk-st-tabs{gap:12px 14px}
+.fk-st-tabs .fk-btn{font-size:17px;padding:2px 14px;min-height:40px}
+.fk-stp{padding:2px 10px}
+.fk-st-n{font-size:20px}
+.fk-st summary{padding-left:24px}
+.fk-st summary::before{left:3px;top:21px}
+.fk-st-b{padding-left:4px}
+.fk-st-b .fk-rich{font-size:17px}
+.fk-hp li{grid-template-columns:minmax(0,1fr) auto}
+.fk-hp p{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){.fk-stp.fk-swap{animation:none}.fk-st summary::before{transition:none}}

@@ -256,6 +256,101 @@
     return '<section class="fk-sec" aria-labelledby="fk-it-h"><h2 class="fk-h2 fk-rv" style="--i:7" id="fk-it-h">Items</h2><div class="fk-load fk-drawn fk-rv" style="--i:7" role="tablist" aria-label="Items">' + tabs + '</div><div class="fk-abs fk-rv" style="--i:7">' + panels + '</div></section>';
   }
 
+  function tc(s) { return String(s || '').toLowerCase().replace(/(^|[\s(/-])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); }); }
+  function tabOf(list, a) {
+    if (!isSub(a)) return abId(a);
+    var k = a.name.split(' - ')[0].trim().toUpperCase();
+    return list.some(function (x) { return x.name.toUpperCase() === k; }) ? 'ab-' + slug(k) : abId(a);
+  }
+  function abFind(c, name) {
+    var u = String(name).toUpperCase().trim(), ms = c.modes && c.modes.length > 1 ? c.modes : [c];
+    for (var i = 0; i < ms.length; i++) {
+      var list = i ? ms[i].abilities || [] : c.abilities;
+      if (i && ms[i].name.toUpperCase() === u) return { m: i, id: '' };
+      for (var j = 0; j < list.length; j++) if (list[j].name.toUpperCase() === u) return { m: i, id: tabOf(list, list[j]) };
+    }
+    return null;
+  }
+  function abBtn(r, label) { return '<button type="button" class="fk-abref" data-m="' + r.m + '" data-abref="' + esc(r.id) + '">' + label + '</button>'; }
+  function refs(h, c) {
+    return h.replace(/<b>([^<]+)<\/b>/g, function (m, n) { var r = abFind(c, n.replace(/&amp;/g, '&')); return r ? abBtn(r, n) : m; });
+  }
+  function cSide(x) { return x.id ? (byId[x.id] || {}).side : x.cls ? 'survivor' : x.side || ''; }
+  function norm(x) { return typeof x === 'string' ? { id: x } : x; }
+  function withText(x) { return (x['with'] || []).map(function (n) { return n.charAt(0) === '⟦' ? plain(n) : tc(n); }).join(', '); }
+  function who(x, c) {
+    if (x.cls) return '<span class="fk-who fk-who--t">' + esc(x.cls) + 's</span>';
+    if (x.text) return '<span class="fk-who fk-who--t">' + esc(x.text) + '</span>';
+    var k = byId[x.id];
+    if (!k) return '';
+    var w = withText(x);
+    return '<a class="fk-who" href="' + BASE + '/' + k.id + '" data-go="' + k.id + '" data-google-vignette="false"' + (k.id === c.id ? ' aria-current="page"' : '') + '><i aria-hidden="true"><img src="/forsaken/img/card/' + esc(k.id) + '-220.webp" alt="" width="220" height="275" loading="lazy" decoding="async"></i><span><b>' + esc(k.name) + '</b>' + (w ? '<small>' + esc(w) + '</small>' : '') + '</span></a>';
+  }
+  function hpList(rows, c) {
+    return '<ul class="fk-hp">' + rows.map(function (r) {
+      return '<li>' + who({ id: r.id }, c) + '<span class="fk-hp-n">' + esc(r.hp) + '<small>Max HP</small></span><p>' + esc(r.how) + '</p></li>';
+    }).join('') + '</ul>';
+  }
+  function kindTag(k) { return '<span class="fk-st-k' + (/^tech$/i.test(k) ? ' fk-st-k--tech' : '') + '">' + esc(k) + '</span>'; }
+  function stRow(s, c, open) {
+    var cs = (s.counters || []).map(norm).filter(function (x) { return s['for'] !== 'all' || cSide(x) !== c.side; });
+    var body = '<div class="fk-rich">' + (s['for'] === c.id ? refs(rich(s.text), c) : rich(s.text)) + '</div>' + (s.table ? hpList(s.table, c) : '') +
+      (cs.length ? '<div class="fk-st-c"><span class="fk-st-ck">Countered by</span><div class="fk-st-w">' + cs.map(function (x) { return who(x, c); }).join('') + '</div></div>' : '');
+    return '<details class="fk-st"' + (open ? ' open' : '') + '><summary><span class="fk-st-n">' + esc(s.name) + '</span>' + kindTag(s.kind) + '</summary><div class="fk-st-b">' + body + '</div></details>';
+  }
+  function ctRows(c, all) {
+    var out = [];
+    all.forEach(function (s) {
+      if (s['for'] === c.id) return;
+      var hit = null, owner = byId[s['for']];
+      (s.counters || []).map(norm).forEach(function (x) {
+        if (!hit && (x.id === c.id || (x.cls && c.side === 'survivor' && catsOf(c).indexOf(x.cls) >= 0))) hit = x;
+      });
+      if (hit) {
+        var sub = hit.cls ? 'As a ' + hit.cls : withText(hit) ? 'With ' + withText(hit) : '';
+        out.push('<details class="fk-st"><summary><span class="fk-st-n">' + (owner ? esc(owner.name) + ': ' : '') + esc(s.name) + '</span>' + kindTag(s.kind) + (sub ? '<span class="fk-st-s">' + esc(sub) + '</span>' : '') + '</summary><div class="fk-st-b"><div class="fk-rich">' + rich(s.text) + '</div>' +
+          (owner ? '<p class="fk-st-o">' + who({ id: owner.id }, c) + '</p>' : '') + '</div></details>');
+      }
+      (s.table || []).forEach(function (r) {
+        if (r.id !== c.id || !owner) return;
+        out.push('<details class="fk-st"><summary><span class="fk-st-n">' + esc(owner.name) + ': ' + esc(s.name) + '</span>' + kindTag(s.kind) + '<span class="fk-st-s">' + esc(owner.name) + ' needs ' + esc(r.hp) + ' Max HP against ' + esc(c.name) + '</span></summary><div class="fk-st-b"><div class="fk-rich"><p>' + esc(r.how) + '</p>' + rich(s.text) + '</div><p class="fk-st-o">' + who({ id: owner.id }, c) + '</p></div></details>');
+      });
+    });
+    return out;
+  }
+  function stratsSection(c) {
+    var all = (data && data.strats) || [];
+    if (!all.length) return '';
+    var own = all.filter(function (s) { return s['for'] === c.id; }), gen = all.filter(function (s) { return s['for'] === 'all' || s['for'] === c.side; }), ct = ctRows(c, all);
+    var tabs = [];
+    if (own.length) tabs.push({ k: 'own', l: c.name, n: own.length, h: own.map(function (s) { return stRow(s, c, true); }).join('') });
+    if (gen.length) tabs.push({ k: 'gen', l: c.side === 'killer' ? 'All Killers' : 'All Survivors', n: gen.length, h: gen.map(function (s) { return stRow(s, c, false); }).join('') });
+    if (ct.length) tabs.push({ k: 'ct', l: 'Counters', n: ct.length, h: ct.join('') });
+    if (!tabs.length) return '';
+    return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-st-h"><h2 class="fk-h2" id="fk-st-h">Strategies &amp; Techs</h2><div class="fk-st-tabs" role="tablist" aria-label="Strategies">' +
+      tabs.map(function (t, i) { return '<button type="button" role="tab" class="fk-btn fk-st-t" id="tab-st-' + t.k + '" aria-controls="st-' + t.k + '" aria-selected="' + (i === 0) + '" tabindex="' + (i ? -1 : 0) + '">' + esc(t.l) + ' <b>' + t.n + '</b></button>'; }).join('') + '</div>' +
+      tabs.map(function (t, i) { return '<div class="fk-stp fk-drawn" role="tabpanel" id="st-' + t.k + '" aria-labelledby="tab-st-' + t.k + '"' + (i ? ' hidden' : '') + '>' + t.h + '</div>'; }).join('') + '</section>';
+  }
+  function showStrat(tab, focus) {
+    var list = tab.parentNode, id = tab.getAttribute('aria-controls');
+    Array.prototype.forEach.call(list.querySelectorAll('.fk-st-t'), function (t) { var on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Array.prototype.forEach.call(list.parentNode.querySelectorAll('.fk-stp'), function (p) {
+      var on = p.id === id;
+      p.hidden = !on;
+      if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
+    });
+    if (focus) tab.focus();
+    sbSync();
+  }
+  function jumpAb(b) {
+    var mb = det.querySelector('.fk-mode[data-mode="' + b.getAttribute('data-m') + '"]');
+    if (mb && mb.getAttribute('aria-pressed') !== 'true') swapMode(mb);
+    var id = b.getAttribute('data-abref'), tab = id && det.querySelector('#tab-' + id);
+    if (tab) showAbility(tab);
+    var sec = det.querySelector('section[aria-labelledby="fk-ab-h"]');
+    if (sec) sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }
+
   function ability(a, i) {
     var meta = [];
     if (isPassive(a)) meta.push('<b>Passive</b>');
@@ -563,6 +658,7 @@
       (c.lead ? '<p class="fk-lead">' + inline(c.lead) + '</p>' : '') +
       (c.description ? '<blockquote class="fk-desc">' + esc(plain(c.description)) + '</blockquote>' : '') + '</div></section>' +
       abilitiesSection(c) +
+      stratsSection(c) +
       itemsSection(c) +
       '<div class="fk-audio" data-audio="' + esc(c.audio || '') + '"></div>' +
       skinsSection(c) +
@@ -1093,6 +1189,7 @@
   det.addEventListener('focusin', function (e) { var b = e.target.closest('button.fk-se'); if (b) showTip(b); });
   det.addEventListener('focusout', function (e) { if (e.target === tipFor) hideTip(); });
   det.addEventListener('scroll', hideTip, { passive: true });
+  det.addEventListener('toggle', function () { sbSync(); }, true);
   window.addEventListener('resize', hideTip);
 
   det.addEventListener('click', function (e) {
@@ -1107,6 +1204,10 @@
       leave(BASE + '/' + id, dir);
       return;
     }
+    var ar = e.target.closest('.fk-abref');
+    if (ar) { e.preventDefault(); jumpAb(ar); return; }
+    var stt = e.target.closest('.fk-st-t');
+    if (stt) { showStrat(stt); return; }
     var slot = e.target.closest('.fk-slot');
     if (slot) { e.preventDefault(); showAbility(slot); return; }
     var pb = e.target.closest('.fk-play');
@@ -1144,6 +1245,15 @@
       showAbility(ts[to], true);
       return;
     }
+    var sl = e.target && e.target.closest && e.target.closest('.fk-st-tabs');
+    if (sl && /^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key)) {
+      e.preventDefault();
+      var ss = Array.prototype.slice.call(sl.querySelectorAll('.fk-st-t')), sa = ss.indexOf(e.target.closest('.fk-st-t'));
+      showStrat(ss[e.key === 'Home' ? 0 : e.key === 'End' ? ss.length - 1 : (sa + (e.key === 'ArrowRight' ? 1 : -1) + ss.length) % ss.length], true);
+      return;
+    }
+    var sm = e.target && e.target.closest && e.target.closest('.fk-st summary');
+    if (sm && /^(ArrowLeft|ArrowRight)$/.test(e.key)) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
     else if (e.key === 'Escape') { if (tipFor) hideTip(); else toRoster(); }
