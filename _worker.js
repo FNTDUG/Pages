@@ -3584,7 +3584,7 @@ const SEO_PAGES = {
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
   '/forsaken/forsaken-directory': ['Forsaken Wiki & Guide: Roblox Characters & Tier List', 'The Forsaken wiki and guide for Roblox: every Survivor and Killer with stats, abilities and skins, plus Killer map tier lists and Survivor tier lists.'],
   '/forsaken/roster': ['Forsaken Characters Wiki: Every Survivor & Killer', 'Every Survivor and Killer in Forsaken on Roblox: health, speed, stamina, abilities with cooldowns, items, voice lines and every skin with how to get it.'],
-  '/forsaken/tierlist': ['Forsaken Tier List: Best Killers per Map & Survivors', 'Forsaken tier list for Roblox: every Killer ranked on each map, how Survivor or Killer sided each map is, plus High MMR and Low MMR Survivor tier lists.'],
+  '/forsaken/tierlist': ['Forsaken Tier List: Best Killers per Map & Survivors', 'Forsaken tier list for Roblox: every Killer ranked on each map, how Survivor or Killer sided each map is, plus Low MMR and High MMR Survivor tier lists.'],
   '/staff': ['FNTD User Guide Staff: Owner, Site Editors & Researchers', 'Meet the staff behind the FNTD User Guide: the owner, site editors, researchers, QA team and management who keep the Roblox guides up to date.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -4659,14 +4659,14 @@ function seoFkTierHtml(d) {
   const t = d && d.tierlist;
   if (!t) return '';
   const byId = {}; seoFkChars(d).forEach(c => { byId[c.id] = c; });
-  let out = '<h2>Forsaken tier list</h2><p>Killers are ranked on each map, best first, with how Survivor or Killer sided the map is. Survivors have a High MMR and a Low MMR tier list.</p>';
+  let out = '<h2>Forsaken tier list</h2><p>Killers are ranked on each map, best first, with how Survivor or Killer sided the map is. Survivors have a Low MMR and a High MMR tier list.</p>';
   (t.maps || []).forEach(m => {
     if (!m || !m.name) return;
     const s = parseFloat(m.sided), lean = seoFkLean(isFinite(s) ? s : null), list = seoFkRanked(m.ranks, byId, 'killer');
     out += '<h3>' + seoEsc(m.name) + '</h3>' + (lean ? '<p>' + lean + '.</p>' : '') + (list.length ? '<ol>' + list.map(x => '<li>' + seoFkLink(x.c) + ': ' + x.r.tier + ' tier' + (x.note ? '. ' + seoEsc(x.note) : '') + '</li>').join('') + '</ol>' : '');
   });
   const sv = t.survivors || {};
-  [['high', 'High MMR Survivors'], ['low', 'Low MMR Survivors']].forEach(([k, label]) => {
+  [['low', 'Low MMR Survivors'], ['high', 'High MMR Survivors']].forEach(([k, label]) => {
     const l = sv[k];
     if (!l) return;
     const list = seoFkRanked(l.ranks || l, byId, 'survivor');

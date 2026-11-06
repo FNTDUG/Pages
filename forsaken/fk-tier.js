@@ -5,7 +5,7 @@
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var BASE = '/forsaken/roster/';
   var TIERS = ['D', 'C', 'B', 'A', 'S'];
-  var data = null, side = 'killer', mmr = 'high', byId = {}, sample = false;
+  var data = null, side = 'killer', mmr = 'low', byId = {}, sample = false;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -119,7 +119,7 @@
       if (c && r && c.side === 'survivor') { by[r.tier].push({ c: c, r: r, k: by[r.tier].length, note: o.note ? String(o.note) : '' }); any = true; }
     });
     var name = mmr === 'low' ? 'Low MMR' : 'High MMR';
-    var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['high', 'low'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>' +
+    var html = '<div class="fkt-mmr" role="group" aria-label="Survivor tier list">' + ['low', 'high'].map(function (k) { return '<button type="button" class="fk-btn" data-mmr="' + k + '" aria-pressed="' + (k === mmr) + '">' + (k === 'low' ? 'Low MMR' : 'High MMR') + '</button>'; }).join('') + '</div>' +
       (about ? '<p class="fkt-about">' + digits(about) + '</p>' : '');
     if (!any) return html + '<div class="fkt-board fk-drawn"><p class="fkt-empty">No ' + name + ' Survivor rankings yet.</p></div>';
     var order = TIERS.slice().reverse();
