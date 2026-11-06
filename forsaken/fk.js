@@ -1284,6 +1284,7 @@
   get(SRC).then(function (d) {
     data = d;
     index();
+    if (window.fkNames) fkNames(root, d.characters, CHAR || null, BASE);
     if (CHAR) { showDetail(CHAR); return; }
     if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
     gridView.querySelector('.fk-tab[data-tab="survivor"] .fk-tab-n').textContent = order.survivor.length;

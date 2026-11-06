@@ -73,6 +73,7 @@
 
   fetch(root.getAttribute('data-src'), { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (d) {
     d.characters.forEach(function (c) { byId[c.id] = c; });
+    if (window.fkNames) fkNames(root, d.characters, null, '/forsaken/roster');
     if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
     render(d);
   }).catch(function () {
