@@ -22,7 +22,7 @@
 .fkt-map::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.15) 40%,rgba(0,0,0,.6));pointer-events:none}
 .fkt-map{isolation:isolate}
 .fkt-map-n{margin:0;font-family:var(--fk-serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;text-shadow:0 2px 0 #000,0 0 12px rgba(0,0,0,.9)}
-.fkt-gauge{position:relative;width:100%;max-width:250px;aspect-ratio:640/352;background:url("/forsaken/img/ui-gauge.webp") center/100% 100% no-repeat;container-type:inline-size}
+.fkt-gauge{position:relative;width:100%;max-width:250px;aspect-ratio:640/352;background:url("/forsaken/img/ui-gauge.webp?v=2") center/100% 100% no-repeat;container-type:inline-size}
 .fkt-gs,.fkt-gk{position:absolute;top:66%;width:2ch;margin-left:-1ch;text-align:center;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:34px;line-height:1;color:#050505;pointer-events:none}
 .fkt-gs{left:13.75%}
 .fkt-gk{left:86.25%}
