@@ -3499,7 +3499,7 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_OG_V = 6;
+const SEO_OG_V = 7;
 const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', forsaken: 'The Forsaken on the FNTD User Guide', 'forsaken-tiers': 'Forsaken TierLists & Maps on the FNTD User Guide', 'forsaken-guide': 'Forsaken Guide on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-minigames': 'FWM Minigames on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
@@ -4612,8 +4612,11 @@ function seoFkMeta(c) {
   for (let i = 1; title.length > 60 && i < tails.length; i++) title = c.name + tails[i];
   const cats = (c.cats || []).filter(Boolean);
   const abs = (c.abilities || []).filter(a => a && a.name && !/ - /.test(a.name)).map(a => seoFkTitleCase(a.name));
-  let desc = c.name + ' is a ' + (cats.length ? cats.join(' and ') + ' ' : '') + seoFkSide(c) + ' in Forsaken on Roblox. ' + (c.health ? 'Health ' + String(c.health).replace(/\s*\(.*$/, '') + ', ' : '') + (abs.length ? 'abilities (' + abs.join(', ') + ')' : 'abilities') + ', cooldowns and every skin.';
-  if (desc.length > 160) desc = c.name + ' is a ' + seoFkSide(c) + ' in Forsaken on Roblox: stats, abilities, cooldowns, voice lines and every skin with how to get it.';
+  const hp = c.health ? 'Health ' + String(c.health).replace(/\s*\(.*$/, '') + ', ' : '';
+  const build = (k, n) => c.name + ' is a ' + (k.length ? (k.length > 1 ? k.slice(0, -1).join(', ') + ' and ' : '') + k[k.length - 1] + ' ' : '') + seoFkSide(c) + ' in Forsaken on Roblox. ' + hp + (n ? 'abilities (' + abs.slice(0, n).join(', ') + (n < abs.length ? ' and more' : '') + ')' : 'abilities') + ', cooldowns and every skin.';
+  let desc = '';
+  for (const k of [cats, cats.slice(0, 2), cats.slice(0, 1), []]) { for (let n = abs.length; n > 0 && !desc; n--) { const t = build(k, n); if (t.length <= 160) desc = t; } if (desc) break; }
+  if (!desc) desc = c.name + ' is a ' + seoFkSide(c) + ' in Forsaken on Roblox: stats, abilities, cooldowns, voice lines and every skin with how to get it.';
   if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
   return { title, desc, image: c.card || c.image || '', crumbs: [[SITE_NAME, '/'], ['Forsaken', '/forsaken/forsaken-directory'], ['The Forsaken', '/forsaken/roster'], [c.name, '/forsaken/roster/' + encodeURIComponent(c.id)]] };
 }
