@@ -42,6 +42,7 @@
       @media(max-width:560px){.bbn-dir-grid{grid-template-columns:1fr}.bbn-dir-btn{max-width:340px;margin:0 auto;display:block}}
       .bbn-dir-col--wide{grid-column:1/-1}
       @media(min-width:561px){.bbn-dir-grid.bbn-dir-grid--2{grid-template-columns:repeat(2,minmax(0,1fr));max-width:620px}}
+      @media(min-width:561px){.bbn-dir-grid.bbn-dir-grid--3{grid-template-columns:repeat(3,minmax(0,1fr));max-width:930px}}
       .bbn-dir-btn--text{aspect-ratio:auto;height:150px}
       .bbn-codes-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,#120326 0%,#3a0a38 45%,#681f62 100%)}
       .bbn-codes-t{font:400 34px/1 'Press Start 2P',cursive;letter-spacing:4px;color:#ffa45b;text-shadow:0 0 12px rgba(255,164,91,.45)}
@@ -51,7 +52,7 @@
 
       <div class="bbn-dir-title">Data Directory</div>
 
-      <div class="bbn-dir-grid bbn-dir-grid--2">
+      <div class="bbn-dir-grid bbn-dir-grid--3">
         <div class="bbn-dir-col">
           <div class="bbn-dir-label">The Forsaken</div>
           <a href="/forsaken/roster" class="bbn-dir-btn">
@@ -68,7 +69,16 @@
               <img src="/forsaken/img/card/slasher-440.webp" alt="TierLists &amp; Maps" width="440" height="550" loading="lazy">
             </div>
           </a>
-          <div class="bbn-dir-desc"><p>Every Killer ranked on each map with how Survivor or Killer sided it is, plus High and Low MMR Survivor TierLists.</p></div>
+          <div class="bbn-dir-desc"><p>Every Killer ranked on each map with how Survivor or Killer sided it is, plus Low and High MMR Survivor TierLists.</p></div>
+        </div>
+        <div class="bbn-dir-col">
+          <div class="bbn-dir-label">Meta Comps</div>
+          <a href="/forsaken/meta-comps" class="bbn-dir-btn">
+            <div class="bbn-glow-card">
+              <img src="/forsaken/img/card/guest-1337-440.webp" alt="Meta Comps" width="440" height="550" loading="lazy">
+            </div>
+          </a>
+          <div class="bbn-dir-desc"><p>The best Survivor team to bring against each Killer: which Healers, Supports, Survivalists and Sentinels, and why it works.</p></div>
         </div>
       </div>
       </div>

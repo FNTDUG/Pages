@@ -237,7 +237,8 @@
     '/fwm/grind-methods': { tint: 'green', go: 'Open Grind Methods' },
     '/fwm/minigames': { tint: 'pink', go: 'Play the Minigames' },
     '/forsaken/roster': { tint: 'yellow', go: 'Open The Forsaken' },
-    '/forsaken/tierlist': { tint: 'pink', go: 'Open TierLists & Maps' }
+    '/forsaken/tierlist': { tint: 'pink', go: 'Open TierLists & Maps' },
+    '/forsaken/meta-comps': { tint: 'blue', go: 'Open Meta Comps' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
@@ -269,6 +270,17 @@
       clearTimeout(fitT);
       fitT = setTimeout(function () { fitTerms(out); }, 150);
     });
+    if (window.ResizeObserver) {
+      var seenW = new WeakMap(), roF = 0;
+      var ro = new ResizeObserver(function (es) {
+        var changed = false;
+        es.forEach(function (e) { var w = Math.round(e.contentRect.width); if (seenW.get(e.target) !== w) { seenW.set(e.target, w); changed = true; } });
+        if (changed) { cancelAnimationFrame(roF); roF = requestAnimationFrame(function () { fitTerms(out); }); }
+      });
+      var watchTerms = function () { Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (t) { if (!seenW.has(t)) { seenW.set(t, -1); ro.observe(t); } }); };
+      watchTerms();
+      if (window.MutationObserver) new MutationObserver(watchTerms).observe(out, { childList: true });
+    }
     if (reduced) return;
     Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
@@ -287,7 +299,9 @@
     Array.prototype.forEach.call(box.querySelectorAll('.ov-term h3'), function (h) {
       h.style.fontSize = '';
       var fs = parseFloat(getComputedStyle(h).fontSize);
-      while (fs > 18 && h.getBoundingClientRect().height > fs * 1.6) {
+      var w = h.querySelector('.ov-term-w'), t = h.closest('.ov-term'), lines = h.querySelector('.ov-term-t').textContent ? 2.4 : 1.6;
+      var room = function () { var r = t.getBoundingClientRect(); return r.right - t.clientLeft - 10; };
+      while (fs > 18 && (h.getBoundingClientRect().height > fs * lines || (w && t && w.getBoundingClientRect().right > room()))) {
         fs -= 1;
         h.style.fontSize = fs + 'px';
       }
