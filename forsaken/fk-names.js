@@ -1,6 +1,5 @@
 (function () {
   var SURVIVOR = '#c8c8ff', KILLER = '#ffc8c8';
-  var KILLERS = { c00lkidd: '#c71414', slasher: '#b98a13', 'john-doe': '#eed169', noli: '#38239e', '1x1x1x1': '#32e132', 'guest-666': '#c80000', nosferatu: '#651c32', azure: '#ee17ff' };
   var ALIAS = { Sixer: 'guest-666', HelperBot: 'helperbot' };
   var TEXT = '.fk-cap,.fk-lead,.fk-desc,.fk-ab-q,.fk-rich,.fk-item-note,.fk-hp p,.fk-who--t,.fk-pick-cap,.fk-vl-t,.fk-cls-d,.fkt-about,.fkt-why dt,.fkt-why dd,.fkc-about,.fkc-tip p';
   var SKIP = 'a,button,summary,h1,h2,h3,.fk-cn,script,style,svg';
@@ -18,7 +17,7 @@
     if (!keys.length) return;
     var re = new RegExp('(^|[^A-Za-z0-9])(' + keys.map(escRe).join('|') + ')(?![A-Za-z0-9])', 'g');
 
-    function colour(c) { return c.side === 'killer' ? (KILLERS[c.id] || KILLER) : SURVIVOR; }
+    function colour(c) { return c.side === 'killer' ? KILLER : SURVIVOR; }
     function mark(c, label) {
       var el;
       if (c.id === self) {
