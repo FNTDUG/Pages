@@ -52,6 +52,13 @@ const MOBILE_NAV_BODY = `
   </div>
 </div>
 <div class="ug-mn-section">
+  <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Forsaken <span class="ug-mn-section-arrow">/</span></button>
+  <div class="ug-mn-section-items">
+    <a href="/forsaken/roster"           class="ug-mn-child" data-nav-href="/forsaken/roster">The Forsaken</a>
+    <a href="/forsaken/tierlist"         class="ug-mn-child" data-nav-href="/forsaken/tierlist">TierLists &amp; Maps</a>
+  </div>
+</div>
+<div class="ug-mn-section">
   <button class="ug-mn-section-btn" onclick="ugMnToggle(this)">Patch Notes <span class="ug-mn-section-arrow">/</span></button>
   <div class="ug-mn-section-items">
     <a href="/patch-notes/fntd1-1"        class="ug-mn-child" data-nav-href="/patch-notes/fntd1-1">FNTD1</a>
@@ -114,6 +121,13 @@ const DESKTOP_NAV_INNER = `
     <a href="/fwm/grind-methods"         data-nav-href="/fwm/grind-methods">Grind Methods</a>
     <a href="/fwm/minigames"             data-nav-href="/fwm/minigames">Minigames</a>
     <a href="/fwm/world-map"             data-nav-href="/fwm/world-map">World Map</a>
+  </div>
+</div>
+<div class="ug-tn-item">
+  <button class="ug-tn-btn" onclick="ugTnToggle(this)">Forsaken <span class="ug-tn-arrow">/</span></button>
+  <div class="ug-tn-drop">
+    <a href="/forsaken/roster"           data-nav-href="/forsaken/roster">The Forsaken</a>
+    <a href="/forsaken/tierlist"         data-nav-href="/forsaken/tierlist">TierLists &amp; Maps</a>
   </div>
 </div>
 <div class="ug-tn-item">
@@ -3192,7 +3206,7 @@ async function ghHealth() {
 
 const PUSH_VAPID_PUBLIC = 'BLPdnNvnZaN3D4LjSIDqrNjaCb4vXJI0F9abZ84MvNzu2I4eaci5H7H7i2E19vkeJkaIJaLd0XkD-n00umI3ZaY';
 const PUSH_VAPID_SUBJECT = 'https://www.fntduserguide.com';
-const PUSH_GAMES = ['fntd2', 'bbn', 'fwm'];
+const PUSH_GAMES = ['fntd2', 'bbn', 'fwm', 'forsaken'];
 const PUSH_HOSTS = ['fcm.googleapis.com', 'push.services.mozilla.com', 'push.apple.com', 'notify.windows.com'];
 const PUSH_BATCH = 20;
 const pushEnc = new TextEncoder();
@@ -3428,7 +3442,7 @@ async function pushSend(request, env) {
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
 
   if (body.mode === 'count') {
-    const counts = { fntd2: 0, bbn: 0, fwm: 0, total: 0, combos: {} };
+    const counts = { fntd2: 0, bbn: 0, fwm: 0, forsaken: 0, total: 0, combos: {} };
     let cursor;
     for (let page = 0; page < 20; page++) {
       const list = await env.PUSH_SUBS.list({ prefix: 's:', cursor });
@@ -3438,6 +3452,7 @@ async function pushSend(request, env) {
         if (g.indexOf('fntd2') !== -1) counts.fntd2++;
         if (g.indexOf('bbn') !== -1) counts.bbn++;
         if (g.indexOf('fwm') !== -1) counts.fwm++;
+        if (g.indexOf('forsaken') !== -1) counts.forsaken++;
         const c = PUSH_GAMES.filter(x => g.indexOf(x) !== -1).join(',');
         counts.combos[c] = (counts.combos[c] || 0) + 1;
       }
@@ -3484,8 +3499,8 @@ async function pushSend(request, env) {
 
 const SITE_URL = 'https://www.fntduserguide.com';
 const SITE_NAME = 'FNTD User Guide';
-const SEO_OG_V = 5;
-const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-minigames': 'FWM Minigames on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
+const SEO_OG_V = 6;
+const SEO_OG_ALT = { home: 'FNTD User Guide: many guides, one hub', fntd1: 'FNTD1 Guide on the FNTD User Guide', fntd2: 'FNTD2 Guide on the FNTD User Guide', 'fntd2-codes': 'FNTD2 Codes on the FNTD User Guide', bbn: 'BBN Guide on the FNTD User Guide', 'bbn-codes': 'BBN Codes on the FNTD User Guide', fwm: 'FWM Roster on the FNTD User Guide', 'fwm-specs': 'FWM Tech Specs on the FNTD User Guide', 'fwm-meta': 'FWM Meta Teams on the FNTD User Guide', 'fwm-tiers': 'FWM TierList on the FNTD User Guide', forsaken: 'The Forsaken on the FNTD User Guide', 'forsaken-tiers': 'Forsaken TierLists & Maps on the FNTD User Guide', 'forsaken-guide': 'Forsaken Guide on the FNTD User Guide', 'fwm-grind-methods': 'FWM Grind Methods on the FNTD User Guide', 'fwm-minigames': 'FWM Minigames on the FNTD User Guide', 'fwm-guide': 'FWM Guide on the FNTD User Guide' };
 function seoOgName(p) {
   if (p === '/fntd2/codes' || p === '/bbn/codes') return p.split('/')[1] + '-codes';
   if (p === '/patch-notes') return 'fntd2';
@@ -3496,6 +3511,9 @@ function seoOgName(p) {
   if (p === '/fwm/minigames' || p === '/fwm/freddy-in-space' || p === '/fwm/freddy-in-space-map' || p === '/fwm/foxy-exe' || p === '/fwm/chicas-magic-rainbow' || p === '/fwm/foxy-fighters' || p === '/fwm/deedees-fishing-hole') return 'fwm-minigames';
   if (p === '/fwm/fwm-directory') return 'fwm-guide';
   if (p.indexOf('/fwm/') === 0) return 'fwm';
+  if (p === '/forsaken/tierlist') return 'forsaken-tiers';
+  if (p === '/forsaken/forsaken-directory') return 'forsaken-guide';
+  if (p.indexOf('/forsaken/') === 0) return 'forsaken';
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
   if (p === '/patch-notes/bbn-patch-notes') return 'bbn';
   if (p === '/patch-notes/fwm-patch-notes') return 'fwm';
@@ -3509,6 +3527,7 @@ const SEO_SECTIONS = {
   fntd2: { name: 'Five Nights TD 2', path: '/fntd2/fntd2-directory' },
   bbn: { name: 'Bite By Night', path: '/bbn/bite-by-night-directory' },
   fwm: { name: 'FNaF World Multiplayer', path: '/fwm/fwm-directory' },
+  forsaken: { name: 'Forsaken', path: '/forsaken/forsaken-directory' },
   'patch-notes': { name: 'Patch Notes', path: '/patch-notes' }
 };
 const SEO_PAGES = {
@@ -3563,6 +3582,9 @@ const SEO_PAGES = {
   '/fwm/freddy-in-space-map': ['Freddy in Space Map: All 9 Cupcake Locations', "Interactive map of FNaF 57: Freddy in Space from FNaF World. Zoom in to find all 9 cupcakes, the jump boost, the teleporter and Scott's Head."],
   '/fwm/freddy-in-space': ['FNaF 57: Freddy in Space: Play the Fan Remake Online', "Play FNaF 57: Freddy in Space in your browser, a fan remake of the FNaF World minigame. Find 9 cupcakes, beat Scott's Head and unlock Purple Guy."],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
+  '/forsaken/forsaken-directory': ['Forsaken Wiki & Guide: Roblox Characters & Tier List', 'The Forsaken wiki and guide for Roblox: every Survivor and Killer with stats, abilities and skins, plus Killer map tier lists and Survivor tier lists.'],
+  '/forsaken/roster': ['Forsaken Characters Wiki: Every Survivor & Killer', 'Every Survivor and Killer in Forsaken on Roblox: health, speed, stamina, abilities with cooldowns, items, voice lines and every skin with how to get it.'],
+  '/forsaken/tierlist': ['Forsaken Tier List: Best Killers per Map & Survivors', 'Forsaken tier list for Roblox: every Killer ranked on each map, how Survivor or Killer sided each map is, plus High MMR and Low MMR Survivor tier lists.'],
   '/staff': ['FNTD User Guide Staff: Owner, Site Editors & Researchers', 'Meet the staff behind the FNTD User Guide: the owner, site editors, researchers, QA team and management who keep the Roblox guides up to date.'],
   '/sponsor': ['Sponsor the FNTD User Guide | Reach Roblox Players', 'Sponsor the FNTD User Guide to put your Roblox game or product in front of Five Nights TD 2, Five Nights TD and Bite By Night players.'],
   '/privacy-policy': ['Privacy Policy | FNTD User Guide', 'How the FNTD User Guide handles your data: what is collected when you visit, how it is used, and who it is shared with.']
@@ -3596,7 +3618,7 @@ function seoMeta(pathname) {
 function seoHead(pathname, canonUrl, over, origin) {
   const m = over || seoMeta(pathname);
   if (!m) return '';
-  const p = seoPath(pathname), og = seoOgName(p), wide = !m.image, img = seoAttr(m.image || (origin || SITE_URL) + '/og/' + og + '.png?v=' + SEO_OG_V);
+  const p = seoPath(pathname), og = seoOgName(p), wide = !m.image, img = seoAttr(m.image ? (m.image.charAt(0) === '/' ? (origin || SITE_URL) + m.image : m.image) : (origin || SITE_URL) + '/og/' + og + '.png?v=' + SEO_OG_V);
   let out = '<meta name="description" content="' + seoAttr(m.desc) + '">' +
     '<meta property="og:type" content="website"><meta property="og:site_name" content="' + SITE_NAME + '">' +
     '<meta property="og:title" content="' + seoAttr(m.title) + '"><meta property="og:description" content="' + seoAttr(m.desc) + '">' +
@@ -3629,7 +3651,8 @@ const SEO_GAMES = {
   fntd2: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd2', name: 'Five Nights TD 2', alternateName: ['FNTD2', 'FNTD 2', 'Five Nights Tower Defense 2', 'FNaF TD 2'], description: 'A FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/70400654680508' },
   fntd1: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fntd1', name: 'Five Nights TD', alternateName: ['FNTD', 'FNTD1', 'Five Nights Tower Defense', 'FNaF TD'], description: 'The original FNaF tower defense game on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Tower defense', 'Strategy'], url: 'https://www.roblox.com/games/15846919378' },
   bbn: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-bbn', name: 'Bite By Night', alternateName: ['BBN'], description: 'A FNaF-inspired multiplayer horror game on Roblox with killers and survivors.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Horror', 'Survival'] },
-  fwm: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fwm', name: 'FNaF World Multiplayer', alternateName: ['FWM', 'FNAF World Multiplayer'], description: 'A multiplayer FNaF World RPG on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['RPG', 'Adventure'], url: 'https://www.roblox.com/games/116192088324578/FNaF-World-Multiplayer' }
+  fwm: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-fwm', name: 'FNaF World Multiplayer', alternateName: ['FWM', 'FNAF World Multiplayer'], description: 'A multiplayer FNaF World RPG on Roblox.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['RPG', 'Adventure'], url: 'https://www.roblox.com/games/116192088324578/FNaF-World-Multiplayer' },
+  forsaken: { '@type': 'VideoGame', '@id': SITE_URL + '/#game-forsaken', name: 'Forsaken', alternateName: ['FORSAKEN', 'Forsaken Roblox'], description: 'An asymmetrical horror game on Roblox where Survivors try to outlast a Killer.', gamePlatform: 'Roblox', applicationCategory: 'Game', genre: ['Horror', 'Survival'], url: 'https://www.roblox.com/games/18687417158/Forsaken' }
 };
 function seoGamesFor(p) {
   if (p === '/') return ['fntd2', 'fntd1', 'bbn'];
@@ -4211,7 +4234,8 @@ const UPD_GH = {
   'fnafworldspecs.json': ['/fwm/tech-specs'],
   'fnafworldtiers.json': ['/fwm/tierlist'],
   'fnafworldmeta.json': ['/fwm/meta-teams'],
-  'fnafworldgrind.json': ['/fwm/grind-methods']
+  'fnafworldgrind.json': ['/fwm/grind-methods'],
+  'forsaken.json': ['/forsaken/roster', '/forsaken/tierlist']
 };
 const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json' };
 const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json' };
@@ -4545,6 +4569,136 @@ async function seoFwmSitemap(env, url) {
     return new Response(body, { status: list.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
   });
 }
+const FK_DATA = '/forsaken/forsaken-preview.json';
+const FK_TIERS = ['D', 'C', 'B', 'A', 'S'];
+let seoFkCache = null;
+async function seoLoadFk(env, url) {
+  if (seoFkCache && Date.now() - seoFkCache.at < 300000) return seoFkCache.data;
+  const r = await env.ASSETS.fetch(new Request(new URL(FK_DATA, url).toString()));
+  if (!r.ok) return seoFkCache ? seoFkCache.data : null;
+  let data;
+  try { data = JSON.parse((await r.text()).replace(/,(\s*[\]}])/g, '$1')); } catch (e) { return seoFkCache ? seoFkCache.data : null; }
+  if (!data || !Array.isArray(data.characters)) return seoFkCache ? seoFkCache.data : null;
+  seoFkCache = { data, at: Date.now() };
+  return data;
+}
+function seoFkPlain(s) {
+  const roman = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  return String(s || '').replace(/\*\*/g, '').replace(/⟦([^|⟧]*)\|?([^⟧]*)⟧/g, (m, n, l) => n + (l ? ' ' + (/^\d+$/.test(l.trim()) ? roman[+l.trim()] || l : l.trim()) : '')).replace(/•+\s*/g, '').replace(/\s*\n+\s*/g, ' ').trim();
+}
+function seoFkTitleCase(s) { return String(s || '').toLowerCase().replace(/(^|[\s(/-])([a-z])/g, (m, a, b) => a + b.toUpperCase()); }
+function seoFkSide(c) { return c.side === 'killer' ? 'Killer' : 'Survivor'; }
+function seoFkChars(d) { return ((d && d.characters) || []).filter(c => c && c.id && c.name); }
+function seoFkRank(v) {
+  const m = /^\s*([DCBAS])\s*[-:]?\s*(\d)?\s*$/i.exec(String(v == null ? '' : v));
+  return m ? { tier: m[1].toUpperCase(), n: m[2] == null ? 2.5 : Math.max(1, Math.min(4, +m[2])) } : null;
+}
+function seoFkLean(s) {
+  if (s == null || !isFinite(s)) return '';
+  return s < 15 ? 'Very Survivor sided' : s < 40 ? 'Survivor sided' : s <= 60 ? 'Balanced' : s <= 85 ? 'Killer sided' : 'Very Killer sided';
+}
+function seoFkRanked(ranks, byId, side) {
+  const out = [];
+  Object.keys(ranks || {}).forEach((id, k) => {
+    const v = ranks[id], o = v && typeof v === 'object' ? v : { rank: v }, c = byId[id], r = seoFkRank(o.rank);
+    if (c && r && c.side === side) out.push({ c, r, k, note: o.note ? String(o.note) : '' });
+  });
+  return out.sort((a, b) => (FK_TIERS.indexOf(b.r.tier) * 5 + b.r.n) - (FK_TIERS.indexOf(a.r.tier) * 5 + a.r.n) || a.k - b.k);
+}
+function seoFkLink(c) { return '<a href="/forsaken/roster/' + encodeURIComponent(c.id) + '">' + seoEsc(c.name) + '</a>'; }
+function seoFkMeta(c) {
+  const tails = [' | Forsaken Wiki: Stats, Abilities & Skins', ' | Forsaken Wiki: Abilities & Skins', ' | Forsaken Wiki', ' | Forsaken'];
+  let title = c.name + tails[0];
+  for (let i = 1; title.length > 60 && i < tails.length; i++) title = c.name + tails[i];
+  const cats = (c.cats || []).filter(Boolean);
+  const abs = (c.abilities || []).filter(a => a && a.name && !/ - /.test(a.name)).map(a => seoFkTitleCase(a.name));
+  let desc = c.name + ' is a ' + (cats.length ? cats.join(' and ') + ' ' : '') + seoFkSide(c) + ' in Forsaken on Roblox. ' + (c.health ? 'Health ' + String(c.health).replace(/\s*\(.*$/, '') + ', ' : '') + (abs.length ? 'abilities (' + abs.join(', ') + ')' : 'abilities') + ', cooldowns and every skin.';
+  if (desc.length > 160) desc = c.name + ' is a ' + seoFkSide(c) + ' in Forsaken on Roblox: stats, abilities, cooldowns, voice lines and every skin with how to get it.';
+  if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
+  return { title, desc, image: c.card || c.image || '', crumbs: [[SITE_NAME, '/'], ['Forsaken', '/forsaken/forsaken-directory'], ['The Forsaken', '/forsaken/roster'], [c.name, '/forsaken/roster/' + encodeURIComponent(c.id)]] };
+}
+function seoFkCharHtml(c, d) {
+  const rows = [['Side', seoFkSide(c)]];
+  const cats = (c.cats || []).filter(Boolean);
+  if (cats.length) rows.push([c.side === 'killer' ? 'Killer type' : 'Survivor type', seoEsc(cats.join(', '))]);
+  [['Health', c.health], ['Max stamina', c.stamina], ['Walk speed', c.speed], ['Sprint speed', c.sprint], ['Stamina loss', c.staminaLoss != null && c.staminaLoss !== '' ? c.staminaLoss + '/s' : ''], ['Stamina gain', c.staminaGain != null && c.staminaGain !== '' ? c.staminaGain + '/s' : ''], ['Terror radius', c.terror], ['Cost', c.cost], ['Difficulty', c.difficulty], ['Pronouns', c.pronouns]].forEach(r => { if (r[1] != null && r[1] !== '') rows.push([r[0], seoEsc(r[1])]); });
+  let out = '<h2>' + seoEsc(c.name) + '</h2>' + (c.lead ? '<p>' + seoEsc(seoFkPlain(c.lead)) + '</p>' : '') + (c.caption ? '<p>&ldquo;' + seoEsc(c.caption) + '&rdquo;</p>' : '') +
+    '<table><tbody>' + rows.map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('') + '</tbody></table>';
+  const abs = (c.abilities || []).filter(a => a && a.name);
+  if (abs.length) out += '<h3>Abilities</h3><ul>' + abs.map(a => '<li><b>' + seoEsc(seoFkTitleCase(a.name)) + '</b>' + (a.key ? ' (' + seoEsc(a.key) + (a.cd ? ', ' + seoEsc(a.cd) + ' cooldown' : '') + ')' : a.cd ? ' (' + seoEsc(a.cd) + ' cooldown)' : '') + ': ' + seoEsc(seoFkPlain(a.desc)) + '</li>').join('') + '</ul>';
+  if (c.side === 'survivor') {
+    const items = ((d && d.items) || []).filter(it => it && it.name);
+    if (items.length) out += '<h3>Items</h3><ul>' + items.map(it => { const blocked = (it.blocked || []).indexOf(c.id) !== -1, note = it.notes && it.notes[c.id]; return '<li><b>' + seoEsc(it.name) + '</b>' + (blocked ? ' (cannot be used)' : '') + ': ' + seoEsc(seoFkPlain(note || it.desc)) + '</li>'; }).join('') + '</ul>';
+  }
+  if (c.side === 'killer' && d && d.tierlist && Array.isArray(d.tierlist.maps)) {
+    const byId = {}; seoFkChars(d).forEach(x => { byId[x.id] = x; });
+    const ranks = d.tierlist.maps.map(m => { const r = seoFkRanked(m.ranks, byId, 'killer').filter(x => x.c === c)[0]; return r ? '<li>' + seoEsc(m.name) + ': ' + r.r.tier + ' tier</li>' : ''; }).join('');
+    if (ranks) out += '<h3>Map tier list</h3><ul>' + ranks + '</ul>';
+  }
+  const skins = (c.skins || []).filter(k => k && k.name);
+  if (skins.length) out += '<h3>Skins</h3><ul>' + skins.map(k => '<li>' + seoEsc(k.name) + (k.how ? ': ' + seoEsc(k.how) : '') + '</li>').join('') + '</ul>';
+  out += '<p><a href="/forsaken/roster">Every Forsaken character</a> &middot; <a href="/forsaken/tierlist">Forsaken TierLists &amp; Maps</a></p>';
+  return seoBlock(c.name + ' as text', out);
+}
+function seoFkRosterHtml(d) {
+  const all = seoFkChars(d);
+  if (!all.length) return '';
+  const table = (side, label) => {
+    const list = all.filter(c => c.side === side);
+    if (!list.length) return '';
+    return '<h3>' + label + '</h3><div class="ug-seo-wrap"><table><thead><tr><th>' + seoFkSide(list[0]) + '</th><th>Type</th><th>Health</th><th>Walk / sprint</th><th>Difficulty</th><th>Cost</th></tr></thead><tbody>' +
+      list.map(c => '<tr><td>' + seoFkLink(c) + '</td><td>' + seoEsc((c.cats || []).join(', ')) + '</td><td>' + seoEsc(String(c.health || '').replace(/\s*\(.*$/, '')) + '</td><td>' + seoEsc((c.speed || '?') + ' / ' + (c.sprint || '?')) + '</td><td>' + seoEsc(c.difficulty || '') + '</td><td>' + seoEsc(c.cost || '') + '</td></tr>').join('') + '</tbody></table></div>';
+  };
+  const ns = all.filter(c => c.side === 'survivor').length, nk = all.length - ns;
+  return seoBlock('Forsaken characters as text', '<h2>Forsaken characters</h2><p>' + ns + ' Survivors and ' + nk + ' Killers in Forsaken on Roblox. Each one has its own page with stats, abilities, cooldowns and skins.</p>' + table('survivor', 'Survivors') + table('killer', 'Killers'));
+}
+function seoFkTierHtml(d) {
+  const t = d && d.tierlist;
+  if (!t) return '';
+  const byId = {}; seoFkChars(d).forEach(c => { byId[c.id] = c; });
+  let out = '<h2>Forsaken tier list</h2><p>Killers are ranked on each map, best first, with how Survivor or Killer sided the map is. Survivors have a High MMR and a Low MMR tier list.</p>';
+  (t.maps || []).forEach(m => {
+    if (!m || !m.name) return;
+    const s = parseFloat(m.sided), lean = seoFkLean(isFinite(s) ? s : null), list = seoFkRanked(m.ranks, byId, 'killer');
+    out += '<h3>' + seoEsc(m.name) + '</h3>' + (lean ? '<p>' + lean + '.</p>' : '') + (list.length ? '<ol>' + list.map(x => '<li>' + seoFkLink(x.c) + ': ' + x.r.tier + ' tier' + (x.note ? '. ' + seoEsc(x.note) : '') + '</li>').join('') + '</ol>' : '');
+  });
+  const sv = t.survivors || {};
+  [['high', 'High MMR Survivors'], ['low', 'Low MMR Survivors']].forEach(([k, label]) => {
+    const l = sv[k];
+    if (!l) return;
+    const list = seoFkRanked(l.ranks || l, byId, 'survivor');
+    if (!list.length) return;
+    out += '<h3>' + label + '</h3>' + (l.about ? '<p>' + seoEsc(l.about) + '</p>' : '') + '<ul>' + FK_TIERS.slice().reverse().map(tr => { const xs = list.filter(x => x.r.tier === tr); return xs.length ? '<li>' + tr + ' tier: ' + xs.map(x => seoFkLink(x.c)).join(', ') + '</li>' : ''; }).join('') + '</ul>';
+  });
+  return seoBlock('Forsaken tier list as text', out);
+}
+async function seoFkChar(p, load) {
+  const want = decodeURIComponent(p.slice('/forsaken/roster/'.length)).replace(/\/+$/, '').toLowerCase();
+  const d = await seoTimed(load(), 2500);
+  if (!d) return null;
+  const c = seoFkChars(d).filter(x => x.id === want)[0];
+  if (!c) return { missing: true, canon: '/forsaken/roster', meta: { title: 'Not found | Forsaken Wiki', desc: 'There is no Forsaken character at this address. Open The Forsaken to see every Survivor and Killer on Roblox.' } };
+  let html = '';
+  try { html = seoFkCharHtml(c, d); } catch (e) { html = ''; }
+  return { meta: seoFkMeta(c), canon: '/forsaken/roster/' + encodeURIComponent(c.id), html };
+}
+async function seoFkSitemap(env, url) {
+  return sitemapCached(url, 'sitemap-forsaken.xml', async () => {
+    const d = await seoTimed(seoLoadFk(env, url), 4000);
+    const list = seoFkChars(d);
+    const now = Date.now();
+    const st = { map: (await sitemapState(env, 'sitemap:lmk')) || {}, dirty: false };
+    st.first = !Object.keys(st.map).length;
+    const enc = new TextEncoder();
+    const sigs = await Promise.all(list.map(async c => wikiHex(new Uint8Array(await crypto.subtle.digest('SHA-1', enc.encode(JSON.stringify(c))))).slice(0, 16)));
+    const rows = list.map((c, i) => '  <url><loc>' + seoEsc(SITE_URL + '/forsaken/roster/' + encodeURIComponent(c.id)) + '</loc><lastmod>' + sitemapIso(sitemapStamp(st, c.id, sigs[i], now, now)) + '</lastmod></url>');
+    if (st.dirty && env.PUSH_SUBS && list.length) {
+      try { await env.PUSH_SUBS.put('sitemap:lmk', JSON.stringify(st.map)); } catch (e) {}
+    }
+    const body = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+    return new Response(body, { status: list.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  });
+}
 function seoFwmLink(name, page) {
   if (!page) return seoEsc(name);
   return '<a href="/fwm/' + page + '#' + encodeURIComponent(seoFwmSlug(name)) + '">' + seoEsc(name) + '</a>';
@@ -4630,8 +4784,15 @@ function seoFwmHtml(d) {
   return seoBlock('FNaF World Multiplayer roster as text', out.join(''));
 }
 
-async function seoSsr(realPath, pageSrc) {
+async function seoSsr(realPath, pageSrc, fkLoad) {
   const p = seoPath(realPath);
+  if (fkLoad && p.indexOf('/forsaken/roster/') === 0) return seoFkChar(p, fkLoad);
+  if (fkLoad && (p === '/forsaken/roster' || p === '/forsaken/tierlist')) {
+    const d = await seoTimed(fkLoad(), 2500);
+    let html = '';
+    try { html = p === '/forsaken/tierlist' ? seoFkTierHtml(d) : seoFkRosterHtml(d); } catch (e) { html = ''; }
+    return html ? { html } : null;
+  }
   if (p.indexOf('/fwm/') === 0 && p.split('/').length > 3) {
     const sub = await seoFwmSub(p);
     if (sub) return sub;
@@ -4688,6 +4849,7 @@ function seoLlms() {
     ['Five Nights TD', p => p === '/fntd1' || p.indexOf('/fntd1/') === 0 || p === '/patch-notes/fntd1-1'],
     ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
     ['FNaF World Multiplayer', p => p.indexOf('/fwm/') === 0 || p === '/patch-notes/fwm-patch-notes'],
+    ['Forsaken', p => p.indexOf('/forsaken/') === 0],
     ['About the site', p => p === '/sponsor' || p === '/staff' || p === '/privacy-policy']
   ];
   const skip = ['/', '/wiki', '/fntd2/patch-notes', '/bbn/codes'];
@@ -4866,7 +5028,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const PAGE_MOVED = { '/fwm/grind': '/fwm/grind-methods', '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams', '/fntd2/meta-teams-1': '/fntd2/meta-teams', '/fntd2': '/fntd2/fntd2-directory', '/bbn': '/bbn/bite-by-night-directory', '/modes': '/fntd2/fntd2-index', '/faq-fntd2': '/fntd2/fntd2-index', '/faq-fntd1': '/fntd1/faq-fntd1', '/value-list': '/fntd2/trade-calculator', '/fntd2/tradingui': '/fntd2/trade-calculator', '/unit-image-renders': '/fntd2/unit-engine', '/dps-list': '/fntd2/unit-engine', '/tierlists-1': '/fntd2/tierlists-1', '/info-charts': '/fntd2/fntd2-index', '/fntd2/info-charts': '/fntd2/fntd2-index', '/bbn-patch-notes': '/patch-notes/bbn-patch-notes', '/info-guides/night-shift': '/fntd1/night-shift', '/bbn/terminal-survivor': '/bbn/survivor-terminal', '/fntd2/boss-raids': '/fntd2/boss-raids-index', '/old-man-consequences': '/fntd2/boss-raids-index' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
-const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261103i"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261104a"><\/script>';
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261103i"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261105a"><\/script>';
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 const PV_UPDATE = {
   version: '2026-10-20',
@@ -5049,7 +5211,8 @@ const NOTIFY_HTML = `
   var GAMES = [
     { id: 'fntd2', name: 'FNTD2' },
     { id: 'bbn', name: 'BBN' },
-    { id: 'fwm', name: 'FWM' }
+    { id: 'fwm', name: 'FWM' },
+    { id: 'forsaken', name: 'Forsaken' }
   ];
   var FAIL = 'Something went wrong. Please try again.';
 
@@ -5078,17 +5241,21 @@ const NOTIFY_HTML = `
   function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function store(k, v) { try { window.localStorage.setItem(k, String(v)); } catch (e) {} }
 
-  var chosen = { fntd2: true, bbn: true, fwm: true };
+  function pick(list) {
+    var out = {}, any = false;
+    for (var i = 0; i < GAMES.length; i++) { out[GAMES[i].id] = !list || list.indexOf(GAMES[i].id) !== -1; any = any || out[GAMES[i].id]; }
+    return any ? out : pick(null);
+  }
+  var chosen = pick(null);
   var savedGames = load('ntf:games');
-  if (savedGames && load('ntf:gamesv') !== '2') {
-    if (savedGames.indexOf('fwm') === -1) savedGames += ',fwm';
+  if (savedGames && load('ntf:gamesv') !== '3') {
+    var gv = load('ntf:gamesv');
+    if (gv !== '2' && savedGames.split(',').indexOf('fwm') === -1) savedGames += ',fwm';
+    if (savedGames.split(',').indexOf('forsaken') === -1) savedGames += ',forsaken';
     store('ntf:games', savedGames);
-    store('ntf:gamesv', '2');
+    store('ntf:gamesv', '3');
   }
-  if (savedGames) {
-    chosen = { fntd2: savedGames.indexOf('fntd2') !== -1, bbn: savedGames.indexOf('bbn') !== -1, fwm: savedGames.indexOf('fwm') !== -1 };
-    if (!chosen.fntd2 && !chosen.bbn && !chosen.fwm) chosen = { fntd2: true, bbn: true, fwm: true };
-  }
+  if (savedGames) chosen = pick(savedGames.split(','));
 
   var BELL = '<svg class="ntf-icon" aria-hidden="true"><use href="#ntfBellArt"/></svg>';
   var BELLW = document.documentElement.classList.contains('ov') ? 'the bell in the settings cog' : 'the bell';
@@ -5213,6 +5380,22 @@ const NOTIFY_HTML = `
     return h + '</div>';
   }
 
+  function topicsEdge() {
+    var r = document.getElementById('ntfTopics');
+    if (!r) return;
+    var max = r.scrollWidth - r.clientWidth;
+    r.classList.toggle('ntf-more-l', max > 2 && r.scrollLeft > 2);
+    r.classList.toggle('ntf-more-r', max > 2 && r.scrollLeft < max - 2);
+  }
+  content.addEventListener('scroll', function (e) { if (e.target && e.target.id === 'ntfTopics') topicsEdge(); }, true);
+  content.addEventListener('wheel', function (e) {
+    var r = e.target.closest ? e.target.closest('#ntfTopics') : null;
+    if (!r || r.scrollWidth <= r.clientWidth || Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+    r.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('resize', topicsEdge);
+
   function readTopics() {
     var out = [];
     var boxes = content.querySelectorAll('#ntfTopics input');
@@ -5221,9 +5404,9 @@ const NOTIFY_HTML = `
   }
 
   function setChosen(list) {
-    chosen = { fntd2: list.indexOf('fntd2') !== -1, bbn: list.indexOf('bbn') !== -1, fwm: list.indexOf('fwm') !== -1 };
+    chosen = pick(list);
     store('ntf:games', list.join(','));
-    store('ntf:gamesv', '2');
+    store('ntf:gamesv', '3');
   }
 
   function lockScroll() {
@@ -5245,6 +5428,7 @@ const NOTIFY_HTML = `
     var s = SCREENS[name];
     panel.className = 'ntf-panel' + (s.cls ? ' ' + s.cls : '');
     content.innerHTML = s.html.replace('{{TOPICS}}', topicsHtml());
+    requestAnimationFrame(topicsEdge);
     if (veil.hidden) {
       prevOverflow = document.body.style.overflow;
       veil.hidden = false;
@@ -5790,6 +5974,9 @@ const PUSH_SEND_PAGE = `<!doctype html>
           <option value="/fwm/tierlist"></option>
           <option value="/fwm/meta-teams"></option>
           <option value="/fwm/grind-methods"></option>
+          <option value="/forsaken/forsaken-directory"></option>
+          <option value="/forsaken/roster"></option>
+          <option value="/forsaken/tierlist"></option>
         </datalist>
         <label class="f">Send to</label>
         <div class="games" id="games">
@@ -5797,6 +5984,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
           <label class="game"><input type="checkbox" value="fntd2" checked><span>FNTD2 <em id="cFntd2"></em></span></label>
           <label class="game"><input type="checkbox" value="bbn"><span>BBN <em id="cBbn"></em></span></label>
           <label class="game"><input type="checkbox" value="fwm"><span>FWM <em id="cFwm"></em></span></label>
+          <label class="game"><input type="checkbox" value="forsaken"><span>Forsaken <em id="cForsaken"></em></span></label>
         </div>
         <p class="plabel">Preview</p>
         <div class="preview" aria-hidden="true">
@@ -5835,7 +6023,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
 <script>
 (function () {
   var password = '';
-  var counts = { fntd2: 0, bbn: 0, fwm: 0, total: 0, combos: {} };
+  var counts = { fntd2: 0, bbn: 0, fwm: 0, forsaken: 0, total: 0, combos: {} };
   var $ = function (id) { return document.getElementById(id); };
 
   function api(data) {
@@ -5879,9 +6067,10 @@ const PUSH_SEND_PAGE = `<!doctype html>
     $('cFntd2').textContent = '(' + counts.fntd2 + ')';
     $('cBbn').textContent = '(' + counts.bbn + ')';
     $('cFwm').textContent = '(' + (counts.fwm || 0) + ')';
+    $('cForsaken').textContent = '(' + (counts.forsaken || 0) + ')';
   }
 
-  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'BBN', fwm: 'FWM' };
+  var GAME_NAMES = { all: 'Whole site', fntd2: 'FNTD2', bbn: 'BBN', fwm: 'FWM', forsaken: 'Forsaken' };
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -8747,6 +8936,7 @@ export default {
     if (pageMoved) return Response.redirect(new URL((url.pathname.indexOf('/overhaul/') === 0 ? '/overhaul' : '') + pageMoved + url.search + url.hash, url).toString(), 301);
     if (url.pathname === '/sitemap-units.xml') return seoUnitSitemap(env, url);
     if (url.pathname === '/sitemap-fwm.xml') return seoFwmSitemap(env, url);
+    if (url.pathname === '/sitemap-forsaken.xml') return seoFkSitemap(env, url);
     if (url.pathname === '/sitemap.xml') return seoSitemap(env, url);
     if (url.pathname === '/llms.txt') return seoLlms();
     if (url.pathname === '/meta-engine.js') {
@@ -8821,7 +9011,7 @@ export default {
     const staffP = okPage && seoPath(realPath) === '/staff' ? staffLoad(env) : null;
     if (staffP && ctx) ctx.waitUntil(staffP.catch(() => null));
     const [ssr, pageNotes, codesData, codesFeeds, gameCodes, pageUpds, pnData, staffData] = await Promise.all([
-      okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve('')) : null,
+      okPage ? seoSsr(realPath, () => pageRes ? pageRes.text() : Promise.resolve(''), () => seoLoadFk(env, url)) : null,
       okPage && seoPath(realPath).indexOf('/fntd2/') === 0 ? seoTimed(seoLoadNotes(), 1500) : null,
       codesCfg ? seoTimed(seoLoadCodes(env, url, codesCfg.file), 2500) : null,
       codesCfg && codesCfg.icons ? seoTimed(seoLoadInfFeeds(), 2000) : null,

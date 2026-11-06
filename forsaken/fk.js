@@ -555,7 +555,7 @@
       '<div class="fk-hero" style="' + vars(c) + '">' +
       '<div class="fk-artcol"><div class="fk-art fk-rv" style="--i:0">' + artImgs(c) + '<span class="fk-art-glow" aria-hidden="true"></span><span class="fk-art-f" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' + modesHtml(c) + '</div>' +
       '<div class="fk-side">' +
-      '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><div class="fk-name">' + nameArt + '</div><div class="fk-tags">' + tags + '</div>' +
+      '<div class="fk-namebox fk-drawn fk-rv" style="--i:1"><h1 class="fk-name">' + nameArt + '</h1><div class="fk-tags">' + tags + '</div>' +
       (c.caption ? '<p class="fk-cap">&ldquo;' + esc(c.caption) + '&rdquo;</p>' : '') + '</div>' +
       '<div class="fk-statbox fk-drawn fk-rv" style="--i:3"><h2 class="fk-box-h">Stats</h2>' + stats(c) + '</div>' +
       '</div></div>' +

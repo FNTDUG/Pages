@@ -10,7 +10,7 @@
   [
     'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
     solo ? '' : '/overhaul/parvus-home.css',
-    '/overhaul/ov-pop.css'
+    '/overhaul/ov-pop.css?v=20261105c'
   ].forEach(function (href) {
     if (!href) return;
     if (href.indexOf('fonts.googleapis') !== -1 && document.querySelector('link[href*="family=Archivo+Black"]')) return;
@@ -35,7 +35,7 @@
   if (SECTIONS[game]) h.setAttribute('data-game', game);
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
-  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
+  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory', '/forsaken/forsaken-directory'];
   var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || (!document.querySelector('meta[name="ov-stage"]') && !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches));
   var tbar = false;
   function hlTitle(t) {
@@ -235,7 +235,9 @@
     '/fwm/tierlist': { tint: 'pink', go: 'Open the TierList' },
     '/fwm/meta-teams': { tint: 'blue', go: 'Open Meta Teams' },
     '/fwm/grind-methods': { tint: 'green', go: 'Open Grind Methods' },
-    '/fwm/minigames': { tint: 'pink', go: 'Play the Minigames' }
+    '/fwm/minigames': { tint: 'pink', go: 'Play the Minigames' },
+    '/forsaken/roster': { tint: 'yellow', go: 'Open The Forsaken' },
+    '/forsaken/tierlist': { tint: 'pink', go: 'Open TierLists & Maps' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
@@ -639,7 +641,7 @@
     window.infToggleExp.ov = true;
   }
 
-  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
+  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory'], ['forsaken', 'Forsaken', '/forsaken/forsaken-directory']];
   function bar() {
     var main = document.getElementById('ug-main');
     if (!main || main.querySelector('.pv-bar') || !document.querySelector('#ug-content[data-layout="wide"]')) return;

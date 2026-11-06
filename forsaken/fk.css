@@ -93,7 +93,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-art-glow{position:absolute;inset:0;z-index:1;background:radial-gradient(60% 50% at 50% 100%,rgba(255,122,26,.55),transparent 70%);mix-blend-mode:screen;opacity:0;pointer-events:none}
 .fk-side{display:flex;flex-direction:column;gap:14px}
 .fk-namebox{padding:16px 16px 14px;text-align:center}
-.fk-name{margin:0 0 8px}
+.fk-name{margin:0 0 8px;font-size:inherit;font-weight:inherit;line-height:inherit}
 .fk-name img{display:block;max-width:100%!important;max-height:100px;width:auto!important;height:auto!important;margin:0 auto!important;filter:drop-shadow(0 3px 0 rgba(0,0,0,.6))}
 .fk-name span{display:block;font-family:var(--fk-title);font-weight:800;font-size:36px;line-height:1.1;background:linear-gradient(90deg,var(--c1,#fff),var(--c2,#fff));-webkit-background-clip:text;background-clip:text;color:transparent}
 .fk-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0 0 10px}
