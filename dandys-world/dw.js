@@ -61,7 +61,6 @@
     '<rect x="32" y="140" width="56" height="7" rx="2.5" fill="#57575c" stroke="#000" stroke-width="2"/>' +
     '<circle cx="60" cy="131" r="7.5" fill="none" stroke="#000" stroke-width="5"/><circle cx="60" cy="131" r="7.5" fill="none" stroke="#e02020" stroke-width="2.8"/>' +
     '<path d="M60 131V123.5M60 131L53.5 134.8M60 131L66.5 134.8" stroke="#000" stroke-width="4" stroke-linecap="round"/><path d="M60 131V123.5M60 131L53.5 134.8M60 131L66.5 134.8" stroke="#e02020" stroke-width="2.2" stroke-linecap="round"/><circle cx="60" cy="131" r="2.2" fill="#b80f0f" stroke="#000" stroke-width="1"/></symbol>' +
-    '<symbol id="dw-sp" viewBox="0 0 24 24"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="#ffe36b" stroke="#7a5a00" stroke-width="1.4" stroke-linejoin="round"/><path d="M19.5 1.5C19.8 3.4 20.6 4.2 22.5 4.5C20.6 4.8 19.8 5.6 19.5 7.5C19.2 5.6 18.4 4.8 16.5 4.5C18.4 4.2 19.2 3.4 19.5 1.5Z" fill="#fff4b0"/></symbol>' +
     '</defs></svg>';
   if (!document.getElementById('dwmg')) document.body.insertAdjacentHTML('afterbegin', SPRITE);
 
@@ -105,8 +104,7 @@
 
   function machine(c, on) {
     var tw = c.kind === 'twisted', r = rarityOf(c), t = toonOf(c), name = c.name.replace(/^Twisted /, '');
-    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + (on && st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '" style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (on && st.sel === c.id ? ' aria-current="true"' : '') + '>' +
-      (c.event ? '<svg class="dw-spark" aria-hidden="true"><use href="#dw-sp"/></svg>' : '') +
+    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + (c.event && !tw ? ' is-ev' : '') + (on && st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '" style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (on && st.sel === c.id ? ' aria-current="true"' : '') + '>' +
       '<span class="dw-mc-m"><svg aria-hidden="true"><use href="#dw-mb"/></svg><span class="dw-mc-glass"><span class="dw-ink"></span><img src="' + esc(media(c.head || c.icon)) + '" alt="" loading="lazy" decoding="async"><span class="dw-pour"></span></span><svg aria-hidden="true"><use href="#dw-mf"/></svg></span>' +
       '<span class="dw-mc-n dw-o' + (name.length > 9 ? ' is-long' : '') + '">' + esc(name) + '</span></a>';
   }
