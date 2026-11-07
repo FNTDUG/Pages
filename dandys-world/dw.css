@@ -107,7 +107,7 @@
 .dw-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0}
 .dw-dl dt{font-weight:800}
 .dw-dl dd{margin:0;white-space:pre-line}
-.dw-link{display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 14px;align-items:center;text-decoration:none;color:inherit}
+.dw-link{display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 14px;align-items:center;text-decoration:none}
 .dw-link img{grid-row:span 3;width:76px;height:76px;object-fit:contain;border-radius:18px;border:3px solid var(--ink);background:#1a0f1e}
 .dw-link--toon img{background:radial-gradient(circle,color-mix(in srgb,var(--lc) 35%,#fff),var(--lc))}
 .dw-link b{font:700 20px/1.1 'Fredoka',sans-serif}
