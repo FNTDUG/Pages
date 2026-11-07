@@ -25,7 +25,7 @@
 .dw-chip[aria-pressed="true"]{background:#f0f0f2;color:#151517}
 .dw-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
 .dw-none{grid-column:1/-1;text-align:center;color:var(--sub);padding:30px 0;font-family:'Fredoka One','Fredoka',sans-serif}
-.dw-mc{position:relative;display:block;aspect-ratio:1;padding:0;border:4px solid var(--line);border-radius:12px;background:var(--tile);text-decoration:none;cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.3,1)}
+.dw-mc{position:relative;display:block;aspect-ratio:4/5;padding:0;border:4px solid var(--line);border-radius:12px;background:var(--tile);text-decoration:none;cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.3,1)}
 .dw-mc::before{content:"";position:absolute;inset:3px;border-radius:8px;background:var(--tbg,#2c2c2f);opacity:.9}
 .dw-mc[data-r="Main"]{--tbg:linear-gradient(180deg,rgba(214,81,81,.55),rgba(214,143,63,.5),rgba(207,194,63,.45),rgba(79,192,72,.45),rgba(63,140,196,.5),rgba(122,85,207,.6))}
 .dw-mc[data-r="Lethal"]{--tbg:linear-gradient(180deg,rgba(200,30,46,.6),rgba(60,8,12,.8))}
@@ -34,7 +34,7 @@
 .dw-mc.is-on{border-color:var(--go);box-shadow:0 0 0 2px #000,0 0 14px rgba(95,227,109,.55)}
 .dw-mc-m{position:absolute;inset:3px}
 .dw-mc-m svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.dw-mc-glass{position:absolute;left:13.4%;width:73.2%;top:18.4%;height:56.6%;border-radius:9px/8px;overflow:hidden}
+.dw-mc-glass{position:absolute;left:13.4%;width:73.2%;top:14%;height:66%;border-radius:9px/8px;overflow:hidden}
 .dw-mc-glass img{position:absolute;left:2%;top:2%;width:96%;height:96%;object-fit:contain;z-index:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .dw-ink{position:absolute;left:0;right:0;bottom:0;height:0;z-index:2;background:linear-gradient(180deg,#24142e 0,#0b0610 40%,#050307);transition:height .85s cubic-bezier(.33,.75,.3,1)}
 .dw-ink::before{content:"";position:absolute;left:0;right:0;top:-7px;height:8px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8'%3E%3Cpath d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5 V8 H0z' fill='%2324142e'/%3E%3C/svg%3E") 0 0/40px 8px repeat-x;animation:dw-wave 1.2s linear infinite}
@@ -45,7 +45,7 @@
 .dw-mc.is-filling .dw-pour{animation:dw-pour .95s cubic-bezier(.4,0,.3,1) forwards}
 @keyframes dw-pour{0%{opacity:1;height:0;top:0}45%{opacity:1;height:100%;top:0}100%{opacity:1;height:0;top:100%}}
 .dw-mc.is-on{--glow:1}
-.dw-mc-n{position:absolute;left:3px;right:3px;bottom:24%;z-index:4;font:400 16px/1.05 'Fredoka One','Fredoka',sans-serif;text-align:center;overflow-wrap:anywhere;max-width:100%}
+.dw-mc-n{position:absolute;left:3px;right:3px;bottom:22%;z-index:4;font:400 16px/1.05 'Fredoka One','Fredoka',sans-serif;text-align:center;overflow-wrap:anywhere;max-width:100%}
 .dw-mc-n.is-long{font-size:13px}
 .dw-spark{position:absolute;top:2px;right:2px;width:24px;height:24px;z-index:2}
 .dw-src{margin:14px 0 0;text-align:center;color:var(--sub);font-size:13px}
@@ -119,7 +119,13 @@
 .dw-rich p:last-child{margin-bottom:0}
 .dw-rich ul{margin:0 0 .6em;padding:0 0 0 1.2em}
 .dw-rich li{margin:.15em 0}
-.dw-rich b{font-weight:800;color:#fff}
+.dw-rich b{font-weight:400;color:#ffe066}
+.dw-detail,.dw-detail .dw-rich,.dw-detail .dw-dl dd,.dw-detail .dw-quote,.dw-detail .dw-stat-n,.dw-detail .dw-link small,.dw-detail .dw-nav a,.dw-detail .dw-pn a,.dw-detail .dw-foot,.dw-detail .dw-full,.dw-src{font-family:'Fredoka One','Fredoka',sans-serif;font-weight:400;letter-spacing:.2px;color:#fff;text-shadow:-1.2px -1.2px 0 #000,1.2px -1.2px 0 #000,-1.2px 1.2px 0 #000,1.2px 1.2px 0 #000,0 1.6px 0 #000,0 -1.6px 0 #000,1.6px 0 0 #000,-1.6px 0 0 #000}
+.dw-detail .dw-rich,.dw-detail .dw-dl dd{font-size:15.5px;line-height:1.5}
+.dw-detail .dw-stat-n{font-size:13px}
+.dw-detail .dw-link small,.dw-detail .dw-foot,.dw-src{color:#d6d6da}
+.dw-detail .dw-nav a[aria-current="page"]{color:var(--go)}
+.dw-detail .dw-foot a,.dw-src a{color:#ffe066}
 .dw-quote{position:relative;font-style:italic;text-align:center;padding:0 10px;color:#e9e9ee}
 .dw-quote small{display:block;font-style:normal;color:var(--sub);font-size:13px;margin-top:6px}
 .dw-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 12px}

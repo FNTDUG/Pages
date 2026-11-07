@@ -50,17 +50,17 @@
     '<radialGradient id="dwrg" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ff9a9a"/><stop offset=".45" stop-color="#e42222"/><stop offset="1" stop-color="#6d0505"/></radialGradient>' +
     '<radialGradient id="dwgl"><stop offset="0" stop-color="#ff3b3b" stop-opacity=".85"/><stop offset="1" stop-color="#ff3b3b" stop-opacity="0"/></radialGradient>' +
     '<linearGradient id="dwgb" x1="0" x2="1"><stop offset="0" stop-color="#d9e2ea" stop-opacity=".32"/><stop offset=".5" stop-color="#e9eef2" stop-opacity=".14"/><stop offset="1" stop-color="#c9d3dc" stop-opacity=".3"/></linearGradient>' +
-    '<symbol id="dw-mb" viewBox="0 0 120 120"><rect x="54" y="-4" width="12" height="9" rx="2" fill="#111"/>' +
+    '<symbol id="dw-mb" viewBox="0 0 120 150"><rect x="54" y="-4" width="12" height="9" rx="2" fill="#111"/>' +
     '<path d="M22 20C22 11 38 5 60 5S98 11 98 20L100 23H20Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M22 20C22 11 38 5 60 5S98 11 98 20L100 23H20Z" fill="url(#dwdp)"/>' +
-    '<rect x="16" y="21" width="88" height="70" rx="9" fill="url(#dwgb)" stroke="#000" stroke-width="2.5"/></symbol>' +
-    '<symbol id="dw-mf" viewBox="0 0 120 120"><rect x="22" y="28" width="6" height="56" rx="3" fill="#fff" opacity=".3"/><rect x="95" y="30" width="2.5" height="52" rx="1.25" fill="#fff" opacity=".2"/>' +
+    '<rect x="16" y="21" width="88" height="99" rx="9" fill="url(#dwgb)" stroke="#000" stroke-width="2.5"/></symbol>' +
+    '<symbol id="dw-mf" viewBox="0 0 120 150"><rect x="22" y="28" width="6" height="84" rx="3" fill="#fff" opacity=".3"/><rect x="95" y="30" width="2.5" height="80" rx="1.25" fill="#fff" opacity=".2"/>' +
     '<path d="M12 19H108V25H12Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M12 19H108V25H12Z" fill="url(#dwdp)"/>' +
     '<circle cx="60" cy="13" r="12" fill="url(#dwgl)" style="opacity:var(--glow,0);transition:opacity .4s"/><circle cx="60" cy="13" r="6.5" fill="url(#dwrg)" stroke="#2a0000" stroke-width="1.6"/><rect x="58.8" y="8" width="2.4" height="10" rx="1.2" fill="#5a0000" transform="rotate(-18 60 13)"/>' +
-    '<path d="M13 90C13 99 24 105 36 107V113H84V107C96 105 107 99 107 90Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M13 90C13 99 24 105 36 107V113H84V107C96 105 107 99 107 90Z" fill="url(#dwdp)"/>' +
-    '<ellipse cx="60" cy="90" rx="47" ry="5.5" fill="#4a4a4e" stroke="#000" stroke-width="2"/><ellipse cx="60" cy="90.4" rx="40" ry="3.5" fill="#18181a"/>' +
-    '<rect x="32" y="111" width="56" height="7" rx="2.5" fill="#57575c" stroke="#000" stroke-width="2"/>' +
-    '<circle cx="60" cy="102" r="7.5" fill="none" stroke="#000" stroke-width="5"/><circle cx="60" cy="102" r="7.5" fill="none" stroke="#e02020" stroke-width="2.8"/>' +
-    '<path d="M60 102V94.5M60 102L53.5 105.8M60 102L66.5 105.8" stroke="#000" stroke-width="4" stroke-linecap="round"/><path d="M60 102V94.5M60 102L53.5 105.8M60 102L66.5 105.8" stroke="#e02020" stroke-width="2.2" stroke-linecap="round"/><circle cx="60" cy="102" r="2.2" fill="#b80f0f" stroke="#000" stroke-width="1"/></symbol>' +
+    '<path d="M13 119C13 128 24 134 36 136V142H84V136C96 134 107 128 107 119Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M13 119C13 128 24 134 36 136V142H84V136C96 134 107 128 107 119Z" fill="url(#dwdp)"/>' +
+    '<ellipse cx="60" cy="119" rx="47" ry="5.5" fill="#4a4a4e" stroke="#000" stroke-width="2"/><ellipse cx="60" cy="119.4" rx="40" ry="3.5" fill="#18181a"/>' +
+    '<rect x="32" y="140" width="56" height="7" rx="2.5" fill="#57575c" stroke="#000" stroke-width="2"/>' +
+    '<circle cx="60" cy="131" r="7.5" fill="none" stroke="#000" stroke-width="5"/><circle cx="60" cy="131" r="7.5" fill="none" stroke="#e02020" stroke-width="2.8"/>' +
+    '<path d="M60 131V123.5M60 131L53.5 134.8M60 131L66.5 134.8" stroke="#000" stroke-width="4" stroke-linecap="round"/><path d="M60 131V123.5M60 131L53.5 134.8M60 131L66.5 134.8" stroke="#e02020" stroke-width="2.2" stroke-linecap="round"/><circle cx="60" cy="131" r="2.2" fill="#b80f0f" stroke="#000" stroke-width="1"/></symbol>' +
     '<symbol id="dw-sp" viewBox="0 0 24 24"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="#ffe36b" stroke="#7a5a00" stroke-width="1.4" stroke-linejoin="round"/><path d="M19.5 1.5C19.8 3.4 20.6 4.2 22.5 4.5C20.6 4.8 19.8 5.6 19.5 7.5C19.2 5.6 18.4 4.8 16.5 4.5C18.4 4.2 19.2 3.4 19.5 1.5Z" fill="#fff4b0"/></symbol>' +
     '</defs></svg>';
   if (!document.getElementById('dwmg')) document.body.insertAdjacentHTML('afterbegin', SPRITE);
