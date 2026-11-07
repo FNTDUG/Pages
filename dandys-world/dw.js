@@ -53,17 +53,17 @@
     '<radialGradient id="dwrg" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ff9a9a"/><stop offset=".45" stop-color="#e42222"/><stop offset="1" stop-color="#6d0505"/></radialGradient>' +
     '<radialGradient id="dwgl"><stop offset="0" stop-color="#ff3b3b" stop-opacity=".85"/><stop offset="1" stop-color="#ff3b3b" stop-opacity="0"/></radialGradient>' +
     '<linearGradient id="dwgb" x1="0" x2="1"><stop offset="0" stop-color="#d9e2ea" stop-opacity=".32"/><stop offset=".5" stop-color="#e9eef2" stop-opacity=".14"/><stop offset="1" stop-color="#c9d3dc" stop-opacity=".3"/></linearGradient>' +
-    '<symbol id="dw-mb" viewBox="0 0 100 200"><rect x="43" y="-10" width="14" height="24" rx="3" fill="#111"/><rect x="39" y="9" width="22" height="6" rx="2" fill="#2b2b2e" stroke="#000"/>' +
-    '<path d="M17 41C17 30 29 21 50 21S83 30 83 41L85 45H15Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M17 41C17 30 29 21 50 21S83 30 83 41L85 45H15Z" fill="url(#dwdp)"/>' +
-    '<rect x="14" y="42" width="72" height="106" rx="10" fill="url(#dwgb)" stroke="#000" stroke-width="2.5"/></symbol>' +
-    '<symbol id="dw-mf" viewBox="0 0 100 200"><rect x="20" y="50" width="7" height="88" rx="3.5" fill="#fff" opacity=".32"/><rect x="74" y="52" width="3" height="84" rx="1.5" fill="#fff" opacity=".22"/>' +
-    '<path d="M12 41H88V49H12Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M12 41H88V49H12Z" fill="url(#dwdp)"/>' +
-    '<circle cx="50" cy="31" r="17" fill="url(#dwgl)" style="opacity:var(--glow,0);transition:opacity .4s"/><circle cx="50" cy="31" r="9.5" fill="url(#dwrg)" stroke="#2a0000" stroke-width="1.8"/><rect x="48.4" y="23.5" width="3.2" height="15" rx="1.6" fill="#5a0000" transform="rotate(-18 50 31)"/>' +
-    '<path d="M10 147C10 161 21 169 30 172V188H70V172C79 169 90 161 90 147Z" fill="url(#dwmg)" stroke="#000" stroke-width="2.2"/><path d="M10 147C10 161 21 169 30 172V188H70V172C79 169 90 161 90 147Z" fill="url(#dwdp)"/>' +
-    '<ellipse cx="50" cy="147" rx="40" ry="7" fill="#4a4a4e" stroke="#000" stroke-width="2"/><ellipse cx="50" cy="147.5" rx="33" ry="4.6" fill="#18181a"/>' +
-    '<rect x="25" y="186" width="50" height="9" rx="3" fill="#57575c" stroke="#000" stroke-width="2"/>' +
-    '<circle cx="50" cy="175" r="12.5" fill="none" stroke="#000" stroke-width="7"/><circle cx="50" cy="175" r="12.5" fill="none" stroke="#e02020" stroke-width="4"/>' +
-    '<path d="M50 175V163M50 175L39.6 181M50 175L60.4 181" stroke="#000" stroke-width="5.5" stroke-linecap="round"/><path d="M50 175V163M50 175L39.6 181M50 175L60.4 181" stroke="#e02020" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="175" r="3.4" fill="#b80f0f" stroke="#000" stroke-width="1.4"/></symbol>' +
+    '<symbol id="dw-mb" viewBox="0 0 120 120"><rect x="54" y="-4" width="12" height="9" rx="2" fill="#111"/>' +
+    '<path d="M22 20C22 11 38 5 60 5S98 11 98 20L100 23H20Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M22 20C22 11 38 5 60 5S98 11 98 20L100 23H20Z" fill="url(#dwdp)"/>' +
+    '<rect x="16" y="21" width="88" height="70" rx="9" fill="url(#dwgb)" stroke="#000" stroke-width="2.5"/></symbol>' +
+    '<symbol id="dw-mf" viewBox="0 0 120 120"><rect x="22" y="28" width="6" height="56" rx="3" fill="#fff" opacity=".3"/><rect x="95" y="30" width="2.5" height="52" rx="1.25" fill="#fff" opacity=".2"/>' +
+    '<path d="M12 19H108V25H12Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M12 19H108V25H12Z" fill="url(#dwdp)"/>' +
+    '<circle cx="60" cy="13" r="12" fill="url(#dwgl)" style="opacity:var(--glow,0);transition:opacity .4s"/><circle cx="60" cy="13" r="6.5" fill="url(#dwrg)" stroke="#2a0000" stroke-width="1.6"/><rect x="58.8" y="8" width="2.4" height="10" rx="1.2" fill="#5a0000" transform="rotate(-18 60 13)"/>' +
+    '<path d="M13 90C13 99 24 105 36 107V113H84V107C96 105 107 99 107 90Z" fill="url(#dwmg)" stroke="#000" stroke-width="2"/><path d="M13 90C13 99 24 105 36 107V113H84V107C96 105 107 99 107 90Z" fill="url(#dwdp)"/>' +
+    '<ellipse cx="60" cy="90" rx="47" ry="5.5" fill="#4a4a4e" stroke="#000" stroke-width="2"/><ellipse cx="60" cy="90.4" rx="40" ry="3.5" fill="#18181a"/>' +
+    '<rect x="32" y="111" width="56" height="7" rx="2.5" fill="#57575c" stroke="#000" stroke-width="2"/>' +
+    '<circle cx="60" cy="102" r="7.5" fill="none" stroke="#000" stroke-width="5"/><circle cx="60" cy="102" r="7.5" fill="none" stroke="#e02020" stroke-width="2.8"/>' +
+    '<path d="M60 102V94.5M60 102L53.5 105.8M60 102L66.5 105.8" stroke="#000" stroke-width="4" stroke-linecap="round"/><path d="M60 102V94.5M60 102L53.5 105.8M60 102L66.5 105.8" stroke="#e02020" stroke-width="2.2" stroke-linecap="round"/><circle cx="60" cy="102" r="2.2" fill="#b80f0f" stroke="#000" stroke-width="1"/></symbol>' +
     '<symbol id="dw-sp" viewBox="0 0 24 24"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="#ffe36b" stroke="#7a5a00" stroke-width="1.4" stroke-linejoin="round"/><path d="M19.5 1.5C19.8 3.4 20.6 4.2 22.5 4.5C20.6 4.8 19.8 5.6 19.5 7.5C19.2 5.6 18.4 4.8 16.5 4.5C18.4 4.2 19.2 3.4 19.5 1.5Z" fill="#fff4b0"/></symbol>' +
     '</defs></svg>';
   if (!document.getElementById('dwmg')) document.body.insertAdjacentHTML('afterbegin', SPRITE);
@@ -82,14 +82,14 @@
   var HEART_P = 'M16 28s-12-7.4-12-16a6.6 6.6 0 0 1 12-3.9A6.6 6.6 0 0 1 28 12c0 8.6-12 16-12 16z';
   function heartIcons(list) {
     return list.map(function (h) {
-      return '<svg viewBox="0 0 32 30" aria-hidden="true"><path d="' + HEART_P + '" fill="' + (/Main/.test(h) ? '#ffd23a' : '#fff') + '" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/></svg>';
+      return '<svg viewBox="0 0 32 30" aria-hidden="true"><path d="' + HEART_P + '" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/></svg>';
     }).join('');
   }
   function bar(k, label, inner, aria, text) {
     return '<li class="dw-bar" data-k="' + k + '"><span class="dw-bar-l dw-o">' + esc(label) + '</span><span class="dw-bar-v' + (text ? ' is-text dw-o' : '') + '"' + (aria ? ' role="img" aria-label="' + esc(aria) + '"' : '') + '>' + inner + '</span></li>';
   }
   function toonBars(c, notes) {
-    var out = bar('health', 'Health', heartIcons(c.hearts), c.hearts.length + ' hearts' + (c.hearts.some(function (h) { return /Main/.test(h); }) ? ', one is a Main Character heart' : ''));
+    var out = bar('health', 'Health', heartIcons(c.hearts), c.hearts.length + ' hearts');
     c.stats.forEach(function (s) {
       out += bar(s.k, s.label, s.v != null ? stars(s.v) : '?', s.label + ': ' + s.v + ' out of 5 stars');
       if (notes && s.note) out = out.replace(/<\/li>$/, '<span class="dw-stat-n">' + esc(s.note.replace(/\//g, ' · ')) + (s.k === 'stealth' ? ' noise' : '') + '</span></li>');
@@ -154,7 +154,7 @@
     pickEl.style.setProperty('--c', (t && t.col) || '#777');
     pickEl.innerHTML = '<div class="dw-port"><img src="' + esc(media(c.head || c.icon)) + '" alt="' + esc(c.name) + '"></div>' +
       '<div class="dw-pick-n dw-o">' + esc(c.name) + '</div><ul class="dw-bars">' + (c.kind === 'toon' ? toonBars(c) : twBars(c)) + '</ul>' +
-      '<a class="dw-big dw-big--go dw-pick-go dw-o" href="' + url + '" data-open="' + esc(c.id) + '">Select</a><p class="dw-hint">Double-click a machine to open it too.</p>';
+      '<a class="dw-big dw-big--go dw-pick-go dw-o" href="' + url + '" data-open="' + esc(c.id) + '">Select</a>';
     if (c.kind === 'toon') {
       btnsEl.innerHTML = '<a class="dw-big dw-big--go dw-o" href="' + url + '#skins" data-open="' + esc(c.id) + '" data-hash="skins">Skins</a>' +
         (c.mastery ? '<a class="dw-big dw-big--cy dw-o" href="' + url + '#mastery" data-open="' + esc(c.id) + '" data-hash="mastery">Mastery</a>' : '<span class="dw-big dw-o" aria-disabled="true" style="opacity:.55;cursor:default">No mastery</span>');
@@ -390,13 +390,8 @@
       e.preventDefault();
       var id = mc.getAttribute('data-id');
       if (narrow()) { select(id, true); open(id, '', true); return; }
-      if (st.sel === id && mc.classList.contains('is-on') && e.detail < 2) { open(id); return; }
       select(id);
     }
-  });
-  list.addEventListener('dblclick', function (e) {
-    var mc = e.target.closest('a.dw-mc');
-    if (mc) { e.preventDefault(); open(mc.getAttribute('data-id')); }
   });
   root.addEventListener('keydown', function (e) {
     var tab = e.target.closest && e.target.closest('.dw-tab');
