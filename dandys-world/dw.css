@@ -36,7 +36,7 @@
 .dw-mc-m{position:absolute;inset:3px}
 .dw-mc-m svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .dw-mc-glass{position:absolute;left:13.4%;width:73.2%;top:14%;height:66%;border-radius:9px/8px;overflow:hidden;z-index:0}
-.dw-mc-glass img{position:absolute;left:50%;top:8%;height:74%;width:auto;max-width:none;transform:translateX(-50%);z-index:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.dw-mc-glass img{position:absolute;left:50%;top:8%;height:74%!important;width:auto!important;max-width:none!important;max-height:none!important;transform:translateX(-50%);z-index:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .dw-ink{position:absolute;left:0;right:0;bottom:0;height:0;z-index:2;background:linear-gradient(180deg,#24142e 0,#0b0610 40%,#050307);transition:height .85s cubic-bezier(.33,.75,.3,1)}
 .dw-ink::before{content:"";position:absolute;left:0;right:0;top:-7px;height:8px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8'%3E%3Cpath d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5 V8 H0z' fill='%2324142e'/%3E%3C/svg%3E") 0 0/40px 8px repeat-x;animation:dw-wave 1.2s linear infinite}
 .dw-ink::after{content:"";position:absolute;left:12%;top:6px;width:10%;height:calc(100% - 12px);border-radius:6px;background:linear-gradient(rgba(190,120,255,.28),transparent)}
