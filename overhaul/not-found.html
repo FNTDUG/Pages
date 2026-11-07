@@ -81,6 +81,7 @@
     to = '';
     try { var ref = new URL(document.referrer); if (ref.origin === location.origin && ref.pathname + ref.search !== here) to = ref.pathname + ref.search + ref.hash; } catch (e) {}
   }
+  if (!/^\/(?![\/\\])/.test(to)) to = '';
   Array.prototype.forEach.call(document.querySelectorAll('[data-nf-back]'), function (a) { if (to) a.setAttribute('href', to); else a.parentNode.removeChild(a); });
 })();
 </script>

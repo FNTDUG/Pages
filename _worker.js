@@ -3324,6 +3324,36 @@ async function pushPasswordOk(request, env) {
   return diff === 0;
 }
 
+const ADMIN_FAILS_MAX = 10;
+const ADMIN_FAIL_WINDOW = 900000;
+let adminFailsReady = null;
+
+async function adminDenied(request, env, kind, check) {
+  const db = env.POLLS;
+  let who = '', win = 0;
+  if (db && env.POLL_SALT) {
+    try {
+      if (!adminFailsReady) adminFailsReady = db.prepare('CREATE TABLE IF NOT EXISTS admin_fails (who TEXT NOT NULL, win INTEGER NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (who, win))').run().catch(e => { adminFailsReady = null; throw e; });
+      await adminFailsReady;
+      who = kind + ':' + wikiHex(await pushSha256(env.POLL_SALT + '|admin|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 32);
+      win = Math.floor(Date.now() / ADMIN_FAIL_WINDOW);
+      const row = await db.prepare('SELECT SUM(n) AS n FROM admin_fails WHERE who = ?1 AND win >= ?2').bind(who, win - 1).first();
+      if (row && row.n >= ADMIN_FAILS_MAX) return pushJson({ ok: false, error: 'locked' }, 429);
+    } catch (e) { who = ''; }
+  }
+  if (await check(request, env)) return null;
+  if (who) {
+    try {
+      await db.batch([
+        db.prepare('INSERT INTO admin_fails (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1').bind(who, win),
+        db.prepare('DELETE FROM admin_fails WHERE win < ?1').bind(win - 2)
+      ]);
+    } catch (e) {}
+  }
+  await new Promise(r => setTimeout(r, 1500));
+  return pushJson({ ok: false, error: 'password' }, 401);
+}
+
 async function pushVapidJwt(env, aud) {
   const pub = pushB64uToBytes(PUSH_VAPID_PUBLIC);
   const key = await crypto.subtle.importKey(
@@ -3420,10 +3450,8 @@ async function pushHistory(env) {
 async function pushSend(request, env) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.PUSH_SUBS || !env.PUSH_VAPID_PRIVATE || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
-  if (!(await pushPasswordOk(request, env))) {
-    await new Promise(r => setTimeout(r, 1500));
-    return pushJson({ ok: false, error: 'password' }, 401);
-  }
+  const denied = await adminDenied(request, env, 'push', pushPasswordOk);
+  if (denied) return denied;
   const body = await pushReadBody(request);
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
 
@@ -4936,6 +4964,7 @@ const PV_POPUP_SCRIPT = `<script>
         to = '';
         try { var ref = new URL(document.referrer); if (ref.origin === location.origin && ref.pathname + ref.search !== here) to = ref.pathname + ref.search + ref.hash; } catch (e) {}
       }
+      if (!/^\\/(?![\\/\\\\])/.test(to)) to = '';
       if (back) { if (to) back.setAttribute('href', to); else back.parentNode.removeChild(back); }
     }
   }
@@ -5846,6 +5875,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (r.status === 401) throw new Error('password');
+        if (r.status === 429) throw new Error('locked');
         if (r.status === 503) throw new Error('setup');
         if (!r.ok || !j.ok) throw new Error('failed');
         return j;
@@ -5855,6 +5885,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
 
   function errText(e) {
     if (e && e.message === 'password') return 'Wrong password.';
+    if (e && e.message === 'locked') return 'Too many wrong passwords. Try again in 15 minutes.';
     if (e && e.message === 'setup') return 'Notifications are not set up yet.';
     return 'Something went wrong. Please try again.';
   }
@@ -6112,10 +6143,8 @@ function pollImgType(bytes) {
 async function pollImageUpload(request, env) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.POLLS || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
-  if (!(await pushPasswordOk(request, env))) {
-    await new Promise(r => setTimeout(r, 1500));
-    return pushJson({ ok: false, error: 'password' }, 401);
-  }
+  const denied = await adminDenied(request, env, 'push', pushPasswordOk);
+  if (denied) return denied;
   const url = new URL(request.url);
   const w = Math.round(Number(url.searchParams.get('w'))), h = Math.round(Number(url.searchParams.get('h')));
   if (Number(request.headers.get('content-length') || 0) > POLL_IMG_MAX) return pushJson({ ok: false, error: 'too-big' }, 413);
@@ -6335,10 +6364,8 @@ async function ratingVote(request, env, url) {
 async function pollAdmin(request, env, url) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.POLLS || !env.PUSH_SEND_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
-  if (!(await pushPasswordOk(request, env))) {
-    await new Promise(r => setTimeout(r, 1500));
-    return pushJson({ ok: false, error: 'password' }, 401);
-  }
+  const denied = await adminDenied(request, env, 'push', pushPasswordOk);
+  if (denied) return denied;
   const body = await pollReadBody(request);
   if (!body) return pushJson({ ok: false, error: 'bad-request' }, 400);
   const db = env.POLLS;
@@ -6870,6 +6897,7 @@ async function sponsorPing(env, r) {
 
 async function sponsorSubmit(request, env) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
+  if (request.headers.get('origin') !== new URL(request.url).origin) return pushJson({ ok: false }, 403);
   if (!env.POLLS || !env.POLL_SALT) return pushJson({ ok: false, error: 'not-set-up' }, 503);
   if (Number(request.headers.get('content-length') || 0) > 16000) return pushJson({ ok: false, error: 'too-big' }, 413);
   let b = null;
@@ -6923,10 +6951,8 @@ async function sponsorPasswordOk(request, env) {
 async function sponsorAdmin(request, env) {
   if (request.method !== 'POST') return pushJson({ ok: false }, 405);
   if (!env.POLLS || !env.SPONSOR_ADMIN_PASSWORD) return pushJson({ ok: false, error: 'not-set-up' }, 503);
-  if (!(await sponsorPasswordOk(request, env))) {
-    await new Promise(r => setTimeout(r, 1500));
-    return pushJson({ ok: false, error: 'password' }, 401);
-  }
+  const denied = await adminDenied(request, env, 'sponsor', sponsorPasswordOk);
+  if (denied) return denied;
   let b = null;
   try { b = await request.json(); } catch (e) {}
   if (!b || typeof b !== 'object') return pushJson({ ok: false, error: 'bad-request' }, 400);
@@ -7006,6 +7032,7 @@ const SPONSOR_ADMIN_PAGE = `<!doctype html>
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
           if (r.status === 401) throw new Error('Wrong password.');
+          if (r.status === 429) throw new Error('Too many wrong passwords. Try again in 15 minutes.');
           if (r.status === 503) throw new Error('The sponsor admin password is not set up yet.');
           if (!r.ok || !j.ok) throw new Error('Something went wrong. Try again.');
           rows = j.rows || [];
@@ -7205,6 +7232,7 @@ const POLL_ADMIN_PAGE = `<!doctype html>
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (r.status === 401) throw new Error('password');
+        if (r.status === 429) throw new Error('locked');
         if (r.status === 503) throw new Error('setup');
         if (r.status === 400) throw new Error('bad');
         if (!r.ok || !j.ok) throw new Error('failed');
@@ -7217,6 +7245,7 @@ const POLL_ADMIN_PAGE = `<!doctype html>
 
   function errText(e) {
     if (e && e.message === 'password') return 'Wrong password.';
+    if (e && e.message === 'locked') return 'Too many wrong passwords. Try again in 15 minutes.';
     if (e && e.message === 'setup') return 'Polls are not set up yet.';
     if (e && e.message === 'bad') return 'Check the questions, answers and time.';
     return 'Something went wrong. Please try again.';
@@ -7400,6 +7429,7 @@ const POLL_ADMIN_PAGE = `<!doctype html>
         return res.json().catch(function () { return {}; }).then(function (j) {
           if (res.status === 413) throw new Error('big');
           if (res.status === 401) throw new Error('password');
+          if (res.status === 429) throw new Error('locked');
           if (!res.ok || !j.ok) throw new Error('failed');
           return j.img;
         });
@@ -7415,7 +7445,7 @@ const POLL_ADMIN_PAGE = `<!doctype html>
       pic.removeAttribute('data-busy');
       pic.querySelector('.pic-add').disabled = false;
       pic.querySelector('.pic-file').value = '';
-      picMsg(pic, e.message === 'type' ? 'Use a PNG, JPG, GIF or WebP image.' : e.message === 'big' ? 'That image is too big. Keep it under 1.5 MB.' : e.message === 'password' ? 'Wrong password. Reload the page and unlock again.' : "The image didn't upload. Try again.", true);
+      picMsg(pic, e.message === 'type' ? 'Use a PNG, JPG, GIF or WebP image.' : e.message === 'big' ? 'That image is too big. Keep it under 1.5 MB.' : e.message === 'password' ? 'Wrong password. Reload the page and unlock again.' : e.message === 'locked' ? 'Too many wrong passwords. Try again in 15 minutes.' : "The image didn't upload. Try again.", true);
     });
   }
 
