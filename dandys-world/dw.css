@@ -4,6 +4,7 @@
 .dw img{margin:0;max-width:none}
 .dw-o{color:#fff;text-shadow:-1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,-1.5px 1.5px 0 #000,1.5px 1.5px 0 #000,0 2px 0 #000,0 -2px 0 #000,2px 0 0 #000,-2px 0 0 #000}
 .dw-stripes{background-image:repeating-linear-gradient(-45deg,rgba(0,0,0,.12) 0 18px,transparent 18px 36px),linear-gradient(rgba(255,255,255,.03),rgba(0,0,0,.25))}
+.dw-grid-view{container:dwwin/inline-size}
 .dw-win{position:relative;background-color:var(--win);border:8px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 10px 0 rgba(0,0,0,.45)}
 .dw-win-h{text-align:center;margin:-4px 0 12px}
 .dw-title{font:700 clamp(26px,4vw,38px)/1 'Fredoka',sans-serif;letter-spacing:1px}
@@ -185,15 +186,17 @@
 .dw a.dw-n:hover{text-decoration-thickness:3px}
 .dw-wipe{position:fixed;inset:0;z-index:2147483646;background:#06030a;pointer-events:none}
 .dw-missing{max-width:560px;margin:60px auto;text-align:center}
-@media (max-width:1180px){
-.dw-win-b{grid-template-columns:minmax(0,1fr) 250px;grid-template-areas:"list pick" "list side"}
+@container dwwin (max-width:1060px){
+.dw-win-b{grid-template-columns:minmax(0,1fr) 236px;grid-template-areas:"list pick" "list side"}
 .dw-col3{position:static}
 }
-@media (max-width:760px){
+@container dwwin (max-width:600px){
 .dw-win{border-width:6px;padding:10px}
 .dw-win-b{grid-template-columns:minmax(0,1fr);grid-template-areas:"list"}
 .dw-pane--pick,.dw-col3{display:none}
 .dw-list{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+}
+@media (max-width:760px){
 .dw-hero{grid-template-columns:minmax(0,1fr);gap:12px}
 .dw-artcol{position:relative;top:0}
 .dw-stage{aspect-ratio:auto;height:min(46vh,380px)}
