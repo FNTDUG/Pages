@@ -3337,19 +3337,19 @@ async function adminDenied(request, env, kind, check) {
       await adminFailsReady;
       who = kind + ':' + wikiHex(await pushSha256(env.POLL_SALT + '|admin|' + (request.headers.get('cf-connecting-ip') || ''))).slice(0, 32);
       win = Math.floor(Date.now() / ADMIN_FAIL_WINDOW);
-      const row = await db.prepare('SELECT SUM(n) AS n FROM admin_fails WHERE who = ?1 AND win >= ?2').bind(who, win - 1).first();
-      if (row && row.n >= ADMIN_FAILS_MAX) return pushJson({ ok: false, error: 'locked' }, 429);
+      const res = await db.batch([
+        db.prepare('INSERT INTO admin_fails (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1 RETURNING n').bind(who, win),
+        db.prepare('SELECT n FROM admin_fails WHERE who = ?1 AND win = ?2').bind(who, win - 1)
+      ]);
+      const cur = res[0].results && res[0].results[0], prev = res[1].results && res[1].results[0];
+      if ((cur ? cur.n : 0) + (prev ? prev.n : 0) > ADMIN_FAILS_MAX) return pushJson({ ok: false, error: 'locked' }, 429);
     } catch (e) { who = ''; }
   }
-  if (await check(request, env)) return null;
-  if (who) {
-    try {
-      await db.batch([
-        db.prepare('INSERT INTO admin_fails (who, win, n) VALUES (?1, ?2, 1) ON CONFLICT(who, win) DO UPDATE SET n = n + 1').bind(who, win),
-        db.prepare('DELETE FROM admin_fails WHERE win < ?1').bind(win - 2)
-      ]);
-    } catch (e) {}
+  if (await check(request, env)) {
+    if (who) { try { await db.prepare('UPDATE admin_fails SET n = n - 1 WHERE who = ?1 AND win = ?2 AND n > 0').bind(who, win).run(); } catch (e) {} }
+    return null;
   }
+  if (who && Math.random() < 0.1) { try { await db.prepare('DELETE FROM admin_fails WHERE win < ?1').bind(win - 2).run(); } catch (e) {} }
   await new Promise(r => setTimeout(r, 1500));
   return pushJson({ ok: false, error: 'password' }, 401);
 }
