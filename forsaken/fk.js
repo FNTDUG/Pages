@@ -20,6 +20,30 @@
   }
   var CHAR = idFromPath();
   if (CHAR) document.documentElement.classList.add('fk-char', 'fk-on');
+  var FROM = null;
+  if (CHAR) {
+    try {
+      var hs = history.state && history.state.fkFrom ? { fkFrom: history.state.fkFrom, fkHops: history.state.fkHops || 0 } : null;
+      var carried = sessionStorage.getItem('fk-from');
+      sessionStorage.removeItem('fk-from');
+      if (carried) hs = JSON.parse(carried);
+      else if (!hs && document.referrer) {
+        var rf = new URL(document.referrer);
+        if (rf.origin === location.origin && /^\/forsaken\/(tierlist|meta-comps)(\.html)?\/?$/.test(rf.pathname)) hs = { fkFrom: rf.pathname + rf.search, fkHops: 0 };
+      }
+      if (hs && /^\/forsaken\/(tierlist|meta-comps)/.test(hs.fkFrom)) {
+        FROM = hs;
+        var stt0 = history.state && typeof history.state === 'object' ? history.state : {};
+        var ns = {};
+        for (var sk in stt0) ns[sk] = stt0[sk];
+        ns.fkFrom = hs.fkFrom;
+        ns.fkHops = hs.fkHops;
+        history.replaceState(ns, '');
+      }
+    } catch (e) { FROM = null; }
+  }
+  var BACK_NAME = FROM ? (/meta-comps/.test(FROM.fkFrom) ? 'Meta Comps' : 'Tierlists & Maps') : 'The Forsaken';
+  var BACK_HREF = FROM ? FROM.fkFrom : '';
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -655,7 +679,7 @@
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + prev.id + '" data-go="' + prev.id + '" data-dir="-1" aria-label="Previous: ' + esc(prev.name) + '" data-google-vignette="false">&lsaquo;</a>' +
       '<span class="fk-count">' + esc(sc.label) + ' ' + (i + 1) + ' / ' + list.length + '</span>' +
       '<a class="fk-btn fk-arrow" href="' + BASE + '/' + next.id + '" data-go="' + next.id + '" data-dir="1" aria-label="Next: ' + esc(next.name) + '" data-google-vignette="false">&rsaquo;</a>' +
-      '<a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to The Forsaken" title="Back to The Forsaken" data-google-vignette="false">The Forsaken</a></div>' +
+      '<a class="fk-x" href="' + esc(BACK_HREF || BASE) + '" data-back="1" aria-label="Back to ' + esc(BACK_NAME) + '" title="Back to ' + esc(BACK_NAME) + '" data-google-vignette="false">' + esc(BACK_NAME) + '</a></div>' +
       '<div class="fk-hero" style="' + vars(c) + '">' +
       '<div class="fk-artcol"><div class="fk-art fk-rv" style="--i:0">' + artImgs(c) + '<span class="fk-art-glow" aria-hidden="true"></span><span class="fk-art-f" aria-hidden="true"></span>' + (catsOf(c).length ? '<img class="fk-art-badge" src="/forsaken/img/ui-multi-' + Math.min(catsOf(c).length, 4) + '.webp?v=2" alt="In ' + catsOf(c).length + (catsOf(c).length === 1 ? ' category' : ' categories') + '" title="' + esc(catsOf(c).join(', ')) + '" width="240" height="240" decoding="async">' : '') + '</div>' + modesHtml(c) + '</div>' +
       '<div class="fk-side">' +
@@ -842,7 +866,7 @@
 
   function showMissing(id) {
     cur = null;
-    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-x" href="' + BASE + '" data-back="1" aria-label="Back to The Forsaken"></a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; in The Forsaken.</p></div>';
+    det.innerHTML = '<div class="fk-page"><div class="fk-top"><a class="fk-x" href="' + esc(BACK_HREF || BASE) + '" data-back="1" aria-label="Back to ' + esc(BACK_NAME) + '"></a></div><p class="fk-none">There is no character called &ldquo;' + esc(id) + '&rdquo; in The Forsaken.</p></div>';
     gridView.hidden = true;
     det.hidden = false;
     var m = document.createElement('meta');
@@ -1100,7 +1124,10 @@
   function leave(url, dir) {
     if (busy) return;
     busy = true;
-    try { if (dir) sessionStorage.setItem('fk-dir', String(dir)); else sessionStorage.removeItem('fk-dir'); } catch (e) {}
+    try {
+      if (dir) sessionStorage.setItem('fk-dir', String(dir)); else sessionStorage.removeItem('fk-dir');
+      if (FROM && url.indexOf(BASE + '/') === 0) sessionStorage.setItem('fk-from', JSON.stringify({ fkFrom: FROM.fkFrom, fkHops: FROM.fkHops + 1 }));
+    } catch (e) {}
     shade(dir, function () { location.assign(url); });
   }
 
@@ -1111,6 +1138,13 @@
   }
 
   function toRoster() {
+    if (FROM) {
+      if (busy) return;
+      busy = true;
+      var hops = FROM.fkHops + 1;
+      shade(0, function () { if (history.length > hops) history.go(-hops); else location.assign(FROM.fkFrom); });
+      return;
+    }
     try { sessionStorage.setItem('fk-restore', '1'); } catch (e) {}
     leave(BASE, 0);
   }
