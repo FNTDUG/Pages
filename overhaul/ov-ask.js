@@ -71,7 +71,7 @@
     var text = el.textContent, spots = [], m, pre = location.pathname.indexOf('/overhaul') === 0 ? '/overhaul' : '';
     (linksFor[text] || []).forEach(function (l) {
       var at = text.indexOf(l.text);
-      if (at !== -1 && /^\//.test(l.href)) spots.push({ at: at, len: l.text.length, href: pre + l.href, out: false });
+      if (at !== -1 && /^\/(?![\/\\])/.test(l.href)) spots.push({ at: at, len: l.text.length, href: pre + l.href, out: false });
     });
     SITES.lastIndex = 0;
     while ((m = SITES.exec(text))) spots.push({ at: m.index + m[1].length, len: m[2].length, href: 'https://' + m[2], out: true });
