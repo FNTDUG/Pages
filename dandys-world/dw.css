@@ -97,7 +97,7 @@
 .dw-rich ul{margin:0 0 .6em;padding:0 0 0 1.2em}
 .dw-rich li{margin:.15em 0}
 .dw-rich b{font-weight:800}
-.dw-sec .dw-rich,.dw-more .dw-rich{max-width:78ch}
+.dw-sec .dw-rich,.dw-more .dw-rich{max-width:60ch}
 .dw-quote{position:relative;font-style:italic;padding-left:30px}
 .dw-quote::before{content:"\201C";position:absolute;left:-2px;top:-14px;font:700 54px/1 'Fredoka',sans-serif;color:var(--c,#c9a3ff)}
 .dw-quote small{display:block;font-style:normal;color:var(--muted);font-size:13px;margin-top:6px}
