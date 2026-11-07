@@ -7,14 +7,11 @@
   var det = root.querySelector('.dw-detail');
   var list = root.querySelector('.dw-list');
   var chipsEl = root.querySelector('.dw-chips');
-  var pickEl = root.querySelector('.dw-pane--pick');
-  var btnsEl = root.querySelector('.dw-pane--btns');
-  var abEl = root.querySelector('.dw-pane--ab');
   var titleEl = root.querySelector('.dw-title');
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var RAR = ['Main', 'Common', 'Uncommon', 'Rare', 'Lethal'];
   var data = null, byId = {}, toons = [], tws = [], cur = null, busy = false;
-  var st = { tab: 'toon', r: 'all', sel: '', ab: 0 };
+  var st = { tab: 'toon', r: 'all', sel: '' };
 
   function idFromPath() {
     var p = location.pathname.replace(/^\/overhaul(?=\/)/, '').replace(/\/+$/, '');
@@ -97,11 +94,6 @@
     return out;
   }
   function first(s) { return String(s || '').split('\n')[0]; }
-  function twBars(c) {
-    var rows = [['health', 'Type', c.type], ['skill', 'Speed', first(c.speed)], ['move', 'Attention span', c.attention_span], ['stamina', 'Detection', first(c.detection_range)], ['stealth', 'Drops', c.trinket]];
-    return rows.filter(function (r) { return r[2]; }).map(function (r) { return bar(r[0], r[1], esc(r[2]), '', true); }).join('');
-  }
-
   function index() {
     toons = data.toons.map(function (c) { c.kind = 'toon'; return c; });
     tws = data.twisteds.map(function (t) { t.kind = 'twisted'; t.rarity = t.type; return t; });
@@ -138,52 +130,21 @@
       t.setAttribute('aria-selected', on);
       t.tabIndex = on ? 0 : -1;
     });
-    if (titleEl) titleEl.textContent = st.tab === 'twisted' ? 'Twisteds' : 'Select Toon';
+    if (titleEl) titleEl.textContent = st.tab === 'twisted' ? 'Select Twisted' : 'Select Toon';
     renderChips();
     var src = shown();
-    if (!byId[st.sel] || byId[st.sel].kind !== st.tab) st.sel = src.length ? src[0].id : '';
-    var on = !narrow();
-    list.innerHTML = src.length ? src.map(function (c) { return machine(c, on); }).join('') : '<p class="dw-none">Nothing here.</p>';
-    renderPick();
+    list.innerHTML = src.length ? src.map(function (c) { return machine(c, false); }).join('') : '<p class="dw-none">Nothing here.</p>';
   }
-
-  function renderPick() {
-    var c = byId[st.sel];
-    if (!c) { pickEl.innerHTML = ''; btnsEl.innerHTML = ''; abEl.innerHTML = ''; return; }
-    var t = toonOf(c), url = BASE + '/' + c.id;
-    pickEl.style.setProperty('--c', (t && t.col) || '#777');
-    pickEl.innerHTML = '<div class="dw-port"><img src="' + esc(media(c.head || c.icon)) + '" alt="' + esc(c.name) + '"></div>' +
-      '<div class="dw-pick-n dw-o">' + esc(c.name) + '</div><ul class="dw-bars">' + (c.kind === 'toon' ? toonBars(c) : twBars(c)) + '</ul>' +
-      '<a class="dw-big dw-big--go dw-pick-go dw-o" href="' + url + '" data-open="' + esc(c.id) + '">Select</a>';
-    if (c.kind === 'toon') {
-      btnsEl.innerHTML = '<a class="dw-big dw-big--go dw-o" href="' + url + '#skins" data-open="' + esc(c.id) + '" data-hash="skins">Skins</a>' +
-        (c.mastery ? '<a class="dw-big dw-big--cy dw-o" href="' + url + '#mastery" data-open="' + esc(c.id) + '" data-hash="mastery">Mastery</a>' : '<span class="dw-big dw-o" aria-disabled="true" style="opacity:.55;cursor:default">No mastery</span>');
-      var a = c.abilities[st.ab] || c.abilities[0], n = c.abilities.length, other = st.ab === 0 ? 1 : 0;
-      abEl.innerHTML = '<div class="dw-abh dw-o">Ability ' + (c.abilities.indexOf(a) + 1) + '</div>' +
-        (a ? '<div class="dw-abbox"><div class="dw-abn dw-o">' + esc(a.name) + '</div><div class="dw-abk">' + esc(a.kind) + '</div><div class="dw-abd dw-o">' + rich(a.desc) + '</div></div>' : '') +
-        (n > 1 ? '<button type="button" class="dw-abt dw-o" data-ab="' + other + '">Ability ' + (other + 1) + '</button>' : '<button type="button" class="dw-abt" disabled>No ability 2</button>');
-    } else {
-      btnsEl.innerHTML = '<a class="dw-big dw-big--go dw-o" href="' + BASE + '/' + esc(c.toon) + '" data-open="' + esc(c.toon) + '">The Toon</a>' +
-        '<a class="dw-big dw-big--red dw-o" href="' + url + '#strategies" data-open="' + esc(c.id) + '" data-hash="strategies">Strategies</a>';
-      abEl.innerHTML = '<div class="dw-abh dw-o">Mechanic</div><div class="dw-abbox"><div class="dw-abd dw-o">' + rich(c.mechanic || 'None') + '</div></div>';
-    }
-  }
-
-  function narrow() { return !pickEl || getComputedStyle(pickEl).display === 'none'; }
-  function select(id, quiet) {
-    if (st.sel === id && !quiet) return;
+  function fill(id) {
     var prev = list.querySelector('.dw-mc.is-on');
     if (prev) { prev.classList.remove('is-on', 'is-filling'); prev.removeAttribute('aria-current'); }
     st.sel = id;
-    st.ab = 0;
     var el = list.querySelector('.dw-mc[data-id="' + id + '"]');
     if (el) {
-      el.classList.remove('is-filling');
       void el.offsetWidth;
       el.classList.add('is-on', 'is-filling');
       el.setAttribute('aria-current', 'true');
     }
-    renderPick();
   }
 
   function saveRet() {
@@ -201,10 +162,11 @@
       a.onfinish = function () { location.assign(url); };
     }, delay || 0);
   }
-  function open(id, hash, fromTile) {
-    if (!byId[id]) return;
-    if (!cur) saveRet();
-    flood(BASE + '/' + id + (hash ? '#' + hash : ''), fromTile ? 650 : 0);
+  function open(id) {
+    if (!byId[id] || busy) return;
+    fill(id);
+    saveRet();
+    flood(BASE + '/' + id, reduced ? 0 : 900);
   }
   function leave(url) {
     if (busy) return;
@@ -377,10 +339,6 @@
     if (tab) { st.tab = tab.getAttribute('data-tab'); st.r = 'all'; st.sel = ''; renderGrid(); return; }
     var chip = e.target.closest('.dw-chip');
     if (chip) { st.r = chip.getAttribute('data-v'); renderGrid(); return; }
-    var abt = e.target.closest('.dw-abt[data-ab]');
-    if (abt) { st.ab = +abt.getAttribute('data-ab'); renderPick(); var nb = abEl.querySelector('.dw-abt'); if (nb) nb.focus(); return; }
-    var op = e.target.closest('[data-open]');
-    if (op) { e.preventDefault(); open(op.getAttribute('data-open'), op.getAttribute('data-hash')); return; }
     var back = e.target.closest('[data-back]');
     if (back) { e.preventDefault(); toRoster(); return; }
     var go = e.target.closest('[data-go]');
@@ -388,9 +346,7 @@
     var mc = e.target.closest('a.dw-mc');
     if (mc) {
       e.preventDefault();
-      var id = mc.getAttribute('data-id');
-      if (narrow()) { select(id, true); open(id, '', true); return; }
-      select(id);
+      open(mc.getAttribute('data-id'));
     }
   });
   root.addEventListener('keydown', function (e) {
@@ -428,7 +384,7 @@
     if (CHAR) { showDetail(CHAR); return; }
     var ret = null;
     try { if (sessionStorage.getItem('dw-restore')) ret = JSON.parse(sessionStorage.getItem('dw-ret') || 'null'); sessionStorage.removeItem('dw-restore'); } catch (e) {}
-    if (ret) { if (ret.tab === 'toon' || ret.tab === 'twisted') st.tab = ret.tab; if (ret.r) st.r = ret.r; if (ret.sel && byId[ret.sel]) st.sel = ret.sel; }
+    if (ret) { if (ret.tab === 'toon' || ret.tab === 'twisted') st.tab = ret.tab; if (ret.r) st.r = ret.r; }
     renderGrid();
     if (ret && ret.y) {
       var tries = 0;
