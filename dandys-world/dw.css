@@ -64,7 +64,7 @@
 .dw-panel{background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:22px;padding:16px 18px;box-shadow:0 6px 0 var(--ink)}
 .is-tw .dw-panel{background:#1c1220;color:#f4e9ee;border-color:#000;box-shadow:0 6px 0 #000,inset 0 0 0 1px rgba(255,120,140,.18)}
 .dw-name{font:700 clamp(34px,5vw,50px)/1 'Fredoka',sans-serif;margin:0;color:var(--ink);letter-spacing:.2px}
-.is-tw .dw-name{color:#ffe3e6;text-shadow:0 0 18px rgba(255,40,70,.45)}
+.is-tw .dw-name{color:#ffe3e6;text-shadow:0 3px 0 #000}
 .dw-full{margin:4px 0 0;color:var(--muted);font-weight:700}
 .is-tw .dw-full{color:#cdb3bd}
 .dw-tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
@@ -97,6 +97,7 @@
 .dw-rich ul{margin:0 0 .6em;padding:0 0 0 1.2em}
 .dw-rich li{margin:.15em 0}
 .dw-rich b{font-weight:800}
+.dw-sec .dw-rich,.dw-more .dw-rich{max-width:78ch}
 .dw-quote{position:relative;font-style:italic;padding-left:30px}
 .dw-quote::before{content:"\201C";position:absolute;left:-2px;top:-14px;font:700 54px/1 'Fredoka',sans-serif;color:var(--c,#c9a3ff)}
 .dw-quote small{display:block;font-style:normal;color:var(--muted);font-size:13px;margin-top:6px}
