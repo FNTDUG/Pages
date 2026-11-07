@@ -5087,7 +5087,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
 const PAGE_MOVED = { '/fwm/grind': '/fwm/grind-methods', '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams', '/fntd2/meta-teams-1': '/fntd2/meta-teams', '/fntd2': '/fntd2/fntd2-directory', '/bbn': '/bbn/bite-by-night-directory', '/modes': '/fntd2/fntd2-index', '/faq-fntd2': '/fntd2/fntd2-index', '/faq-fntd1': '/fntd1/faq-fntd1', '/value-list': '/fntd2/trade-calculator', '/fntd2/tradingui': '/fntd2/trade-calculator', '/unit-image-renders': '/fntd2/unit-engine', '/dps-list': '/fntd2/unit-engine', '/tierlists-1': '/fntd2/tierlists-1', '/info-charts': '/fntd2/fntd2-index', '/fntd2/info-charts': '/fntd2/fntd2-index', '/bbn-patch-notes': '/patch-notes/bbn-patch-notes', '/info-guides/night-shift': '/fntd1/night-shift', '/bbn/terminal-survivor': '/bbn/survivor-terminal', '/fntd2/boss-raids': '/fntd2/boss-raids-index', '/old-man-consequences': '/fntd2/boss-raids-index' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
-const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261103i"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261106d"><\/script>';
+const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261103i"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261107a"><\/script>';
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
 const PV_UPDATE = {
   version: '2026-10-20',
@@ -9045,7 +9045,7 @@ export default {
     const realPath = url.pathname;
 
     let assetReq = request;
-    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/meta-teams', '/fwm/grind-methods', '/forsaken/roster', '/wiki'];
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/meta-teams', '/fwm/grind-methods', '/forsaken/roster', '/dandys-world/roster', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
       if (realPath.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
@@ -9096,11 +9096,13 @@ export default {
     const isOvHome = realPath === '/';
     const nav = { mobile: MOBILE_NAV_BODY, desktop: DESKTOP_NAV_INNER, footer: FOOTER_HTML };
     const fkChar = okPage && /^\/forsaken\/roster\/[^/]+\/?$/.test(realPath);
+    const dwChar = okPage && /^\/dandys-world\/roster\/[^/]+\/?$/.test(realPath);
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {
           el.append(NAV_CSS, { html: true }); if (!pvMissing) el.append('<link rel="canonical" href="' + canonUrl + '">', { html: true }); if (seo) el.append(seoHead(realPath, canonUrl, codesUpdated ? Object.assign({}, seo, { modified: codesUpdated.toISOString() }) : ssr && ssr.meta, url.origin), { html: true }); el.append(SEO_CSS, { html: true }); el.append(HOME_ICONS, { html: true }); el.append(ANALYTICS, { html: true }); el.append(SOUND_GOVERNOR, { html: true }); el.append(ASSET_GUARD, { html: true }); el.append(ADSENSE_LOADER, { html: true });
           if (fkChar) el.append('<meta name="ov-bare" content="1"><style>html.fk-char,html.fk-char body,html.fk-char.fk-on.ov:has(#ug-content[data-hdr]),html.fk-char.fk-on.ov[data-theme]:has(#ug-content[data-hdr]){background:#000!important}html.fk-char #ug-main{visibility:hidden}html.fk-char .fk-detail{visibility:visible}html.fk-char #ug-hamburger,html.fk-char #ug-info-btn,html.fk-char #ug-sound-btn,html.fk-char .ntf-bell{display:none!important}.fk-cover{position:fixed;inset:0;z-index:2147483600;background:#000;pointer-events:none;animation:fk-cover-x 0s 8s forwards}@keyframes fk-cover-x{to{visibility:hidden}}</style>', { html: true });
+          if (dwChar) el.append('<meta name="ov-bare" content="1"><style>html.dw-char,html.dw-char body,html.dw-char.dw-on.ov:has(#ug-content[data-hdr]),html.dw-char.dw-on.ov[data-theme]:has(#ug-content[data-hdr]){background:#140d20!important}html.dw-char #ug-main{visibility:hidden}html.dw-char .dw-detail{visibility:visible}html.dw-char #ug-hamburger,html.dw-char #ug-info-btn,html.dw-char #ug-sound-btn,html.dw-char .ntf-bell{display:none!important}.dw-cover{position:fixed;inset:0;z-index:2147483600;background:#140d20;pointer-events:none;animation:dw-cover-x 0s 8s forwards}@keyframes dw-cover-x{to{visibility:hidden}}</style>', { html: true });
           if (ssr && ssr.fwChar) el.append('<meta name="ov-bare" content="1">' + FWM_PRE_CSS + (ssr.fwWorld.bg ? '<link rel="preload" as="image" href="' + seoAttr(ssr.fwWorld.bg) + '">' : ''), { html: true });
           if (!isOvHome) el.append(OV_HEAD, { html: true });
           if (codesEmpty || (ssr && ssr.missing)) el.append('<meta name="robots" content="noindex">', { html: true });
@@ -9136,10 +9138,10 @@ export default {
         element(el) { if (ssr && ssr.fwChar) el.setInnerContent(seoEsc(ssr.lead), { html: true }); }
       })
       .on('html', {
-        element(el) { if ((ssr && ssr.fwChar) || fkChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char' + (fkChar ? ' fk-char fk-on' : '')).trim()); }
+        element(el) { if ((ssr && ssr.fwChar) || fkChar || dwChar) el.setAttribute('class', ((el.getAttribute('class') || '') + ' fw-char' + (fkChar ? ' fk-char fk-on' : '') + (dwChar ? ' dw-char dw-on' : '')).trim()); }
       })
       .on('div.ad-slot, div#ug-hero', {
-        element(el) { if ((ssr && ssr.fwChar) || fkChar) el.remove(); }
+        element(el) { if ((ssr && ssr.fwChar) || fkChar || dwChar) el.remove(); }
       })
       .on('div#ug-content', {
         element(el) {
@@ -9185,6 +9187,7 @@ export default {
       .on('body', {
         element(el) {
           if (fkChar) el.prepend('<div class="fk-cover" aria-hidden="true"></div>', { html: true });
+          if (dwChar) el.prepend('<div class="dw-cover" aria-hidden="true"></div>', { html: true });
           if (ssr && ssr.fwChar) el.prepend('<div class="fwd-pre" aria-hidden="true"><i style="background-color:' + seoAttr(ssr.fwWorld.color) + (ssr.fwWorld.bg ? ';background-image:url(&quot;' + seoAttr(ssr.fwWorld.bg) + '&quot;)' : '') + '"></i><b></b></div>', { html: true });
           if (!hasInfo) el.append('<style>#ug-sound-btn{top:47px}@media(min-width:769px){#ug-sound-btn{top:63px}}</style>', { html: true });
           el.append(SOUND_BTN_HTML, { html: true });
@@ -9195,7 +9198,7 @@ export default {
           el.append(noInfoPanel || pvMissing ? pollHtml.replace('data-auto="1"', 'data-auto="0"') : pollHtml, { html: true });
           el.append(OUTAGE_SCRIPT, { html: true });
           el.append(REWARD_TIP, { html: true });
-          if (!(ssr && ssr.fwChar) && !fkChar) {
+          if (!(ssr && ssr.fwChar) && !fkChar && !dwChar) {
             el.append(RAIL_HTML, { html: true });
             el.append(CONTENT_AD_HTML, { html: true });
           }

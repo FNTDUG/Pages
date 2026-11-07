@@ -20,7 +20,7 @@
     document.head.appendChild(l);
   });
 
-  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', fwm: 'FNaF World Multiplayer', forsaken: 'Forsaken', 'patch-notes': 'Patch notes', wiki: 'Community wiki', '404': 'Error 404' };
+  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', fwm: 'FNaF World Multiplayer', forsaken: 'Forsaken', 'dandys-world': "Dandy's World", 'patch-notes': 'Patch notes', wiki: 'Community wiki', '404': 'Error 404' };
   var title = '';
   var PREFIX = { fntd1: /^FNTD ?1\s+/i, fntd2: /^FNTD ?2\s+/i, bbn: /^(BBN|Bite By Night)\s+/i, fwm: /^(FWM|FNaF World Multiplayer)\s+/i, forsaken: /^Forsaken\s+/i };
   function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
