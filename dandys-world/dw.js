@@ -111,9 +111,9 @@
   function listFor(tab) { return tab === 'twisted' ? tws : toons; }
   function toonOf(c) { return c.kind === 'toon' ? c : byId[c.toon]; }
 
-  function machine(c) {
+  function machine(c, on) {
     var tw = c.kind === 'twisted', r = rarityOf(c), t = toonOf(c), name = c.name.replace(/^Twisted /, '');
-    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + (st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '" style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (st.sel === c.id ? ' aria-current="true"' : '') + '>' +
+    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + (on && st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '" style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (on && st.sel === c.id ? ' aria-current="true"' : '') + '>' +
       (c.event ? '<svg class="dw-spark" aria-hidden="true"><use href="#dw-sp"/></svg>' : '') +
       '<span class="dw-mc-m"><svg aria-hidden="true"><use href="#dw-mb"/></svg><span class="dw-mc-glass"><span class="dw-ink"></span><img src="' + esc(media(c.head || c.icon)) + '" alt="" loading="lazy" decoding="async"><span class="dw-pour"></span></span><svg aria-hidden="true"><use href="#dw-mf"/></svg></span>' +
       '<span class="dw-mc-n dw-o' + (name.length > 9 ? ' is-long' : '') + '">' + esc(name) + '</span></a>';
@@ -142,7 +142,8 @@
     renderChips();
     var src = shown();
     if (!byId[st.sel] || byId[st.sel].kind !== st.tab) st.sel = src.length ? src[0].id : '';
-    list.innerHTML = src.length ? src.map(machine).join('') : '<p class="dw-none">Nothing here.</p>';
+    var on = !narrow();
+    list.innerHTML = src.length ? src.map(function (c) { return machine(c, on); }).join('') : '<p class="dw-none">Nothing here.</p>';
     renderPick();
   }
 
