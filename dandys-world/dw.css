@@ -39,7 +39,7 @@
 [data-bt="halloweenmain"]{--bt:linear-gradient(#4E1B1F,#442E16,#403E15,#15401A,#132E35,#23183E,#581757) left top/calc(50% + 1px) 100% no-repeat,linear-gradient(#3c1b5a,#6e3400) right top/calc(50% + 1px) 100% no-repeat}
 .dw-mc[data-bt]{--tbg:var(--bt)}
 .dw-mc[data-bt]::before{opacity:1}
-.dw-tag[data-bt]{background:var(--bt)}
+.dw-tag[data-r][data-bt]{background:var(--bt)}
 .dw-mc--tw{--tbg:radial-gradient(circle at 50% 70%,rgba(200,20,40,.45),#1a0e12 70%)}
 .dw-mc:hover{transform:translateY(-3px)}
 .dw-mc.is-on{border-color:var(--go);box-shadow:0 0 0 2px #000,0 0 14px rgba(95,227,109,.55)}
