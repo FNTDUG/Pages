@@ -1227,7 +1227,7 @@ window.CFGame = function (opt) {
     stopAll();
     play('FANTASY_TONAL_SP_DSL32001', 1);
     var r = REWARDS[GLOBAL.found];
-    if (r && r[2]) { each('Active', hide); showArt(r[1]); }
+    if (r && r[2]) { each('Active', hide); showArt(r[3] || 'https://fnaf-world.fntduserguide.com/idle/' + r[1] + '.webp'); }
   };
   var art = null;
   function placeArt() {
@@ -1238,7 +1238,7 @@ window.CFGame = function (opt) {
     art.style.width = (w * 250 / W) + 'px';
     art.style.height = (h * 250 / H) + 'px';
   }
-  function showArt(slug) {
+  function showArt(src) {
     if (!art) {
       art = document.createElement('img');
       art.alt = '';
@@ -1246,7 +1246,7 @@ window.CFGame = function (opt) {
       cv.parentNode.appendChild(art);
       window.addEventListener('resize', placeArt);
     }
-    art.src = 'https://fnaf-world.fntduserguide.com/idle/' + slug + '.webp';
+    art.src = src;
     art.hidden = false;
     art.style.display = '';
     placeArt();
@@ -1552,6 +1552,7 @@ window.CFGame = function (opt) {
     if (a) { try { var un = a.createBufferSource(); un.buffer = a.createBuffer(1, 1, 22050); un.connect(a.destination); un.start(0); } catch (e) {} }
     if (PHONE && !isFS() && !pseudo) enterFS();
     endBox.hidden = true;
+    hideArt();
     paused = false;
     rotPaused = false;
     mode = 'play';
@@ -1569,6 +1570,7 @@ window.CFGame = function (opt) {
   }
   function toTitle() {
     stopAll();
+    hideArt();
     mode = 'title';
     if (stage && (pseudo || (PHONE && isFS()))) exitFS();
     else if (stage) checkRot();
