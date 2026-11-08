@@ -1,7 +1,7 @@
 (function () {
   var root = document.getElementById('dw');
   if (!root) return;
-  var BASE = (root.getAttribute('data-base') || '/dandys-world/pawns-and-infecteds').replace(/\/$/, '');
+  var BASE = (root.getAttribute('data-base') || '/dandys-world/toons-and-twisteds').replace(/\/$/, '');
   var SRC = root.getAttribute('data-src');
   var MEDIA = root.getAttribute('data-media') || '/dandys-world/img/';
   var det = root.querySelector('.dw-detail');
@@ -222,7 +222,7 @@
       '<a class="dw-btn dw-o" href="' + BASE + '/' + esc(prev.id) + '" data-go="' + esc(prev.id) + '" aria-label="Previous: ' + esc(prev.name) + '">&lsaquo;</a>' +
       '<span class="dw-count dw-o">' + (c.kind === 'toon' ? 'Toon' : 'Twisted') + ' ' + (i + 1) + ' / ' + l.length + '</span>' +
       '<a class="dw-btn dw-o" href="' + BASE + '/' + esc(next.id) + '" data-go="' + esc(next.id) + '" aria-label="Next: ' + esc(next.name) + '">&rsaquo;</a>' +
-      '<a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Pawns &amp; Infecteds" title="Back to Pawns &amp; Infecteds">' + XSVG + '</a></div>';
+      '<a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Toons &amp; Twisteds" title="Back to Toons &amp; Twisteds">' + XSVG + '</a></div>';
   }
 
   function toonPage(c) {
@@ -311,7 +311,7 @@
     det.hidden = false;
     if (!c) {
       det.className = 'dw-detail';
-      det.innerHTML = '<div class="dw-page"><div class="dw-top"><a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Pawns &amp; Infecteds">' + XSVG + '</a></div><div class="dw-panel dw-stripes dw-missing"><h1 class="dw-name dw-o">Not found</h1><p>There is no Toon or Twisted called &ldquo;' + esc(id) + '&rdquo;.</p></div></div>';
+      det.innerHTML = '<div class="dw-page"><div class="dw-top"><a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Toons &amp; Twisteds">' + XSVG + '</a></div><div class="dw-panel dw-stripes dw-missing"><h1 class="dw-name dw-o">Not found</h1><p>There is no Toon or Twisted called &ldquo;' + esc(id) + '&rdquo;.</p></div></div>';
       if (cover) cover.remove();
       return;
     }
