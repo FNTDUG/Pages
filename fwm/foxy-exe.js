@@ -9,12 +9,13 @@
     play: 41,
     first: 40,
     defaultReward: 46,
+    rewards: { 'grimm-foxy': ['Grimm Foxy', 'grimm-foxy', 1, 'https://fnaf-world.fntduserguide.com/idle/grim-foxy.webp'] },
     codes: { KeyA: 65, KeyD: 68, ArrowLeft: 65, ArrowRight: 68, Enter: 13, NumpadEnter: 13, Space: 32 },
     pad: { left: 65, right: 68 },
     endLine: function () { return ''; },
     setup: function (api) {
       var S = api.S, O1 = api.O1, C = api.C, CS = api.CS, CA = api.CA, count = api.count, each = api.each, where = api.where, colSel = api.colSel, notCol = api.notCol, once = api.once, onceOnly = api.onceOnly, every = api.every, create = api.create, lookAt = api.lookAt, nearBorder = api.nearBorder, hide = api.hide, show = api.show, display = api.display, setPos = api.setPos, setX = api.setX, setY = api.setY, setDir = api.setDir, force = api.force, destroy = api.destroy, play = api.play, stopAll = api.stopAll, playing = api.playing, down = api.down, rnd = api.rnd, go = api.go, setAlphaCoef = api.setAlphaCoef, setZoom = api.setZoom, G = api.G;
-      var START = {}, EV = {};
+      var START = {}, EV = {}, hurt = false;
 
       START[40] = function () { stopAll(); play('boot', 1); };
 
@@ -32,6 +33,7 @@
 
       START[41] = function () {
         api.hideCursor();
+        hurt = false;
         each('Active 9', function (e) { e.alt[0] = 255; });
       };
 
@@ -73,12 +75,12 @@
         if (P.x <= 200) each('Active 3', function (e) { e.alt[0] = 0; });
         if (once('e22', C('area') === 3)) { each('Perspective', hide); each('Perspective 2', show); }
         if (C('area') === 3) each('Active 6', function (e) { if (e.x < P.x + 400) e.alt[0] = 1; });
-        if (once('e24', colSel([P], 'Active 6').a.length > 0 && notCol([P], 'Active 7').length > 0)) { play('scream (2)', 5); CA('lives', -1); each('Active 9', function (e) { e.alt[0] = 0; }); }
+        if (once('e24', colSel([P], 'Active 6').a.length > 0 && notCol([P], 'Active 7').length > 0)) { play('scream (2)', 5); CA('lives', -1); hurt = true; each('Active 9', function (e) { e.alt[0] = 0; }); }
         each('Active 6', function (e) { if (e.alt[0] === 1) setPos(e, e.x - 1, e.y); });
         if (once('e26', C('area') === 4)) { each('Perspective', hide); each('Perspective 2', hide); }
-        if (C('area') === 4 && every('e27', 4000) && onceOnly('e27')) { G.found = C('found new') || 46; go(43); return; }
+        if (C('area') === 4 && every('e27', 4000) && onceOnly('e27')) { G.found = hurt ? C('found new') || 46 : 'grimm-foxy'; go(43); return; }
         var hit = where(colSel([P], 'Active 4').b, function (e) { return e.alt[0] === 0; });
-        if (hit.length) { CA('lives', -1); hit.forEach(function (e) { destroy(e); e.alt[0] = 1; }); play('scream (2)', 5); each('Active 9', function (e) { e.alt[0] = 0; }); }
+        if (hit.length) { CA('lives', -1); hurt = true; hit.forEach(function (e) { destroy(e); e.alt[0] = 1; }); play('scream (2)', 5); each('Active 9', function (e) { e.alt[0] = 0; }); }
         each('Active 9', function (e) { if (e.alt[0] < 255) { setAlphaCoef(e, e.alt[0]); e.alt[0] += 5; } });
         if (once('e31', C('lives') === 0)) { go(42); return; }
         if (once('e32', C('area') === 4)) CS('found new', 46);
