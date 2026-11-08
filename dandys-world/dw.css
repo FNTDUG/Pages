@@ -87,6 +87,7 @@
 .dw-flood::before{content:"";position:absolute;left:0;right:0;top:-22px;height:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M0 14 Q15 0 30 14 T60 14 T90 14 T120 14 V24 H0z' fill='%2306030a'/%3E%3C/svg%3E") 0 0/120px 24px repeat-x;animation:dw-wave2 .6s linear infinite}
 @keyframes dw-wave2{to{background-position:120px 0}}
 
+.dw-detail:focus,.dw-detail:focus-visible{outline:none}
 .dw-detail{position:fixed;inset:0;z-index:2147483000;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:radial-gradient(circle at 50% -10%,color-mix(in srgb,var(--c,#777) 40%,transparent),transparent 60%),repeating-linear-gradient(-45deg,rgba(255,255,255,.025) 0 18px,transparent 18px 36px),#161618;visibility:visible}
 .dw-detail[hidden]{display:none}
 .dw-detail.is-tw{background:radial-gradient(circle at 50% 120%,rgba(200,20,40,.4),transparent 55%),repeating-linear-gradient(-45deg,rgba(255,255,255,.02) 0 18px,transparent 18px 36px),#100a0d}
