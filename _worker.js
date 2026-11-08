@@ -5085,7 +5085,7 @@ const PAGE_NOTES_SCRIPT = `<script>
 })();
 <\/script>`;
 const PV_POP_FILES = { '404': '404', wip: 'maintenance', outage: 'outage', tip: 'tip', update: 'update' };
-const PAGE_MOVED = { '/fwm/grind': '/fwm/grind-methods', '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams', '/fntd2/meta-teams-1': '/fntd2/meta-teams', '/fntd2': '/fntd2/fntd2-directory', '/bbn': '/bbn/bite-by-night-directory', '/modes': '/fntd2/fntd2-index', '/faq-fntd2': '/fntd2/fntd2-index', '/faq-fntd1': '/fntd1/faq-fntd1', '/value-list': '/fntd2/trade-calculator', '/fntd2/tradingui': '/fntd2/trade-calculator', '/unit-image-renders': '/fntd2/unit-engine', '/dps-list': '/fntd2/unit-engine', '/tierlists-1': '/fntd2/tierlists-1', '/info-charts': '/fntd2/fntd2-index', '/fntd2/info-charts': '/fntd2/fntd2-index', '/bbn-patch-notes': '/patch-notes/bbn-patch-notes', '/info-guides/night-shift': '/fntd1/night-shift', '/bbn/terminal-survivor': '/bbn/survivor-terminal', '/fntd2/boss-raids': '/fntd2/boss-raids-index', '/old-man-consequences': '/fntd2/boss-raids-index' };
+const PAGE_MOVED = { '/dandys-world/roster': '/dandys-world/pawns-and-infecteds', '/fwm/grind': '/fwm/grind-methods', '/fwm/tier-list': '/fwm/tierlist', '/bbnpatchnotes': '/patch-notes/bbn-patch-notes', '/patchnotesfntd2': '/patch-notes', '/modes/clan-wars': '/fntd2/clan-wars', '/modes/meta-teams-1': '/fntd2/meta-teams', '/fntd2/meta-teams-1': '/fntd2/meta-teams', '/fntd2': '/fntd2/fntd2-directory', '/bbn': '/bbn/bite-by-night-directory', '/modes': '/fntd2/fntd2-index', '/faq-fntd2': '/fntd2/fntd2-index', '/faq-fntd1': '/fntd1/faq-fntd1', '/value-list': '/fntd2/trade-calculator', '/fntd2/tradingui': '/fntd2/trade-calculator', '/unit-image-renders': '/fntd2/unit-engine', '/dps-list': '/fntd2/unit-engine', '/tierlists-1': '/fntd2/tierlists-1', '/info-charts': '/fntd2/fntd2-index', '/fntd2/info-charts': '/fntd2/fntd2-index', '/bbn-patch-notes': '/patch-notes/bbn-patch-notes', '/info-guides/night-shift': '/fntd1/night-shift', '/bbn/terminal-survivor': '/bbn/survivor-terminal', '/fntd2/boss-raids': '/fntd2/boss-raids-index', '/old-man-consequences': '/fntd2/boss-raids-index' };
 const OV_MOVED = { '/overhaul/meta-teams': '/overhaul/fntd2/meta-teams', '/overhaul/unit-engine': '/overhaul/fntd2/unit-engine' };
 const OV_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/overhaul/ov-base.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov.css?v=20261103i"><link rel="stylesheet" href="/overhaul/ov-kit.css?v=20261021d"><link rel="stylesheet" href="/overhaul/ov-a11y.css?v=20261021d"><script src="/overhaul/ov-a11y.js?v=20261021d"><\/script><script src="/overhaul/ov.js?v=20261107a"><\/script>';
 function ovPage(path) { return !/\.[a-z0-9]+$/i.test(path) || /\.html$/i.test(path); }
@@ -9045,7 +9045,7 @@ export default {
     const realPath = url.pathname;
 
     let assetReq = request;
-    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/meta-teams', '/fwm/grind-methods', '/forsaken/roster', '/dandys-world/roster', '/wiki'];
+    const _deepBases = ['/fntd2/unit-engine', '/fntd2/tierlists-1', '/fntd2/meta-teams', '/fwm/roster', '/fwm/tech-specs', '/fwm/tierlist', '/fwm/meta-teams', '/fwm/grind-methods', '/forsaken/roster', '/dandys-world/pawns-and-infecteds', '/wiki'];
     for (let _i = 0; _i < _deepBases.length; _i++) {
       if (realPath.indexOf(_deepBases[_i] + '/') === 0) {
         assetReq = new Request(new URL(_deepBases[_i], url).toString(), request);
@@ -9096,7 +9096,7 @@ export default {
     const isOvHome = realPath === '/';
     const nav = { mobile: MOBILE_NAV_BODY, desktop: DESKTOP_NAV_INNER, footer: FOOTER_HTML };
     const fkChar = okPage && /^\/forsaken\/roster\/[^/]+\/?$/.test(realPath);
-    const dwChar = okPage && /^\/dandys-world\/roster\/[^/]+\/?$/.test(realPath);
+    const dwChar = okPage && /^\/dandys-world\/pawns-and-infecteds\/[^/]+\/?$/.test(realPath);
     let rw = new HTMLRewriter()
       .on('head', {
         element(el) {

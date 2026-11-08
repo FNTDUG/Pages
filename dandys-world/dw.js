@@ -1,7 +1,7 @@
 (function () {
   var root = document.getElementById('dw');
   if (!root) return;
-  var BASE = (root.getAttribute('data-base') || '/dandys-world/roster').replace(/\/$/, '');
+  var BASE = (root.getAttribute('data-base') || '/dandys-world/pawns-and-infecteds').replace(/\/$/, '');
   var SRC = root.getAttribute('data-src');
   var MEDIA = root.getAttribute('data-media') || '/dandys-world/img/';
   var det = root.querySelector('.dw-detail');
@@ -104,7 +104,7 @@
 
   function machine(c, on) {
     var tw = c.kind === 'twisted', r = rarityOf(c), t = toonOf(c), name = c.name.replace(/^Twisted /, '');
-    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + (c.event && !tw ? ' is-ev' : '') + (on && st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '" style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (on && st.sel === c.id ? ' aria-current="true"' : '') + '>' +
+    return '<a class="dw-mc' + (tw ? ' dw-mc--tw' : '') + '' + (on && st.sel === c.id ? ' is-on' : '') + '" href="' + BASE + '/' + esc(c.id) + '" data-id="' + esc(c.id) + '" data-r="' + esc(r) + '"' + (c.bt && !tw ? ' data-bt="' + esc(c.bt) + '"' : '') + ' style="--c:' + esc((t && t.col) || '#888') + '" aria-label="' + esc(c.name + ', ' + r + (c.event ? ', Event' : '')) + '"' + (on && st.sel === c.id ? ' aria-current="true"' : '') + '>' +
       '<span class="dw-mc-m"><svg aria-hidden="true"><use href="#dw-mb"/></svg><span class="dw-mc-glass"><span class="dw-ink"></span><img src="' + esc(media(c.head || c.icon)) + '" alt="" loading="lazy" decoding="async"><span class="dw-pour"></span></span><svg aria-hidden="true"><use href="#dw-mf"/></svg></span>' +
       '<span class="dw-mc-n dw-o' + (name.length > 9 ? ' is-long' : '') + '">' + esc(name) + '</span></a>';
   }
@@ -222,12 +222,12 @@
       '<a class="dw-btn dw-o" href="' + BASE + '/' + esc(prev.id) + '" data-go="' + esc(prev.id) + '" aria-label="Previous: ' + esc(prev.name) + '">&lsaquo;</a>' +
       '<span class="dw-count dw-o">' + (c.kind === 'toon' ? 'Toon' : 'Twisted') + ' ' + (i + 1) + ' / ' + l.length + '</span>' +
       '<a class="dw-btn dw-o" href="' + BASE + '/' + esc(next.id) + '" data-go="' + esc(next.id) + '" aria-label="Next: ' + esc(next.name) + '">&rsaquo;</a>' +
-      '<a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster" title="Back to the roster">' + XSVG + '</a></div>';
+      '<a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Pawns &amp; Infecteds" title="Back to Pawns &amp; Infecteds">' + XSVG + '</a></div>';
   }
 
   function toonPage(c) {
     var tags = '<span class="dw-tag" data-r="' + esc(c.rarity) + '">' + esc(c.rarity === 'Main' ? 'Main Character' : c.rarity) + '</span>' +
-      (c.event ? '<span class="dw-tag" data-r="Event">Event Toon</span>' : '') +
+      (c.event ? '<span class="dw-tag" data-r="Event"' + (c.bt ? ' data-bt="' + esc(c.bt.replace(/main$/, '')) + '"' : '') + '>Event Toon</span>' : '') +
       (c.designation ? '<span class="dw-tag">' + esc(c.designation) + '</span>' : '');
     var abil = c.abilities.map(function (a, n) {
       return '<div class="dw-ab"><span class="dw-ab-i">' + (a.icon ? '<img src="' + esc(media(a.icon)) + '" alt="" loading="lazy">' : '<span aria-hidden="true">' + (n + 1) + '</span>') + '</span>' +
@@ -311,7 +311,7 @@
     det.hidden = false;
     if (!c) {
       det.className = 'dw-detail';
-      det.innerHTML = '<div class="dw-page"><div class="dw-top"><a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to the roster">' + XSVG + '</a></div><div class="dw-panel dw-stripes dw-missing"><h1 class="dw-name dw-o">Not found</h1><p>There is no Toon or Twisted called &ldquo;' + esc(id) + '&rdquo;.</p></div></div>';
+      det.innerHTML = '<div class="dw-page"><div class="dw-top"><a class="dw-x" href="' + BASE + '" data-back="1" aria-label="Back to Pawns &amp; Infecteds">' + XSVG + '</a></div><div class="dw-panel dw-stripes dw-missing"><h1 class="dw-name dw-o">Not found</h1><p>There is no Toon or Twisted called &ldquo;' + esc(id) + '&rdquo;.</p></div></div>';
       if (cover) cover.remove();
       return;
     }
@@ -389,7 +389,7 @@
       (function again() { window.scrollTo(0, ret.y); if (Math.abs(window.scrollY - ret.y) > 4 && tries++ < 20) setTimeout(again, 60); })();
     }
   }).catch(function () {
-    list.innerHTML = '<p class="dw-none">The roster could not load. Refresh the page to try again.</p>';
+    list.innerHTML = '<p class="dw-none">The page could not load. Refresh the page to try again.</p>';
     var cover = document.querySelector('.dw-cover');
     if (cover) cover.remove();
   });
