@@ -612,7 +612,7 @@ html.ov .ov-pager-list a,html.ov .ov-pager-list strong{white-space:nowrap}
 @media (max-width:600px){html.ov .ov-pager-row{grid-template-columns:1fr}html.ov .ov-pager-next{border-left:0;border-top:2px solid var(--surface2)}html.ov .ov-pager-none{display:none}}
 html.ov:has(#ug-content[data-hdr=title]){background:#a39b8d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%239a9284'/%3E%3Cpath d='M40 0L80 40L40 80L0 40Z' fill='%23a39b8d' stroke='%238e8678' stroke-width='2'/%3E%3C/svg%3E") 0 0/80px 80px!important}
 html.ov[data-theme="dark"]:has(#ug-content[data-hdr=title]){background:#3b3848 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23343140'/%3E%3Cpath d='M40 0L80 40L40 80L0 40Z' fill='%233b3848' stroke='%232d2a38' stroke-width='2'/%3E%3C/svg%3E") 0 0/80px 80px!important}
-html.ov:has(#ug-content[data-hdr=title]) #ug-hero-inner>:not(.ad-slot):not(.ov-notes){display:none!important}
+html.ov:has(#ug-content[data-hdr=title]) #ug-hero-inner>:not(.ad-slot):not(.ov-notes):not(#ue-last-updated-loader){display:none!important}
 html.ov:has(#ug-content[data-hdr=title]) #ug-hero-inner>.ov-notes{margin:0 0 var(--ov-gap)}
 html.ov:has(#ug-content[data-hdr=title]) #ug-hero{padding-top:calc(var(--hdr-h) + 24px)!important}
 html.ov:has(#ug-content[data-hdr=title]) .pv-bar-title{display:flex;align-items:center;flex:1;min-width:0}
