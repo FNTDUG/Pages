@@ -71,7 +71,7 @@
     rows.sort(function (a, b) { return b.r.score - a.r.score || a.k - b.k; });
     var why = notesOf(TIERS.slice().reverse().map(function (t) { return [t, rows.filter(function (x) { return x.r.tier === t; })]; }));
     var id = 'fkt-' + slug(m.name);
-    return '<section class="fkt-row" aria-labelledby="' + id + '" style="--i:' + i + '">' +
+    return '<section class="fkt-row" id="map-' + slug(m.name) + '" aria-labelledby="' + id + '" style="--i:' + i + '">' +
       '<div class="fkt-map fk-drawn">' + (m.image ? '<img class="fkt-map-bg" src="' + esc(m.image) + '" alt="" loading="lazy" decoding="async">' : '') +
       '<h2 class="fkt-map-n" id="' + id + '">' + esc(m.name) + '</h2>' + gauge(s) + '</div>' +
       '<div class="fkt-chars fk-drawn">' + (rows.length ? '<ul class="fkt-list" aria-label="' + esc(m.name) + ' Killer rankings, best first">' + rows.map(function (x) { return item(x.c, x.r); }).join('') + '</ul>' : '<p class="fkt-empty">No Killer rankings for this map yet.</p>') +
@@ -134,13 +134,26 @@
     return html;
   }
 
+  function jump(maps) {
+    if (maps.length < 2) return '';
+    return '<nav class="fkt-jump fk-drawn" aria-label="Jump to a map"><ul>' + maps.map(function (m) {
+      return '<li><a class="fk-card fkt-j" href="#map-' + slug(m.name) + '">' + (m.image ? '<img src="' + esc(m.image) + '" alt="" width="420" height="236" decoding="async">' : '') + '<span class="fk-mo" aria-hidden="true"></span><span class="fkt-jn">' + esc(m.name) + '</span></a></li>';
+    }).join('') + '</ul></nav>';
+  }
+
+  function goHash() {
+    if (side !== 'killer' || !/^#map-/.test(location.hash)) return;
+    var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (t && t.scrollIntoView) t.scrollIntoView();
+  }
+
   function render() {
     if (top) top.hidden = side !== 'killer';
     if (side === 'survivor') {
       list.innerHTML = board();
     } else {
       var maps = (data.tierlist && data.tierlist.maps) || [];
-      list.innerHTML = maps.length ? maps.map(row).join('') : '<p class="fkt-empty">No maps have been ranked yet.</p>';
+      list.innerHTML = maps.length ? jump(maps) + maps.map(row).join('') : '<p class="fkt-empty">No maps have been ranked yet.</p>';
     }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(list); });
     fit(list);
@@ -180,6 +193,7 @@
     if (d.gridBg) root.style.setProperty('--fk-grid-bg', 'url("' + d.gridBg + '")');
     if (!d.tierlist) { sample = true; d.tierlist = sampleList(d); }
     render();
+    goHash();
   }).catch(function () {
     list.innerHTML = '<p class="fkt-empty">The tier list could not load. Try refreshing the page.</p>';
   });
