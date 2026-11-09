@@ -79,7 +79,17 @@
       '</section>';
   }
 
+  function fitJump(scope) {
+    Array.prototype.forEach.call(scope.querySelectorAll('.fkt-jn'), function (n) {
+      n.style.fontSize = '';
+      var room = n.clientWidth - parseFloat(getComputedStyle(n).paddingLeft) * 2, w = 0;
+      n.textContent.split(/\s+/).forEach(function (word) { var r = document.createElement('span'); r.textContent = word; r.style.whiteSpace = 'nowrap'; n.appendChild(r); w = Math.max(w, r.offsetWidth); n.removeChild(r); });
+      if (room > 0 && w > room) n.style.fontSize = Math.max(8, Math.floor(parseFloat(getComputedStyle(n).fontSize) * room / w * 10) / 10) + 'px';
+    });
+  }
+
   function fit(scope) {
+    fitJump(scope);
     Array.prototype.forEach.call(scope.querySelectorAll('.fk-card-n'), function (n) {
       n.style.fontSize = '';
       var room = n.parentNode.clientWidth - 8, w = n.scrollWidth;
