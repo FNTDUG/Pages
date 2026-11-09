@@ -45,7 +45,7 @@
 .fkt-jump{padding:10px}
 .fkt-jump ul{--c:8;--g:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);margin:0;padding:0;list-style:none}
 .fkt-jump li{width:calc((100% - (var(--c) - 1) * var(--g)) / var(--c))}
-.fkt .fkt-j{aspect-ratio:420/236;will-change:transform;backface-visibility:hidden;outline:1px solid rgba(236,230,218,.35);outline-offset:-1px}
+.fkt .fkt-j{--mo:url("/forsaken/img/ui-corners-map.svg");aspect-ratio:420/236;will-change:transform;backface-visibility:hidden;outline:1px solid rgba(236,230,218,.35);outline-offset:-1px}
 .fkt .fkt-j::after{display:none}
 .fkt .fkt-j img{inset:0;width:100%!important;height:100%!important;object-position:50% 50%}
 .fkt .fkt-j::before{background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.5))}
