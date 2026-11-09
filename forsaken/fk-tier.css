@@ -42,7 +42,7 @@
 .fkt-bar-o{background:url("/forsaken/img/ui-bar-frame.webp") center/100% 100% no-repeat}
 .fkt-mk{position:absolute;left:var(--p);top:15%;bottom:11.7%;width:6px;margin-left:-3px;background:#fff;box-shadow:-2px 0 0 #050505,2px 0 0 #050505}
 .fkt-empty{margin:0;padding:18px;text-align:center;font-style:italic;color:#d8d8d8}
-.fkt-jump{padding:10px}
+.fkt-jump{padding:10px;container-type:inline-size}
 .fkt-jump ul{--c:8;--g:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);margin:0;padding:0;list-style:none}
 .fkt-jump li{width:calc((100% - (var(--c) - 1) * var(--g)) / var(--c))}
 .fkt .fkt-j{--mo:url("/forsaken/img/ui-corners-map.svg");aspect-ratio:420/236;will-change:transform;backface-visibility:hidden;outline:1px solid rgba(236,230,218,.35);outline-offset:-1px}
@@ -52,8 +52,10 @@
 .fkt-jn{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:4px 6px;text-align:center;font-family:var(--fk-title);font-weight:800;font-size:13px;line-height:1.1;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,0 3px 6px rgba(0,0,0,.6);overflow-wrap:normal;word-break:normal}
 .fkt .fkt-j:hover,.fkt .fkt-j:focus-visible{filter:drop-shadow(0 6px 14px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(255,0,60,.45))}
 .fkt-row{scroll-margin-top:8px}
+@container (max-width:900px){.fkt-jump ul{--c:6}}
+@container (max-width:640px){.fkt-jump ul{--c:4}}
+@container (max-width:520px){.fkt-jump ul{--c:3;--g:6px}.fkt-jn{font-size:11px;padding:3px 4px;-webkit-text-stroke:2.5px #000}}
 @media (max-width:860px){
-.fkt-jump ul{--c:4}
 .fkt-top{grid-template-columns:minmax(0,1fr)}
 .fkt-row{grid-template-columns:minmax(0,1fr);gap:10px}
 .fkt-map{min-height:0}
@@ -73,8 +75,6 @@
 .fkt .fkt-ch .fk-card{width:84px}
 .fkt .fkt-ch .fk-card-n{font-size:13px;bottom:6px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
 .fkt-jump{padding:8px 6px}
-.fkt-jump ul{--c:3;--g:6px}
-.fkt-jn{font-size:11px;padding:3px 4px;-webkit-text-stroke:2.5px #000}
 }
 @media (prefers-reduced-motion:reduce){
 .fkt-row .fkt-needle{transform:rotate(var(--a,270deg))}
