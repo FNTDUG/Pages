@@ -50,7 +50,7 @@
 .fkt .fkt-j::before{background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.5))}
 .fkt-jn{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:6px 10px;text-align:center;font-family:var(--fk-title);font-weight:800;font-size:16px;line-height:1.1;color:#fff;-webkit-text-stroke:3.5px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,0 3px 6px rgba(0,0,0,.6);overflow-wrap:anywhere}
 .fkt .fkt-j:hover,.fkt .fkt-j:focus-visible{filter:drop-shadow(0 6px 14px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(255,0,60,.45))}
-.fkt-row{scroll-margin-top:84px}
+.fkt-row{scroll-margin-top:8px}
 @media (max-width:860px){
 .fkt-jump ul{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fkt-top{grid-template-columns:minmax(0,1fr)}

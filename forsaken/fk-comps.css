@@ -6,7 +6,7 @@
 .fkc-jump li{width:min(92px,calc((100% - 84px) / 8))}
 .fkc .fkc-j{width:100%;will-change:transform;backface-visibility:hidden}
 .fkc .fkc-j .fk-card-n{font-size:13px;bottom:7px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
-.fkc-comp{scroll-margin-top:84px}
+.fkc-comp{scroll-margin-top:8px}
 .fkc-or{max-width:100%;margin-top:-4px;font-size:15px;line-height:1.2;color:#bdbdbd;text-align:center}
 .fkc-or a{color:#fff;text-decoration:underline;text-underline-offset:3px}
 .fkc-or a:hover,.fkc-or a:focus-visible{color:var(--fk-gold)}
