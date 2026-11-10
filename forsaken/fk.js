@@ -252,7 +252,7 @@
     Array.prototype.forEach.call((list.closest('section') || det).querySelectorAll('.fk-abp'), function (p) {
       var on = p.id === id;
       p.hidden = !on;
-      if (!on) Array.prototype.forEach.call(p.querySelectorAll('video'), function (v) { if (!v.paused) v.pause(); });
+      Array.prototype.forEach.call(p.querySelectorAll('video'), function (v) { if (!on && !v.paused) v.pause(); if (on && v.currentTime && v.muted) v.currentTime = 0; });
       if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
     });
     var cd = tab.querySelector('.fk-cd');
