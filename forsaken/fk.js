@@ -359,7 +359,7 @@
     function grp(t, l) { return l.length ? '<h3 class="fk-st-g">' + t + '</h3>' + l.map(function (s) { return stRow(s, c); }).join('') : ''; }
     var tabs = [];
     if (own.length) tabs.push({ k: 'own', l: c.name, n: own.length, h: own.map(function (s) { return stRow(s, c); }).join('') });
-    if (gen.length) tabs.push({ k: 'gen', l: 'General', n: gen.length, h: grp(c.side === 'killer' ? 'All Killers' : 'All Survivors', sd) + grp('Everyone', ev) });
+    if (gen.length) tabs.push({ k: 'gen', l: 'General', n: gen.length, h: grp(c.side === 'killer' ? 'All Killers' : 'All Survivors', sd) + ev.map(function (s) { return stRow(s, c); }).join('') });
     if (ct.length) tabs.push({ k: 'ct', l: 'Counters', n: ct.length, h: ct.join('') });
     if (!tabs.length) return '';
     return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-st-h"><h2 class="fk-h2" id="fk-st-h">Strategies &amp; Techs</h2><div class="fk-st-tabs" role="tablist" aria-label="Strategies">' +
