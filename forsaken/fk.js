@@ -389,7 +389,7 @@
 
   function vids(a) {
     var v = a.videos || [];
-    return v.length ? '<div class="fk-ab-v">' + v.map(function (x) { return '<video controls playsinline preload="none" width="1280" height="720"' + (x.poster ? ' poster="' + esc(media(x.poster)) + '"' : '') + ' src="' + esc(media(x.src)) + '" aria-label="' + esc(tc(a.name)) + ' video"></video>'; }).join('') + '</div>' : '';
+    return v.length ? '<div class="fk-ab-v">' + v.map(function (x) { return '<video ' + (reduced ? 'controls ' : 'muted loop disablepictureinpicture ') + 'playsinline preload="none" width="1280" height="720"' + (x.poster ? ' poster="' + esc(media(x.poster)) + '"' : '') + ' src="' + esc(media(x.src)) + '" aria-label="' + esc(tc(a.name)) + ' video"></video>'; }).join('') + '</div>' : '';
   }
   function ability(a, i) {
     var meta = [];
@@ -861,7 +861,6 @@
       player.addEventListener('ended', function () { cancelAnimationFrame(raf); playing = null; waitOff(); paintPlay(); Array.prototype.forEach.call(det.querySelectorAll('.fk-theme-t'), function (t) { t.textContent = ''; }); });
       player.addEventListener('error', function () { var bad = playing; cancelAnimationFrame(raf); playing = null; waitOff(); Array.prototype.forEach.call(det.querySelectorAll('.fk-play'), function (x) { if (x.getAttribute('data-src') === bad) x.classList.add('fk-err'); }); paintPlay(); });
     }
-    Array.prototype.forEach.call(det.querySelectorAll('video'), function (v) { if (!v.paused) v.pause(); });
     if (playing === src) { if (player.paused) player.play().catch(function () {}); else player.pause(); return; }
     if (!player.paused) player.pause();
     waitOff();
@@ -1242,10 +1241,23 @@
   det.addEventListener('focusout', function (e) { if (e.target === tipFor) hideTip(); });
   det.addEventListener('scroll', hideTip, { passive: true });
   det.addEventListener('play', function (e) {
-    if (e.target.tagName !== 'VIDEO') return;
-    Array.prototype.forEach.call(det.querySelectorAll('video'), function (v) { if (v !== e.target && !v.paused) v.pause(); });
+    if (e.target.tagName !== 'VIDEO' || e.target.muted) return;
+    Array.prototype.forEach.call(det.querySelectorAll('video'), function (v) { if (v !== e.target && !v.paused && !v.muted) v.pause(); });
     if (player && !player.paused) player.pause();
   }, true);
+  var vio = null;
+  function vidRun(v) {
+    if (!v.isConnected) { if (vio) vio.unobserve(v); return; }
+    if (v._vis && !v.closest('[hidden]')) { v.muted = true; v.preload = 'auto'; if (v.paused) { var q = v.play(); if (q && q.catch) q.catch(function () {}); } }
+    else if (!v.paused) v.pause();
+  }
+  function vidWatch() {
+    if (reduced || !('IntersectionObserver' in window)) return;
+    if (!vio) vio = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target._vis = e.isIntersecting; vidRun(e.target); }); }, { threshold: 0.2 });
+    Array.prototype.forEach.call(det.querySelectorAll('.fk-ab-v video:not([data-vw])'), function (v) { v.setAttribute('data-vw', ''); vio.observe(v); });
+  }
+  if ('MutationObserver' in window) new MutationObserver(vidWatch).observe(det, { childList: true, subtree: true });
+  vidWatch();
   det.addEventListener('toggle', function (e) {
     var d = e.target;
     if (d.classList && d.classList.contains('fk-st') && d.open) Array.prototype.forEach.call(d.parentNode.querySelectorAll('.fk-st[open]'), function (o) { if (o !== d) o.open = false; });
