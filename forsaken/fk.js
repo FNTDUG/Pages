@@ -209,7 +209,8 @@
   }
 
   function isPassive(a) { return /passive/i.test(a.key); }
-  function isSub(a) { return / - /.test(a.name); }
+  function isSub(a) { return !!a.parent || / - /.test(a.name); }
+  function subOf(a) { return (a.parent || a.name.split(' - ')[0]).trim().toUpperCase(); }
   function abId(a) { return 'ab-' + slug(a.name); }
 
   function slotIcon(a) {
@@ -222,7 +223,7 @@
     var mains = [], byKey = {};
     c.abilities.forEach(function (a) {
       if (isSub(a)) {
-        var key = a.name.split(' - ')[0].trim().toUpperCase();
+        var key = subOf(a);
         if (byKey[key]) { byKey[key].subs.push(a); return; }
       }
       var g = { main: a, subs: [] };
@@ -284,7 +285,7 @@
   function tc(s) { return String(s || '').toLowerCase().replace(/(^|[\s(/-])([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); }); }
   function tabOf(list, a) {
     if (!isSub(a)) return abId(a);
-    var k = a.name.split(' - ')[0].trim().toUpperCase();
+    var k = subOf(a);
     return list.some(function (x) { return x.name.toUpperCase() === k; }) ? 'ab-' + slug(k) : abId(a);
   }
   function abFind(c, name) {
