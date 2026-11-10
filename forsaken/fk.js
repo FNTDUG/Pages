@@ -327,6 +327,7 @@
   function kindTag(k) { return '<span class="fk-st-k">' + esc(k) + '</span>'; }
   function stRow(s, c) {
     var cs = (s.counters || []).map(norm).filter(function (x) { return s['for'] !== 'all' || cSide(x) !== c.side; });
+    if (!s.text && !s.table && !cs.length) return '<div class="fk-st fk-st--e"><div class="fk-st-r"><span class="fk-st-n">' + esc(s.name) + '</span>' + kindTag(s.kind) + '<span class="fk-st-s">No write-up yet</span></div></div>';
     var body = '<div class="fk-rich">' + (s['for'] === c.id ? refs(rich(s.text), c) : rich(s.text)) + '</div>' + (s.table ? hpList(s.table, c) : '') +
       (cs.length ? '<div class="fk-st-c"><span class="fk-st-ck">Countered by</span><div class="fk-st-w">' + cs.map(function (x) { return who(x, c); }).join('') + '</div></div>' : '');
     return '<details class="fk-st"><summary><span class="fk-st-n">' + esc(s.name) + '</span>' + kindTag(s.kind) + '</summary><div class="fk-st-b">' + body + '</div></details>';
@@ -354,10 +355,11 @@
   function stratsSection(c) {
     var all = (data && data.strats) || [];
     if (!all.length) return '';
-    var own = all.filter(function (s) { return s['for'] === c.id; }), gen = all.filter(function (s) { return s['for'] === 'all' || s['for'] === c.side; }), ct = ctRows(c, all);
+    var own = all.filter(function (s) { return s['for'] === c.id; }), sd = all.filter(function (s) { return s['for'] === c.side; }), ev = all.filter(function (s) { return s['for'] === 'all'; }), gen = sd.concat(ev), ct = ctRows(c, all);
+    function grp(t, l) { return l.length ? '<h3 class="fk-st-g">' + t + '</h3>' + l.map(function (s) { return stRow(s, c); }).join('') : ''; }
     var tabs = [];
     if (own.length) tabs.push({ k: 'own', l: c.name, n: own.length, h: own.map(function (s) { return stRow(s, c); }).join('') });
-    if (gen.length) tabs.push({ k: 'gen', l: 'General', n: gen.length, h: gen.map(function (s) { return stRow(s, c); }).join('') });
+    if (gen.length) tabs.push({ k: 'gen', l: 'General', n: gen.length, h: grp(c.side === 'killer' ? 'All Killers' : 'All Survivors', sd) + grp('Everyone', ev) });
     if (ct.length) tabs.push({ k: 'ct', l: 'Counters', n: ct.length, h: ct.join('') });
     if (!tabs.length) return '';
     return '<section class="fk-sec fk-rv" style="--i:7" aria-labelledby="fk-st-h"><h2 class="fk-h2" id="fk-st-h">Strategies &amp; Techs</h2><div class="fk-st-tabs" role="tablist" aria-label="Strategies">' +
