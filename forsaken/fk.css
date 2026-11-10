@@ -329,6 +329,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-ab{padding:14px 14px 12px}
 .fk-ab-n{font-size:32px}
 .fk-ab-b{grid-template-columns:64px minmax(0,1fr);gap:12px}
+.fk-ab-v{margin-left:-76px}
 .fk-circ{width:62px;height:62px}
 .fk-dia{width:52px;height:52px;margin:5px}
 .fk-dia img{inset:8px;width:36px!important;height:36px!important}
