@@ -157,6 +157,8 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-ab-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 6px;font-size:20px}
 .fk-ab-meta span{color:#bdbdbd}
 .fk-ab-meta b{color:#fff;font-weight:600}
+.fk-ab-v{display:grid;gap:10px;margin:14px 0 4px}
+.fk-ab-v video{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;background:#000;outline:1px solid rgba(255,255,255,.28);outline-offset:-1px}
 .fk-rich{font-size:19px;color:#ececec}
 .fk-rich p{margin:0 0 8px}
 .fk-rich ul{margin:0 0 8px 20px;padding:0}

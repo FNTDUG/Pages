@@ -252,6 +252,7 @@
     Array.prototype.forEach.call((list.closest('section') || det).querySelectorAll('.fk-abp'), function (p) {
       var on = p.id === id;
       p.hidden = !on;
+      if (!on) Array.prototype.forEach.call(p.querySelectorAll('video'), function (v) { if (!v.paused) v.pause(); });
       if (on && !reduced) { p.classList.remove('fk-swap'); void p.offsetWidth; p.classList.add('fk-swap'); }
     });
     var cd = tab.querySelector('.fk-cd');
@@ -386,6 +387,10 @@
     if (sec) sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }
 
+  function vids(a) {
+    var v = a.videos || [];
+    return v.length ? '<div class="fk-ab-v">' + v.map(function (x) { return '<video controls playsinline preload="none" width="1280" height="720"' + (x.poster ? ' poster="' + esc(media(x.poster)) + '"' : '') + ' src="' + esc(media(x.src)) + '" aria-label="' + esc(tc(a.name)) + ' video"></video>'; }).join('') + '</div>' : '';
+  }
   function ability(a, i) {
     var meta = [];
     if (isPassive(a)) meta.push('<b>Passive</b>');
@@ -395,7 +400,7 @@
       (a.quote ? '<p class="fk-ab-q">' + esc(plain(a.quote)).replace(/\n+/g, '<br>') + '</p>' : '') +
       '<div class="fk-ab-b"><div class="fk-ab-i">' + slotIcon(a) + '</div><div>' +
       (meta.length ? '<p class="fk-ab-meta">' + meta.join('</p><p class="fk-ab-meta">') + '</p>' : '') +
-      '<div class="fk-rich">' + rich(a.desc) + '</div>' +
+      '<div class="fk-rich">' + rich(a.desc) + '</div>' + vids(a) +
       '</div></div></article>';
   }
 
@@ -856,6 +861,7 @@
       player.addEventListener('ended', function () { cancelAnimationFrame(raf); playing = null; waitOff(); paintPlay(); Array.prototype.forEach.call(det.querySelectorAll('.fk-theme-t'), function (t) { t.textContent = ''; }); });
       player.addEventListener('error', function () { var bad = playing; cancelAnimationFrame(raf); playing = null; waitOff(); Array.prototype.forEach.call(det.querySelectorAll('.fk-play'), function (x) { if (x.getAttribute('data-src') === bad) x.classList.add('fk-err'); }); paintPlay(); });
     }
+    Array.prototype.forEach.call(det.querySelectorAll('video'), function (v) { if (!v.paused) v.pause(); });
     if (playing === src) { if (player.paused) player.play().catch(function () {}); else player.pause(); return; }
     if (!player.paused) player.pause();
     waitOff();
@@ -1235,6 +1241,11 @@
   det.addEventListener('focusin', function (e) { var b = e.target.closest('button.fk-se'); if (b) showTip(b); });
   det.addEventListener('focusout', function (e) { if (e.target === tipFor) hideTip(); });
   det.addEventListener('scroll', hideTip, { passive: true });
+  det.addEventListener('play', function (e) {
+    if (e.target.tagName !== 'VIDEO') return;
+    Array.prototype.forEach.call(det.querySelectorAll('video'), function (v) { if (v !== e.target && !v.paused) v.pause(); });
+    if (player && !player.paused) player.pause();
+  }, true);
   det.addEventListener('toggle', function (e) {
     var d = e.target;
     if (d.classList && d.classList.contains('fk-st') && d.open) Array.prototype.forEach.call(d.parentNode.querySelectorAll('.fk-st[open]'), function (o) { if (o !== d) o.open = false; });
