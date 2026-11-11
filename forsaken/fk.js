@@ -504,7 +504,7 @@
     for (var n = i; n >= 0; n = w.parent[n]) { var p = det.querySelector('.fk-lines path[data-n="' + n + '"]'); if (p) p.classList.add('fk-hot'); }
     var sa = AUDIO && AUDIO.skins[k.name];
     var audio = sa ? (sa.themes.length ? '<ul class="fk-themes fk-themes--sm">' + sa.themes.map(function (t) { return themeCard(t, c); }).join('') + '</ul>' : '') + (sa.voice.length ? '<p class="fk-pick-sub">Voicelines <b>' + sa.voice.length + '</b></p><div class="fk-pick-vl">' + voiceList(sa.voice, 6) + '</div>' : '') : (k.au ? '<p class="fk-pick-cap">Loading audio...</p>' : '');
-    box.innerHTML = skinCard(c, k.img && big(k.img), k.name, k.name + ' skin') + '<div class="fk-pick-info">' + (k.title ? '<p class="fk-pick-t"><img src="' + esc(media(k.title)) + '" alt="' + esc(k.name) + '" decoding="async"></p>' : '') + '<p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
+    box.innerHTML = skinCard(c, k.img && big(k.img), k.name, k.name + ' skin') + '<div class="fk-pick-info">' + (k.title ? '<p class="fk-pick-t"><img src="' + esc(media(k.title)) + '" alt="' + esc(k.name) + '" decoding="async"' + (k.tw && k.th ? ' width="' + k.tw + '" height="' + k.th + '" style="--ar:' + (k.tw / k.th).toFixed(4) + '"' : '') + '></p>' : '') + '<p class="fk-pick-how" data-g="' + k.group + '">' + esc(k.group) + (k.how && k.how !== k.group ? ' &middot; ' + esc(k.how) : '') + '</p>' + (k.caption ? '<p class="fk-pick-cap">&ldquo;' + esc(k.caption) + '&rdquo;</p>' : '') + '</div>' + audio;
     fitNames(box);
     paintPlay();
     sbSync();
