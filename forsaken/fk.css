@@ -187,6 +187,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-node img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;object-position:50% 15%}
 .fk-node[data-g=Milestone]{--g:linear-gradient(160deg,#ffe28f,#c98a00)}
 .fk-node[data-g=Shop]{--g:linear-gradient(160deg,#f2f2f2,#8c8c8c)}
+.fk-node[data-g=Special]{--g:linear-gradient(160deg,#d6b3ff,#4e1d86)}
 .fk-node[data-g=Limited]{--g:linear-gradient(160deg,#ff4d6d,#6e0012)}
 .fk-node[data-g=Free]{--g:linear-gradient(160deg,#9a9a9a,#3a3a3a)}
 .fk-node:hover,.fk-node:focus-visible{z-index:4;filter:drop-shadow(0 0 6px rgba(255,210,122,.8))}
@@ -208,6 +209,7 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-pick-how{margin:0 0 10px;font-family:var(--fk-serif);font-weight:600;font-size:16px}
 .fk-pick-how[data-g=Milestone]{color:var(--fk-gold)}
 .fk-pick-how[data-g=Limited]{color:#ff6a80}
+.fk-pick-how[data-g=Special]{color:#c99bff}
 .fk-pick-cap{margin:0;font-style:italic;color:#d8d8d8;font-size:16px}
 .fk-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 0 0;font-family:var(--fk-serif);font-size:15px;color:#d0d0d0}
 .fk-legend span{display:inline-flex;align-items:center;gap:7px}

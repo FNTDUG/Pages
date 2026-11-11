@@ -405,12 +405,12 @@
       '</div></div></article>';
   }
 
-  var GROUPS = ['Milestone', 'Shop', 'Limited', 'Free'];
-  var GCOL = { Milestone: '#ffc500', Shop: '#e6e6e6', Limited: '#ff3355', Free: '#8a8a8a' };
+  var GROUPS = ['Milestone', 'Shop', 'Special', 'Limited', 'Free'];
+  var GCOL = { Milestone: '#ffc500', Shop: '#e6e6e6', Special: '#b97cff', Limited: '#ff3355', Free: '#8a8a8a' };
 
   function skinOrder(c) {
     var s = c.skins.slice();
-    var rank = { Free: 0, Milestone: 1, Shop: 2, Limited: 3 };
+    var rank = { Free: 0, Milestone: 1, Shop: 2, Special: 3, Limited: 4 };
     s.sort(function (a, b) {
       if (rank[a.group] !== rank[b.group]) return rank[a.group] - rank[b.group];
       if (a.group === 'Milestone') return (a.level || 0) - (b.level || 0);
@@ -474,7 +474,7 @@
       '<button type="button" class="fk-btn" data-sg="all" aria-pressed="true">All <b>' + s.length + '</b></button>' +
       GROUPS.filter(function (g) { return counts[g]; }).map(function (g) { return '<button type="button" class="fk-btn" data-sg="' + g + '" aria-pressed="false">' + g + ' <b>' + counts[g] + '</b></button>'; }).join('') + '</div>';
     var legend = '<div class="fk-legend" aria-hidden="true">' + GROUPS.filter(function (g) { return counts[g]; }).map(function (g) {
-      return '<span><i style="background:' + GCOL[g] + '"></i>' + (g === 'Limited' ? 'Limited (no longer sold)' : g === 'Milestone' ? 'Milestone (character level)' : g) + '</span>';
+      return '<span><i style="background:' + GCOL[g] + '"></i>' + (g === 'Limited' ? 'Limited (no longer sold)' : g === 'Milestone' ? 'Milestone (character level)' : g === 'Special' ? 'Special (events, packs, achievements)' : g) + '</span>';
     }).join('') + '</div>';
     root._web = { skins: s, parent: parent, rings: L.rings };
     return '<section class="fk-sec fk-rv" style="--i:8" aria-labelledby="fk-skins-h"><h2 class="fk-h2" id="fk-skins-h">Skins <small>' + s.length + '</small></h2>' + chips +
