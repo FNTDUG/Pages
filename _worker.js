@@ -66,6 +66,7 @@ const MOBILE_NAV_BODY = `
     <a href="/patch-notes"                class="ug-mn-child" data-nav-href="/patch-notes">FNTD2</a>
     <a href="/patch-notes/bbn-patch-notes" class="ug-mn-child" data-nav-href="/patch-notes/bbn-patch-notes">BBN</a>
     <a href="/patch-notes/fwm-patch-notes" class="ug-mn-child" data-nav-href="/patch-notes/fwm-patch-notes">FWM</a>
+    <a href="/patch-notes/forsaken-patch-notes" class="ug-mn-child" data-nav-href="/patch-notes/forsaken-patch-notes">Forsaken</a>
   </div>
 </div>
 <div class="ug-mn-discord-wrap">
@@ -139,6 +140,7 @@ const DESKTOP_NAV_INNER = `
     <a href="/patch-notes"                 data-nav-href="/patch-notes">FNTD2</a>
     <a href="/patch-notes/bbn-patch-notes" data-nav-href="/patch-notes/bbn-patch-notes">BBN</a>
     <a href="/patch-notes/fwm-patch-notes" data-nav-href="/patch-notes/fwm-patch-notes">FWM</a>
+    <a href="/patch-notes/forsaken-patch-notes" data-nav-href="/patch-notes/forsaken-patch-notes">Forsaken</a>
   </div>
 </div>
 <a href="https://discord.gg/6Y84tuFBB3" target="_blank" rel="noopener noreferrer" class="ug-tn-link">Discord</a>`;
@@ -3548,6 +3550,7 @@ function seoOgName(p) {
   if (p === '/patch-notes/fntd1-1') return 'fntd1';
   if (p === '/patch-notes/bbn-patch-notes') return 'bbn';
   if (p === '/patch-notes/fwm-patch-notes') return 'fwm';
+  if (p === '/patch-notes/forsaken-patch-notes') return 'forsaken';
   const g = p.split('/')[1];
   return g === 'fntd1' || g === 'fntd2' || g === 'bbn' ? g : 'home';
 }
@@ -3597,6 +3600,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/patch-notes/fwm-patch-notes': ['FWM Guide Patch Notes | FNTD User Guide', 'Changelog for the FNaF World Multiplayer pages of the FNTD User Guide: Roster, Tech Specs, TierList and Meta Teams updates, newest first.'],
+  '/patch-notes/forsaken-patch-notes': ['Forsaken Guide Patch Notes | FNTD User Guide', 'Changelog for the Forsaken pages of the FNTD User Guide: roster, abilities, skins, TierLists & Maps and Meta Comps updates, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
   '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade, a TierList, Meta Teams and Grind Methods.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
@@ -3691,6 +3695,7 @@ function seoGamesFor(p) {
   if (p === '/patch-notes/fntd1-1') return ['fntd1'];
   if (p === '/patch-notes/bbn-patch-notes') return ['bbn'];
   if (p === '/patch-notes/fwm-patch-notes') return ['fwm'];
+  if (p === '/patch-notes/forsaken-patch-notes') return ['forsaken'];
   if (p === '/patch-notes') return ['fntd2'];
   const s = p.split('/')[1];
   return SEO_GAMES[s] ? [s] : [];
@@ -4269,8 +4274,8 @@ const UPD_GH = {
   'fnafworldgrind.json': ['/fwm/grind-methods'],
   'forsaken.json': ['/forsaken/roster', '/forsaken/tierlist', '/forsaken/meta-comps']
 };
-const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json' };
-const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json' };
+const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json', '/patch-notes/forsaken-patch-notes': '/patch-notes/patchnotesforsaken.json' };
+const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json', '/patch-notes/forsaken-patch-notes': '/patch-notes/patchnotesforsaken.json' };
 const UPD_KEY = 'https://www.fntduserguide.com/_page-updates';
 let pageUpd = null, pageUpdAt = 0, pageUpdRun = null;
 async function pageUpdFetch(env, url) {
@@ -4908,7 +4913,7 @@ function seoLlms() {
     ['Five Nights TD', p => p === '/fntd1' || p.indexOf('/fntd1/') === 0 || p === '/patch-notes/fntd1-1'],
     ['Bite By Night', p => p.indexOf('/bbn/') === 0 || p === '/patch-notes/bbn-patch-notes'],
     ['FNaF World Multiplayer', p => p.indexOf('/fwm/') === 0 || p === '/patch-notes/fwm-patch-notes'],
-    ['Forsaken', p => p.indexOf('/forsaken/') === 0],
+    ['Forsaken', p => p.indexOf('/forsaken/') === 0 || p === '/patch-notes/forsaken-patch-notes'],
     ['About the site', p => p === '/sponsor' || p === '/staff' || p === '/privacy-policy']
   ];
   const skip = ['/', '/wiki', '/fntd2/patch-notes', '/bbn/codes'];
@@ -6029,6 +6034,7 @@ const PUSH_SEND_PAGE = `<!doctype html>
           <option value="/bbn/survivor-terminal"></option>
           <option value="/patch-notes/bbn-patch-notes"></option>
           <option value="/patch-notes/fwm-patch-notes"></option>
+          <option value="/patch-notes/forsaken-patch-notes"></option>
           <option value="/fwm/roster"></option>
           <option value="/fwm/tech-specs"></option>
           <option value="/fwm/tierlist"></option>
