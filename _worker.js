@@ -4266,6 +4266,7 @@ const UPD_GH = {
   'metas.json': ['/fntd2/story-index', '/fntd2/endless-index', '/fntd2/boss-raids-index', '/fntd2/challenges', '/fntd2/meta-teams', '/fntd2/event-story-endless'],
   'tierlist.js': ['/fntd2/tierlists-1'],
   'patchnotesfwm.json': ['/patch-notes/fwm-patch-notes'],
+  'patchnotesforsaken.json': ['/patch-notes/forsaken-patch-notes'],
   'last-updated': ['/fntd2/unit-engine'],
   'fnafworld.json': ['/fwm/roster'],
   'fnafworldspecs.json': ['/fwm/tech-specs'],
@@ -4274,8 +4275,8 @@ const UPD_GH = {
   'fnafworldgrind.json': ['/fwm/grind-methods'],
   'forsaken.json': ['/forsaken/roster', '/forsaken/tierlist', '/forsaken/meta-comps']
 };
-const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json', '/patch-notes/forsaken-patch-notes': '/patch-notes/patchnotesforsaken.json' };
-const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json', '/patch-notes/forsaken-patch-notes': '/patch-notes/patchnotesforsaken.json' };
+const UPD_FILES = { '/fntd2/codes': '/codes/fntd2.json', '/bbn/codes': '/codes/bbn.json' };
+const PN_PAGES = { '/patch-notes/fwm-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesfwm.json', '/patch-notes/forsaken-patch-notes': 'https://raw.githubusercontent.com/FNTDUG/characters.json/main/patchnotesforsaken.json' };
 const UPD_KEY = 'https://www.fntduserguide.com/_page-updates';
 let pageUpd = null, pageUpdAt = 0, pageUpdRun = null;
 async function pageUpdFetch(env, url) {
@@ -4606,12 +4607,12 @@ async function seoFwmSitemap(env, url) {
     return new Response(body, { status: list.length ? 200 : 503, headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
   });
 }
-const FK_DATA = '/forsaken/forsaken-preview.json';
+const FK_DATA = 'forsaken.json';
 const FK_TIERS = ['D', 'C', 'B', 'A', 'S'];
 let seoFkCache = null;
 async function seoLoadFk(env, url) {
   if (seoFkCache && Date.now() - seoFkCache.at < 300000) return seoFkCache.data;
-  const r = await env.ASSETS.fetch(new Request(new URL(FK_DATA, url).toString()));
+  const r = await fetch(PARVUS_RAW + FK_DATA, { cf: { cacheTtl: 300, cacheEverything: true } });
   if (!r.ok) return seoFkCache ? seoFkCache.data : null;
   let data;
   try { data = JSON.parse((await r.text()).replace(/,(\s*[\]}])/g, '$1')); } catch (e) { return seoFkCache ? seoFkCache.data : null; }
