@@ -232,7 +232,6 @@ html.fk-on #ug-hamburger,html.fk-on #ug-info-btn,html.fk-on #ug-sound-btn,html.f
 .fk-pn a:hover{background:rgba(255,255,255,.06)}
 .fk-pn a+a{text-align:right;border-left:1px solid rgba(255,255,255,.12)}
 .fk-pn em{display:block;font-family:var(--fk-title);font-style:normal;font-weight:700;font-size:18px;color:#fff}
-.fk-src{margin:22px 0 0;font-size:14px;color:#9a9a9a;font-style:italic}
 
 .fk-wipe{position:fixed;inset:0;z-index:2147483620;pointer-events:none;background:#000;clip-path:polygon(0 0,0 0,0 100%,0 100%)}
 .fk-pulse{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0}

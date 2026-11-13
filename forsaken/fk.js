@@ -703,8 +703,7 @@
       itemsSection(c) +
       '<div class="fk-audio" data-audio="' + esc(c.audio || '') + '"></div>' +
       skinsSection(c) +
-      navbox(c) +
-      '<p class="fk-src">' + (c.map ? 'Background: ' + esc(c.map) + '. ' : '') + 'Stats, abilities and skins are from the FORSAKEN Wiki on Fandom.</p></div>';
+      navbox(c) + '</div>';
   }
 
   function headerFor(c) {
