@@ -3600,7 +3600,7 @@ const SEO_PAGES = {
   '/bbn/survivor-terminal': ['Bite By Night Survivor Terminal: Survivor Stats', 'A Bite By Night (Roblox) survivor wiki styled as a retro terminal: Fighter, Security Guard, Customer and Technician stats, training, voice lines and skins.'],
   '/patch-notes/bbn-patch-notes': ['Bite By Night Guide Patch Notes | FNTD User Guide', 'Changelog for the Bite By Night pages of the FNTD User Guide: tier list, map and Terminal updates, newest first.'],
   '/patch-notes/fwm-patch-notes': ['FWM Guide Patch Notes | FNTD User Guide', 'Changelog for the FNaF World Multiplayer pages of the FNTD User Guide: Roster, Tech Specs, TierList and Meta Teams updates, newest first.'],
-  '/patch-notes/forsaken-patch-notes': ['Forsaken Guide Patch Notes | FNTD User Guide', 'Changelog for the Forsaken pages of the FNTD User Guide: roster, abilities, skins, TierLists & Maps and Meta Comps updates, newest first.'],
+  '/patch-notes/forsaken-patch-notes': ['Forsaken Guide Patch Notes | FNTD User Guide', 'What changed on the Forsaken pages of the FNTD User Guide: balance changes, skins, ability videos, tier list moves, techs and Meta Comps, newest first.'],
   '/wiki': ['Community Wiki | FNTD User Guide', 'Wiki pages for Five Nights TD 2, Five Nights TD and Bite By Night, written by the community and built block by block.'],
   '/fwm/fwm-directory': ['FNaF World Multiplayer Wiki: Roblox FWM Roster & Specs', 'The FNaF World Multiplayer (FWM) wiki and guide for Roblox: the full Roster, every Byte, Chip and armor upgrade, a TierList, Meta Teams and Grind Methods.'],
   '/fwm/tech-specs': ['FWM Tech Specs: FNaF World Multiplayer Bytes, Chips & Armor', 'Every Byte, Chip and Mendo-Armor upgrade in FNaF World Multiplayer on Roblox: what each does, what it costs and where to find every chip.'],
@@ -3617,7 +3617,7 @@ const SEO_PAGES = {
   '/fwm/freddy-in-space-map': ['Freddy in Space Map: All 9 Cupcake Locations', "Interactive map of FNaF 57: Freddy in Space from FNaF World. Zoom in to find all 9 cupcakes, the jump boost, the teleporter and Scott's Head."],
   '/fwm/freddy-in-space': ['FNaF 57: Freddy in Space: Play the Fan Remake Online', "Play FNaF 57: Freddy in Space in your browser, a fan remake of the FNaF World minigame. Find 9 cupcakes, beat Scott's Head and unlock Purple Guy."],
   '/fwm/roster': ['FWM Roster Wiki: Every FNaF World Multiplayer Character', 'The FNaF World Multiplayer character wiki for Roblox: every party member with health, moves and how to unlock them, plus every boss, enemy and NPC.'],
-  '/forsaken/forsaken-directory': ['Forsaken Wiki & Guide: Roblox Characters & Tier List', 'The Forsaken wiki and guide for Roblox: every Survivor and Killer with stats, abilities and skins, plus Killer map tier lists and Survivor tier lists.'],
+  '/forsaken/forsaken-directory': ['Forsaken Wiki & Guide: Roblox Characters & Tier List', 'Forsaken wiki and guide for Roblox: every Survivor and Killer with stats, abilities and skins, Killer tier lists for every map and the best team comps.'],
   '/forsaken/roster': ['Forsaken Characters Wiki: Every Survivor & Killer', 'Every Survivor and Killer in Forsaken on Roblox: health, speed, stamina, abilities with cooldowns, items, voice lines and every skin with how to get it.'],
   '/forsaken/meta-comps': ['Forsaken Meta Comps: Best Survivor Team vs Each Killer', 'The best Survivor team comps in Forsaken on Roblox for every Killer: which Healers, Supports, Survivalists and Sentinels to bring, and why the team works.'],
   '/forsaken/tierlist': ['Forsaken Tier List: Best Killers per Map & Survivors', 'Forsaken tier list for Roblox: every Killer ranked on each map, how Survivor or Killer sided each map is, plus Low MMR and High MMR Survivor tier lists.'],
@@ -4623,7 +4623,7 @@ function seoFkPlain(s) {
   const roman = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
   return String(s || '').replace(/\*\*/g, '').replace(/⟦([^|⟧]*)\|?([^⟧]*)⟧/g, (m, n, l) => n + (l ? ' ' + (/^\d+$/.test(l.trim()) ? roman[+l.trim()] || l : l.trim()) : '')).replace(/•+\s*/g, '').replace(/\s*\n+\s*/g, ' ').trim();
 }
-function seoFkTitleCase(s) { return String(s || '').toLowerCase().replace(/(^|[\s(/-])([a-z])/g, (m, a, b) => a + b.toUpperCase()); }
+function seoFkTitleCase(s) { return String(s || '').split(' ').map(w => /\d/.test(w) ? w : w.toLowerCase().replace(/(^|[(/-])([a-z])/g, (m, a, b) => a + b.toUpperCase())).join(' '); }
 function seoFkSide(c) { return c.side === 'killer' ? 'Killer' : 'Survivor'; }
 function seoFkChars(d) { return ((d && d.characters) || []).filter(c => c && c.id && c.name); }
 function seoFkRank(v) {
@@ -4648,11 +4648,16 @@ function seoFkMeta(c) {
   let title = c.name + tails[0];
   for (let i = 1; title.length > 60 && i < tails.length; i++) title = c.name + tails[i];
   const cats = (c.cats || []).filter(Boolean);
-  const abs = (c.abilities || []).filter(a => a && a.name && !/ - /.test(a.name)).map(a => seoFkTitleCase(a.name));
-  const hp = c.health ? 'Health ' + String(c.health).replace(/\s*\(.*$/, '') + ', ' : '';
-  const build = (k, n) => c.name + ' is a ' + (k.length ? (k.length > 1 ? k.slice(0, -1).join(', ') + ' and ' : '') + k[k.length - 1] + ' ' : '') + seoFkSide(c) + ' in Forsaken on Roblox. ' + hp + (n ? 'abilities (' + abs.slice(0, n).join(', ') + (n < abs.length ? ' and more' : '') + ')' : 'abilities') + ', cooldowns and every skin.';
+  const basic = a => /^(passive|m1|hold m1)$/i.test(String(a.key || '').trim());
+  const named = (c.abilities || []).filter(a => a && a.name && !/ - /.test(a.name));
+  const abs = named.filter(a => !basic(a)).concat(named.filter(basic)).map(a => seoFkTitleCase(a.name)).filter((n, i, l) => l.indexOf(n) === i);
+  const killer = c.side === 'killer';
+  const hp = !killer && c.health ? ' with ' + String(c.health).replace(/\s*\(.*$/, '') + ' HP' : '';
+  const list = k => k.length > 1 ? k.slice(0, -1).join(', ') + ' and ' + k[k.length - 1] : k[0] || '';
+  const ends = killer ? [', cooldowns, map rankings and every skin.', ', map rankings and every skin.', ' and every skin.'] : [', cooldowns, items and every skin.', ', items and every skin.', ' and every skin.'];
+  const build = (k, n, e) => c.name + ' in Forsaken on Roblox: ' + (/^[AEIOU]/.test(k[0] || seoFkSide(c)) ? 'an ' : 'a ') + (k.length ? list(k) + ' ' : '') + seoFkSide(c) + hp + '. How ' + (n < abs.length ? abs.slice(0, n).join(', ') + ' and more' : list(abs)) + ' work' + e;
   let desc = '';
-  for (const k of [cats, cats.slice(0, 2), cats.slice(0, 1), []]) { for (let n = abs.length; n > 0 && !desc; n--) { const t = build(k, n); if (t.length <= 160) desc = t; } if (desc) break; }
+  for (const e of ends) { for (const k of [cats, cats.slice(0, 2), cats.slice(0, 1), []]) { for (let n = Math.min(abs.length, 4); n > 1 && !desc; n--) { const t = build(k, n, e); if (t.length <= 160) desc = t; } if (desc) break; } if (desc) break; }
   if (!desc) desc = c.name + ' is a ' + seoFkSide(c) + ' in Forsaken on Roblox: stats, abilities, cooldowns, voice lines and every skin with how to get it.';
   if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '...';
   return { title, desc, image: c.card || c.image || '', crumbs: [[SITE_NAME, '/'], ['Forsaken', '/forsaken/forsaken-directory'], ['The Forsaken', '/forsaken/roster'], [c.name, '/forsaken/roster/' + encodeURIComponent(c.id)]] };
