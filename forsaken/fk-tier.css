@@ -1,0 +1,144 @@
+.fkt{--mo:url("/forsaken/img/ui-corners.svg");--t0:#e0392a;--t1:#f2722b;--t2:#f9d63a;--t3:#c3dd2f;--t4:#86c425}
+.fkt .fk-shell{padding:18px 18px 22px}
+.fkt-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:stretch;margin:0 0 18px}
+.fkt-key{display:flex;align-items:center;gap:16px;padding:12px 18px}
+.fkt-key p{margin:0;font-size:17px;line-height:1.4;color:#e6e6e6}
+.fkt-key p b{font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:22px;letter-spacing:1px}
+.fkt-key .fkt-s{color:#ff5a45}
+.fkt-key .fkt-k{color:#9ad92e}
+.fkt-key-g{flex:0 0 140px}
+.fkt-key-g .fkt-gauge{--a:225deg}
+.fkt-key-g .fkt-gs,.fkt-key-g .fkt-gk{font-size:18px}
+.fkt-legend{position:relative;flex:0 0 min(46%,300px);aspect-ratio:440/60}
+.fkt-legend .fkt-bar-f,.fkt-legend .fkt-bar-o{position:absolute;inset:0}
+.fkt-legend ol{position:absolute;inset:0 1.8%;display:grid;grid-template-columns:repeat(5,1fr);margin:0;padding:0;list-style:none}
+.fkt-legend{container-type:inline-size}
+.fkt-legend li{display:flex;align-items:center;justify-content:center;font-family:"Rubik Dirt",var(--fk-title);font-size:6.6cqw;line-height:1;color:#050505}
+.fkt .fk-tabs{margin:0 0 18px}
+.fkt-maps{display:grid;gap:18px}
+.fkt-row{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:stretch}
+.fkt-map{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px 16px 14px;min-height:280px}
+.fkt-map-bg{position:absolute;inset:0;z-index:-1;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;object-fit:cover;opacity:.5}
+.fkt-map::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.15) 40%,rgba(0,0,0,.6));pointer-events:none}
+.fkt-map{isolation:isolate}
+.fkt-map-n{margin:0;font-family:var(--fk-serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;text-shadow:0 2px 0 #000,0 0 12px rgba(0,0,0,.9)}
+.fkt-gauge{position:relative;width:100%;max-width:250px;aspect-ratio:640/352;background:url("/forsaken/img/ui-gauge.webp?v=2") center/100% 100% no-repeat;container-type:inline-size}
+.fkt-gs,.fkt-gk{position:absolute;top:66%;width:2ch;margin-left:-1ch;text-align:center;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:34px;line-height:1;color:#050505;pointer-events:none}
+.fkt-gs{left:13.75%}
+.fkt-gk{left:86.25%}
+.fkt-needle{position:absolute;left:calc(50% - 45% * 38 / 420);top:93.75%;width:45%;aspect-ratio:420/76;margin-top:calc(-45% * 38 / 420);background:url("/forsaken/img/ui-needle.webp") center/100% 100% no-repeat;transform-origin:9.05% 50%;transform:rotate(var(--a,270deg))}
+.fkt-row .fkt-needle{transform:rotate(180deg)}
+.fkt-row.fkt-in .fkt-needle{transform:rotate(var(--a,270deg));transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.fkt-unset .fkt-needle{opacity:.35}
+.fkt-lean{margin:0;text-align:center;font-family:var(--fk-serif);font-size:18px;line-height:1.2;color:#fff;text-shadow:0 2px 0 #000,0 0 10px #000}
+.fkt-chars{display:flex;align-items:center;justify-content:center;padding:18px 14px 14px;background:var(--fk-glass2)}
+.fkt-list{display:flex;flex-wrap:wrap;justify-content:center;gap:24px 14px;margin:0;padding:0;list-style:none}
+.fkt-ch{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;width:124px}
+.fkt .fkt-ch .fk-card{width:96px}
+.fkt .fkt-ch .fk-card-n{font-size:14px;bottom:8px;max-width:calc(100% - 12px);-webkit-text-stroke:3px #000}
+.fkt-bar{position:relative;display:block;width:100%;aspect-ratio:440/60}
+.fkt-bar-f,.fkt-bar-o{position:absolute;inset:0;pointer-events:none}
+.fkt-bar-f{background:linear-gradient(90deg,var(--t0) 0 21.08%,var(--t1) 21.08% 40.36%,var(--t2) 40.36% 59.64%,var(--t3) 59.64% 78.92%,var(--t4) 78.92% 100%);-webkit-mask:url("/forsaken/img/ui-bar-fill.webp") center/100% 100% no-repeat;mask:url("/forsaken/img/ui-bar-fill.webp") center/100% 100% no-repeat}
+.fkt-bar-o{background:url("/forsaken/img/ui-bar-frame.webp") center/100% 100% no-repeat}
+.fkt-mk{position:absolute;left:var(--p);top:15%;bottom:11.7%;width:6px;margin-left:-3px;background:#fff;box-shadow:-2px 0 0 #050505,2px 0 0 #050505}
+.fkt-empty{margin:0;padding:18px;text-align:center;font-style:italic;color:#d8d8d8}
+.fkt-jump{padding:10px;container-type:inline-size}
+.fkt-jump ul{--c:8;--g:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);margin:0;padding:0;list-style:none}
+.fkt-jump li{width:calc((100% - (var(--c) - 1) * var(--g)) / var(--c))}
+.fkt .fkt-j{--mo:url("/forsaken/img/ui-corners-map.svg");aspect-ratio:420/236;will-change:transform;backface-visibility:hidden;outline:1px solid rgba(236,230,218,.35);outline-offset:-1px}
+.fkt .fkt-j::after{display:none}
+.fkt .fkt-j img{inset:0;width:100%!important;height:100%!important;object-position:50% 50%}
+.fkt .fkt-j::before{background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.5))}
+.fkt-jn{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:4px 6px;text-align:center;font-family:var(--fk-title);font-weight:800;font-size:13px;line-height:1.1;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,0 3px 6px rgba(0,0,0,.6);overflow-wrap:normal;word-break:normal}
+.fkt .fkt-j:hover,.fkt .fkt-j:focus-visible{filter:drop-shadow(0 6px 14px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(255,0,60,.45))}
+.fkt-row{scroll-margin-top:8px}
+@container (max-width:900px){.fkt-jump ul{--c:6}}
+@container (max-width:640px){.fkt-jump ul{--c:4}}
+@container (max-width:520px){.fkt-jump ul{--c:3;--g:6px}.fkt-jn{font-size:11px;padding:3px 4px;-webkit-text-stroke:2.5px #000}}
+@media (max-width:860px){
+.fkt-top{grid-template-columns:minmax(0,1fr)}
+.fkt-row{grid-template-columns:minmax(0,1fr);gap:10px}
+.fkt-map{min-height:0}
+.fkt-map .fkt-gauge{max-width:190px}
+.fkt-map .fkt-gs,.fkt-map .fkt-gk{font-size:27px}
+}
+@media (max-width:600px){
+.fkt .fk-shell{padding:12px 10px 14px}
+.fkt-key{padding:10px 12px;gap:12px}
+.fkt-key p{font-size:15px}
+.fkt-key-g{flex-basis:84px}
+.fkt-key-g .fkt-gs,.fkt-key-g .fkt-gk{font-size:12px}
+.fkt-map-n{font-size:21px}
+.fkt-chars{padding:14px 6px 10px}
+.fkt-list{gap:22px 6px}
+.fkt-ch{width:96px}
+.fkt .fkt-ch .fk-card{width:84px}
+.fkt .fkt-ch .fk-card-n{font-size:13px;bottom:6px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
+.fkt-jump{padding:8px 6px}
+}
+@media (prefers-reduced-motion:reduce){
+.fkt-row .fkt-needle{transform:rotate(var(--a,270deg))}
+.fkt-row.fkt-in .fkt-needle{transition:none}
+}
+.fkt .fkt-ch .fk-card{will-change:transform;backface-visibility:hidden}
+.fkt-top[hidden]{display:none}
+.fkt-mmr{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 18px;padding:2px 0}
+.fkt-mmr .fk-btn{min-height:40px;padding:2px 18px;font-size:19px}
+.fkt-board{padding:6px;background:var(--fk-glass2)}
+.fkt-tier{display:grid;grid-template-columns:96px minmax(0,1fr);min-height:150px}
+.fkt-tier+.fkt-tier{border-top:2px solid rgba(255,255,255,.14)}
+.fkt-tl{display:flex;align-items:center;justify-content:center;margin:0;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:52px;line-height:1;color:#050505;background:var(--tc)}
+.fkt-tier[data-t=S]{--tc:var(--t4)}
+.fkt-tier[data-t=A]{--tc:var(--t3)}
+.fkt-tier[data-t=B]{--tc:var(--t2)}
+.fkt-tier[data-t=C]{--tc:var(--t1)}
+.fkt-tier[data-t=D]{--tc:var(--t0)}
+.fkt-tlist{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0;padding:12px 14px;list-style:none}
+.fkt-tc{width:96px}
+.fkt .fkt-tc .fk-card{width:96px;will-change:transform;backface-visibility:hidden}
+.fkt .fkt-tc .fk-card-n{font-size:14px;bottom:8px;max-width:calc(100% - 12px);-webkit-text-stroke:3px #000}
+.fkt-tnone{align-self:center;margin:0;padding:0 18px;font-style:italic;color:#9a9a9a}
+@media (max-width:600px){
+.fkt-mmr .fk-btn{flex:1 1 0;font-size:17px;padding:2px 12px}
+.fkt-board{padding:4px}
+.fkt-tier{grid-template-columns:52px minmax(0,1fr);min-height:124px}
+.fkt-tl{font-size:34px}
+.fkt-tlist{gap:8px;padding:8px}
+.fkt-tc,.fkt .fkt-tc .fk-card{width:76px}
+.fkt .fkt-tc .fk-card-n{font-size:12px;bottom:6px;max-width:calc(100% - 8px);-webkit-text-stroke:2.5px #000}
+}
+.fkt-about{margin:-6px 0 16px;font-size:18px;font-style:italic;color:#e6e6e6}
+.fkt-notes{margin:18px 0 0;padding:0 0 6px;background:var(--fk-glass2)}
+.fkt-notes .fk-h2{margin:0}
+.fkt-notes dl{margin:0;padding:6px 18px}
+.fkt-why{padding:14px 0}
+.fkt-why+.fkt-why{border-top:1px solid rgba(255,255,255,.12)}
+.fkt-why dt{display:flex;align-items:center;gap:12px;margin:0 0 6px;font-family:var(--fk-title);font-weight:700;font-size:20px;line-height:1.2;color:#fff}
+.fkt-why dd{margin:0;padding-left:50px;font-size:17px;line-height:1.5;color:#dcdcdc}
+.fkt-wt{flex:0 0 38px;display:flex;align-items:center;justify-content:center;height:34px;font-family:"Rubik Dirt",var(--fk-title);font-weight:400;font-size:24px;color:#050505;background:var(--tc)}
+.fkt-why[data-t=S]{--tc:var(--t4)}
+.fkt-why[data-t=A]{--tc:var(--t3)}
+.fkt-why[data-t=B]{--tc:var(--t2)}
+.fkt-why[data-t=C]{--tc:var(--t1)}
+.fkt-why[data-t=D]{--tc:var(--t0)}
+@media (max-width:600px){
+.fkt-about{font-size:16px}
+.fkt-notes dl{padding:4px 12px}
+.fkt-why dt{font-size:17px;gap:10px}
+.fkt-why dd{padding-left:0;font-size:16px}
+.fkt-wt{flex-basis:32px;height:30px;font-size:20px}
+}
+.fkt-chars{flex-direction:column;align-items:stretch}
+.fkt-chars .fkt-list{align-self:center}
+.fkt-mwhy{margin:16px 0 0;border-top:1px solid rgba(255,255,255,.14)}
+.fkt-mwhy summary{display:flex;align-items:center;gap:10px;padding:12px 6px 4px;cursor:pointer;list-style:none;font-family:var(--fk-serif);font-size:18px;letter-spacing:1.5px;text-transform:uppercase;color:#fff}
+.fkt-mwhy summary::-webkit-details-marker{display:none}
+.fkt-mwhy summary::before{content:"";flex:0 0 auto;width:0;height:0;border:6px solid transparent;border-left:8px solid #fff;border-right:0;transition:transform .15s}
+.fkt-mwhy[open] summary::before{transform:rotate(90deg)}
+.fkt-mwhy summary:hover,.fkt-mwhy summary:focus-visible{color:var(--fk-gold)}
+.fkt-mwhy dl{margin:0;padding:2px 6px 4px}
+@media (max-width:600px){.fkt-mwhy summary{font-size:16px}}
+.fkt-d{font-family:"Source Serif 4",Georgia,serif;font-size:.94em}
+.fkt-notes{padding:0 16px 8px}
+.fkt-notes .fkt-mwhy{margin:0;border-top:0}
+@media (max-width:600px){.fkt-notes{padding:0 10px 6px}}

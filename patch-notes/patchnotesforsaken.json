@@ -1,0 +1,165 @@
+{
+  "notes": [
+    {
+      "date": "2026-11-13",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "Forsakenween 2026 balance changes",
+          "link": "/forsaken/roster",
+          "items": [
+            "Updated 1x1x1x1's walk and sprint speed, Mass Infection, Entanglement, Unstable Eye and Rejuvenate the Rotten.",
+            "Updated Elliot's Pizza Throw and Rush Hour, and added the two new Rush Hour rewards.",
+            "Updated Noob's Bloxy Cola, Slateskin Potion and Ghostburger.",
+            "Updated Helperbot's Inspire and Pulse.",
+            "Updated Two Time's Crouch and the Crouch backstab stun.",
+            "Exhausted now lowers stamina by 5% per level instead of 10%."
+          ]
+        },
+        {
+          "badge": "Added",
+          "title": "New ability videos",
+          "link": "/forsaken/roster",
+          "items": [
+            "Added videos for Guest 666's Blood Hunt and Eviscerate, Noli's Observant, and Azure's Inflorescence and Blooming.",
+            "New recordings for John Doe's Retract and Azure's Unearthing."
+          ]
+        },
+        {
+          "badge": "Added",
+          "title": "Two Time techs",
+          "link": "/forsaken/roster/two-time",
+          "items": [
+            "Added Matador Backstab, Slide Backstab and Sixer Eviscerate Stab."
+          ]
+        },
+        {
+          "badge": "Updated",
+          "title": "TierLists & Maps",
+          "link": "/forsaken/tierlist",
+          "items": [
+            "1x1x1x1 moved from C to A on Brandon6875935's Place."
+          ]
+        },
+        {
+          "badge": "Removed",
+          "title": "Character pages",
+          "items": [
+            "Removed the background and source line at the bottom of each character page."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-11",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "Skin themes",
+          "link": "/forsaken/roster",
+          "items": [
+            "Annihilation John Doe and Timeless 1x1x1x1 now have all three terror radius layers, their chase theme and their LMS.",
+            "Friend Elliot's LMS now shows its name, CLOSE TO ME."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Added",
+          "title": "Every released skin",
+          "link": "/forsaken/roster",
+          "items": [
+            "Added 358 skins, for 1,048 in total.",
+            "Added a purple Special group for skins from events, packs and achievements.",
+            "Skins show their title art in the skin preview."
+          ]
+        },
+        {
+          "badge": "Added",
+          "title": "Ability videos",
+          "link": "/forsaken/roster",
+          "items": [
+            "Added gameplay videos to Killer abilities. They play muted while their ability is open."
+          ]
+        },
+        {
+          "badge": "Added",
+          "title": "Strategies & Techs",
+          "link": "/forsaken/roster",
+          "items": [
+            "Added new Killer techs.",
+            "The General tab is now split into All Survivors and All Killers."
+          ]
+        },
+        {
+          "badge": "Updated",
+          "title": "Ability text",
+          "items": [
+            "Removed old event versions and outdated values from ability descriptions."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Updated",
+          "title": "TierLists & Maps",
+          "link": "/forsaken/tierlist",
+          "items": [
+            "New Killer rankings on several maps.",
+            "Added Yorick's Resting Place.",
+            "Added map buttons that jump to each map."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Added",
+          "title": "Meta Comps",
+          "link": "/forsaken/meta-comps",
+          "items": [
+            "Added the best Survivor team to bring against each Killer, with tips on how to play it."
+          ]
+        },
+        {
+          "badge": "Added",
+          "title": "Strategies & Techs",
+          "link": "/forsaken/roster",
+          "items": [
+            "Added a Strategies & Techs section to every Killer and Survivor."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "label": "Updated",
+      "entries": [
+        {
+          "badge": "Release",
+          "title": "Forsaken coverage release!",
+          "link": "/forsaken/forsaken-directory",
+          "items": [
+            "Added the Forsaken page.",
+            "Added The Forsaken, with every Survivor and Killer.",
+            "Added TierLists & Maps.",
+            "Added Items on Survivor pages."
+          ]
+        }
+      ]
+    }
+  ]
+}

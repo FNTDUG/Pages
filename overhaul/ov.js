@@ -10,7 +10,7 @@
   [
     'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Audiowide&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap',
     solo ? '' : '/overhaul/parvus-home.css',
-    '/overhaul/ov-pop.css'
+    '/overhaul/ov-pop.css?v=20261105c'
   ].forEach(function (href) {
     if (!href) return;
     if (href.indexOf('fonts.googleapis') !== -1 && document.querySelector('link[href*="family=Archivo+Black"]')) return;
@@ -20,9 +20,9 @@
     document.head.appendChild(l);
   });
 
-  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', fwm: 'FNaF World Multiplayer', 'patch-notes': 'Patch notes', wiki: 'Community wiki', '404': 'Error 404' };
+  var SECTIONS = { fntd2: 'Five Nights TD 2', fntd1: 'Five Nights TD', bbn: 'Bite By Night', fwm: 'FNaF World Multiplayer', forsaken: 'Forsaken', 'patch-notes': 'Patch notes', wiki: 'Community wiki', '404': 'Error 404' };
   var title = '';
-  var PREFIX = { fntd1: /^FNTD ?1\s+/i, fntd2: /^FNTD ?2\s+/i, bbn: /^(BBN|Bite By Night)\s+/i, fwm: /^(FWM|FNaF World Multiplayer)\s+/i };
+  var PREFIX = { fntd1: /^FNTD ?1\s+/i, fntd2: /^FNTD ?2\s+/i, bbn: /^(BBN|Bite By Night)\s+/i, fwm: /^(FWM|FNaF World Multiplayer)\s+/i, forsaken: /^Forsaken\s+/i };
   function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function gameKey() {
     var q = /[?&]game=([a-z0-9-]+)/.exec(location.search);
@@ -35,7 +35,7 @@
   if (SECTIONS[game]) h.setAttribute('data-game', game);
   function section() { return SECTIONS[game] || 'FNTD User Guide'; }
 
-  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory'];
+  var NAV_PAGES = ['/fntd1', '/fntd2/fntd2-directory', '/bbn/bite-by-night-directory', '/fntd2/fntd2-index', '/fwm/fwm-directory', '/forsaken/forsaken-directory'];
   var bare = NAV_PAGES.indexOf(location.pathname.replace(/^\/overhaul(?=\/|$)/, '').replace(/\.html$/, '').replace(/\/(index)?$/, '')) !== -1 || !!document.querySelector('meta[name="ov-bare"]') || (!document.querySelector('meta[name="ov-stage"]') && !!(window.matchMedia && window.matchMedia('(max-width: 960px)').matches));
   var tbar = false;
   function hlTitle(t) {
@@ -235,7 +235,10 @@
     '/fwm/tierlist': { tint: 'pink', go: 'Open the TierList' },
     '/fwm/meta-teams': { tint: 'blue', go: 'Open Meta Teams' },
     '/fwm/grind-methods': { tint: 'green', go: 'Open Grind Methods' },
-    '/fwm/minigames': { tint: 'pink', go: 'Play the Minigames' }
+    '/fwm/minigames': { tint: 'pink', go: 'Play the Minigames' },
+    '/forsaken/roster': { tint: 'yellow', go: 'Open The Forsaken' },
+    '/forsaken/tierlist': { tint: 'pink', go: 'Open TierLists & Maps' },
+    '/forsaken/meta-comps': { tint: 'blue', go: 'Open Meta Comps' }
   };
   function directory() {
     var grid = document.querySelector('#ug-content .bbn-dir-grid');
@@ -267,6 +270,17 @@
       clearTimeout(fitT);
       fitT = setTimeout(function () { fitTerms(out); }, 150);
     });
+    if (window.ResizeObserver) {
+      var seenW = new WeakMap(), roF = 0;
+      var ro = new ResizeObserver(function (es) {
+        var changed = false;
+        es.forEach(function (e) { var w = Math.round(e.contentRect.width); if (seenW.get(e.target) !== w) { seenW.set(e.target, w); changed = true; } });
+        if (changed) { cancelAnimationFrame(roF); roF = requestAnimationFrame(function () { fitTerms(out); }); }
+      });
+      var watchTerms = function () { Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (t) { if (!seenW.has(t)) { seenW.set(t, -1); ro.observe(t); } }); };
+      watchTerms();
+      if (window.MutationObserver) new MutationObserver(watchTerms).observe(out, { childList: true });
+    }
     if (reduced) return;
     Array.prototype.forEach.call(out.querySelectorAll('.ov-term'), function (el) { typer(el, 9); });
     if (window.MutationObserver) new MutationObserver(function (ms) {
@@ -285,7 +299,9 @@
     Array.prototype.forEach.call(box.querySelectorAll('.ov-term h3'), function (h) {
       h.style.fontSize = '';
       var fs = parseFloat(getComputedStyle(h).fontSize);
-      while (fs > 18 && h.getBoundingClientRect().height > fs * 1.6) {
+      var w = h.querySelector('.ov-term-w'), t = h.closest('.ov-term'), lines = h.querySelector('.ov-term-t').textContent ? 2.4 : 1.6;
+      var room = function () { var r = t.getBoundingClientRect(); return r.right - t.clientLeft - 10; };
+      while (fs > 18 && (h.getBoundingClientRect().height > fs * lines || (w && t && w.getBoundingClientRect().right > room()))) {
         fs -= 1;
         h.style.fontSize = fs + 'px';
       }
@@ -639,7 +655,7 @@
     window.infToggleExp.ov = true;
   }
 
-  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory']];
+  var GAMES = [['fntd1', 'FNTD1', '/fntd1/'], ['fntd2', 'FNTD2', '/fntd2/fntd2-directory'], ['bbn', 'BBN', '/bbn/bite-by-night-directory'], ['fwm', 'FWM', '/fwm/fwm-directory'], ['forsaken', 'Forsaken', '/forsaken/forsaken-directory']];
   function bar() {
     var main = document.getElementById('ug-main');
     if (!main || main.querySelector('.pv-bar') || !document.querySelector('#ug-content[data-layout="wide"]')) return;
